@@ -79,13 +79,27 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="XMLFiles\Agents.xml" />
-    <Content Include="XMLFiles\Buyers.xml" />
-    <Content Include="XMLFiles\Homes.xml" />
-    <Content Include="XMLFiles\HomeSales.xml" />
-    <Content Include="XMLFiles\Owners.xml" />
-    <Content Include="XMLFiles\People.xml" />
-    <Content Include="XMLFiles\RealEstateCompanies.xml" />
+    <None Include="XMLFiles\Agents.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\Buyers.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\Homes.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\HomeSales.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\Owners.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\People.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XMLFiles\RealEstateCompanies.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
