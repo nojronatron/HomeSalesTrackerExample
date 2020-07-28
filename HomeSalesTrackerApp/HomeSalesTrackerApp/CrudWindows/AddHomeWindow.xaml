@@ -1,0 +1,75 @@
+﻿<Window x:Class="HomeSalesTrackerApp.AddHomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        mc:Ignorable="d"
+        Title="Add New Home" Height="450" Width="400" Loaded="Window_Loaded">
+
+    <DockPanel Background="Azure">
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+            </MenuItem>
+            <Separator Width="5" />
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Clear Inputs" Click="menuRefresh_Click"/>
+                <MenuItem Header="_Reload Everything" Click="menuRefreshAll_Click" />
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
+            <StatusBarItem>
+                <TextBlock x:Name="statusBarText" Text="Window Loaded" TextAlignment="Center" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <StackPanel Orientation="Vertical" MinWidth="130" Margin="10,10" Background="Azure">
+            <Label Content="Address (Required)" Height="25" />
+            <TextBox x:Name="homeAddressTextbox" Text="" Height="25" />
+            <Label Content="City (Required)" Height="25" />
+            <TextBox x:Name="homeCityTextbox" Text="" Height="25" />
+            <Label Content="State (Required)" Height="25" />
+            <TextBox x:Name="homeStateTextbox" Text="" Height="25" />
+            <Label Content="Zip Code + 4 (Required)" Height="25" />
+            <TextBox x:Name="homeZipTextbox" Text="" Height="25" />
+
+            <Label Content="Add Owner or Select Owner required." HorizontalContentAlignment="Center" Height="25" Margin="0,5"
+                   Background="Red" FontWeight="Bold" Foreground="White" />
+            <Grid Margin="0,5">
+                <Label Content="Select Owner below. If not found click Add:" Height="25" />
+                <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" Click="addOwnerButton_click" Margin="5,5,5,5" />
+            </Grid>
+            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10"/>
+            <Button x:Name="addHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="addNewHome_Button" MinWidth="25" />
+        </StackPanel>
+    </DockPanel>
+</Window>
+
+    
+    
+    <!--<StackPanel Orientation="Vertical" MinWidth="130" Margin="10,10">
+            <Label x:Name="personElementLabel" Content="Contact Information" Height="25" />
+            <Label Content="First Name" Height="25" />
+            <TextBox x:Name="firstnameTextbox" Text="" Height="25" />
+            <Label Content="Last Name" Height="25" />
+            <TextBox x:Name="lastnameTextbox" Text="" Height="25" />
+            <Label Content="Phone Number" Height="25" />
+            <TextBox x:Name="phoneTextbox" Text="" Height="25" />
+            <Label Content="Email Address" Height="25" />
+            <TextBox x:Name="emailTextbox" Text="" Height="25" />
+        </StackPanel>
+        <StackPanel Orientation="Vertical" MinWidth="100" Margin="10,10">
+            <Label x:Name="personTypeLabel" Content="Additional Information" Height="25" />
+            <Label Content="Select Agent, Buyer, or Owner" Height="25" />
+            <ComboBox x:Name="personTypeComboBox" Text="Roles" ItemsSource="{Binding}" IsEditable="False" />
+            <Label Content="Preferred Lender (if any)" Height="25" />
+            <TextBox x:Name="preferredLenderTextbox" Text="" Height="25" />
+            <Label Content="Buyer Credit Rating" Height="25" />
+            <TextBox x:Name="creditRatingTextbox" Text="" Height="25" />
+            <Label Content="Real Estate Commpany" Height="25" />
+            <TextBox x:Name="agentRECompany" Text="" Height="25" />
+            <Label Content="Agent Commission" Height="25" />
+            <TextBox x:Name="commissionPercentTextbox" Text="" Height="25" />
+            <Button x:Name="submitButton" Content="Submit" Height="25" Click="submitButton_Click" Margin="10,10" />
+        </StackPanel>-->

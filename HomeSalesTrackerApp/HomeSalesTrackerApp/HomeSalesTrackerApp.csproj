@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{583067A7-F8FB-4983-8DF7-94DD753B1F6E}</ProjectGuid>
+    <ProjectGuid>{58F4DAF9-10F4-4F46-BD2B-178C5D190846}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>HomeSalesTrackerApp</RootNamespace>
     <AssemblyName>HomeSalesTrackerApp</AssemblyName>
@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,6 +58,50 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CrudWindows\AddHomeWindow.xaml.cs">
+      <DependentUpon>AddHomeWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CrudWindows\AddOwnerWindow.xaml.cs">
+      <DependentUpon>AddOwnerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CrudWindows\AddPersonWindow.xaml.cs">
+      <DependentUpon>AddPersonWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
+      <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CrudWindows\CrudWindow.xaml.cs">
+      <DependentUpon>CrudWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\HomeSalesCollection.cs" />
+    <Compile Include="WpfResources\PersonList.cs" />
+    <Compile Include="Collections\RealEstateCosCollection.cs" />
+    <Compile Include="SearchWindows\SearchWindow.xaml.cs">
+      <DependentUpon>SearchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
+      <DependentUpon>SoldHomesReport.xaml</DependentUpon>
+    </Compile>
+    <Page Include="CrudWindows\AddHomeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\AddOwnerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\AddPersonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReportWindows\AgentsResultsReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\CrudWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -63,12 +110,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\HomesCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SearchWindows\SearchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ReportWindows\SoldHomesReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\PeopleCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -93,6 +150,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HSTDataLayer\HSTDataLayer.csproj">
+      <Project>{970CE19F-8F32-49A8-B740-BDAE863A2569}</Project>
+      <Name>HSTDataLayer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

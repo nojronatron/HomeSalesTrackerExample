@@ -1,0 +1,42 @@
+﻿<Window x:Class="HomeSalesTrackerApp.SoldHomesReport"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        mc:Ignorable="d"
+        Title="Sold Homes Report" Height="450" Width="1000" Loaded="soldHomeReportWindowLoaded" >
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Refresh" Click="menuRefresh_Click"/>
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
+            <StatusBarItem>
+                <TextBlock x:Name="statusBarText" Text="" TextAlignment="Center" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
+        <Grid DockPanel.Dock="Left">
+            <ListView x:Name="soldHomesReportListview" ItemsSource="{Binding}">
+                <ListView.View>
+                    <GridView AllowsColumnReorder="True" ColumnHeaderToolTip="Sold Homes Report">
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=HomeID}" Header="ID" Width="20"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Address}" Header="Address" Width="200"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=City}" Header="City" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=State}" Header="State" Width="40"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Zip}" Header="Zip Code" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=BuyerName}" Header="Buyer (First Last)" Width="140"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=AgentName}" Header="Agent (First Last)" Width="140"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=RECoName}" Header="RE Company" Width="130"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SaleAmount}" Header="Sale Amount" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SoldDate}" Header="Sold Date" Width="130"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</Window>

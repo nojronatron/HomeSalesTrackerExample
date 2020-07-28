@@ -3,10 +3,104 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        xmlns:local="clr-namespace:HomeSalesTrackerApp" xmlns:sys="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Home Sales Tracker" Height="390" Width="660" Loaded="Window_Loaded" Closing="Window_Closing">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black" HorizontalContentAlignment="Left">
+            <MenuItem Header="_File">
+                <Separator />
+                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Search">
+                <Separator/>
+                <MenuItem Header="Homes" Click="menuSearchHomes_Click"></MenuItem>
+                <MenuItem Header="Homes For Sale" Click="menuSearchHomeForSale_Click"></MenuItem>
+                <MenuItem Header="Sold Homes" Click="menuSearchSoldHomes_Click"></MenuItem>
+                <MenuItem Header="Owners" Click="menuSearchOwners_Click"></MenuItem>
+                <MenuItem Header="Agents" Click="menuSearchAgents_Click"></MenuItem>
+                <MenuItem Header="Buyers" Click="menuSeawrchBuyers_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Add">
+                <Separator/>
+                <MenuItem Header="Home" Click="menuAddHome_Click"></MenuItem>
+                <MenuItem Header="Homes For Sale" Click="menuAddHomesForSale_Click"></MenuItem>
+                <MenuItem Header="Owner" Click="menuAddOwner_Click"></MenuItem>
+                <MenuItem Header="Agent" Click="menuAddAgent_Click"></MenuItem>
+                <MenuItem Header="Buyer" Click="menuAddBuyer_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Update">
+                <Separator/>
+                <MenuItem Header="Home" Click="menuUpdateHome_Click"></MenuItem>
+                <MenuItem Header="Home For Sale" Click="menuUpdateHomeForSale_Click"></MenuItem>
+                <MenuItem Header="Sold Home" Click="menuUpdateSoldHome_Click"></MenuItem>
+                <MenuItem Header="Owner" Click="menuUpdateOwner_Click"></MenuItem>
+                <MenuItem Header="Agent" Click="menuUpdateAgent_Click"></MenuItem>
+                <MenuItem Header="Buyer" Click="menuUpdateBuyer_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Remove">
+                <Separator />
+                <MenuItem Header="Home Off Of The Market" Click="menuRemoveHomeFromMarket_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Update Home As Sold" Click="menuUpdateHomeAsSold_Click"></MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="Display List">
+                <Separator/>
+                <MenuItem Header="Sold Homes" Click="menuDisplaySoldHomes_Click"></MenuItem>
+                <MenuItem Header="Agents" Click="menuDisplayAgents_Click"></MenuItem>
+                <MenuItem Header="Buyers" Click="menuDisplayBuyers_Click"></MenuItem>
+                <MenuItem Header="Homes for Sale" Click="menuDisplayHomesForSale_Click"></MenuItem>
+                <MenuItem Header="Real Estate Co. Totals" Click="menuDisplayRECoTotals_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5"/>
+            <MenuItem Header="_About" Click="menuAboutAppInfo_Click" >
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
+            <StatusBarItem>
+                <TextBlock x:Name="statusBarText" Text="App Loaded" TextAlignment="Center" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
+        <Grid DockPanel.Dock="Left" Background="Azure">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="165*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="102*"/>
+                    <ColumnDefinition Width="160*"/>
+                    <ColumnDefinition Width="261*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="75" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.ColumnSpan="3" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" MinHeight="75">
+                    <Label Grid.Column="0" Content="Enter Search Terms Separated By Commas, then click Search Menu to Search." 
+                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <TextBox x:Name="searchTermsTextbox" Text="" Margin="20,5" Height="27" VerticalAlignment="Top" Background="White" />
+                </StackPanel>
+                <Label Grid.ColumnSpan="3" Grid.Row="1"
+                    Content="Search Results" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Top"
+                           Height="25" Margin="20,5,20,0"/>
+                <ListView Grid.ColumnSpan="3" Grid.Row="1"
+                             x:Name="searchResultsListbox" MinHeight="180" Margin="20,35,20,0" HorizontalAlignment="Stretch" 
+                             VerticalAlignment="Top" Height="27" Background="White" ItemsSource="{Binding}" />
+            </Grid>
+            <StackPanel Grid.Column="3" VerticalAlignment="Stretch">
+                <Button x:Name="fullDetailsButton" Content="Details" Margin="10, 7" Height="25" Click="FullDetailsButton_Click" />
+                <Button x:Name="modifyButton" Content="Modify?" Margin="10, 7" Height="25" Click="modifyItemButton_Click" />
+                <Button x:Name="clearButton" Content="Clear" Margin="10, 7" Height="25" Click="clearFieldsButton_Click" />
+                <Button x:Name="closeButton" Content="Exit" Margin="10, 7" Height="25" VerticalAlignment="Bottom" Click="closeButton_Click" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

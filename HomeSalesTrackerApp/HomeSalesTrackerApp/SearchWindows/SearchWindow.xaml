@@ -1,0 +1,35 @@
+﻿<Window x:Class="HomeSalesTrackerApp.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        mc:Ignorable="d"
+        Title="Search" Height="220" Width="400">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+            </MenuItem>
+            <Separator Width="5" />
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Refresh" Click="menuRefresh_Click"/>
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
+            <StatusBarItem>
+                <TextBlock x:Name="statusBarText" Text="Window Loaded" TextAlignment="Center" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!--<Grid DockPanel.Dock="Top">
+            <Label x:Name="addnewHomeLabel" Content="Add New Home" HorizontalContentAlignment="Center" 
+                    MinWidth="100" Height="25" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,25,0,0" FontWeight="Bold" />
+        </Grid>-->
+        <StackPanel Orientation="Vertical" MinWidth="130" Margin="10,10" Background="Azure">
+            <Label Content="Search! Use commas to separate terms." Height="25" />
+            <TextBox x:Name="searchTextbox" Text="" Height="25" />
+            <Button x:Name="searchButton" Content="Search" Height="25" Margin="10,25" Click="searchButton_Click" MinWidth="25" />
+        </StackPanel>
+    </DockPanel>
+</Window>
