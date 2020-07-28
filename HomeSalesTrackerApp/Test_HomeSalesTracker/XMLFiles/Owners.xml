@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Contents of Owners table in HomeSalesTracker database-->
+<Owners>
+  <Owner>
+    <OwnerID>1</OwnerID>
+    <PreferredLender>ABC Mortgage Company</PreferredLender>
+  </Owner>
+  <Owner>
+    <OwnerID>3</OwnerID>
+    <PreferredLender>Allied Mortgage Company</PreferredLender>
+  </Owner>
+  <Owner>
+    <OwnerID>5</OwnerID>
+  </Owner>
+  <Owner>
+    <OwnerID>7</OwnerID>
+    <PreferredLender>Unique Mortgaging</PreferredLender>
+  </Owner>
+</Owners>

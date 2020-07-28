@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Contents of Buyers table in HomeSalesTracker database-->
+<Buyers>
+  <Buyer>
+    <BuyerID>1</BuyerID>
+    <CreditRating>735</CreditRating>
+  </Buyer>
+  <Buyer>
+    <BuyerID>3</BuyerID>
+  </Buyer>
+  <Buyer>
+    <BuyerID>5</BuyerID>
+    <CreditRating>700</CreditRating>
+  </Buyer>
+  <Buyer>
+    <BuyerID>7</BuyerID>
+    <CreditRating>780</CreditRating>
+  </Buyer>
+</Buyers>

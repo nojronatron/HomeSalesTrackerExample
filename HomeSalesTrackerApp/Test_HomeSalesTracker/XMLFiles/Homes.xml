@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Contents of Homes table in HomeSalesTracker database-->
+<Homes>
+  <Home>
+    <HomeID>1</HomeID>
+    <Address>23 Oak St.</Address>
+    <City>Johnsonville</City>
+    <State>CA</State>
+    <Zip>955551111</Zip>
+    <OwnerID>1</OwnerID>
+  </Home>
+  <Home>
+    <HomeID>2</HomeID>
+    <Address>12 Sunny Ave.</Address>
+    <City>Manner</City>
+    <State>WA</State>
+    <Zip>944445555</Zip>
+    <OwnerID>3</OwnerID>
+  </Home>
+  <Home>
+    <HomeID>3</HomeID>
+    <Address>905 Stratton Circle</Address>
+    <City>Larimount</City>
+    <State>WA</State>
+    <Zip>955552222</Zip>
+    <OwnerID>5</OwnerID>
+  </Home>
+  <Home>
+    <HomeID>4</HomeID>
+    <Address>6 Hindley Road</Address>
+    <City>Woodsworth</City>
+    <State>OR</State>
+    <Zip>955553333</Zip>
+    <OwnerID>7</OwnerID>
+  </Home>
+  <Home>
+    <HomeID>5</HomeID>
+    <Address>123 8th Ave.</Address>
+    <City>Charleston</City>
+    <State>OR</State>
+    <Zip>922223333</Zip>
+    <OwnerID>5</OwnerID>
+  </Home>
+</Homes>

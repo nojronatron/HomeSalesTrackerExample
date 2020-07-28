@@ -51,11 +51,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EF\HSTContextInitializer.cs" />
+    <Compile Include="EF\HSTDataModel.cs" />
+    <Compile Include="Extensions\AgentExtension.cs" />
+    <Compile Include="Extensions\BuyerExtension.cs" />
+    <Compile Include="Extensions\HomeExtension.cs" />
+    <Compile Include="Extensions\HomeSaleExtension.cs" />
+    <Compile Include="Extensions\OwnerExtension.cs" />
+    <Compile Include="Extensions\PersonExtension.cs" />
+    <Compile Include="Extensions\RealEstateCompanyExtension.cs" />
+    <Compile Include="Helpers\BackupDataFiles.cs" />
+    <Compile Include="Helpers\EntityLists.cs" />
+    <Compile Include="Helpers\FilesHelper.cs" />
+    <Compile Include="Helpers\LogicBroker.cs" />
+    <Compile Include="Helpers\XmlHelper.cs" />
+    <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\Buyer.cs" />
+    <Compile Include="Models\Home.cs" />
+    <Compile Include="Models\HomeSale.cs" />
+    <Compile Include="Models\Owner.cs" />
+    <Compile Include="Models\Person.cs" />
+    <Compile Include="Models\RealEstateCompany.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="XMLFiles\Agents.xml" />
+    <Content Include="XMLFiles\Buyers.xml" />
+    <Content Include="XMLFiles\Homes.xml" />
+    <Content Include="XMLFiles\HomeSales.xml" />
+    <Content Include="XMLFiles\Owners.xml" />
+    <Content Include="XMLFiles\People.xml" />
+    <Content Include="XMLFiles\RealEstateCompanies.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

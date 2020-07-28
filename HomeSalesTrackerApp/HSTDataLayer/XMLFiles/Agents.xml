@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Contents of Agents table in HomeSalesTracker database-->
+<Agents>
+  <Agent>
+    <AgentID>1</AgentID>
+    <CompanyID>4</CompanyID>
+    <CommissionPercent>0.02</CommissionPercent>
+  </Agent>
+  <Agent>
+    <AgentID>2</AgentID>
+    <CompanyID>1</CompanyID>
+    <CommissionPercent>0.02</CommissionPercent>
+  </Agent>
+  <Agent>
+    <AgentID>3</AgentID>
+    <CommissionPercent>0.03</CommissionPercent>
+  </Agent>
+  <Agent>
+    <AgentID>4</AgentID>
+    <CompanyID>1</CompanyID>
+    <CommissionPercent>0.03</CommissionPercent>
+  </Agent>
+  <Agent>
+    <AgentID>8</AgentID>
+    <CompanyID>3</CompanyID>
+    <CommissionPercent>0.04</CommissionPercent>
+  </Agent>
+</Agents>

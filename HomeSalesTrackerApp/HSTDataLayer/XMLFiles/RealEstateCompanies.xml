@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Contents of RealEstateCompanies table in HomeSalesTracker database-->
+<RealEstateCompanies>
+  <RealEstateCompany>
+    <CompanyID>1</CompanyID>
+    <CompanyName>ABC Real Estate</CompanyName>
+    <Phone>6663331111</Phone>
+  </RealEstateCompany>
+  <RealEstateCompany>
+    <CompanyID>2</CompanyID>
+    <CompanyName>BCD Real Estate</CompanyName>
+    <Phone>6664441111</Phone>
+  </RealEstateCompany>
+  <RealEstateCompany>
+    <CompanyID>3</CompanyID>
+    <CompanyName>Rapid Real Estate</CompanyName>
+    <Phone>6662221111</Phone>
+  </RealEstateCompany>
+  <RealEstateCompany>
+    <CompanyID>4</CompanyID>
+    <CompanyName>Martin Real Estate</CompanyName>
+    <Phone>6661114444</Phone>
+  </RealEstateCompany>
+</RealEstateCompanies>
