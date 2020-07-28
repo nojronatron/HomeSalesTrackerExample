@@ -122,14 +122,13 @@ namespace HSTDataLayer
         /// <returns></returns>
         public bool UpdateEntities<T>(T[] collectionT)
         {
-            bool result = false;
             using (var context = new HSTDataModel())
             {
                 foreach (var item in collectionT)
                 {
                     if (collectionT.GetType().Name == "Person")
                     {
-                        //  TODO: See if you can figure out how to make this work
+                        //  TODO: Figure out how to make this work
                         //  context.People.AddOrUpdate(item as IEnumerable<Person>);
 
                     }
