@@ -14,8 +14,8 @@
             </MenuItem>
             <Separator Width="5" />
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Clear Inputs" Click="menuRefresh_Click"/>
-                <MenuItem Header="_Reload Everything" Click="menuRefreshAll_Click" />
+                <MenuItem Header="_Clear Inputs" Click="menuClearInputs_Click"/>
+                <MenuItem Header="_Reload Data" Click="menuReloadData_Click" />
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">

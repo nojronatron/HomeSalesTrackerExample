@@ -50,7 +50,7 @@ namespace HomeSalesTrackerApp
             if (people == null)
             {
                 _peopleList.Add(person);
-                LogicBroker.SaveEntity<Person>(person); //  TODO: acquire the new PersonID to put it into this collection (otherwise it is blank)
+                //LogicBroker.SaveEntity<Person>(person); //  TODO: acquire the new PersonID to put it into this collection (otherwise it is blank)
                 listOfHandlers(person); //  sends Person object via Delegate to subscriber(s)
                 result = true;
             }

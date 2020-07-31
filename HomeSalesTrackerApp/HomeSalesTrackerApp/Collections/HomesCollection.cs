@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp
 {
-    public class HomesCollection : IEnumerable<Home>, INotifyPropertyChanged
+    public class HomesCollection : IEnumerable<Home>//, INotifyPropertyChanged
     {
         private List<Home> _homesList = null;
 
         //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
         
         //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         /// <summary>
         /// Constructor.

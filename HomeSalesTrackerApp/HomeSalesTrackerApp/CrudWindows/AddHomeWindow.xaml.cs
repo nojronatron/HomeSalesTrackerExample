@@ -33,10 +33,9 @@ namespace HomeSalesTrackerApp
             InitializeComponent();
         }
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            RefreshData();
+            RefreshOwnersComboBox();
             string addType = AddType;
             MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
             statusBarText.Text = $"Add a new { addType } to the database.";
@@ -45,12 +44,14 @@ namespace HomeSalesTrackerApp
         public void AlertPersonAddedToCollection(Person p)
         {
             NewPersonAddedToCollection = p;
-            RefreshData();
+            //  TODO: Test this in DEBUG
+            //LogicBroker.SaveEntity<Person>(p);
+            RefreshOwnersComboBox();
         }
 
         private void addNewHome_Button(object sender, RoutedEventArgs e)
         {
-            RefreshData();
+            //RefreshOwnersComboBox();
 
             Home newHome = null;
             //  TODO: Validate these fields right away
@@ -66,15 +67,16 @@ namespace HomeSalesTrackerApp
             if (NewPersonAddedToCollection == null)
             {
                 //  Owner is selected in the ComboBox so get the data
-                var cbo = (ComboBox)ownersComboBox.SelectionBoxItem;
+                //var cbo = (ComboBox)ownersComboBox.SelectionBoxItem;
                 Person comboBoxPerson = null;
-                comboBoxPerson = cbo.SelectedItem as Person;
+                //comboBoxPerson = cbo.SelectedItem as Person;
+                comboBoxPerson = ownersComboBox.SelectedItem as Person;
                 var ownerID = comboBoxPerson.PersonID;
                 
-                //  get existing Owner instance
-                var newHomeExistingOwner = (from h in MainWindow.homesCollection
-                                            where h.Owner.OwnerID == ownerID
-                                            select h.Owner).FirstOrDefault();
+                ////  get existing Owner instance
+                //var newHomeExistingOwner = (from p in MainWindow.peopleCollection
+                //                            where ownerID == p.PersonID
+                //                            select p.Owner).FirstOrDefault();
                 
                 //  create the new Home instance
                 newHome = new Home()
@@ -83,7 +85,7 @@ namespace HomeSalesTrackerApp
                     City = city,
                     State = state,
                     Zip = zip,
-                    Owner = newHomeExistingOwner
+                    OwnerID = ownerID
                 };
             }
 
@@ -128,37 +130,34 @@ namespace HomeSalesTrackerApp
             this.Close();
         }
 
-        private void menuRefresh_Click(object sender, RoutedEventArgs e)
+        private void menuClearInputs_Click(object sender, RoutedEventArgs e)
         {
-            RefreshScreenElements();
+            ClearScreenElements();
         }
 
-        private void menuRefreshAll_Click(object sender, RoutedEventArgs e)
+        private void menuReloadData_Click(object sender, RoutedEventArgs e)
         {
-            //  refresh screen elements and data in local collection and ComboBox
-            RefreshScreenElements();
-            RefreshData();
+            RefreshOwnersComboBox();
         }
 
-        private void RefreshScreenElements()
+        private void ClearScreenElements()
         {
             homeAddressTextbox.Text = string.Empty;
             homeCityTextbox.Text = string.Empty;
             homeStateTextbox.Text = string.Empty;
             homeZipTextbox.Text = string.Empty;
             ownersComboBox.SelectedIndex = -1;
-            statusBarText.Text = "Refreshed screen.";
+            statusBarText.Text = "Cleared all entries.";
         }
 
-        public void RefreshData()
+        public void RefreshOwnersComboBox()
         {
             var existingOwnersList = from pc in MainWindow.peopleCollection
                                      where pc.Owner != null
                                      select pc;
 
-
             ownersComboBox.ItemsSource = (from p in existingOwnersList
-                                          select p);
+                                          select p).ToList();
         }
 
         private void DisplayStatusMessage(string message)
