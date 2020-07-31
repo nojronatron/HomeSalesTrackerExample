@@ -16,7 +16,6 @@ namespace HSTDataLayer.Helpers
             List<Person> peopleList = null;
             using (HSTDataModel context = new HSTDataModel())
             {
-                context.Configuration.LazyLoadingEnabled = false;
                 peopleList = new List<Person>();
                 foreach (Person person in context.People.Include(a => a.Agent)
                                                         .Include(r => r.Agent.RealEstateCompany)
@@ -63,11 +62,11 @@ namespace HSTDataLayer.Helpers
 
         public static List<RealEstateCompany> GetTreeListOfRECompanies()
         {
-            List<RealEstateCompany> recosList = null;
-            using (HSTDataModel context = new HSTDataModel())
+            var recosList = default(List<RealEstateCompany>);   //  allows using var, forces null if nullable type
+            using (var context = new HSTDataModel())
             {
                 recosList = new List<RealEstateCompany>();
-                foreach (RealEstateCompany reco in context.RealEstateCompanies.Include(a => a.Agents)
+                foreach (var reco in context.RealEstateCompanies.Include(a => a.Agents)
                                                                               .Include(hs => hs.HomeSales))
                 {
                     recosList.Add(reco);
@@ -112,8 +111,6 @@ namespace HSTDataLayer.Helpers
 
         public static List<Agent> GetListOfAgents()
         {
-            //  TODO: Verify this function is returning an Agent list that is fully populated
-            //List<Person> agentList = null;
             List<Agent> agentList = null;
             using (HSTDataModel context = new HSTDataModel())
             {

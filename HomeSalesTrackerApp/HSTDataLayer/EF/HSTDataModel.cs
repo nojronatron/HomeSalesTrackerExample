@@ -11,6 +11,8 @@ namespace HSTDataLayer
         {
             Database.SetInitializer<HSTDataModel>(new DropCreateDatabaseAlways<HSTDataModel>());
             //Database.SetInitializer<HSTDataModel>(new CreateDatabaseIfNotExists<HSTDataModel>());
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
 
             ////  disable initializer to avoid overwriting DB e.g. Production
             //  Database.SetInitializer<HSTDataModel>(null);

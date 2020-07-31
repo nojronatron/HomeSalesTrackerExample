@@ -61,6 +61,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BusinessModels\Agent.cs" />
+    <Compile Include="BusinessModels\Buyer.cs" />
+    <Compile Include="BusinessModels\Extensions\AgentExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\BuyerExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\HomeExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\HomeSaleExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\OwnerExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\PersonExtension.cs" />
+    <Compile Include="BusinessModels\Extensions\RealEstateCompanyExtension.cs" />
+    <Compile Include="BusinessModels\Home.cs" />
+    <Compile Include="BusinessModels\HomeSale.cs" />
+    <Compile Include="BusinessModels\Owner.cs" />
+    <Compile Include="BusinessModels\Person.cs" />
+    <Compile Include="BusinessModels\RealEstateCompany.cs" />
     <Compile Include="CrudWindows\AddHomeWindow.xaml.cs">
       <DependentUpon>AddHomeWindow.xaml</DependentUpon>
     </Compile>

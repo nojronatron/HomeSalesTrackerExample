@@ -6,25 +6,6 @@
         xmlns:local="clr-namespace:HomeSalesTrackerApp" xmlns:sys="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         mc:Ignorable="d"
         Title="Home Sales Tracker" Height="390" Width="760" Loaded="Window_Loaded" Closing="Window_Closing">
-    <!--<Window.Resources>
-        <ControlTemplate x:Key="HomeSearchResultsView" TargetType="ListView">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <DataGridColumnHeader x:Name="Home ID" Grid.Column="0" />
-                <DataGridColumnHeader x:Name="Address" Grid.Column="1" />
-                <DataGridColumnHeader x:Name="City" Grid.Column="2"/>
-                <DataGridColumnHeader x:Name="State" Grid.Column="3"/>
-                <DataGridColumnHeader x:Name="Zip Code" Grid.Column="4"/>
-                
-            </Grid>
-        </ControlTemplate>
-    </Window.Resources>-->
     <DockPanel>
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black" HorizontalContentAlignment="Left">
             <MenuItem Header="_File">
@@ -63,7 +44,7 @@
             <Separator Width="5"/>
             <MenuItem Header="Remove">
                 <Separator />
-                <MenuItem Header="Home Off Of The Market" Click="menuRemoveHomeFromMarket_Click"></MenuItem>
+                <MenuItem Header="Home Off Of The Market" Click="MenuRemoveHomeFromMarket_Click"></MenuItem>
             </MenuItem>
             <Separator Width="5"/>
             <MenuItem Header="Update Home As Sold" Click="menuUpdateHomeAsSold_Click"></MenuItem>
@@ -87,12 +68,16 @@
         </StatusBar>
         <Grid DockPanel.Dock="Left" Background="Azure">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="165*"/>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="151*"/>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="23*"/>
+                <ColumnDefinition Width="17*"/>
+                <ColumnDefinition Width="395*"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Grid.ColumnSpan="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="102*"/>
                     <ColumnDefinition Width="160*"/>
@@ -315,9 +300,9 @@
                 </ListView>
 
             </Grid>
-            <StackPanel Grid.Column="3" VerticalAlignment="Stretch">
+            <StackPanel Grid.Column="7" VerticalAlignment="Stretch">
                 <Button x:Name="fullDetailsButton" Content="Details" Margin="10, 7" Height="25" Click="FullDetailsButton_Click" />
-                <Button x:Name="modifyButton" Content="Modify?" Margin="10, 7" Height="25" Click="modifyItemButton_Click" />
+                <Button x:Name="modifyButton" Content="Modify" Margin="10, 7" Height="25" Click="modifyItemButton_Click" ToolTip="Modify currently selected item."/>
                 <Button x:Name="clearButton" Content="Clear" Margin="10, 7" Height="25" Click="ClearFieldsButton_Click" />
                 <Button x:Name="closeButton" Content="Exit" Margin="10, 7" Height="25" VerticalAlignment="Bottom" Click="CloseButton_Click" />
             </StackPanel>

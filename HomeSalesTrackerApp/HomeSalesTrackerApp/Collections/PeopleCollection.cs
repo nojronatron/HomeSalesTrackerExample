@@ -141,7 +141,7 @@ namespace HomeSalesTrackerApp
 
         public int TotalHomesCurrentlyForSale()
         {
-
+            //  TODO: Move to the HomeSsalesCollection
             return 0;
         }
 

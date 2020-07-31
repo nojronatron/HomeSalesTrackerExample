@@ -38,7 +38,7 @@ namespace HomeSalesTrackerApp
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             //  TODO: Call to flush DB contents to XML files here
-            //LogicBroker.BackUpDatabase();
+            LogicBroker.BackUpDatabase();
 
             //  TODO: Call any other cleanup method/s here
 

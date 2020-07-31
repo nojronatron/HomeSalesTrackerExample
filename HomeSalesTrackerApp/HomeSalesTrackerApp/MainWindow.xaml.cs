@@ -306,7 +306,7 @@ namespace HomeSalesTrackerApp
             //
         }
 
-        private void menuRemoveHomeFromMarket_Click(object sender, RoutedEventArgs e)
+        private void MenuRemoveHomeFromMarket_Click(object sender, RoutedEventArgs e)
         {
             //
         }
