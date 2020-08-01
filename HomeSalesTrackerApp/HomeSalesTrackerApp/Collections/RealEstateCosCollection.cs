@@ -1,11 +1,7 @@
-﻿using HSTDataLayer;
-using HSTDataLayer.Helpers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
@@ -104,7 +100,6 @@ namespace HomeSalesTrackerApp
             return elementsUpdated;
         }
 
-
         public void Remove(int companyID)
         {
             if (companyID > -1)
@@ -126,20 +121,5 @@ namespace HomeSalesTrackerApp
         }
 
     }
-
-    //public class RealEstateCompany
-    //{
-    //    public RealEstateCompany()
-    //    {
-    //        //Agents = new HashSet<Agent>();
-    //        //HomeSales = new HashSet<HomeSale>();
-    //    }
-
-    //    public int CompanyID { get; set; }
-    //    public string CompanyName { get; set; }
-    //    public string Phone { get; set; }
-    //    //public virtual ICollection<Agent> Agents { get; set; }
-    //    //public virtual ICollection<HomeSale> HomeSales { get; set; }
-    //}
 
 }

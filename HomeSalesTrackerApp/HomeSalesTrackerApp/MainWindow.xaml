@@ -47,7 +47,7 @@
                 <MenuItem Header="Home Off Of The Market" Click="MenuRemoveHomeFromMarket_Click"></MenuItem>
             </MenuItem>
             <Separator Width="5"/>
-            <MenuItem Header="Update Home As Sold" Click="menuUpdateHomeAsSold_Click"></MenuItem>
+            <MenuItem Header="Update Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
             <Separator Width="5"/>
             <MenuItem Header="Display List">
                 <Separator/>

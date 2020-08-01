@@ -3,7 +3,7 @@ namespace HomeSalesTrackerApp
     using System;
     using System.Collections.Generic;
 
-    public partial class Owner
+    public partial class Owner : Person
     {
         public Owner()
         {
@@ -17,5 +17,11 @@ namespace HomeSalesTrackerApp
         public virtual ICollection<Home> Homes { get; set; }
 
         public virtual Person Person { get; set; }
+
+        public override string ToString()
+        {
+            return $"{ base.ToString() } { this.PreferredLender }";
+        }
+
     }
 }

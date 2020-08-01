@@ -1,11 +1,8 @@
-﻿using HSTDataLayer;
-using HSTDataLayer.Helpers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
@@ -71,7 +68,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// 
+        /// Returns a single HomeSale instance item, by its SaleID.
         /// </summary>
         /// <param name="saleID"></param>
         /// <returns></returns>
@@ -101,6 +98,38 @@ namespace HomeSalesTrackerApp
                 }
             }
             return itemUpdated;
+        }
+
+        /// <summary>
+        /// Removes a specified instance from this Collection by instance. Returns true if succeeds, otherwise false.
+        /// </summary>
+        /// <param name="homesale"></param>
+        /// <returns></returns>
+        public bool Remove(HomeSale homesale)
+        {
+            bool result = false;
+            if (homesale != null)
+            {
+                result = _homeSalesList.Remove(homesale);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Removes a specified instance from this Collection by SaleID. Returns true if succeeds, otherwise false.
+        /// </summary>
+        /// <param name="saleid"></param>
+        /// <returns></returns>
+        public bool Remove(int saleid)
+        {
+            bool result = false;
+            HomeSale hsToRemove = _homeSalesList.Where(hs => hs.SaleID == saleid).FirstOrDefault();
+            if (hsToRemove != null)
+            {
+                _homeSalesList.Remove(hsToRemove);
+                result = true;
+            }
+            return result;
         }
 
         IEnumerator IEnumerable.GetEnumerator()

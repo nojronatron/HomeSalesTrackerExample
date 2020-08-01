@@ -1,14 +1,8 @@
-﻿using HSTDataLayer;
-using HSTDataLayer.Helpers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
+using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {

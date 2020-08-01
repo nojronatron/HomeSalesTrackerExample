@@ -3,7 +3,7 @@ namespace HomeSalesTrackerApp
     using System;
     using System.Collections.Generic;
     
-    public partial class Buyer
+    public partial class Buyer : Person
     {
         public Buyer()
         {
@@ -17,5 +17,6 @@ namespace HomeSalesTrackerApp
         public virtual Person Person { get; set; }
 
         public virtual ICollection<HomeSale> HomeSales { get; set; }
+
     }
 }

@@ -52,6 +52,7 @@ namespace HomeSalesTrackerApp
             }
             return false;
         }
+
         /// <summary>
         /// Required Equals() override when implementing IEquitable T (IDE generated code)
         /// </summary>

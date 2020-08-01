@@ -1,13 +1,7 @@
-﻿using HSTDataLayer;
-using HSTDataLayer.Helpers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
@@ -17,7 +11,7 @@ namespace HomeSalesTrackerApp
 
         //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
         //public event PropertyChangedEventHandler PropertyChanged;
-        
+
         //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
         //private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         //{
@@ -27,7 +21,7 @@ namespace HomeSalesTrackerApp
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HomesCollection() 
+        public HomesCollection()
         {
             _homesList = new List<Home>();
         }
@@ -37,8 +31,14 @@ namespace HomeSalesTrackerApp
             _homesList = homes;
             _homesList.Sort();
         }
-        
+
         public int Count { get { return _homesList.Count; } }
+        
+        /// <summary>
+        /// Indexer.
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
         public Home this[int idx]
         {
             get
@@ -55,7 +55,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// 
+        /// Adds an instance to this item list.
         /// </summary>
         /// <param name="home"></param>
         public void Add(Home home)
@@ -68,7 +68,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// 
+        /// Returns a specific item as identified by HomeID
         /// </summary>
         /// <param name="homeID"></param>
         /// <returns></returns>
@@ -80,7 +80,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// 
+        /// Updates an existing ID via fully-fledged object instance.
         /// </summary>
         /// <param name="home"></param>
         /// <returns></returns>
@@ -123,7 +123,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// 
+        /// Removes an item from this collection by its HomeID.
         /// </summary>
         /// <param name="homeID"></param>
         public void Remove(int homeID)
@@ -147,14 +147,4 @@ namespace HomeSalesTrackerApp
         }
     }
 
-    //public class Home
-    //{
-    //    public int HomeID { get; set; }
-    //    public string Address { get; set; }
-    //    public string City { get; set; }
-    //    public string State { get; set; }
-    //    public string Zip { get; set; }
-    //    public int OwnerID { get; set; }
-
-    //}
 }
