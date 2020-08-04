@@ -44,7 +44,6 @@ namespace HomeSalesTrackerApp
             if (people == null)
             {
                 _peopleList.Add(person);
-                //LogicBroker.SaveEntity<Person>(person); //  TODO: acquire the new PersonID to put it into this collection (otherwise it is blank)
                 listOfHandlers(person); //  sends Person object via Delegate to subscriber(s)
                 result = true;
             }
@@ -68,13 +67,22 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return (IEnumerator<T>)this;
+            return ((IEnumerable<T>)_peopleList).GetEnumerator();
         }
-
         //public IEnumerator<T> GetEnumerator()
         //{
-        //    return ((IEnumerable<T>)_peopleList).GetEnumerator();
+        //    return (IEnumerator<T>)this;
         //}
+
+
+        /// <summary>
+        /// IEnumerator IEnumerable.GetEnumerator() implementation by Carl.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)this;
+        }
 
         public bool MoveNext()
         {
@@ -85,15 +93,6 @@ namespace HomeSalesTrackerApp
         public void Reset()
         {
             position = -1;
-        }
-
-        /// <summary>
-        /// IEnumerator IEnumerable.GetEnumerator() implementation by Carl.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)this;
         }
 
         /// <summary>
@@ -131,12 +130,6 @@ namespace HomeSalesTrackerApp
                 }
             }
             return personID;
-        }
-
-        public int TotalHomesCurrentlyForSale()
-        {
-            //  TODO: Move to the HomeSsalesCollection
-            return 0;
         }
 
         public Decimal TotalCommissionsPaid()

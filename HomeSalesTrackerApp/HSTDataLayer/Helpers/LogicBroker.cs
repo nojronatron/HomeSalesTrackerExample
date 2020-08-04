@@ -40,15 +40,43 @@ namespace HSTDataLayer
         public static bool BackUpDatabase()
         {
             //  TODO: decide whether to use Bool returns on each of these calls or not
-
+            bool peopleFlushed = 
             BackUpDataFiles.FlushPeopleTableToXml();
-            BackUpDataFiles.FlushOwnersTableToXml();
-            BackUpDataFiles.FlushHomesTableToXml();
-            BackUpDataFiles.FlushRealEstateCompaniesTableToXml();
-            BackUpDataFiles.FlushAgentsTableToXml();
-            BackUpDataFiles.FlushBuyersTableToXml();
-            BackUpDataFiles.FlushHomeSalesTableToXml();
-            return true;
+            if (peopleFlushed)
+            {
+                bool ownersFlushed =
+                BackUpDataFiles.FlushOwnersTableToXml();
+                if (ownersFlushed)
+                {
+                    bool homesFlushed =
+                BackUpDataFiles.FlushHomesTableToXml();
+                    if (homesFlushed)
+                    {
+                        bool reCompaniesFlushed =
+                BackUpDataFiles.FlushRealEstateCompaniesTableToXml();
+                        if (reCompaniesFlushed)
+                        {
+                            bool agentsFlushed =
+                BackUpDataFiles.FlushAgentsTableToXml();
+                            if (agentsFlushed)
+                            {
+                                bool buyersFlushed =
+                BackUpDataFiles.FlushBuyersTableToXml();
+                                if (buyersFlushed)
+                                {
+                                    bool homeSalesFlushed =
+                BackUpDataFiles.FlushHomeSalesTableToXml();
+                                    if (homeSalesFlushed)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -60,7 +88,7 @@ namespace HSTDataLayer
         public static bool SaveEntity<T>(T item)
         {
             bool result = false;
-            string name = nameof(item);
+            string name = item.GetType().Name;
             using (var context = new HSTDataModel())
             {
                 switch (name)
@@ -130,7 +158,7 @@ namespace HSTDataLayer
                     {
                         //  TODO: Figure out how to make this work
                         //  context.People.AddOrUpdate(item as IEnumerable<Person>);
-
+                        context.People.AddOrUpdate(item as Person);
                     }
                 }
             }

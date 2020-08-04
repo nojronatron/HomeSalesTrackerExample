@@ -44,77 +44,81 @@ namespace HomeSalesTrackerApp
         public void AlertPersonAddedToCollection(Person p)
         {
             NewPersonAddedToCollection = p;
-            //  TODO: Test this in DEBUG
+            //  TODO: After Golden Paths completed look at attempting to implement this notification regime.
             //LogicBroker.SaveEntity<Person>(p);
             RefreshOwnersComboBox();
         }
 
         private void addNewHome_Button(object sender, RoutedEventArgs e)
         {
-            //RefreshOwnersComboBox();
-
             Home newHome = null;
             //  TODO: Validate these fields right away
             string address = this.homeAddressTextbox.Text.Trim();
-            string city = this.homeAddressTextbox.Text.Trim();
-            string state = this.homeAddressTextbox.Text.Trim();
-            string zip = this.homeAddressTextbox.Text.Trim();
+            string city = this.homeCityTextbox.Text.Trim();
+            string state = this.homeStateTextbox.Text.Trim();
+            string zip = this.homeZipTextbox.Text.Trim();
 
-
-            //  If owner is in the combobox:
-            //      OwnerID == PersonID of the selected Person
-            //      No need to create a new Owner just get Owner using PersonID/OwnerID then add to newHome
-            if (NewPersonAddedToCollection == null)
+            if (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(city) || string.IsNullOrEmpty(state) || string.IsNullOrEmpty(zip))
             {
-                //  Owner is selected in the ComboBox so get the data
-                //var cbo = (ComboBox)ownersComboBox.SelectionBoxItem;
-                Person comboBoxPerson = null;
-                //comboBoxPerson = cbo.SelectedItem as Person;
-                comboBoxPerson = ownersComboBox.SelectedItem as Person;
-                var ownerID = comboBoxPerson.PersonID;
-                
-                ////  get existing Owner instance
-                //var newHomeExistingOwner = (from p in MainWindow.peopleCollection
-                //                            where ownerID == p.PersonID
-                //                            select p.Owner).FirstOrDefault();
-                
-                //  create the new Home instance
-                newHome = new Home()
+                if (address.Length > 50 || city.Length > 30 || state.Length > 2 || zip.Length > 9)
                 {
-                    Address = address,
-                    City = city,
-                    State = state,
-                    Zip = zip,
-                    OwnerID = ownerID
-                };
-            }
-
-            //  If owner is NOT in the combobox:
-            //      OwnerID doesn't matter because user will create a new Person via AddPersonWindow and will include Preferred Lender
-            //      New Person would have been added to the peopleCollection and notification includes the added instance named NewPersonAddedToCollection
-            //      So just add a new home and tie it to the Owner via PersonID of NewPersonAddedToCollection
-            if (NewPersonAddedToCollection != null)
-            {
-                int ownerId = NewPersonAddedToCollection.PersonID;
-                //  create the new Home instance
-                newHome = new Home()
-                {
-                    Address = address,
-                    City = city,
-                    State = state,
-                    Zip = zip,
-                    OwnerID = ownerId
-                };
-            }
-
-            if (newHome != null)
-            {
-                MainWindow.homesCollection.Add(newHome);
-                DisplayStatusMessage("Added new Home to database.");
+                    DisplayStatusMessage("Home not created. Ensure required fields are completed.");
+                }
             }
             else
             {
-                DisplayStatusMessage("Home not created. Ensure required fields are completed.");
+                if (NewPersonAddedToCollection == null)
+                {
+                    Person comboBoxPerson = null;
+                    comboBoxPerson = ownersComboBox.SelectedItem as Person;
+                    var ownerID = comboBoxPerson.PersonID;
+
+                    newHome = new Home()
+                    {
+                        Address = address,
+                        City = city,
+                        State = state,
+                        Zip = zip,
+                        OwnerID = ownerID
+                    };
+                }
+
+                //  If owner is NOT in the combobox:
+                //      OwnerID doesn't matter because user will create a new Person via AddPersonWindow and will include Preferred Lender
+                //      New Person would have been added to the peopleCollection and notification includes the added instance named NewPersonAddedToCollection
+                //      So just add a new home and tie it to the Owner via PersonID of NewPersonAddedToCollection
+                if (NewPersonAddedToCollection != null)
+                {
+                    int ownerId = NewPersonAddedToCollection.PersonID;
+                    //  create the new Home instance
+                    newHome = new Home()
+                    {
+                        Address = address,
+                        City = city,
+                        State = state,
+                        Zip = zip,
+                        OwnerID = ownerId
+                    };
+                }
+
+                if (newHome == null)
+                {
+                    DisplayStatusMessage("Home not created. Ensure required fields are completed.");
+                }
+                else
+                {
+                    if (LogicBroker.SaveEntity<Home>(newHome))
+                    {
+                        DisplayStatusMessage("Added new Home to database.");
+                        
+                        //  TODO: HomeID will be required so change homesCollection.Add to fully refreesh from DB
+                        MainWindow.homesCollection.Add(newHome);
+                    }
+                    else
+                    {
+                        DisplayStatusMessage("Home was not saved to Database.");
+                    }
+                }
             }
         }
 
@@ -152,12 +156,26 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            var existingOwnersList = from pc in MainWindow.peopleCollection
-                                     where pc.Owner != null
-                                     select pc;
+            //var existingOwnersList = from pc in MainWindow.peopleCollection
+            //                         where pc.Owner != null
+            //                         select pc;
 
-            ownersComboBox.ItemsSource = (from p in existingOwnersList
-                                          select p).ToList();
+            var existingOwnersList = (from p in MainWindow.peopleCollection
+                                      from h in MainWindow.homesCollection
+                                      where p.PersonID == h.OwnerID
+                                      select p).ToList();
+
+            //ownersComboBox.ItemsSource = (from p in existingOwnersList
+            //                              select p).ToList();
+
+            ownersComboBox.ItemsSource = existingOwnersList;
+        }
+
+        private void ownersComboBoxOpened(object sender, EventArgs e)
+        {
+            //  ComboBox did not always should bound data at FormOpened() method so force refresh when user clicks the drop-down arrow
+            RefreshOwnersComboBox();
+            DisplayStatusMessage("Refreshed Owners list for display.");
         }
 
         private void DisplayStatusMessage(string message)

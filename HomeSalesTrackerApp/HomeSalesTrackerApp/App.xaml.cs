@@ -18,8 +18,6 @@ namespace HomeSalesTrackerApp
         public static bool DatabaseLoadCompleted { get; set; }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            //  TODO: Call DB init and data loading routine/s here
-            //LogicBroker.InitDatabase();
             try
             {
                 DatabaseLoadCompleted = LogicBroker.LoadData();
@@ -29,16 +27,20 @@ namespace HomeSalesTrackerApp
                 MessageBox.Show($"{ ex.Message }", "An Exception has been thrown.");
 
             }
-            //DatabaseLoadCompleted = false;
-            
             //  TODO: Call any other pre-UI method/s here
-
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             //  TODO: Call to flush DB contents to XML files here
-            LogicBroker.BackUpDatabase();
+            if (LogicBroker.BackUpDatabase())
+            {
+                MessageBox.Show("Backup executed.... muwahahaha!");
+            }
+            else
+            {
+                MessageBox.Show("Backup failed (returned False).", "Warning!", MessageBoxButton.OK);
+            }
 
             //  TODO: Call any other cleanup method/s here
 

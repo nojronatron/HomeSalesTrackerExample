@@ -132,6 +132,12 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
+        public int TotalHomesCurrentlyForSale()
+        {
+            throw new NotImplementedException("TotalHomesCurrentlyForSale() has not been implemented");
+            //  return 0;
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<Home>)_homeSalesList).GetEnumerator();
@@ -143,5 +149,4 @@ namespace HomeSalesTrackerApp
         }
 
     }
-
 }
