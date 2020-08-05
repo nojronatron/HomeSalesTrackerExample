@@ -74,9 +74,6 @@
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrudWindows\CrudWindow.xaml.cs">
-      <DependentUpon>CrudWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Collections\HomeSalesCollection.cs" />
     <Compile Include="Collections\RealEstateCosCollection.cs" />
     <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
@@ -95,10 +92,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ReportWindows\AgentsResultsReport.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CrudWindows\CrudWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
