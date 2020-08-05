@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="Add Person" Height="450" Width="450">
+        Title="Add Person" Height="470" Width="450" Closing="AddPersonWindow_Closing">
 
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
@@ -37,6 +37,9 @@
                 <TextBox x:Name="phoneTextbox" Text="" Height="27" />
                 <Label Content="Email Address" Height="27" />
                 <TextBox x:Name="emailTextbox" Text="" Height="27" />
+                <Separator Height="100"/>
+                <Button x:Name="closeButton" Content="Save and Close" Height="27" Margin="10" Click="CloseWindowButton_Click" 
+                        MinWidth="25" VerticalAlignment="Bottom"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="130" Margin="10,10" >
                 <Label Content="Owner's Preferred Lender" Height="27" />
@@ -51,7 +54,7 @@
                 <TextBox x:Name="commissionTextbox" Text="" Height="27" />
                 <Label Content="Agent's RE Company Name" Height="27" />
                 <TextBox x:Name="agentRecoTextbox" Text="" Height="27" />
-                <Button x:Name="addAgentButton" Content="Add Agemt" Height="27" Margin="10" Click="addAgentButton_Click" MinWidth="25" />
+                <Button x:Name="addAgentButton" Content="Add Agent" Height="27" Margin="10" Click="addAgentButton_Click" MinWidth="25" />
             </StackPanel>
         </Grid>
     </DockPanel>

@@ -70,6 +70,7 @@
     <Compile Include="CrudWindows\AddPersonWindow.xaml.cs">
       <DependentUpon>AddPersonWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CollectionsManager.cs" />
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
     </Compile>
@@ -154,7 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BusinessModels\Extensions\" />
-    <Folder Include="Helpers\" />
     <Folder Include="WpfResources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

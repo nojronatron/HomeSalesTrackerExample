@@ -63,34 +63,50 @@ namespace HomeSalesTrackerApp
 
         private static void InitializeCollections()
         {
-            homeSalesCollection = new HomeSalesCollection();
-            List<HSTDataLayer.HomeSale> homeSales = EntityLists.GetTreeListOfHomeSales();
-            foreach (var homeSale in homeSales)
-            {
-                homeSalesCollection.Add((HomeSale)homeSale);
-            }
+            InitHomeSalesCollection();
+            InitPeopleCollection();
+            InitHomesCollection();
+            InitRealEstateCompaniesCollection();
+        }
 
-            List<Person> people = EntityLists.GetTreeListOfPeople();
-            foreach (var person in people)
-            {
-                peopleCollection.Add(person);
-            }
-
-
-            homesCollection = new HomesCollection();
-            List<Home> homes = EntityLists.GetTreeListOfHomes();
-            foreach (var home in homes)
-            {
-                homesCollection.Add(home);
-            }
-
+        public static void InitRealEstateCompaniesCollection()
+        {
             reCosCollection = new RealEstateCosCollection();
             List<RealEstateCompany> recos = EntityLists.GetTreeListOfRECompanies();
             foreach (var reco in recos)
             {
                 reCosCollection.Add(reco);
             }
+        }
 
+        public static void InitHomesCollection()
+        {
+            homesCollection = new HomesCollection();
+            List<Home> homes = EntityLists.GetTreeListOfHomes();
+            foreach (var home in homes)
+            {
+                homesCollection.Add(home);
+            }
+        }
+
+        public static void InitPeopleCollection()
+        {
+            peopleCollection = new PeopleCollection<Person>();
+            List<Person> people = EntityLists.GetTreeListOfPeople();
+            foreach (var person in people)
+            {
+                peopleCollection.Add(person);
+            }
+        }
+
+        public static void InitHomeSalesCollection()
+        {
+            homeSalesCollection = new HomeSalesCollection();
+            List<HomeSale> homeSales = EntityLists.GetTreeListOfHomeSales();
+            foreach (var homeSale in homeSales)
+            {
+                homeSalesCollection.Add((HomeSale)homeSale);
+            }
         }
 
         private void ClearFieldsButton_Click(object sender, RoutedEventArgs e)

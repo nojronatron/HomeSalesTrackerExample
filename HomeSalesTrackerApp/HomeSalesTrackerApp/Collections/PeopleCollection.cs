@@ -44,7 +44,7 @@ namespace HomeSalesTrackerApp
             if (people == null)
             {
                 _peopleList.Add(person);
-                listOfHandlers(person); //  sends Person object via Delegate to subscriber(s)
+                //listOfHandlers(person); //  sends Person object via Delegate to subscriber(s)
                 result = true;
             }
             return result;

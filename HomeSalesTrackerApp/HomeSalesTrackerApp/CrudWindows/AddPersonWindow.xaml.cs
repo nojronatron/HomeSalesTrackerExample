@@ -20,6 +20,10 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class AddPersonWindow : Window
     {
+        private Agent newAgent = null;
+        private Buyer newBuyer = null;
+        private Owner newOwner = null;
+        private Person newPerson = null;
         public string AddType { get; set; }
         public AddPersonWindow()
         {
@@ -39,22 +43,24 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void addOwnerButton_Click(object sender, RoutedEventArgs e)
         {
             //  TODO: Add validation
-            var newOwner = new Owner()
+            newOwner = new Owner()
             {
                 PreferredLender = this.preferredLenderTextbox.Text.Trim()
             };
 
-            var newPerson = CreateNewPerson();
+            newPerson = CreateNewPerson();
             newPerson.Owner = newOwner;
-            UpdatePersonCollection(newPerson);
-            LogicBroker.SaveEntity<Person>(newPerson);
+            //UpdatePersonCollection(newPerson);
+            //LogicBroker.SaveEntity<Person>(newPerson);
             DisplayStatusMessage("Added new Owner.");
         }
 
         private static void UpdatePersonCollection(Person newPerson)
         {
             //  TODO: Add validation
-            MainWindow.peopleCollection.Add(newPerson);
+            //MainWindow.peopleCollection.Add(newPerson);
+            //  TODO: Refresh the People Collection with data from DB
+            MainWindow.InitPeopleCollection();
             AddHomeWindow ahw = new AddHomeWindow();
             ahw.RefreshOwnersComboBox();
         }
@@ -62,14 +68,14 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void addBuyerButton_Click(object sender, RoutedEventArgs e)
         {
             string credRating = this.creditRatingTextbox.Text.Trim();
-            var newBuyer = new Buyer()
+            newBuyer = new Buyer()
             {
                 CreditRating = int.Parse(credRating)
             };
             
-            var newPerson = CreateNewPerson();
+            newPerson = CreateNewPerson();
             newPerson.Buyer = newBuyer;
-            UpdatePersonCollection(newPerson);
+            //UpdatePersonCollection(newPerson);
 
             DisplayStatusMessage("Added new Buyer.");
         }
@@ -77,14 +83,14 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void addAgentButton_Click(object sender, RoutedEventArgs e)
         {
             string commission = this.commissionTextbox.Text.Trim();
-            var newAgent = new Agent()
+            newAgent = new Agent()
             {
                 CommissionPercent = Decimal.Parse(commission)
             };
 
-            var newPerson = CreateNewPerson();
+            newPerson = CreateNewPerson();
             newPerson.Agent = newAgent;
-            UpdatePersonCollection(newPerson);
+            //UpdatePersonCollection(newPerson);
 
             DisplayStatusMessage("Added new Agent.");
         }
@@ -108,5 +114,38 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
+        private void AddPersonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //  TODO: add person window closing: does it need to do anything else besidese just close?
+            var userResponse = MessageBox.Show("Save changes?", "Changes not saved!", MessageBoxButton.YesNo);
+            if (userResponse == MessageBoxResult.Yes)
+            {
+                SaveToEntities();
+            }
+            this.Close();
+        }
+
+        private void CloseWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveToEntities();
+            MainWindow.InitPeopleCollection();
+            //  TODO: init HomesCollection, HomeSalesCollection, and RECOsCollection
+        }
+
+        private void SaveToEntities()
+        {
+            if (newAgent != null)
+            {
+                LogicBroker.SaveEntity<Person>(newPerson);
+            }
+            if (newBuyer != null)
+            {
+                LogicBroker.SaveEntity<Person>(newPerson);
+            }
+            if (newOwner != null)
+            {
+                LogicBroker.SaveEntity<Person>(newPerson);
+            }
+        }
     }
 }
