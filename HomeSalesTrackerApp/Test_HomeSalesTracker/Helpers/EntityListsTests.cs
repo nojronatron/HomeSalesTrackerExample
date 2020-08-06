@@ -68,27 +68,6 @@ namespace HSTDataLayer.Helpers.Tests
             HSTContextInitializer.LoadDataIntoDatabase();
         }
 
-        //[TestMethod()]
-        //public void GetListOfOwnerPeopleTest()
-        //{
-        //    //  TODO: This test is just for experimentation at this time but should be converted
-        //    var personList = new List<Person>();
-        //    personList.Add(lyle);
-        //    personList.Add(anna);
-
-        //    var ownerList = new List<Owner>();
-        //    ownerList.Add(lyleOwner);
-        //    ownerList.Add(annaOwner);
-            
-        //    var peopleOwners = EntityLists.GetListOfOwnerPeople(personList, ownerList);
-            
-        //    PrintEntities(personList, "People in personList");
-        //    PrintEntities(ownerList, "Owners in ownerList");
-        //    PrintEntities(peopleOwners, "People that are owners list");
-
-        //    Assert.Fail("See additional output.");
-        //}
-
         [TestMethod()]
         public void GetListOfPeopleLyleAnnaTest()
         {

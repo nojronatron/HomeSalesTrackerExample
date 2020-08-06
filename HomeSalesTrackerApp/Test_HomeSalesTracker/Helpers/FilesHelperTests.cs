@@ -27,7 +27,7 @@ namespace HomeSalesTrackerDataLayer.Tests
         [TestMethod()]
         public void WriteOutXmlFilesTest()
         {
-            //  TODO: create a file, get the FileInfo object on it, set FI obj to a List<FileInfo> send List to FilesHelper.SetFullFilePaths() method
+            //  create a file, get the FileInfo object on it, set FI obj to a List<FileInfo> send List to FilesHelper.SetFullFilePaths() method
 
             testXDoc = new XDocument(
                 new XDeclaration(xDeclaration),

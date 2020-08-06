@@ -27,7 +27,7 @@ namespace HomeSalesTrackerApp
 
         private void soldHomeReportWindowLoaded(object sender, RoutedEventArgs e)
         {
-            //  TODO: solve lazyload? problem: https://stackoverflow.com/questions/18398356/solving-the-objectcontext-instance-has-been-disposed-and-can-no-longer-be-used
+            //  solved: lazyload problem ref: https://stackoverflow.com/questions/18398356/solving-the-objectcontext-instance-has-been-disposed-and-can-no-longer-be-used
             var soldHomesReport = (from hsc in MainWindow.homeSalesCollection
                                    from b in MainWindow.peopleCollection
                                    from a in MainWindow.peopleCollection

@@ -42,27 +42,52 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void addOwnerButton_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Add validation
-            newOwner = new Owner()
-            {
-                PreferredLender = this.preferredLenderTextbox.Text.Trim()
-            };
+            //  TODO: Add validation, preferredLender is not required but limited to 30 chars
+            string preferredLenderText = this.preferredLenderTextbox.Text.Trim();
 
-            newPerson = CreateNewPerson();
-            newPerson.Owner = newOwner;
-            //UpdatePersonCollection(newPerson);
-            //LogicBroker.SaveEntity<Person>(newPerson);
-            DisplayStatusMessage("Added new Owner.");
+            if (preferredLenderText.Length == 0)
+            {
+                preferredLenderText = string.Empty; //  ensures an empty field rather than a special or control character that could be unsafe
+            }
+            if (preferredLenderText.Length < 31)
+            {
+                newOwner = new Owner()
+                {
+                    PreferredLender = this.preferredLenderTextbox.Text.Trim()
+                };
+
+                string createNewPersonErrorMessages = CreateNewPerson();
+                if (newPerson != null)
+                {
+                    newPerson.Owner = newOwner;
+                    DisplayStatusMessage("Added new Owner.");
+                    UpdatePersonCollection(newPerson);
+                }
+                else
+                {
+                    newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
+                    DisplayStatusMessage(createNewPersonErrorMessages);
+                }
+            }
+            if (preferredLenderText.Length < 1)
+            {
+                DisplayStatusMessage("Preferred Lender Name is too long for this database. Please shorten it and try again.");
+            }
         }
 
-        private static void UpdatePersonCollection(Person newPerson)
+        private void UpdatePersonCollection(Person p)
         {
-            //  TODO: Add validation
-            //MainWindow.peopleCollection.Add(newPerson);
-            //  TODO: Refresh the People Collection with data from DB
-            MainWindow.InitPeopleCollection();
-            AddHomeWindow ahw = new AddHomeWindow();
-            ahw.RefreshOwnersComboBox();
+            //  TODO: Verify updatePersonCollection(Person p) saves the new entity then refreshes the peopleCollection as expected
+            if (LogicBroker.SaveEntity<Person>(p))
+            {
+                MainWindow.InitPeopleCollection();
+                AddHomeWindow ahw = new AddHomeWindow();
+                ahw.RefreshOwnersComboBox();
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to add Owner to the database.");
+            }
         }
 
         private void addBuyerButton_Click(object sender, RoutedEventArgs e)
@@ -73,11 +98,18 @@ namespace HomeSalesTrackerApp.CrudWindows
                 CreditRating = int.Parse(credRating)
             };
             
-            newPerson = CreateNewPerson();
-            newPerson.Buyer = newBuyer;
-            //UpdatePersonCollection(newPerson);
-
-            DisplayStatusMessage("Added new Buyer.");
+            string createNewPersonErrorMessage = CreateNewPerson();
+            if (newPerson != null)
+            {
+                newPerson.Buyer = newBuyer;
+                DisplayStatusMessage("Added new Buyer.");
+                UpdatePersonCollection(newPerson);
+            }
+            else
+            {
+                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
+                DisplayStatusMessage(createNewPersonErrorMessage);
+            }
         }
 
         private void addAgentButton_Click(object sender, RoutedEventArgs e)
@@ -88,25 +120,57 @@ namespace HomeSalesTrackerApp.CrudWindows
                 CommissionPercent = Decimal.Parse(commission)
             };
 
-            newPerson = CreateNewPerson();
-            newPerson.Agent = newAgent;
-            //UpdatePersonCollection(newPerson);
-
-            DisplayStatusMessage("Added new Agent.");
+            string createNewPersonErrorMessage = CreateNewPerson();
+            if (newPerson != null)
+            {
+                newPerson.Agent = newAgent;
+                UpdatePersonCollection(newPerson);
+                DisplayStatusMessage("Added new Agent.");
+            }
+            else
+            {
+                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get re-used
+                DisplayStatusMessage(createNewPersonErrorMessage);
+            }
         }
 
-        private Person CreateNewPerson()
+        private string CreateNewPerson()
         {
-            //  TODO: Add valiations including nulls and type/length/formatting
-            Person newPerson = new Person()
+            StringBuilder result = new StringBuilder();
+            result.Append("Missing required field(s) ");
+            
+            //  TODO: confirm the null coalescing operator used on email string is properly implemented
+            string firstName = this.fNameTextbox.Text.Trim();
+            string lastName = this.lNameTextbox.Text.Trim();
+            string phone = this.phoneTextbox.Text.Trim();
+            string email = this.emailTextbox?.Text.Trim() ?? string.Empty;
+
+            if (firstName.Length < 1)
             {
-                FirstName = this.fNameTextbox.Text.Trim(),
-                LastName = this.lNameTextbox.Text.Trim(),
-                Phone = this.phoneTextbox.Text.Trim(),
-                Email = this.emailTextbox.Text.Trim(),
-                //  Owner = newOwner
-            };
-            return newPerson;
+                result.Append("First Name ");
+            }
+            if (lastName.Length < 1)
+            {
+                DisplayStatusMessage("Last Name ");
+            }
+            if (phone.Length < 1)
+            {
+                DisplayStatusMessage("Phone Number ");
+            }
+            if (result.Length < 19)
+            {
+                result.Clear();
+                newPerson = new Person()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Phone = phone,
+                    Email = email
+                    //  Owner = newOwner
+                };
+            }
+
+            return result.ToString();
         }
 
         private void DisplayStatusMessage(string message)
@@ -127,9 +191,11 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void CloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveToEntities();
-            MainWindow.InitPeopleCollection();
-            //  TODO: init HomesCollection, HomeSalesCollection, and RECOsCollection
+            //  DONT save stuff on exit because exiting != to wanting to save changes
+            //SaveToEntities();
+            //MainWindow.InitPeopleCollection();
+            DisplayStatusMessage("Closing.");
+            this.Close();
         }
 
         private void SaveToEntities()

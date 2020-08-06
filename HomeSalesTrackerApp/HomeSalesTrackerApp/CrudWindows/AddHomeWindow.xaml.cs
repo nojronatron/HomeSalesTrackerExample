@@ -52,7 +52,7 @@ namespace HomeSalesTrackerApp
         private void addNewHome_Button(object sender, RoutedEventArgs e)
         {
             Home newHome = null;
-            //  TODO: Validate these fields right away
+
             string address = this.homeAddressTextbox.Text.Trim();
             string city = this.homeCityTextbox.Text.Trim();
             string state = this.homeStateTextbox.Text.Trim();
@@ -110,9 +110,10 @@ namespace HomeSalesTrackerApp
                     if (LogicBroker.SaveEntity<Home>(newHome))
                     {
                         DisplayStatusMessage("Added new Home to database.");
-                        
-                        //  TODO: HomeID will be required so change homesCollection.Add to fully refreesh from DB
-                        MainWindow.homesCollection.Add(newHome);
+
+                        //  TODO: Test this solution. HomeID will be required so change homesCollection.Add to fully refresh from DB
+                        UpdateHomesCollection(newHome);
+                        //MainWindow.homesCollection.Add(newHome);
                     }
                     else
                     {
@@ -181,6 +182,21 @@ namespace HomeSalesTrackerApp
         private void DisplayStatusMessage(string message)
         {
             this.statusBarText.Text = message;
+        }
+
+        private void UpdateHomesCollection(Home h)
+        {
+            //  TODO: Verify updateHomesCollection(Home h) saves the new entity then refreshes the homesCollection as expected
+            if (LogicBroker.SaveEntity<Home>(h))
+            {
+                MainWindow.InitHomesCollection();
+                AddHomeWindow ahw = new AddHomeWindow();
+                ahw.RefreshOwnersComboBox();
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to update database with this home.");
+            }
         }
 
     }

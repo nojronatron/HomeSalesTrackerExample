@@ -324,7 +324,7 @@ namespace HomeSalesTrackerApp
 
             StringBuilder statusMessage = new StringBuilder($"About to remove HomeID { homesale.HomeID } off the Market.");
 
-            //  TODO: provide input allowing user to go-ahead or cancel out.
+            //  TODO: test allowing user to go-ahead or cancel out.
             MessageBoxResult mbr = MessageBox.Show(statusMessage.ToString(), "Confirm", MessageBoxButton.YesNo);
             statusMessage.Clear();
 
@@ -336,7 +336,8 @@ namespace HomeSalesTrackerApp
                     {
                         if (homeSalesCollection.Remove(homesale))
                         {
-                            //  TODO: Update the DB using LogicBroker.Remove()
+                            //  TODO: Verify DB updated using LogicBroker.RemoveEntity() method
+                            LogicBroker.RemoveEntity<HomeSale>(homesale);
                             statusMessage.Append("Removed Home off the Market.");
                         }
                         else
@@ -494,10 +495,7 @@ namespace HomeSalesTrackerApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //  TODO: Flush all Collections to the DB
-
-            //  TODO: Make a call to backup DB to XML
-
+            //  Placeholder Window_Closing method. There could be actions to take here
         }
 
         private void FullDetailsButton_Click(object sender, RoutedEventArgs e)

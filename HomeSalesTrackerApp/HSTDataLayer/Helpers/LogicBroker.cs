@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations;
+using System.Runtime.Remoting.Contexts;
 
 namespace HSTDataLayer
 {
@@ -39,7 +40,6 @@ namespace HSTDataLayer
         /// <returns></returns>
         public static bool BackUpDatabase()
         {
-            //  TODO: decide whether to use Bool returns on each of these calls or not
             bool peopleFlushed = 
             BackUpDataFiles.FlushPeopleTableToXml();
             if (peopleFlushed)
@@ -110,22 +110,22 @@ namespace HSTDataLayer
                         }
                     case "RealEstateCompany":
                         {
-                            context.Homes.Add(item as Home);
+                            context.RealEstateCompanies.Add(item as RealEstateCompany);
                             break;
                         }
                     case "Agent":
                         {
-                            context.Homes.Add(item as Home);
+                            context.Agents.Add(item as Agent);
                             break;
                         }
                     case "Buyer":
                         {
-                            context.Homes.Add(item as Home);
+                            context.Buyers.Add(item as Buyer);
                             break;
                         }
                     case "HomeSale":
                         {
-                            context.Homes.Add(item as Home);
+                            context.HomeSales.Add(item as HomeSale);
                             break;
                         }
                     default:
@@ -143,26 +143,66 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// NOT IMPLEMENTED
+        /// NOT TESTED. Should take a generic item and enable removing from the DB via EF.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="collectionT"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
-        public bool UpdateEntities<T>(T[] collectionT)
+        public static bool RemoveEntity<T>(T item)
         {
+            bool result = false;
+            string name = item.GetType().Name;
             using (var context = new HSTDataModel())
             {
-                foreach (var item in collectionT)
+                switch (name)
                 {
-                    if (collectionT.GetType().Name == "Person")
-                    {
-                        //  TODO: Figure out how to make this work
-                        //  context.People.AddOrUpdate(item as IEnumerable<Person>);
-                        context.People.AddOrUpdate(item as Person);
-                    }
+                    case "Person":
+                        {
+                            context.People.Remove(item as Person);
+                            break;
+                        }
+                    case "Owner":
+                        {
+                            context.Owners.Remove(item as Owner);
+                            break;
+                        }
+                    case "Home":
+                        {
+                            context.Homes.Remove(item as Home);
+                            break;
+                        }
+                    case "RealEstateCompany":
+                        {
+                            context.RealEstateCompanies.Remove(item as RealEstateCompany);
+                            break;
+                        }
+                    case "Agent":
+                        {
+                            context.Agents.Remove(item as Agent);
+                            break;
+                        }
+                    case "Buyer":
+                        {
+                            context.Buyers.Remove(item as Buyer);
+                            break;
+                        }
+                    case "HomeSale":
+                        {
+                            context.HomeSales.Remove(item as HomeSale);
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+                int itemsAffected = context.SaveChanges();
+                if (itemsAffected == 1)
+                {
+                    result = true;
                 }
             }
-            throw new NotImplementedException();
+            return result;
         }
 
     }
