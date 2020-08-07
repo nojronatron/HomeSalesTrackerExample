@@ -29,7 +29,7 @@ namespace HomeSalesTrackerApp
         public HomesCollection(List<Home> homes)
         {
             _homesList = homes;
-            _homesList.Sort();
+            //_homesList.Sort();
         }
 
         public int Count { get { return _homesList.Count; } }

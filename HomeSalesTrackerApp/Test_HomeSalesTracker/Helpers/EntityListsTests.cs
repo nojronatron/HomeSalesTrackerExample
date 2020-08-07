@@ -97,7 +97,7 @@ namespace HSTDataLayer.Helpers.Tests
         {
             int expectedCount = 4;
 
-            List<Owner> actualOwnersList = EntityLists.GetListOfOwners();
+            List<Owner> actualOwnersList = EntityLists.GetTreeListOfOwners();
             int actualCount = actualOwnersList.Count;
 
             Assert.AreEqual(expectedCount, actualCount);
@@ -108,7 +108,7 @@ namespace HSTDataLayer.Helpers.Tests
         {
             int expectedCount = 5;
 
-            List<Home> actualHomesList = EntityLists.GetListOfHomes();
+            List<Home> actualHomesList = EntityLists.GetTreeListOfHomes();
             int actualCount = actualHomesList.Count;
 
             Assert.AreEqual(expectedCount, actualCount);
@@ -120,7 +120,7 @@ namespace HSTDataLayer.Helpers.Tests
             //  Regression test: hindley and charleston home addresses were corrupted in previous revisions of the code
             bool expectedMatchResult = true;
 
-            List<Home> homes = EntityLists.GetListOfHomes();
+            List<Home> homes = EntityLists.GetTreeListOfHomes();
             Home woodsworthHomeFromDB = homes.Find(x => x.City == "Woodsworth");
             Home charlestonHomeFromDB = homes.Find(x => x.City == "Charleston");
 
@@ -146,7 +146,7 @@ namespace HSTDataLayer.Helpers.Tests
         {
             int expectedCount = 4;
 
-            List<RealEstateCompany> actualRECosList = EntityLists.GetListOfRECompanies();
+            List<RealEstateCompany> actualRECosList = EntityLists.GetTreeListOfRECompanies();
             int actualCount = actualRECosList.Count;
 
             Assert.AreEqual(expectedCount, actualCount);
@@ -157,7 +157,7 @@ namespace HSTDataLayer.Helpers.Tests
         {
             int expectedCount = 5;
 
-            List<Agent> actualAgentsList = EntityLists.GetListOfAgents();
+            List<Agent> actualAgentsList = EntityLists.GetTreeListOfAgents();
             int actualCount = actualAgentsList.Count;
 
             Assert.AreEqual(expectedCount, actualCount);
@@ -168,7 +168,7 @@ namespace HSTDataLayer.Helpers.Tests
         {
             int expectedCount = 4;
 
-            List<Buyer> actualBuyersList = EntityLists.GetListOfBuyers();
+            List<Buyer> actualBuyersList = EntityLists.GetTreeListOfBuyers();
             int actualCount = actualBuyersList.Count;
 
             Assert.AreEqual(expectedCount, actualCount);

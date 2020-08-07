@@ -25,7 +25,7 @@ namespace HomeSalesTrackerApp
         public HomeSalesCollection(List<HomeSale> homeSales)
         {
             _homeSalesList = homeSales;
-            _homeSalesList.Sort();
+            //_homeSalesList.Sort();
         }
 
         public int Count {  get { return _homeSalesList.Count; } }
@@ -58,11 +58,12 @@ namespace HomeSalesTrackerApp
         {
             if (homeSale != null)
             {
-                var hsInList = _homeSalesList.SingleOrDefault(hs => hs.SoldDate == homeSale.SoldDate);
+                var hsInList = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID 
+                                                              && hs.SaleAmount == homeSale.SaleAmount);
                 if (hsInList == null )
                 {
                     _homeSalesList.Add(homeSale);
-                    _homeSalesList.Sort();
+                    //_homeSalesList.Sort();
                 }
             }
         }
@@ -94,7 +95,7 @@ namespace HomeSalesTrackerApp
                 {
                     _homeSalesList[hsIndex] = homeSale;
                     itemUpdated++;
-                    _homeSalesList.Sort();
+                    //_homeSalesList.Sort();
                 }
             }
             return itemUpdated;

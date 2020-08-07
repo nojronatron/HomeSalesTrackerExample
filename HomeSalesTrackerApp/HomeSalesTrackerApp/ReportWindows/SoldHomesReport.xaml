@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
         mc:Ignorable="d"
-        Title="Sold Homes Report" Height="450" Width="1000" Loaded="soldHomeReportWindowLoaded" >
+        Title="Sold Homes Report" Height="450" Width="1000" Loaded="SoldHomeReportWindowLoaded" >
     <DockPanel>
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
             <MenuItem Header="_File">

@@ -241,7 +241,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void saveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
+        private void SaveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
             isButtonClose = true;
             DisplayStatusMessage("Closing.");

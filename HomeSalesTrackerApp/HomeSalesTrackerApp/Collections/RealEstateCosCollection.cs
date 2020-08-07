@@ -25,7 +25,7 @@ namespace HomeSalesTrackerApp
         public RealEstateCosCollection(List<RealEstateCompany> reCompanies)
         {
             _recoList = reCompanies;
-            _recoList.Sort();
+            //_recoList.Sort();
         }
 
         /// <summary>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
         mc:Ignorable="d"
-        Title="Add New Home" Height="470" Width="400" Loaded="Window_Loaded">
+        Title="Add New Home" Height="495" Width="400" Loaded="Window_Loaded">
 
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
@@ -43,6 +43,7 @@
             </DockPanel>
             <Separator Margin="0,5"/>
             <Button x:Name="addHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="AddNewHomeButton_Click" MinWidth="25" />
+            <Button x:Name="closeButton" Content="Close" Height="25" Margin="5,10" Click="CloseButton_Click" MinWidth="25" Visibility="Hidden"/>
         </StackPanel>
     </DockPanel>
 </Window>

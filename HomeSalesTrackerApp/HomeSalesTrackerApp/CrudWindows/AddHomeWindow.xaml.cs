@@ -4,6 +4,7 @@ using HSTDataLayer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -113,6 +114,7 @@ namespace HomeSalesTrackerApp
                     APerson = null;
                     NewHome = null;
                     AnOwner = null;
+                    closeButton.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -183,7 +185,7 @@ namespace HomeSalesTrackerApp
         public void RefreshOwnersComboBox()
         {
             MainWindow.peopleCollection = new PeopleCollection<Person>( EntityLists.GetListOfPeople() );
-            MainWindow.homesCollection = new HomesCollection(EntityLists.GetListOfHomes());
+            MainWindow.homesCollection = new HomesCollection(EntityLists.GetTreeListOfHomes());
             
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       from h in MainWindow.homesCollection
@@ -273,5 +275,9 @@ namespace HomeSalesTrackerApp
             }
         }
 
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            isButtonClose = true;
+        }
     }
 }

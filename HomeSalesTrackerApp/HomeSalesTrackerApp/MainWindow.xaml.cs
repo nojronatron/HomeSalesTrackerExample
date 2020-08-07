@@ -42,11 +42,6 @@ namespace HomeSalesTrackerApp
 
         public static Person NewPersonAddedToCollection { get; set; }
 
-        private int UpdateCollection()
-        {
-            return 0;
-        }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -56,10 +51,8 @@ namespace HomeSalesTrackerApp
         {
             if (App.DatabaseLoadCompleted)
             {
-                ////  https://stackoverflow.com/questions/26353919/wpf-listview-binding-itemssource-in-xaml
-                //this.DataContext = this;
-                peopleCollection = new PeopleCollection<Person>();
-                peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
+                //peopleCollection = new PeopleCollection<Person>();
+                //peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
                 InitializeCollections();
                 DisplayStatusMessage("Database data loaded.");
             };
@@ -101,7 +94,7 @@ namespace HomeSalesTrackerApp
         public static void InitPeopleCollection()
         {
             peopleCollection = new PeopleCollection<Person>();
-            List<Person> people = EntityLists.GetTreeListOfPeople();
+            List<Person> people = EntityLists.GetListOfPeople();
             foreach (var person in people)
             {
                 peopleCollection.Add(person);
@@ -111,7 +104,7 @@ namespace HomeSalesTrackerApp
         public static void InitHomeSalesCollection()
         {
             homeSalesCollection = new HomeSalesCollection();
-            List<HomeSale> homeSales = EntityLists.GetTreeListOfHomeSales();
+            List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
             foreach (var homeSale in homeSales)
             {
                 homeSalesCollection.Add((HomeSale)homeSale);
