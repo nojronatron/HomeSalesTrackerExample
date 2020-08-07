@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
         mc:Ignorable="d"
-        Title="Add New Home" Height="460" Width="400" Loaded="Window_Loaded">
+        Title="Add New Home" Height="470" Width="400" Loaded="Window_Loaded">
 
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
             <MenuItem Header="_File">
-                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+                <MenuItem Header="_Exit" Click="MenuExit_Click"/>
             </MenuItem>
             <Separator Width="5" />
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Clear Inputs" Click="menuClearInputs_Click"/>
-                <MenuItem Header="_Reload Data" Click="menuReloadData_Click" />
+                <MenuItem Header="_Clear Inputs" Click="MenuClearInputs_Click"/>
+                <MenuItem Header="_Reload Owners" Click="MenuReloadOwners_Click" />
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
@@ -33,15 +33,16 @@
             <TextBox x:Name="homeStateTextbox" Text="" Height="25" />
             <Label Content="Zip Code + 4 (Required)" Height="25" />
             <TextBox x:Name="homeZipTextbox" Text="" Height="25" />
-
-            <Label Content="Add Owner or Select Owner required." HorizontalContentAlignment="Center" Height="25" Margin="0,5"
+            <Separator Margin="0,5" />
+            <Label Content="Select Owner from list below." HorizontalContentAlignment="Center" Height="25" Margin="0,5"
                    Background="Red" FontWeight="Bold" Foreground="White" />
-            <Grid Margin="0,5">
-                <Label Content="Select Owner below. If not found click Add:" Height="25" />
-                <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" Click="addOwnerButton_click" Margin="5,5,5,5" />
-            </Grid>
-            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" DropDownOpened="ownersComboBoxOpened" />
-            <Button x:Name="addHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="addNewHome_Button" MinWidth="25" />
+            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" DropDownOpened="OwnersComboBoxOpened" SelectionChanged="OwnerComboBox_SelectionChanged" />
+            <DockPanel>
+                <Label Content="If Owner not in list above, click Add Owner:" HorizontalAlignment="Right" Height="25" />
+                <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" Click="AddOwnerButton_click" Margin="5,5,5,5" />
+            </DockPanel>
+            <Separator Margin="0,5"/>
+            <Button x:Name="addHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="AddNewHomeButton_Click" MinWidth="25" />
         </StackPanel>
     </DockPanel>
 </Window>

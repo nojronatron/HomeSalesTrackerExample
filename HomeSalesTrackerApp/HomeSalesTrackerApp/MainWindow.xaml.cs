@@ -31,6 +31,15 @@ namespace HomeSalesTrackerApp
         public static PeopleCollection<Person> peopleCollection = null;
         public static HomeSalesCollection homeSalesCollection = null;
         public static RealEstateCosCollection reCosCollection = null;
+        
+        public Person APerson { get; set; }
+        public Owner AnOwner { get; set; }
+        public Home AHome { get; set; }
+        public RealEstateCompany RECo { get; set; }
+        public Agent AnAgent { get; set; }
+        public Buyer ABuyer { get; set; }
+        public HomeSale AHomeSale { get; set; }
+
         public static Person NewPersonAddedToCollection { get; set; }
 
         private int UpdateCollection()

@@ -26,6 +26,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="5"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Vertical" MinWidth="130" Margin="10,10" >
@@ -38,10 +39,10 @@
                 <Label Content="Email Address" Height="27" />
                 <TextBox x:Name="emailTextbox" Text="" Height="27" />
                 <Separator Height="100"/>
-                <Button x:Name="closeButton" Content="Save and Close" Height="27" Margin="10" Click="CloseWindowButton_Click" 
+                <Button x:Name="closeButton" Content="Save and Close" Height="27" Margin="10" Click="saveAndCloseWindowButton_Click" 
                         MinWidth="25" VerticalAlignment="Bottom"/>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="130" Margin="10,10" >
+            <StackPanel Grid.Column="2" Orientation="Vertical" MinWidth="130" Margin="10,10" >
                 <Label Content="Owner's Preferred Lender" Height="27" />
                 <TextBox x:Name="preferredLenderTextbox" Text="" Height="27" />
                 <Button x:Name="addOwnerButton" Content="Add Owner" Height="27" Margin="10" Click="addOwnerButton_Click" MinWidth="25" />

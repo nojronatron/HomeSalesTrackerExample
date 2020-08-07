@@ -20,11 +20,14 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class AddPersonWindow : Window
     {
+        private bool isButtonClose = false;
         private Agent newAgent = null;
         private Buyer newBuyer = null;
         private Owner newOwner = null;
         private Person newPerson = null;
         public string AddType { get; set; }
+        public string WhoLaunchedMe { get; set; }
+
         public AddPersonWindow()
         {
             InitializeComponent();
@@ -47,51 +50,39 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             if (preferredLenderText.Length == 0)
             {
+                DisplayStatusMessage("Preferred Lender will be blank (no preferred lender).");
                 preferredLenderText = string.Empty; //  ensures an empty field rather than a special or control character that could be unsafe
             }
-            if (preferredLenderText.Length < 31)
-            {
-                newOwner = new Owner()
-                {
-                    PreferredLender = this.preferredLenderTextbox.Text.Trim()
-                };
 
-                string createNewPersonErrorMessages = CreateNewPerson();
-                if (newPerson != null)
-                {
-                    newPerson.Owner = newOwner;
-                    DisplayStatusMessage("Added new Owner.");
-                    UpdatePersonCollection(newPerson);
-                }
-                else
-                {
-                    newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
-                    DisplayStatusMessage(createNewPersonErrorMessages);
-                }
-            }
-            if (preferredLenderText.Length < 1)
+            if (preferredLenderText.Length > 31)
             {
-                DisplayStatusMessage("Preferred Lender Name is too long for this database. Please shorten it and try again.");
+                DisplayStatusMessage("Preferred Lender Name is too long for this database. Trimmed-down to 31 characters.");
+                preferredLenderText = preferredLenderText.Substring(0, 30);
             }
-        }
 
-        private void UpdatePersonCollection(Person p)
-        {
-            //  TODO: Verify updatePersonCollection(Person p) saves the new entity then refreshes the peopleCollection as expected
-            if (LogicBroker.SaveEntity<Person>(p))
+            newOwner = new Owner()
             {
-                MainWindow.InitPeopleCollection();
-                AddHomeWindow ahw = new AddHomeWindow();
-                ahw.RefreshOwnersComboBox();
+                PreferredLender = preferredLenderText
+            };
+
+            string createNewPersonErrorMessages = CreateNewPerson();
+
+            if (newPerson != null)
+            {
+                newPerson.Owner = newOwner;
+                DisplayStatusMessage("Added a new Owner.");
             }
             else
             {
-                DisplayStatusMessage("Unable to add Owner to the database.");
+                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
+                newOwner = null;
+                DisplayStatusMessage(createNewPersonErrorMessages);
             }
         }
 
         private void addBuyerButton_Click(object sender, RoutedEventArgs e)
         {
+            //  TODO: Add preemptive input validation prior to creating the new Buyer object instance
             string credRating = this.creditRatingTextbox.Text.Trim();
             newBuyer = new Buyer()
             {
@@ -103,7 +94,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 newPerson.Buyer = newBuyer;
                 DisplayStatusMessage("Added new Buyer.");
-                UpdatePersonCollection(newPerson);
+                SavePersonAndRefreshCollection(newPerson);
             }
             else
             {
@@ -114,6 +105,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void addAgentButton_Click(object sender, RoutedEventArgs e)
         {
+            //  TODO; Add preemptive input validation prior to creating the new Agent object instance
             string commission = this.commissionTextbox.Text.Trim();
             newAgent = new Agent()
             {
@@ -124,7 +116,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (newPerson != null)
             {
                 newPerson.Agent = newAgent;
-                UpdatePersonCollection(newPerson);
+                SavePersonAndRefreshCollection(newPerson);
                 DisplayStatusMessage("Added new Agent.");
             }
             else
@@ -134,6 +126,32 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
+        /// <summary>
+        /// Takes a Person instance and saves it to the DB then synchronizes the People Collection with the DB to ensure each instance has an ID.
+        /// </summary>
+        /// <param name="p"></param>
+        private void SavePersonAndRefreshCollection(Person p)
+        {
+            //  TODO: Verify updatePersonCollection(Person p) saves the new entity then refreshes the peopleCollection as expected
+            if (SaveToEntities())
+            {
+                MainWindow.InitPeopleCollection();
+                AddHomeWindow ahw = new AddHomeWindow();
+                //ahw.RefreshOwnersComboBox();
+                AddHomeWindow.APerson = p;
+                ahw.AddPersonLoadOwnerToAddHomeComboBox();
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to add Owner to the database.");
+            }
+        }
+
+        /// <summary>
+        /// Updates this.newPerson field with a Person Object containing fields from user input and returns an empty string.
+        /// If user input(s) do not pass validation then a null Person is stored in this.newPerson and the validation error(s) are returns as a string.
+        /// </summary>
+        /// <returns></returns>
         private string CreateNewPerson()
         {
             StringBuilder result = new StringBuilder();
@@ -157,7 +175,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 DisplayStatusMessage("Phone Number ");
             }
-            if (result.Length < 19)
+            if (result.ToString() == "Missing required field(s) ")
             {
                 result.Clear();
                 newPerson = new Person()
@@ -165,8 +183,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                     FirstName = firstName,
                     LastName = lastName,
                     Phone = phone,
-                    Email = email
-                    //  Owner = newOwner
+                    Email = email,
                 };
             }
 
@@ -178,40 +195,92 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
+        /// <summary>
+        /// Save the Person and any Agent, Buyer, or Owner instance, write them to DB, and refresh all four collections.
+        /// ONLY do this if the user clicked the Close button AND says YES to saving changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddPersonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //  TODO: add person window closing: does it need to do anything else besidese just close?
-            var userResponse = MessageBox.Show("Save changes?", "Changes not saved!", MessageBoxButton.YesNo);
-            if (userResponse == MessageBoxResult.Yes)
+            if (isButtonClose)
             {
-                SaveToEntities();
+                e.Cancel = false;
+                //  TODO: verify this updates the db and the PeopleCollection
+                var userResponse = MessageBox.Show("Save changes?", "Changes not saved!", MessageBoxButton.YesNo);
+                if (userResponse == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        SaveToEntities();
+                        MainWindow.InitPeopleCollection();
+                        MainWindow.InitHomeSalesCollection();
+                        MainWindow.InitHomesCollection();
+                        AddHomeWindow.APerson = newPerson;
+                    }
+                    catch (Exception ex)
+                    {
+                        userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
+                        if (userResponse == MessageBoxResult.No)
+                        {
+                            isButtonClose = false;
+                            e.Cancel = true;
+                        }
+                    }
+                }
             }
-            this.Close();
+            else
+            {
+                DisplayStatusMessage("You must click the Close button to exit (with or without saving).");
+                e.Cancel = true;
+            }
         }
 
-        private void CloseWindowButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Save the Person and any Agent, Buyer, or Owner object instances, write them to DB, and refresh ALL FOUR collections
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void saveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            //  DONT save stuff on exit because exiting != to wanting to save changes
-            //SaveToEntities();
-            //MainWindow.InitPeopleCollection();
+            isButtonClose = true;
             DisplayStatusMessage("Closing.");
             this.Close();
         }
 
-        private void SaveToEntities()
+        /// <summary>
+        /// Automates saving a newly created Agent, Buyer, or Owner instance without updating any of the four Collections.
+        /// </summary>
+        private bool SaveToEntities()
         {
+            bool result = false;
+            int count = 0;
             if (newAgent != null)
             {
-                LogicBroker.SaveEntity<Person>(newPerson);
+                if (LogicBroker.SaveEntity<Person>(newPerson))
+                {
+                    count++;
+                }
             }
             if (newBuyer != null)
             {
-                LogicBroker.SaveEntity<Person>(newPerson);
+                if (LogicBroker.SaveEntity<Person>(newPerson))
+                {
+                    count++;
+                }
             }
             if (newOwner != null)
             {
-                LogicBroker.SaveEntity<Person>(newPerson);
+                if(LogicBroker.SaveEntity<Person>(newPerson))
+                {
+                    count++;
+                }
             }
+            if (count > 0)
+            {
+                result = true;
+            }
+            return result;
         }
     }
 }

@@ -64,9 +64,6 @@
     <Compile Include="CrudWindows\AddHomeWindow.xaml.cs">
       <DependentUpon>AddHomeWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrudWindows\AddOwnerWindow.xaml.cs">
-      <DependentUpon>AddOwnerWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CrudWindows\AddPersonWindow.xaml.cs">
       <DependentUpon>AddPersonWindow.xaml</DependentUpon>
     </Compile>
@@ -80,10 +77,6 @@
       <DependentUpon>SoldHomesReport.xaml</DependentUpon>
     </Compile>
     <Page Include="CrudWindows\AddHomeWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CrudWindows\AddOwnerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

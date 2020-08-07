@@ -1,5 +1,6 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HSTDataLayer;
+using HSTDataLayer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,13 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class AddHomeWindow : Window
     {
-        public PeopleCollection<Person> PersonCollection = null;
-        public Home newHome = new Home();
-        public Owner anOwner = new Owner();
+        private bool isButtonClose = false;
+
+        public static Home NewHome { get; set; }
+        public static Owner AnOwner { get; set; }
+        public static Person APerson { get; set; }
         public string AddType { get; set; }
-        public static Person NewPersonAddedToCollection { get; set; }
+        //public static Person NewPersonAddedToCollection { get; set; }
 
         public AddHomeWindow()
         {
@@ -37,19 +40,19 @@ namespace HomeSalesTrackerApp
         {
             RefreshOwnersComboBox();
             string addType = AddType;
-            MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
+            //MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
             statusBarText.Text = $"Add a new { addType } to the database.";
         }
 
-        public void AlertPersonAddedToCollection(Person p)
-        {
-            NewPersonAddedToCollection = p;
-            //  TODO: After Golden Paths completed look at attempting to implement this notification regime.
-            //LogicBroker.SaveEntity<Person>(p);
-            RefreshOwnersComboBox();
-        }
+        //public void AlertPersonAddedToCollection(Person p)
+        //{
+        //    NewPersonAddedToCollection = p;
+        //    //  TODO: After Golden Paths completed look at attempting to implement this notification regime.
+        //    //LogicBroker.SaveEntity<Person>(p);
+        //    RefreshOwnersComboBox();
+        //}
 
-        private void addNewHome_Button(object sender, RoutedEventArgs e)
+        private void AddNewHomeButton_Click(object sender, RoutedEventArgs e)
         {
             Home newHome = null;
 
@@ -67,10 +70,10 @@ namespace HomeSalesTrackerApp
             }
             else
             {
-                if (NewPersonAddedToCollection == null)
+                Person comboBoxPerson = null;
+                comboBoxPerson = ownersComboBox.SelectedItem as Person;
+                if (comboBoxPerson != null)
                 {
-                    Person comboBoxPerson = null;
-                    comboBoxPerson = ownersComboBox.SelectedItem as Person;
                     var ownerID = comboBoxPerson.PersonID;
 
                     newHome = new Home()
@@ -83,13 +86,9 @@ namespace HomeSalesTrackerApp
                     };
                 }
 
-                //  If owner is NOT in the combobox:
-                //      OwnerID doesn't matter because user will create a new Person via AddPersonWindow and will include Preferred Lender
-                //      New Person would have been added to the peopleCollection and notification includes the added instance named NewPersonAddedToCollection
-                //      So just add a new home and tie it to the Owner via PersonID of NewPersonAddedToCollection
-                if (NewPersonAddedToCollection != null)
+                if (comboBoxPerson == null && APerson != null)
                 {
-                    int ownerId = NewPersonAddedToCollection.PersonID;
+                    int ownerId = APerson.PersonID;
                     //  create the new Home instance
                     newHome = new Home()
                     {
@@ -104,45 +103,71 @@ namespace HomeSalesTrackerApp
                 if (newHome == null)
                 {
                     DisplayStatusMessage("Home not created. Ensure required fields are completed.");
+                    isButtonClose = false;
                 }
                 else
                 {
-                    if (LogicBroker.SaveEntity<Home>(newHome))
-                    {
-                        DisplayStatusMessage("Added new Home to database.");
-
-                        //  TODO: Test this solution. HomeID will be required so change homesCollection.Add to fully refresh from DB
-                        UpdateHomesCollection(newHome);
-                        //MainWindow.homesCollection.Add(newHome);
-                    }
-                    else
-                    {
-                        DisplayStatusMessage("Home was not saved to Database.");
-                    }
+                    SaveHomeAndUpdateCollection(newHome);
+                    isButtonClose = true;
+                    DisplayStatusMessage("New Home saved! You can now close this window.");
+                    APerson = null;
+                    NewHome = null;
+                    AnOwner = null;
                 }
             }
         }
 
-        private void addOwnerButton_click(object sender, RoutedEventArgs e)
+        private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
             AddPersonWindow apw = new AddPersonWindow();
             apw.AddType = "Owner";
             apw.Show();
+            RefreshOwnersComboBox();
         }
 
-        private void menuExit_Click(object sender, RoutedEventArgs e)
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
-        private void menuClearInputs_Click(object sender, RoutedEventArgs e)
+        private void MenuClearInputs_Click(object sender, RoutedEventArgs e)
         {
             ClearScreenElements();
         }
 
-        private void menuReloadData_Click(object sender, RoutedEventArgs e)
+        private void MenuReloadOwners_Click(object sender, RoutedEventArgs e)
         {
             RefreshOwnersComboBox();
+        }
+
+        public void AddPersonLoadOwnerToAddHomeComboBox()
+        { 
+
+            var checkPerson = MainWindow.peopleCollection.FirstOrDefault(p => p.FirstName == APerson.FirstName && p.LastName == APerson.LastName);
+            if (APerson != null)    //  user created a new person and it might/not be in collection so deal with it then display JUST THE NEW PERSON in the combo box and select it
+            {
+                if (checkPerson == null)
+                {
+                    LogicBroker.SaveEntity<Person>(APerson);
+                    MainWindow.peopleCollection = new PeopleCollection<Person>(EntityLists.GetListOfPeople());
+                    checkPerson = MainWindow.peopleCollection.FirstOrDefault(p => p.FirstName == APerson.FirstName && p.LastName == APerson.LastName);
+                }
+                if (checkPerson != null)
+                {
+                    var newOwnerCreated = (from p in MainWindow.peopleCollection
+                                           where p.FirstName == APerson.FirstName
+                                           select p).ToList();
+                    ownersComboBox.ItemsSource = newOwnerCreated;
+                    ownersComboBox.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                //  refresh ComboBox with existing owner instances because user did NOT just create a new Person
+                RefreshOwnersComboBox();
+                ownersComboBox.SelectedIndex = -1;
+            }
+            DisplayStatusMessage("Owners List refreshed with latest data.");
         }
 
         private void ClearScreenElements()
@@ -157,25 +182,27 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            //var existingOwnersList = from pc in MainWindow.peopleCollection
-            //                         where pc.Owner != null
-            //                         select pc;
-
+            MainWindow.peopleCollection = new PeopleCollection<Person>( EntityLists.GetListOfPeople() );
+            MainWindow.homesCollection = new HomesCollection(EntityLists.GetListOfHomes());
+            
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       from h in MainWindow.homesCollection
                                       where p.PersonID == h.OwnerID
                                       select p).ToList();
 
-            //ownersComboBox.ItemsSource = (from p in existingOwnersList
-            //                              select p).ToList();
+            if (APerson != null)
+            {
+                existingOwnersList.Add(APerson);
+            }
 
             ownersComboBox.ItemsSource = existingOwnersList;
         }
 
-        private void ownersComboBoxOpened(object sender, EventArgs e)
+        private void OwnersComboBoxOpened(object sender, EventArgs e)
         {
             //  ComboBox did not always should bound data at FormOpened() method so force refresh when user clicks the drop-down arrow
             RefreshOwnersComboBox();
+            //  TODO: Confirm AdHomeWindow succeeds in refresh OwnersComboBox if that fails then fallback to doing it in OwnersComboBoxOpened
             DisplayStatusMessage("Refreshed Owners list for display.");
         }
 
@@ -184,9 +211,9 @@ namespace HomeSalesTrackerApp
             this.statusBarText.Text = message;
         }
 
-        private void UpdateHomesCollection(Home h)
+
+        private void SaveHomeAndUpdateCollection(Home h)
         {
-            //  TODO: Verify updateHomesCollection(Home h) saves the new entity then refreshes the homesCollection as expected
             if (LogicBroker.SaveEntity<Home>(h))
             {
                 MainWindow.InitHomesCollection();
@@ -196,6 +223,53 @@ namespace HomeSalesTrackerApp
             else
             {
                 DisplayStatusMessage("Unable to update database with this home.");
+            }
+        }
+
+        private void OwnerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DisplayStatusMessage("Selecting an existing owner.");
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (isButtonClose)
+            {
+                e.Cancel = false;
+
+                try
+                {
+                    SaveHomeAndUpdateCollection(NewHome);
+                }
+                catch (Exception ex)
+                {
+                    var userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
+                    if (userResponse == MessageBoxResult.No)
+                    {
+                        isButtonClose = false;
+                        e.Cancel = true;
+                    }
+                }
+            }
+            else
+            {
+                var userResponse = MessageBox.Show("Save changes?", "Closing Add Home Window", MessageBoxButton.YesNo);
+                if (userResponse == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        SaveHomeAndUpdateCollection(NewHome);
+                    }
+                    catch (Exception ex)
+                    {
+                        userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
+                        if (userResponse == MessageBoxResult.No)
+                        {
+                            isButtonClose = false;
+                            e.Cancel = true;
+                        }
+                    }
+                }
             }
         }
 
