@@ -206,7 +206,7 @@ namespace HomeSalesTrackerApp
                 //  deliver results to the screen
                 var results = (from h in searchResults
                                from hs in homeSalesCollection
-                               where h.HomeID == hs.HomeID //&& hs.SoldDate == null
+                               where ( h.HomeID == hs.HomeID && hs.SoldDate == null )
                                select new
                                {
                                    HomeID = h.HomeID,
