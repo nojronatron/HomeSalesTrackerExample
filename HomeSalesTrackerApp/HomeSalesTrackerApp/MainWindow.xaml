@@ -13,16 +13,6 @@
                 <MenuItem Header="_Exit" Click="MenuExit_Click"/>
             </MenuItem>
             <Separator Width="5"/>
-            <MenuItem Header="Search">
-                <Separator/>
-                <MenuItem Header="Homes" Click="MenuSearchHomes_Click"></MenuItem>
-                <MenuItem Header="Homes For Sale" Click="MenuSearchHomesForSale_Click"></MenuItem>
-                <MenuItem Header="Sold Homes" Click="MenuSearchSoldHomes_Click"></MenuItem>
-                <MenuItem Header="Owners" Click="MenuSearchOwners_Click"></MenuItem>
-                <MenuItem Header="Agents" Click="MenuSearchAgents_Click"></MenuItem>
-                <MenuItem Header="Buyers" Click="MenuSeawrchBuyers_Click"></MenuItem>
-            </MenuItem>
-            <Separator Width="5"/>
             <MenuItem Header="Add">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuAddHome_Click"></MenuItem>
@@ -31,7 +21,17 @@
                 <MenuItem Header="Agent" Click="MenuAddAgent_Click"></MenuItem>
                 <MenuItem Header="Buyer" Click="MenuAddBuyer_Click"></MenuItem>
             </MenuItem>
-            <Separator Width="5"/>
+            <Separator Width="15"/>
+            <MenuItem Header="Search">
+                <Separator/>
+                <MenuItem Header="Homes" Click="MenuSearchHomes_Click"></MenuItem>
+                <MenuItem Header="Homes For Sale" Click="MenuSearchHomesForSale_Click"></MenuItem>
+                <MenuItem Header="Sold Homes" Click="MenuSearchSoldHomes_Click"></MenuItem>
+                <MenuItem Header="Owners" Click="MenuSearchOwners_Click"></MenuItem>
+                <MenuItem Header="Agents" Click="MenuSearchAgents_Click"></MenuItem>
+                <MenuItem Header="Buyers" Click="MenuSearchBuyers_Click"></MenuItem>
+            </MenuItem>
+            <Separator Width="5" />
             <MenuItem Header="Update">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuUpdateHome_Click"></MenuItem>
@@ -40,15 +40,14 @@
                 <MenuItem Header="Owner" Click="menuUpdateOwner_Click"></MenuItem>
                 <MenuItem Header="Agent" Click="menuUpdateAgent_Click"></MenuItem>
                 <MenuItem Header="Buyer" Click="menuUpdateBuyer_Click"></MenuItem>
+                <MenuItem Header="Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
             </MenuItem>
             <Separator Width="5"/>
             <MenuItem Header="Remove">
                 <Separator />
                 <MenuItem Header="Home Off Of The Market" Click="MenuRemoveHomeFromMarket_Click"></MenuItem>
             </MenuItem>
-            <Separator Width="5"/>
-            <MenuItem Header="Update Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
-            <Separator Width="5"/>
+            <Separator Width="15"/>
             <MenuItem Header="Display List">
                 <Separator/>
                 <MenuItem Header="Sold Homes" Click="menuDisplaySoldHomes_Click"></MenuItem>
@@ -57,7 +56,7 @@
                 <MenuItem Header="Homes for Sale" Click="menuDisplayHomesForSale_Click"></MenuItem>
                 <MenuItem Header="Real Estate Co. Totals" Click="menuDisplayRECoTotals_Click"></MenuItem>
             </MenuItem>
-            <Separator Width="5"/>
+            <Separator Width="15"/>
             <MenuItem Header="_About" Click="menuAboutAppInfo_Click" >
             </MenuItem>
         </Menu>

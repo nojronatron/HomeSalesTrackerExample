@@ -129,6 +129,7 @@ namespace HomeSalesTrackerApp
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
+            isButtonClose = true;
             this.Close();
         }
 
@@ -278,6 +279,7 @@ namespace HomeSalesTrackerApp
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             isButtonClose = true;
+            this.Close();
         }
     }
 }

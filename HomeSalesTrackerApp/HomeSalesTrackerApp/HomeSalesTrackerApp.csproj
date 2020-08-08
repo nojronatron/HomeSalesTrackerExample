@@ -67,6 +67,9 @@
     <Compile Include="CrudWindows\AddPersonWindow.xaml.cs">
       <DependentUpon>AddPersonWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CrudWindows\UpdaterWindow.xaml.cs">
+      <DependentUpon>UpdaterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\CollectionsManager.cs" />
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
@@ -81,6 +84,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CrudWindows\AddPersonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\UpdaterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

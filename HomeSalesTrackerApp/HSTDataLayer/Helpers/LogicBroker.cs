@@ -158,37 +158,51 @@ namespace HSTDataLayer
                 {
                     case "Person":
                         {
-                            context.People.Remove(item as Person);
+                            int personID = (item as Person).PersonID;
+                            Person personToDelete = context.People.Find(personID);
+                            context.People.Remove(personToDelete);
                             break;
                         }
                     case "Owner":
                         {
-                            context.Owners.Remove(item as Owner);
+                            int ownerID = (item as Owner).OwnerID;
+                            Owner ownerToDelete = context.Owners.Find(ownerID);
+                            context.Owners.Remove(ownerToDelete);
                             break;
                         }
                     case "Home":
                         {
-                            context.Homes.Remove(item as Home);
+                            int homeID = (item as Home).HomeID;
+                            Home homeToDelete = context.Homes.Find(homeID);
+                            context.Homes.Remove(homeToDelete);
                             break;
                         }
                     case "RealEstateCompany":
                         {
-                            context.RealEstateCompanies.Remove(item as RealEstateCompany);
+                            int recoID = (item as RealEstateCompany).CompanyID;
+                            RealEstateCompany recoToDelete = context.RealEstateCompanies.Find(recoID);
+                            context.RealEstateCompanies.Remove(recoToDelete);
                             break;
                         }
                     case "Agent":
                         {
-                            context.Agents.Remove(item as Agent);
+                            int agentID = (item as Agent).AgentID;
+                            Agent agentToDelete = context.Agents.Find(agentID);
+                            context.Agents.Remove(agentToDelete) ;
                             break;
                         }
                     case "Buyer":
                         {
-                            context.Buyers.Remove(item as Buyer);
+                            int buyerID = (item as Buyer).BuyerID;
+                            Buyer buyerToDelete = context.Buyers.Find(buyerID);
+                            context.Buyers.Remove(buyerToDelete);
                             break;
                         }
                     case "HomeSale":
                         {
-                            context.HomeSales.Remove(item as HomeSale);
+                            int saleID = (item as HomeSale).SaleID;
+                            HomeSale homeSaleToDelete = context.HomeSales.Find(saleID);
+                            context.HomeSales.Remove(homeSaleToDelete);
                             break;
                         }
                     default:

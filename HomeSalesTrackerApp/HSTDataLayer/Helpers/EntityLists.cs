@@ -21,12 +21,9 @@ namespace HSTDataLayer.Helpers
             using (HSTDataModel context = new HSTDataModel())
             {
                 peopleList = new List<Person>();
-                foreach (Person person in context.People.Include(a => a.Agent)
-                                                        .Include(r => r.Agent.RealEstateCompany)
-                                                        .Include(hs => hs.Agent.HomeSales)
-                                                        .Include(o => o.Owner)
+                foreach (Person person in context.People.Include(o => o.Owner)
+                                                        .Include(a => a.Agent)
                                                         .Include(b => b.Buyer))
-                    //foreach (Person person in context.People)
                 {
                     peopleList.Add(person);
                 }
@@ -43,9 +40,8 @@ namespace HSTDataLayer.Helpers
             List<Owner> ownerList = null;
             using (HSTDataModel context = new HSTDataModel())
             {
-                //var owners = (context.Owners.OrderBy(o => o.OwnerID)).ToList();
-                //ownerList = new List<Owner>(owners);
-                foreach (var owner in context.Owners.Include(h => h.Homes))
+                foreach (var owner in context.Owners.Include(h => h.Homes)
+                                                    .Include(p => p.Person))
                 {
                     ownerList.Add(owner);
                 }
@@ -63,7 +59,8 @@ namespace HSTDataLayer.Helpers
             using (HSTDataModel context = new HSTDataModel())
             {
                 homesList = new List<Home>();
-                foreach (Home home in context.Homes.Include(hs => hs.HomeSales))
+                foreach (Home home in context.Homes.Include(hs => hs.HomeSales)
+                                                   .Include(o => o.Owner))
                 {
                     homesList.Add(home);
                 }
@@ -81,8 +78,8 @@ namespace HSTDataLayer.Helpers
             using (var context = new HSTDataModel())
             {
                 recosList = new List<RealEstateCompany>();
-                foreach (var reco in context.RealEstateCompanies.Include(a => a.Agents)
-                                                                .Include(hs => hs.HomeSales))
+                foreach (var reco in context.RealEstateCompanies.Include(hs => hs.HomeSales)
+                                                                .Include(a => a.Agents))
                 {
                     recosList.Add(reco);
                 }
@@ -99,9 +96,9 @@ namespace HSTDataLayer.Helpers
             var agentList = default(List<Agent>);
             using (HSTDataModel context = new HSTDataModel())
             {
-                //var agents = (context.Agents.OrderBy(a => a.AgentID)).ToList();
-                //agentList = new List<Agent>(agents);
-                foreach (var agent in context.Agents.Include(a => a.HomeSales))
+                foreach (var agent in context.Agents.Include(p => p.Person)
+                                                    .Include(r => r.RealEstateCompany)
+                                                    .Include(a => a.HomeSales))
                 {
                     agentList.Add(agent);
                 }
@@ -119,7 +116,8 @@ namespace HSTDataLayer.Helpers
             using (var context = new HSTDataModel())
             {
                 buyersList = new List<Buyer>();
-                foreach (var buyer in context.Buyers.Include(b => b.HomeSales))
+                foreach (var buyer in context.Buyers.Include(p => p.Person)
+                                                    .Include(b => b.HomeSales))
                 {
                     buyersList.Add(buyer);
                 }
@@ -137,11 +135,10 @@ namespace HSTDataLayer.Helpers
             using (HSTDataModel context = new HSTDataModel())
             {
                 homeSalesList = new List<HomeSale>();
-                //foreach (HomeSale homesale in context.HomeSales.Include(hs => hs.Agent)
-                //                                               .Include(a => a.RealEstateCompany)
-                //                                               .Include(b => b.Buyer)
-                //                                               .Include(h => h.Home))
-                foreach (var homesale in context.HomeSales)
+                foreach (HomeSale homesale in context.HomeSales.Include(hs => hs.Agent)
+                                                               .Include(a => a.RealEstateCompany)
+                                                               .Include(b => b.Buyer)
+                                                               .Include(h => h.Home))
                 {
                     homeSalesList.Add(homesale);
                 }
@@ -149,68 +146,5 @@ namespace HSTDataLayer.Helpers
             return homeSalesList;
         }
 
-
-
-
-        //public static List<Home> GetListOfHomes()
-        //{
-        //    List<Home> homesList = null;
-        //    using (HSTDataModel context = new HSTDataModel())
-        //    {
-        //        var homes = (context.Homes.OrderBy(o => o.Zip)
-        //                                  .ThenBy(o => o.Address)).ToList();
-        //        homesList = new List<Home>(homes);
-        //    }
-        //    return homesList;
-        //}
-
-        //public static List<RealEstateCompany> GetListOfRECompanies()
-        //{
-        //    List<RealEstateCompany> RECoList = null;
-        //    using (HSTDataModel context = new HSTDataModel())
-        //    {
-        //        var reCos = (context.RealEstateCompanies.OrderBy(o => o.CompanyName)).ToList();
-        //        RECoList = new List<RealEstateCompany>(reCos);
-        //    }
-        //    return RECoList;
-        //}
-
-        //public static List<Buyer> GetListOfBuyers()
-        //{
-        //    List<Buyer> buyerList = null;
-        //    using (HSTDataModel context = new HSTDataModel())
-        //    {
-        //        var buyers = (context.Buyers.OrderBy(b => b.BuyerID)).ToList();
-        //        //var buyers = (from b in context.Buyers
-        //        //              select b).ToList();
-        //        buyerList = new List<Buyer>(buyers);
-        //    }
-        //    return buyerList;
-        //}
-
-        //public static List<Person> GetListOfPeople()
-        //{
-        //    List<Person> peopleList = null;
-        //    using (HSTDataModel context = new HSTDataModel())
-        //    {
-        //        var people = (context.People.OrderBy(o => o.LastName)
-        //                                    .ThenBy(o => o.FirstName)).ToList();
-        //        peopleList = new List<Person>(people);
-        //    }
-        //    return peopleList;
-        //}
-
-        ////public static List<HomeSale> GetListOfHomeSales()
-        //{
-        //    List<HomeSale> homeSalesList = null;
-        //    using (HSTDataModel context = new HSTDataModel())
-        //    {
-        //        var homeSales = (context.HomeSales.OrderBy(o => o.SoldDate)
-        //                                          .ThenBy(o => o.MarketDate)
-        //                                          .ThenBy(o => o.SaleAmount)).ToList();
-        //        homeSalesList = new List<HomeSale>(homeSales);
-        //    }
-        //    return homeSalesList;
-        //}
     }
 }

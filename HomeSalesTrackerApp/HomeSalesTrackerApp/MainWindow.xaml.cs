@@ -1,10 +1,19 @@
-﻿using System;
+﻿using HomeSalesTrackerApp.CrudWindows;
+
+using HSTDataLayer;
+using HSTDataLayer.Helpers;
+
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -12,13 +21,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using System.Windows.Controls.Primitives;
-using HSTDataLayer.Helpers;
-using HSTDataLayer;
-using HomeSalesTrackerApp.CrudWindows;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
 
 namespace HomeSalesTrackerApp
 {
@@ -31,7 +33,7 @@ namespace HomeSalesTrackerApp
         public static PeopleCollection<Person> peopleCollection = null;
         public static HomeSalesCollection homeSalesCollection = null;
         public static RealEstateCosCollection reCosCollection = null;
-        
+
         public Person APerson { get; set; }
         public Owner AnOwner { get; set; }
         public Home AHome { get; set; }
@@ -107,7 +109,7 @@ namespace HomeSalesTrackerApp
             List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
             foreach (var homeSale in homeSales)
             {
-                homeSalesCollection.Add((HomeSale)homeSale);
+                homeSalesCollection.Add(homeSale);
             }
         }
 
@@ -130,7 +132,6 @@ namespace HomeSalesTrackerApp
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             //  App.Exit triggers Application_Exit Method that calls data layer to backup DB to XML
-            //this.Close();
             App.Current.Shutdown();
         }
 
@@ -138,7 +139,6 @@ namespace HomeSalesTrackerApp
         {
             //  App.Exit triggers Application_Exit Method that calls data layer to backup DB to XML
             App.Current.Shutdown();
-            //this.Close();
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace HomeSalesTrackerApp
             string searchTermsText = searchTermsTextbox.Text;
             string[] searchTermsArr = searchTermsText.Split(',');
             searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
-            
+
             if (searchTerms.Count > 0)
             {
                 HomeSearchHelper(ref searchResults, ref searchTerms);
@@ -177,7 +177,7 @@ namespace HomeSalesTrackerApp
                 var listResults = results.ToList();
                 FoundHomesView.ItemsSource = listResults;
                 FoundHomesView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Displaying { listResults.Count } search results.");
+                DisplayStatusMessage($"Found { listResults.Count } Homes. Select a result and use Update or Remove menus to make changes.");
             }
 
             if (searchTerms.Count < 1 || searchResults.Count < 1)
@@ -206,14 +206,14 @@ namespace HomeSalesTrackerApp
                 //  deliver results to the screen
                 var results = (from h in searchResults
                                from hs in homeSalesCollection
-                               where ( h.HomeID == hs.HomeID && hs.SoldDate == null )
-                               select new
+                               where (h.HomeID == hs.HomeID && hs.SoldDate == null)
+                               select new HomeForSaleView
                                {
                                    HomeID = h.HomeID,
                                    Address = h.Address,
                                    City = h.City,
                                    State = h.State,
-                                   Zip = $"{h.Zip:#####-####}",
+                                   Zip = h.Zip,
                                    SaleAmount = hs.SaleAmount,
                                    MarketDate = hs.MarketDate
                                });
@@ -221,7 +221,7 @@ namespace HomeSalesTrackerApp
                 var listResults = results.ToList();
                 FoundHomesForSaleView.ItemsSource = listResults;
                 FoundHomesForSaleView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Displaying { listResults.Count } search results.");
+                DisplayStatusMessage($"Found { listResults.Count } Homes For Sale. Select a result and use Update or Remove menus to make changes.");
             }
 
             if (searchTerms.Count < 1 || searchResults.Count < 1)
@@ -253,7 +253,7 @@ namespace HomeSalesTrackerApp
             var searchTerms = new List<string>();
             string searchTermsText = searchTermsTextbox.Text;
             searchTerms = FormatSearchTerms(searchTermsText);
-            
+
             HomeSalesSearchHelper(ref searchResultsForSale, ref searchTerms, false);
 
             var searchResult = (from hsForSale in homesSalesForSale
@@ -276,6 +276,9 @@ namespace HomeSalesTrackerApp
             {
                 selectedHomeID = searchResult.First().HomeID;
                 HomeSale homeSaleToUpdate = homeSalesCollection.FirstOrDefault(hs => hs.HomeID == selectedHomeID);
+
+                
+
                 homeSaleToUpdate.SaleAmount = 0m;   //  TODO: get SaleAmount (decimal) from user
                 homeSaleToUpdate.BuyerID = 0;   //  TODO: get new or existing BuyerID information
                 homeSaleToUpdate.SoldDate = new DateTime(2020, 7, 31);  //  TODO: get new SoldDate from user
@@ -284,10 +287,9 @@ namespace HomeSalesTrackerApp
                 homeToUpdate.OwnerID = 0;   //  TODO: acquire the PersonID and insert it here
 
                 //  TODO: Save to Entities
+                LogicBroker.SaveEntity<HomeSale>(homeSaleToUpdate); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
 
-                //  TODO: Update HomeCollection
-
-                //  TODO: Update HomeSalesCollection
+                InitializeCollections();
             }
 
         }
@@ -306,63 +308,37 @@ namespace HomeSalesTrackerApp
             //  3)  Update HomeSale Collection and Database Context
             //      Allow the user to abandon the remove/update process
 
-            //List<HomeSale> homeSalesWithMarketDate = homeSalesCollection.Where(hs => hs.MarketDate != null).ToList();
-
-            var searchResults = new List<Home>();
-            var searchTerms = new List<String>();
-            string searchTermsText = searchTermsTextbox.Text;
-            if (searchTermsText.Length < 1)
+            HomeForSaleView selectedHomeForSale = (HomeForSaleView)this.FoundHomesForSaleView.SelectedItem;
+            if (selectedHomeForSale != null)
             {
-                DisplayStatusMessage("Enter one or more search terms in the Search textbox, then click the Remove menu.");
-                return;
-            }
-            searchTerms = FormatSearchTerms(searchTermsText);
-            HomeSalesSearchHelper(ref searchResults, ref searchTerms, sold: false);
+                int homeID = selectedHomeForSale.HomeID;
+                var homeSaleToRemove = (from h in homesCollection
+                                        from hs in homeSalesCollection
+                                        where h.HomeID == hs.HomeID 
+                                            && hs.MarketDate != null 
+                                            && hs.SoldDate == null 
+                                        select hs).FirstOrDefault();
 
-            HomeSale homesale = (from sr in searchResults
-                                 from hs in homeSalesCollection
-                                 where hs.HomeID == sr.HomeID
-                                 select hs).FirstOrDefault();
-
-            StringBuilder statusMessage = new StringBuilder($"About to remove HomeID { homesale.HomeID } off the Market.");
-
-            //  TODO: test allowing user to go-ahead or cancel out.
-            MessageBoxResult mbr = MessageBox.Show(statusMessage.ToString(), "Confirm", MessageBoxButton.YesNo);
-            statusMessage.Clear();
-
-            if (mbr == MessageBoxResult.Yes)
-            {
-                if (homesale != null)
+                if (homeSaleToRemove != null)
                 {
-                    if (homesale.MarketDate == null)
-                    {
-                        if (homeSalesCollection.Remove(homesale))
-                        {
-                            //  TODO: Verify DB updated using LogicBroker.RemoveEntity() method
-                            LogicBroker.RemoveEntity<HomeSale>(homesale);
-                            statusMessage.Append("Removed Home off the Market.");
-                        }
-                        else
-                        {
-                            statusMessage.Append("Unable to remove Home off the Market. Call Support Line for assistance.");
-                        }
-                    }
-                    else
-                    {
-                        statusMessage.Append("Home is sold. Cannot remove from Market.");
-                    }
+                    LogicBroker.RemoveEntity<HomeSale>(homeSaleToRemove);
+                    //homeSalesCollection.Remove(homeSaleToRemove.SaleID);
+                    InitializeCollections();
+
+                    DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
+                    ClearSearchResultsViews();  //  user doesn't need to see remaining results right?
                 }
                 else
                 {
-                    statusMessage.Append("Home Sale not found. Try again using different search terms.");
+                    DisplayStatusMessage("Home For Sale not found.");
                 }
+
             }
             else
             {
-                statusMessage.Append("Aborting operation. Home Sale will not be removed from the Market.");
+                DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
 
-            DisplayStatusMessage(statusMessage.ToString());
         }
 
         /// <summary>
@@ -387,40 +363,33 @@ namespace HomeSalesTrackerApp
         /// <param name="sold"></param>
         private static void HomeSalesSearchHelper(ref List<Home> searchResults, ref List<string> searchTerms, bool sold)
         {
+            var homeSearchResults = new List<Home>();
+            var soldOrUnsoldHomes = new List<Home>();
             if (searchTerms.Count > 0)
             {
                 if (sold == false)
                 {
-                    var unsoldHomes = (from hs in homeSalesCollection
-                                       from h in homesCollection
-                                       where hs.SoldDate == null && hs.HomeID == h.HomeID
-                                       select h).ToList();
-
-                    HomeSearchHelper(ref searchResults, ref searchTerms);
-
-                    searchResults = (from sr in searchResults
-                                     from uh in unsoldHomes
-                                     where sr.HomeID == uh.HomeID
-                                     select sr).ToList();
-
-                    searchResults.Distinct();
+                    soldOrUnsoldHomes = (from hs in homeSalesCollection
+                                         from h in homesCollection
+                                         where hs.SoldDate == null && hs.HomeID == h.HomeID
+                                         select h).ToList();
                 }
                 else
                 {
-                    var soldHomes = (from sh in homeSalesCollection
-                                     from h in homesCollection
-                                     where sh.SoldDate != null && sh.HomeID == h.HomeID
-                                     select h).ToList();
-
-                    HomeSearchHelper(ref searchResults, ref searchTerms);
-
-                    searchResults = (from sr in searchResults
-                                     from sh in soldHomes
-                                     where sr.HomeID == sh.HomeID
-                                     select sr).ToList();
-
-                    searchResults.Distinct();
+                    soldOrUnsoldHomes = (from sh in homeSalesCollection
+                                         from h in homesCollection
+                                         where sh.SoldDate != null && sh.HomeID == h.HomeID
+                                         select h).ToList();
                 }
+
+                HomeSearchHelper(ref homeSearchResults, ref searchTerms);
+
+                searchResults = (from sr in homeSearchResults
+                                 from sh in soldOrUnsoldHomes
+                                 where sr.HomeID == sh.HomeID
+                                 select sr).ToList();
+
+                searchResults.Distinct();
             }
         }
 
@@ -458,12 +427,12 @@ namespace HomeSalesTrackerApp
             SoldHomesReport shr = new SoldHomesReport();
             shr.Show();
         }
-        
+
         private void menuDisplayBuyers_Click(object sender, RoutedEventArgs e)
         {
             //
         }
-        
+
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)
         {
             AgentsResultsReport arr = new AgentsResultsReport();
@@ -482,6 +451,7 @@ namespace HomeSalesTrackerApp
         private void modifyItemButton_Click(object sender, RoutedEventArgs e)
         {
             DisplayStatusMessage("Modify button not yet implemented");
+
         }
 
         private void DisplayStatusMessage(string message)
@@ -526,7 +496,10 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  take a selected HomeForSale item and pass it to UpdaterWindow with arguments to update HomeSale
+            UpdaterWindow uw = new UpdaterWindow();
+            uw.UpdateType = "HomeSale";
+
         }
 
         private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
@@ -546,29 +519,25 @@ namespace HomeSalesTrackerApp
 
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
-            //  SoldDate != null
             ClearSearchResultsViews();
             FoundSoldHomesView.Visibility = Visibility.Visible;
         }
 
         private void MenuSearchOwners_Click(object sender, RoutedEventArgs e)
         {
-            //
             ClearSearchResultsViews();
             FoundPeopleView.Visibility = Visibility.Visible;
         }
 
         private void MenuSearchAgents_Click(object sender, RoutedEventArgs e)
         {
-            //
             ClearSearchResultsViews();
             FoundPeopleView.Visibility = Visibility.Visible;
 
         }
 
-        private void MenuSeawrchBuyers_Click(object sender, RoutedEventArgs e)
+        private void MenuSearchBuyers_Click(object sender, RoutedEventArgs e)
         {
-            //
             ClearSearchResultsViews();
             FoundPeopleView.Visibility = Visibility.Visible;
 
@@ -596,7 +565,41 @@ namespace HomeSalesTrackerApp
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-
+            //
         }
+
+        private void RemoveHomeSaleAndUpdateCollection(HomeSale homesale)
+        {
+            if (LogicBroker.RemoveEntity<HomeSale>(homesale))
+            {
+                InitHomesCollection();
+                InitHomeSalesCollection();
+                InitRealEstateCompaniesCollection();
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to update database with this home.");
+            }
+        }
+
+
+        class HomeForSaleView
+        {
+            public int HomeID { get; set; }// = h.HomeID,
+            public string Address { get; set; }// = h.Address,
+            public string City { get; set; }// = h.City,
+            public string State { get; set; }// = h.State,
+            public string Zip { get; set; } //  maybe add this as a get return: $"{h.Zip:#####-####}"
+            public Decimal SaleAmount { get; set; } //= hs.SaleAmount,
+            public DateTime MarketDate { get; set; } //= hs.MarketDate
+            public HomeForSaleView() { }
+
+            public override string ToString()
+            {
+                //$"{h.Zip:#####-####}"
+                return $"{HomeID}{Address}{City}{State}{Zip:#####-####}{MarketDate}";
+            }
+        }
+
     }
 }
