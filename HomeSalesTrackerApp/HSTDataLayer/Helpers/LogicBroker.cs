@@ -95,7 +95,17 @@ namespace HSTDataLayer
                 {
                     case "Person":
                         {
-                            context.People.Add(item as Person);
+                            Person person = item as Person;
+                            Person updatePerson = new Person()
+                            {
+                                FirstName = person.FirstName,
+                                LastName = person.LastName,
+                                Phone = person.Phone,
+                                Email = person.Email ?? null
+                            };
+
+                            context.People.AddOrUpdate(x => new { x.FirstName, x.LastName }, updatePerson);
+                            //context.People.Add(item as Person);
                             break;
                         }
                     case "Owner":
@@ -115,7 +125,15 @@ namespace HSTDataLayer
                         }
                     case "Agent":
                         {
-                            context.Agents.Add(item as Agent);
+                            Agent agent = item as Agent;
+                            Agent updateAgent = new Agent()
+                            {
+                                CommissionPercent = agent.CommissionPercent,
+                                CompanyID = agent.CompanyID ?? null
+                            };
+
+                            context.Agents.AddOrUpdate(a => new { a.AgentID }, updateAgent);
+                            //context.Agents.Add(item as Agent);
                             break;
                         }
                     case "Buyer":
@@ -125,7 +143,21 @@ namespace HSTDataLayer
                         }
                     case "HomeSale":
                         {
-                            context.HomeSales.Add(item as HomeSale);
+                            HomeSale homesale = item as HomeSale;
+                            HomeSale updateHomesale = new HomeSale()
+                            {
+                                HomeID = homesale.HomeID,
+                                SoldDate = homesale.SoldDate ?? null,
+                                AgentID = homesale.AgentID,
+                                SaleAmount = homesale.SaleAmount,
+                                BuyerID = homesale.BuyerID ?? null,
+                                MarketDate = homesale.MarketDate,
+                                CompanyID = homesale.CompanyID,
+                                Agent = homesale.Agent
+                            };
+
+                            context.HomeSales.AddOrUpdate(hs => new { hs.HomeID }, updateHomesale);
+                            //context.HomeSales.Add(item as HomeSale);
                             break;
                         }
                     default:
@@ -133,11 +165,13 @@ namespace HSTDataLayer
                             break;
                         }
                 }
+
                 int itemsAffected = context.SaveChanges();
                 if (itemsAffected == 1)
                 {
                     result = true;
                 }
+
             }
             return result;
         }
@@ -188,7 +222,7 @@ namespace HSTDataLayer
                         {
                             int agentID = (item as Agent).AgentID;
                             Agent agentToDelete = context.Agents.Find(agentID);
-                            context.Agents.Remove(agentToDelete) ;
+                            context.Agents.Remove(agentToDelete);
                             break;
                         }
                     case "Buyer":
@@ -210,11 +244,138 @@ namespace HSTDataLayer
                             break;
                         }
                 }
+
                 int itemsAffected = context.SaveChanges();
                 if (itemsAffected == 1)
                 {
                     result = true;
                 }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// NOT TESTED. Should take a generic item and enable updating a field in an existing entry via EF.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool UpdateEntity<T>(T item)
+        {
+            bool result = false;
+            string name = item.GetType().Name;
+            using (var context = new HSTDataModel())
+            {
+                switch (name)
+                {
+                    case "Person":
+                        {
+                            //  IComparable<Person> comparison uses FirstName and LastName fields
+                            Person person = item as Person;
+                            Person personToUpdate = context.People.Find(person.PersonID);
+                            if (personToUpdate != null && personToUpdate.Equals(person))
+                            {
+                                personToUpdate.Phone = person.Phone;
+                                personToUpdate.Email = person.Email ?? null;
+                            }
+
+                            break;
+                        }
+                    case "Owner":
+                        {
+                            //  Only comparable item is OwnerID
+                            Owner owner = item as Owner;
+                            Owner ownerToUpdate = context.Owners.Find(owner.OwnerID);
+                            if (ownerToUpdate != null)
+                            {
+                                ownerToUpdate.PreferredLender = owner.PreferredLender;
+                            }
+
+                            break;
+                        }
+                    case "Home":
+                        {
+                            //  IComparable<Home> comparison uses Address and Zip fields
+                            Home home = item as Home;
+                            Home homeToUpdate = context.Homes.Find(home.HomeID);
+                            if(homeToUpdate != null && homeToUpdate.Equals(home))
+                            {
+                                homeToUpdate.City = home.City;
+                                homeToUpdate.State = home.State;
+                                homeToUpdate.OwnerID = home.OwnerID;
+                            };
+
+                            break;
+                        }
+                    case "RealEstateCompany":
+                        {
+                            //  IComparable<RealEstateCompany> exists but stick with CompanyID instead
+                            RealEstateCompany reco = item as RealEstateCompany;
+                            RealEstateCompany recoToUpdate = context.RealEstateCompanies.Find(reco.CompanyID);
+                            if(recoToUpdate != null)
+                            {
+                                recoToUpdate.CompanyName = reco.CompanyName;
+                                recoToUpdate.Phone = reco.Phone;
+                            }
+
+                            break;
+                        }
+                    case "Agent":
+                        {
+                            //  IComparable<Agent> uses AgentID for comparison
+                            Agent agent = item as Agent;
+                            Agent agentToUpdate = context.Agents.Find(agent.AgentID);
+                            if(agentToUpdate != null)
+                            {
+                                agentToUpdate.CompanyID = agent.CompanyID;
+                                agentToUpdate.CommissionPercent = agent.CommissionPercent;
+                            }
+
+                            break;
+                        }
+                    case "Buyer":
+                        {
+                            //  IComparable<Buyer> not implemented
+                            Buyer buyer = item as Buyer;
+                            Buyer buyerToUpdate = context.Buyers.Find(buyer.BuyerID);
+                            if(buyerToUpdate != null)
+                            {
+                                buyerToUpdate.CreditRating = buyer.CreditRating;
+                            }
+
+                            break;
+                        }
+                    case "HomeSale":
+                        {
+                            //  ICOmparable<HomeSale> implemented but will not use it here
+                            HomeSale homesale = item as HomeSale;
+                            HomeSale homesaleToUpdate = context.HomeSales.Find(homesale.SaleID);
+                            if(homesaleToUpdate != null)
+                            {
+                                homesaleToUpdate.HomeID = homesale.HomeID;
+                                homesaleToUpdate.SoldDate = homesale.SoldDate ?? null;
+                                homesaleToUpdate.AgentID = homesale.AgentID;
+                                homesaleToUpdate.SaleAmount = homesale.SaleAmount;
+                                homesaleToUpdate.BuyerID = homesale.BuyerID ?? null;
+                                homesaleToUpdate.MarketDate = homesale.MarketDate;
+                                homesaleToUpdate.CompanyID = homesale.CompanyID;
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                int itemsAffected = context.SaveChanges();
+                if (itemsAffected == 1)
+                {
+                    result = true;
+                }
+
             }
             return result;
         }

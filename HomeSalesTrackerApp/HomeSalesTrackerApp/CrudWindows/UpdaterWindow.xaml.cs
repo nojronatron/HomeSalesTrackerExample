@@ -158,15 +158,16 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             updateAgentPanel.Visibility = Visibility.Visible;
             updateAgentAgentIdTextbox.Text = UpdateAgent.AgentID.ToString();
+            updateAgentAgentPersonNameTextbox.Text = $"{UpdatePerson.FirstName} {UpdatePerson.LastName}";
             updateAgentCompanyIdTextbox.Text = UpdateAgent.CompanyID.ToString();
             updateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
             var listOfHomesalesAgents = (from hs in MainWindow.homeSalesCollection
                                          from a in MainWindow.peopleCollection
                                          where a.PersonID == hs.AgentID
-                                         select a.Agent).ToList();
+                                         select a).ToList();
             //  TODO: Fix the output so it displays data in the combobox instead of entity wrappers
             listOfExistingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
-            closeButton.Visibility = Visibility.Hidden;
+            closeButton.Visibility = Visibility.Visible;
         }
 
         private void ShowCloseButtonOnly()
@@ -309,6 +310,11 @@ namespace HomeSalesTrackerApp.CrudWindows
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void listOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }

@@ -121,9 +121,14 @@ namespace HomeSalesTrackerApp
 
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
-            AddPersonWindow apw = new AddPersonWindow();
-            apw.AddType = "Owner";
-            apw.Show();
+            //AddPersonWindow apw = new AddPersonWindow();
+            //apw.AddType = "Owner";
+            //apw.Show();
+            PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
+            pauw.UpdateAgent = new Agent();
+            pauw.UpdatePerson = new Person();
+            pauw.UpdateOwner = new Owner();
+            pauw.UpdateType = "Owner";
             RefreshOwnersComboBox();
         }
 
@@ -213,7 +218,6 @@ namespace HomeSalesTrackerApp
         {
             this.statusBarText.Text = message;
         }
-
 
         private void SaveHomeAndUpdateCollection(Home h)
         {

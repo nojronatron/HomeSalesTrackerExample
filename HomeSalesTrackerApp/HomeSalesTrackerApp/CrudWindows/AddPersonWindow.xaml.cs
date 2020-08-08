@@ -26,11 +26,11 @@ namespace HomeSalesTrackerApp.CrudWindows
         private Owner newOwner = null;
         private Person newPerson = null;
         public string AddType { get; set; }
-        public string WhoLaunchedMe { get; set; }
 
         public AddPersonWindow()
         {
             InitializeComponent();
+            this.Title = "wowzers";
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
@@ -80,7 +80,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
-        private void addBuyerButton_Click(object sender, RoutedEventArgs e)
+        private void AddBuyerButton_Click(object sender, RoutedEventArgs e)
         {
             //  TODO: Add preemptive input validation prior to creating the new Buyer object instance
             string credRating = this.creditRatingTextbox.Text.Trim();

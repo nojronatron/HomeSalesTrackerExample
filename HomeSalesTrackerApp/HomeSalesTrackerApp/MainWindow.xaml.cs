@@ -474,28 +474,30 @@ namespace HomeSalesTrackerApp
         {
             //  when a HomeSale is selected in the Search Results window
             //  this menu item can be used to change the Agent (new or existing)
-            var selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            HomeForSaleView selectedHomesaleView = null;
+            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            FoundHomesForSaleView.SelectedItem = -1;    //  always clear the combobox before moving on
 
-            Agent hsAgent = (from h in homesCollection
-                             from hs in homeSalesCollection
-                             from a in peopleCollection
-                             where h.HomeID == selectedHomesaleView.HomeID
-                             where hs.HomeID == selectedHomesaleView.HomeID
-                             where a.PersonID == hs.AgentID
-                             select a.Agent).FirstOrDefault();
+            var homeid = selectedHomesaleView.HomeID;
+            HomeSale homesaleByID = MainWindow.homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+                                                                  .FirstOrDefault();
+            Agent homesaleAgent = new Agent()
+            {
+                AgentID = homesaleByID.AgentID,
+                CompanyID = homesaleByID.CompanyID,
+                CommissionPercent = homesaleByID.Agent.CommissionPercent
+            };
 
-            HomeSale homesale = (from hs in homeSalesCollection
-                                 from h in homesCollection
-                                 where selectedHomesaleView.Address == h.Address &&
-                                 selectedHomesaleView.Zip == h.Zip
-                                 where hs.HomeID == h.HomeID
-                                 select hs).FirstOrDefault();
+            Person agentPerson = MainWindow.peopleCollection.Where(p => p.PersonID == homesaleByID.AgentID).FirstOrDefault();
 
-            UpdaterWindow uw = new UpdaterWindow();
-            uw.UpdateType = "Agent";
-            uw.UpdateAgent = hsAgent;
-            uw.UpdateHomeSale = homesale;
-            uw.Show();
+            PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
+            pauw.UpdateType = "Agent";
+            pauw.UpdateAgent = homesaleAgent;
+            pauw.UpdatePerson = agentPerson;
+            pauw.UpdateHomeSale = homesaleByID;
+            pauw.Show();
+
+            ClearSearchResultsViews();
         }
 
         private void menuUpdateBuyer_Click(object sender, RoutedEventArgs e)

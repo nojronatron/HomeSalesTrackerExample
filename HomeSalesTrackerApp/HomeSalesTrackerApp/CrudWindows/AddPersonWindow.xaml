@@ -49,7 +49,7 @@
                 <Separator/>
                 <Label Content="Buyer's Credit Rating" Height="27" />
                 <TextBox x:Name="creditRatingTextbox" Text="" Height="27" />
-                <Button x:Name="addBuyerButton" Content="Add Buyer" Height="27" Margin="10" Click="addBuyerButton_Click" MinWidth="25" />
+                <Button x:Name="addBuyerButton" Content="Add Buyer" Height="27" Margin="10" Click="AddBuyerButton_Click" MinWidth="25" />
                 <Separator/>
                 <Label Content="Commission Percent example: 0.04" Height="27" />
                 <TextBox x:Name="commissionTextbox" Text="" Height="27" />
