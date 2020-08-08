@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="Entry Editor" Height="450" Width="280" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="Entry Editor" Height="540" Width="280" Closing="Window_Closing" Loaded="Window_Loaded">
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
             <MenuItem Header="_File">
@@ -19,25 +19,47 @@
         </StatusBar>
 
         <StackPanel>
-        
-        <DockPanel x:Name="updateHomePanel" Margin="10,10" Visibility="Collapsed" 
-                   HorizontalAlignment="Stretch" MinWidth="250" >
-            <Label Content="Home ID" Height="25" DockPanel.Dock="Top" />
-            <TextBox x:Name="homeIdTextBox" Text="" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
-            <Label Content="Address (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="homeAddressTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Label Content="City (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="homeCityTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Label Content="State (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="homeStateTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Label Content="Zip Code + 4 (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="homeZipTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Separator Margin="0,10" DockPanel.Dock="Top"  />
-            <Button x:Name="updateChangedHomeFields" Content="Update Changes" Height="25" Margin="5,5" 
-                    Click="UpdateChangedHomeFieldsButton_Click" DockPanel.Dock="Top"  />
-        </DockPanel>
 
-        <DockPanel x:Name="updateRealEstateCoPanel" Margin="10,10" Visibility="Collapsed"
+
+            <DockPanel x:Name="updateHomePanel" Margin="10,10" Visibility="Collapsed" 
+                   HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Home ID" Height="25" DockPanel.Dock="Top" />
+                <TextBox x:Name="homeIdTextBox" Text="" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
+                <Label Content="Address (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeAddressTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="City (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeCityTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="State (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeStateTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Zip Code + 4 (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeZipTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Separator Margin="0,10" DockPanel.Dock="Top"  />
+                <Button x:Name="updateChangedHomeFields" Content="Update Changes" Height="25" Margin="5,5" 
+                    Click="UpdateChangedHomeFieldsButton_Click" DockPanel.Dock="Top"  />
+            </DockPanel>
+
+            <DockPanel x:Name="updateHomeSalesPanel" Margin="10,10" Visibility="Collapsed" 
+                   HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Sale ID" Height="25" DockPanel.Dock="Top" />
+                <TextBox x:Name="homeSalesSaleIdTextBox" Text="" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
+                <Label Content="Home ID" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesSaleHomeIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Agent ID" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesAgentIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Sale Amount" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesSaleAmountTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Buyer ID" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesBuyerIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Market Date" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesMarketDateTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Company ID" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeSalesCompanyIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Separator Margin="0,10" DockPanel.Dock="Top"  />
+                <Button x:Name="updateChangedHomeSalesFields" Content="Update Changes" Height="25" Margin="5,5" 
+                    Click="UpdateChangedHomeSalesFieldsButton_Click" DockPanel.Dock="Top"  />
+            </DockPanel>
+
+            <DockPanel x:Name="updateRealEstateCoPanel" Margin="10,10" Visibility="Collapsed"
                     HorizontalAlignment="Stretch" MinWidth="250" >
             <Label Content="Company ID" Height="25" DockPanel.Dock="Top" />
             <TextBox x:Name="companyIdTextBox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
@@ -50,24 +72,46 @@
                     Click="UpdateChangedRecoFieldsButton_Click" MinWidth="25" DockPanel.Dock="Top"  />
         </DockPanel>
 
-        <DockPanel x:Name="updatePersonPanel" Margin="10,10" Visibility="Collapsed" 
+            <DockPanel x:Name="updatePersonPanel" Margin="10,10" Visibility="Collapsed" 
                     HorizontalAlignment="Stretch" MinWidth="250" >
-            <Label Content="Person ID" Height="25"  DockPanel.Dock="Top" />
-            <TextBox x:Name="personIdTextbox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
-            <Label Content="First name (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="personFirstNameTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
-            <Label Content="Last name (Required)" Height="25"  DockPanel.Dock="Top" />
-            <TextBox x:Name="personPhoneTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
-            <Label Content="Phone Number (Required)" Height="25"  DockPanel.Dock="Top" />
-            <TextBox x:Name="personLastNameTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
-            <Label Content="Email Address" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="personEmailTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Separator Margin="0,10"  DockPanel.Dock="Top" />
-            <Button x:Name="updateChangedPersonFieldsButton" Content="Update Changes" Height="25" Margin="5,5" 
+                <Label Content="Person ID" Height="25"  DockPanel.Dock="Top" />
+                <TextBox x:Name="personIdTextbox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
+                <Label Content="First name (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="personFirstNameTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
+                <Label Content="Last name (Required)" Height="25"  DockPanel.Dock="Top" />
+                <TextBox x:Name="personPhoneTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
+                <Label Content="Phone Number (Required)" Height="25"  DockPanel.Dock="Top" />
+                <TextBox x:Name="personLastNameTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
+                <Label Content="Email Address" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="personEmailTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Separator Margin="0,10"  DockPanel.Dock="Top" />
+                <Button x:Name="updateChangedPersonFieldsButton" Content="Update Changes" Height="25" Margin="5,5" 
                     Click="UpdateChangedPersonFieldsButton_Click" MinWidth="25"  DockPanel.Dock="Top" />
-        </DockPanel>
+            </DockPanel>
 
-        <DockPanel MinWidth="250" Margin="10,5" Visibility="Hidden">
+
+            <DockPanel x:Name="updateAgentPanel" Margin="10,10" Visibility="Visible" 
+                    HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Agent ID" Height="25"  DockPanel.Dock="Top" />
+                <TextBox x:Name="updateAgentAgentIdTextbox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
+                <Label Content="Company ID" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="updateAgentCompanyIdTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
+                <Label Content="Commission (Percentage)" Height="25"  DockPanel.Dock="Top" />
+                <TextBox x:Name="updateAgentCommissionTextbox" Text="" Height="25"  DockPanel.Dock="Top" />
+                <Separator Margin="0,10" DockPanel.Dock="Top" />
+                <Label Content="Choose Existing or Create New?" DockPanel.Dock="Top"/>
+                <Label Content="Existing Agents:" Height="25" DockPanel.Dock="Top" />
+                <ComboBox x:Name="listOfExistingAgentsCombobox" ItemsSource="{Binding}" Margin="5,5"  DockPanel.Dock="Top" />
+
+                <Label Content="Create a new Agent:" Height="25"  DockPanel.Dock="Top" />
+                <Button x:Name="createNewAgentButton" Content="Create New Agent" Height="25" Margin="5,5"  DockPanel.Dock="Top" />
+
+                <Separator Margin="0,10" DockPanel.Dock="Top" />
+                <Button x:Name="updateChangedAgentFieldsButton" Content="Update Changes" Height="25" Margin="5,5" 
+                    Click="UpdateChangedAgentFieldsButton_Click" MinWidth="25"  DockPanel.Dock="Top" />
+            </DockPanel>
+            
+            <DockPanel MinWidth="250" Margin="10,5" Visibility="Hidden">
             <Button x:Name="closeButton" Content="Close" Height="25" Margin="5,5"
                 Click="CloseButton_Click" MinWidth="25" DockPanel.Dock="Bottom" />
         </DockPanel>

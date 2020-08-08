@@ -21,12 +21,17 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class UpdaterWindow : Window
     {
+        private bool IsButtonClose { get; set; }
+        
         public string UpdateType { get; set; }
         public Person UpdatePerson { get; set; }
         public Home UpdateHome { get; set; }
         public RealEstateCompany UpdateReco { get; set; }
-        private bool IsButtonClose { get; set; }
-
+        public HomeSale UpdateHomeSale { get; set; }
+        public Agent UpdateAgent { get; set; }
+        public Owner UpdateOwner { get; set; }
+        public Buyer UpdateBuyer { get; set; }
+                
         public UpdaterWindow()
         {
             InitializeComponent();
@@ -73,18 +78,34 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             int count = 0;
-                if(UpdatePerson != null )
-                {
-                    count++;
-                }
-                if (UpdateHome != null)
-                {
-                    count++;
-                }
-                if(UpdateReco != null)
-                {
-                    count++;
-                }
+            if (UpdatePerson != null)
+            {
+                count++;
+            }
+            if (UpdateHome != null)
+            {
+                count++;
+            }
+            if (UpdateReco != null)
+            {
+                count++;
+            }
+            if (UpdateHomeSale != null)
+            {
+                count++;
+            }
+            if (UpdateAgent != null)
+            {
+                count++;
+            }
+            if (UpdateBuyer != null)
+            {
+                count++;
+            }
+            if (UpdateOwner != null)
+            {
+                count++;
+            }
             if (count > 0)
             {
                 LoadPanelsAndFields();
@@ -127,6 +148,27 @@ namespace HomeSalesTrackerApp.CrudWindows
             closeButton.Visibility = Visibility.Hidden;
         }
 
+        private void LoadHomeSalesPanel()
+        {
+
+            closeButton.Visibility = Visibility.Hidden;
+        }
+
+        private void LoadAgentPanel()
+        {
+            updateAgentPanel.Visibility = Visibility.Visible;
+            updateAgentAgentIdTextbox.Text = UpdateAgent.AgentID.ToString();
+            updateAgentCompanyIdTextbox.Text = UpdateAgent.CompanyID.ToString();
+            updateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
+            var listOfHomesalesAgents = (from hs in MainWindow.homeSalesCollection
+                                         from a in MainWindow.peopleCollection
+                                         where a.PersonID == hs.AgentID
+                                         select a.Agent).ToList();
+            //  TODO: Fix the output so it displays data in the combobox instead of entity wrappers
+            listOfExistingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
+            closeButton.Visibility = Visibility.Hidden;
+        }
+
         private void ShowCloseButtonOnly()
         {
             updatePersonPanel.Visibility = Visibility.Collapsed;
@@ -154,6 +196,24 @@ namespace HomeSalesTrackerApp.CrudWindows
                 case "REALESTATECOMPANY":
                     {
                         LoadRECoPanel();
+                        break;
+                    }
+                case "HOMESALE":
+                    {
+                        LoadHomeSalesPanel();
+                        break;
+                    }
+                case "OWNER":
+                    {
+                        break;
+                    }
+                case "BUYER":
+                    {
+                        break;
+                    }
+                case "AGENT":
+                    {
+                        LoadAgentPanel();
                         break;
                     }
                 default:
@@ -243,5 +303,14 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
+        private void UpdateChangedHomeSalesFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

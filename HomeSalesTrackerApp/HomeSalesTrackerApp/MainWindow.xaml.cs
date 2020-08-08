@@ -249,77 +249,13 @@ namespace HomeSalesTrackerApp
             //  5)  Propagate update to the Entities (save to DB)
             //  6)  Allow user to abandon this process
 
+            //  TODO: Complete MenuUpdateHomeAsSold_Click method
 
+            //  TODO: Save to Entities
+            LogicBroker.SaveEntity<HomeSale>(new HomeSale()); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //List<HomeSale> homesSalesForSale = homeSalesCollection.Where(hs => hs.SoldDate == null).ToList();
-
-            //var searchResultsForSale = new List<Home>();
-            //var searchTerms = new List<string>();
-            //string searchTermsText = searchTermsTextbox.Text;
-            //searchTerms = FormatSearchTerms(searchTermsText);
-
-            //HomeSalesSearchHelper(ref searchResultsForSale, ref searchTerms, false);
-
-            //var searchResult = (from hsForSale in homesSalesForSale
-            //                    from srForSale in searchResultsForSale
-            //                    where srForSale.HomeID == hsForSale.HomeID
-            //                    select hsForSale).ToList();
-
-            //int selectedHomeID = -1;
-
-            //if (searchResult.Count > 1)
-            //{
-            //    DisplayStatusMessage("More than one Home For Sale found. Refine your search terms and try again.");
-            //}
-            //else if (searchResult.Count == 0)
-            //{
-            //    DisplayStatusMessage("No Homes For Sale found. Refine your search terms and try again.");
-            //}
-
-            //else
-            //{
-            //    selectedHomeID = searchResult.First().HomeID;
-            //    HomeSale homeSaleToUpdate = homeSalesCollection.FirstOrDefault(hs => hs.HomeID == selectedHomeID);
-
-                
-
-            //    homeSaleToUpdate.SaleAmount = 0m;   //  TODO: get SaleAmount (decimal) from user
-            //    homeSaleToUpdate.BuyerID = 0;   //  TODO: get new or existing BuyerID information
-            //    homeSaleToUpdate.SoldDate = new DateTime(2020, 7, 31);  //  TODO: get new SoldDate from user
-
-            //    Home homeToUpdate = homesCollection.FirstOrDefault(h => h.HomeID == selectedHomeID);
-            //    homeToUpdate.OwnerID = 0;   //  TODO: acquire the PersonID and insert it here
-
-                //  TODO: Save to Entities
-                LogicBroker.SaveEntity<HomeSale>(new HomeSale()); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
-
-                InitializeCollections();
-            //}
-
+            //  Update collections
+            InitializeCollections();
         }
 
         /// <summary>
@@ -526,7 +462,7 @@ namespace HomeSalesTrackerApp
             //  take a selected HomeForSale item and pass it to UpdaterWindow with arguments to update HomeSale
             UpdaterWindow uw = new UpdaterWindow();
             uw.UpdateType = "HomeSale";
-
+            uw.Show();
         }
 
         private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
@@ -536,7 +472,30 @@ namespace HomeSalesTrackerApp
 
         private void menuUpdateAgent_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  when a HomeSale is selected in the Search Results window
+            //  this menu item can be used to change the Agent (new or existing)
+            var selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+
+            Agent hsAgent = (from h in homesCollection
+                             from hs in homeSalesCollection
+                             from a in peopleCollection
+                             where h.HomeID == selectedHomesaleView.HomeID
+                             where hs.HomeID == selectedHomesaleView.HomeID
+                             where a.PersonID == hs.AgentID
+                             select a.Agent).FirstOrDefault();
+
+            HomeSale homesale = (from hs in homeSalesCollection
+                                 from h in homesCollection
+                                 where selectedHomesaleView.Address == h.Address &&
+                                 selectedHomesaleView.Zip == h.Zip
+                                 where hs.HomeID == h.HomeID
+                                 select hs).FirstOrDefault();
+
+            UpdaterWindow uw = new UpdaterWindow();
+            uw.UpdateType = "Agent";
+            uw.UpdateAgent = hsAgent;
+            uw.UpdateHomeSale = homesale;
+            uw.Show();
         }
 
         private void menuUpdateBuyer_Click(object sender, RoutedEventArgs e)
@@ -624,8 +583,8 @@ namespace HomeSalesTrackerApp
 
         class HomeForSaleView : HomeSearchView
         {
-            public Decimal SaleAmount { get; set; } //= hs.SaleAmount,
-            public DateTime MarketDate { get; set; } //= hs.MarketDate
+            public Decimal SaleAmount { get; set; }
+            public DateTime MarketDate { get; set; }
             public HomeForSaleView() { }
 
             public override string ToString()
