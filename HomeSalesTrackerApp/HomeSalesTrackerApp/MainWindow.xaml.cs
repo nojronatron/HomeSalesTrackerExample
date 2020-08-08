@@ -6,6 +6,7 @@ using HSTDataLayer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
@@ -165,7 +166,7 @@ namespace HomeSalesTrackerApp
                 //  deliver results to the screen
                 var results = (from h in searchResults
                                where h != null
-                               select new
+                               select new HomeSearchView
                                {
                                    HomeID = h.HomeID,
                                    Address = h.Address,
@@ -247,50 +248,77 @@ namespace HomeSalesTrackerApp
             //          OwnerID (add if not in the system for same person as buyer)
             //  5)  Propagate update to the Entities (save to DB)
             //  6)  Allow user to abandon this process
-            List<HomeSale> homesSalesForSale = homeSalesCollection.Where(hs => hs.SoldDate == null).ToList();
 
-            var searchResultsForSale = new List<Home>();
-            var searchTerms = new List<string>();
-            string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms(searchTermsText);
 
-            HomeSalesSearchHelper(ref searchResultsForSale, ref searchTerms, false);
 
-            var searchResult = (from hsForSale in homesSalesForSale
-                                from srForSale in searchResultsForSale
-                                where srForSale.HomeID == hsForSale.HomeID
-                                select hsForSale).ToList();
 
-            int selectedHomeID = -1;
 
-            if (searchResult.Count > 1)
-            {
-                DisplayStatusMessage("More than one Home For Sale found. Refine your search terms and try again.");
-            }
-            else if (searchResult.Count == 0)
-            {
-                DisplayStatusMessage("No Homes For Sale found. Refine your search terms and try again.");
-            }
 
-            else
-            {
-                selectedHomeID = searchResult.First().HomeID;
-                HomeSale homeSaleToUpdate = homeSalesCollection.FirstOrDefault(hs => hs.HomeID == selectedHomeID);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //List<HomeSale> homesSalesForSale = homeSalesCollection.Where(hs => hs.SoldDate == null).ToList();
+
+            //var searchResultsForSale = new List<Home>();
+            //var searchTerms = new List<string>();
+            //string searchTermsText = searchTermsTextbox.Text;
+            //searchTerms = FormatSearchTerms(searchTermsText);
+
+            //HomeSalesSearchHelper(ref searchResultsForSale, ref searchTerms, false);
+
+            //var searchResult = (from hsForSale in homesSalesForSale
+            //                    from srForSale in searchResultsForSale
+            //                    where srForSale.HomeID == hsForSale.HomeID
+            //                    select hsForSale).ToList();
+
+            //int selectedHomeID = -1;
+
+            //if (searchResult.Count > 1)
+            //{
+            //    DisplayStatusMessage("More than one Home For Sale found. Refine your search terms and try again.");
+            //}
+            //else if (searchResult.Count == 0)
+            //{
+            //    DisplayStatusMessage("No Homes For Sale found. Refine your search terms and try again.");
+            //}
+
+            //else
+            //{
+            //    selectedHomeID = searchResult.First().HomeID;
+            //    HomeSale homeSaleToUpdate = homeSalesCollection.FirstOrDefault(hs => hs.HomeID == selectedHomeID);
 
                 
 
-                homeSaleToUpdate.SaleAmount = 0m;   //  TODO: get SaleAmount (decimal) from user
-                homeSaleToUpdate.BuyerID = 0;   //  TODO: get new or existing BuyerID information
-                homeSaleToUpdate.SoldDate = new DateTime(2020, 7, 31);  //  TODO: get new SoldDate from user
+            //    homeSaleToUpdate.SaleAmount = 0m;   //  TODO: get SaleAmount (decimal) from user
+            //    homeSaleToUpdate.BuyerID = 0;   //  TODO: get new or existing BuyerID information
+            //    homeSaleToUpdate.SoldDate = new DateTime(2020, 7, 31);  //  TODO: get new SoldDate from user
 
-                Home homeToUpdate = homesCollection.FirstOrDefault(h => h.HomeID == selectedHomeID);
-                homeToUpdate.OwnerID = 0;   //  TODO: acquire the PersonID and insert it here
+            //    Home homeToUpdate = homesCollection.FirstOrDefault(h => h.HomeID == selectedHomeID);
+            //    homeToUpdate.OwnerID = 0;   //  TODO: acquire the PersonID and insert it here
 
                 //  TODO: Save to Entities
-                LogicBroker.SaveEntity<HomeSale>(homeSaleToUpdate); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
+                LogicBroker.SaveEntity<HomeSale>(new HomeSale()); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
 
                 InitializeCollections();
-            }
+            //}
 
         }
 
@@ -322,7 +350,6 @@ namespace HomeSalesTrackerApp
                 if (homeSaleToRemove != null)
                 {
                     LogicBroker.RemoveEntity<HomeSale>(homeSaleToRemove);
-                    //homeSalesCollection.Remove(homeSaleToRemove.SaleID);
                     InitializeCollections();
 
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
@@ -582,22 +609,28 @@ namespace HomeSalesTrackerApp
             }
         }
 
-
-        class HomeForSaleView
+        class HomeSearchView
         {
-            public int HomeID { get; set; }// = h.HomeID,
-            public string Address { get; set; }// = h.Address,
-            public string City { get; set; }// = h.City,
-            public string State { get; set; }// = h.State,
-            public string Zip { get; set; } //  maybe add this as a get return: $"{h.Zip:#####-####}"
+            public int HomeID { get; set; }
+            public string Address { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+            public string Zip { get; set; } 
+            public override string ToString()
+            {
+                return $"{ this.HomeID }{ this.Address }{ this.City }{ this.State }{ this.Zip }";
+            }
+        }
+
+        class HomeForSaleView : HomeSearchView
+        {
             public Decimal SaleAmount { get; set; } //= hs.SaleAmount,
             public DateTime MarketDate { get; set; } //= hs.MarketDate
             public HomeForSaleView() { }
 
             public override string ToString()
             {
-                //$"{h.Zip:#####-####}"
-                return $"{HomeID}{Address}{City}{State}{Zip:#####-####}{MarketDate}";
+                return $"{ base.ToString() }{this.SaleAmount:C2}{ this.MarketDate }";
             }
         }
 
