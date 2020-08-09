@@ -1,0 +1,38 @@
+﻿<Window x:Class="HomeSalesTrackerApp.BuyersResultsReport"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        mc:Ignorable="d"
+        Title="BuyersResultsReport" Height="450" Width="800"
+        Loaded="Window_Loaded" >
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Refresh" Click="MenuRefresh_Click"/>
+                <MenuItem Header="_Exit" Click="MenuExit_Click"/>
+            </MenuItem>
+            <Separator/>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
+            <StatusBarItem>
+                <TextBlock x:Name="statusBarText" Text="" TextAlignment="Center" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
+        <ListView x:Name="buyersResultsListView" ItemsSource="{Binding}" >
+            <ListView.View>
+                <GridView AllowsColumnReorder="True" ColumnHeaderToolTip="Buyers List"  TextBlock.TextAlignment="Center" >
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=PersonID}" Header="ID" Width="20" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FirstName}" Header="First Name" Width="110" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=LastName}" Header="Last Name" Width="110"  />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Phone}" Header="Phone" Width="110" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Email}" Header="Email" Width="200" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=CreditRating}" Header="Credit Rating" Width="80"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+
+</Window>

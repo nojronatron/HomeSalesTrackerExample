@@ -1,5 +1,5 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
-
+using HomeSalesTrackerApp.DisplayModels;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 
@@ -393,7 +393,24 @@ namespace HomeSalesTrackerApp
 
         private void menuDisplayBuyers_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  Display all Buyers: personid, fname, lname, phone, email, preferred lender
+            var foundBuyers = (from p in peopleCollection
+                                                from b in homeSalesCollection
+                                                where b.BuyerID == p.PersonID
+                                                select new FoundBuyerView
+                                                {
+                                                   PersonID = p.PersonID,
+                                                   FirstName = p.FirstName,
+                                                   LastName = p.LastName,
+                                                   Phone = p.Phone,
+                                                   Email = p.Email ?? null,
+                                                   CreditRating = b.Buyer.CreditRating ?? 0
+                                                });
+            BuyersResultsReport brr = new BuyersResultsReport();
+            brr.iFoundBuyers = foundBuyers;
+            brr.Show();
+            ClearSearchResultsViews();
+            DisplayStatusMessage("Ready");
         }
 
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)
@@ -502,7 +519,7 @@ namespace HomeSalesTrackerApp
 
         private void menuUpdateBuyer_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  
         }
 
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
@@ -527,7 +544,6 @@ namespace HomeSalesTrackerApp
         private void MenuSearchBuyers_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            FoundPeopleView.Visibility = Visibility.Visible;
 
         }
 
@@ -567,31 +583,6 @@ namespace HomeSalesTrackerApp
             else
             {
                 DisplayStatusMessage("Unable to update database with this home.");
-            }
-        }
-
-        class HomeSearchView
-        {
-            public int HomeID { get; set; }
-            public string Address { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public string Zip { get; set; } 
-            public override string ToString()
-            {
-                return $"{ this.HomeID }{ this.Address }{ this.City }{ this.State }{ this.Zip }";
-            }
-        }
-
-        class HomeForSaleView : HomeSearchView
-        {
-            public Decimal SaleAmount { get; set; }
-            public DateTime MarketDate { get; set; }
-            public HomeForSaleView() { }
-
-            public override string ToString()
-            {
-                return $"{ base.ToString() }{this.SaleAmount:C2}{ this.MarketDate }";
             }
         }
 

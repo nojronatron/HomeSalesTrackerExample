@@ -35,11 +35,5 @@ namespace HomeSalesTrackerApp
             statusBarText.Text = message.Trim().ToString();
         }
 
-        private void menuRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            agentsResultsListView.ItemsSource = null;
-            DisplayStatusMessage("Refreshed report output.");
-        }
-
     }
 }

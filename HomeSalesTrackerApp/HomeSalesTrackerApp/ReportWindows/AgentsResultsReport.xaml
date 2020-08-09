@@ -11,9 +11,6 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Exit" Click="menuExit_Click"/>
             </MenuItem>
-            <MenuItem Header="_Edit">
-                <MenuItem Header="_Refresh" Click="menuRefresh_Click"/>
-            </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>
