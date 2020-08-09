@@ -6,7 +6,7 @@ using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
-    public class PeopleCollection<T> : IEnumerator<T>, IEnumerable<T>, IObservable<T>
+    public class PeopleCollection<T> : ICollection<T>, IEnumerable<T>, IObservable<T>
                             where T : Person
     {
         public delegate void CollectionChangedHandler(Person person);
@@ -14,7 +14,7 @@ namespace HomeSalesTrackerApp
 
 
         private static List<T> _peopleList = null;
-        private static int position = -1;
+        private static int position = 0;
         public int Count => _peopleList.Count;
 
         /// <summary>
@@ -31,7 +31,9 @@ namespace HomeSalesTrackerApp
         }
 
         public T Current => _peopleList[position];
-        object IEnumerator.Current => _peopleList[position];
+        //object IEnumerator.Current => _peopleList[position];
+
+        public bool IsReadOnly => ((ICollection<T>)_peopleList).IsReadOnly;
 
         /// <summary>
         /// Allows caller to add a Person to the Collection based on PersonID
@@ -58,31 +60,31 @@ namespace HomeSalesTrackerApp
 
         public void Dispose()
         {
-            //  noop
+            position = -1;
         }
 
-        /// <summary>
-        /// IEnumerator T GetEnumerator() implementation by Carl.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return ((IEnumerable<T>)_peopleList).GetEnumerator();
-        }
+        ///// <summary>
+        ///// IEnumerator T GetEnumerator() implementation by Carl.
+        ///// </summary>
+        ///// <returns></returns>
         //public IEnumerator<T> GetEnumerator()
         //{
-        //    return (IEnumerator<T>)this;
+        //    return ((IEnumerable<T>)_peopleList).GetEnumerator();
         //}
+        ////public IEnumerator<T> GetEnumerator()
+        ////{
+        ////    return (IEnumerator<T>)this;
+        ////}
 
 
-        /// <summary>
-        /// IEnumerator IEnumerable.GetEnumerator() implementation by Carl.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)this;
-        }
+        ///// <summary>
+        ///// IEnumerator IEnumerable.GetEnumerator() implementation by Carl.
+        ///// </summary>
+        ///// <returns></returns>
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    return (IEnumerator)this;
+        //}
 
         public bool MoveNext()
         {
@@ -147,6 +149,41 @@ namespace HomeSalesTrackerApp
         IDisposable IObservable<T>.Subscribe(IObserver<T> observer)
         {
             throw new NotImplementedException();
+        }
+
+        void ICollection<T>.Add(T item)
+        {
+            ((ICollection<T>)_peopleList).Add(item);
+        }
+
+        public void Clear()
+        {
+            ((ICollection<T>)_peopleList).Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return ((ICollection<T>)_peopleList).Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            ((ICollection<T>)_peopleList).CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(T item)
+        {
+            return ((ICollection<T>)_peopleList).Remove(item);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return ((IEnumerable<T>)_peopleList).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<T>)_peopleList).GetEnumerator();
         }
     }
 }
