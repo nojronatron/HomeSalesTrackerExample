@@ -30,7 +30,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         public AddPersonWindow()
         {
             InitializeComponent();
-            this.Title = "wowzers";
+            this.Title = "Add Person";
+            
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)

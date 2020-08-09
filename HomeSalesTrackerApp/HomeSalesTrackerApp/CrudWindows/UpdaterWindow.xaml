@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="Entry Editor" Height="540" Width="280" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="Entry Editor" Height="800" Width="280" Closing="Window_Closing" Loaded="Window_Loaded">
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
             <MenuItem Header="_File">
@@ -23,6 +23,7 @@
 
             <DockPanel x:Name="updateHomePanel" Margin="10,10" Visibility="Collapsed" 
                    HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Update Existing Home" Height="27" DockPanel.Dock="Top" FontWeight="Bold"/>
                 <Label Content="Home ID" Height="25" DockPanel.Dock="Top" />
                 <TextBox x:Name="homeIdTextBox" Text="" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
                 <Label Content="Address (Required)" Height="25" DockPanel.Dock="Top"  />
@@ -40,40 +41,64 @@
 
             <DockPanel x:Name="updateHomeSalesPanel" Margin="10,10" Visibility="Collapsed" 
                    HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Update Existing Home For Sale" Height="27" DockPanel.Dock="Top" FontWeight="Bold" />
+
                 <Label Content="Sale ID" Height="25" DockPanel.Dock="Top" />
-                <TextBox x:Name="homeSalesSaleIdTextBox" Text="" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
-                <Label Content="Home ID" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesSaleHomeIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-                <Label Content="Agent ID" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesAgentIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="hfsSaleIdTextBox" Text="(show hfsHomeID)" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
+
+                <Label Content="Sale ID (bound)" Height="25" DockPanel.Dock="Top" />
+                <TextBox x:Name="hfsSaleIdTextBoxBound" Text="{Binding TestMessage}" Height="25" IsReadOnly="True" DockPanel.Dock="Top" />
+                
+                <Label Content="Home For Sale" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="hfsHomeIdTextbox" Text="(should show home address and zip)" IsReadOnly="True" Height="25" DockPanel.Dock="Top" />
+                <Separator Height="5" DockPanel.Dock="Top" Margin="0,5" />
+
+                <Label Content="Sold Date" Height="25" DockPanel.Dock="Top" />
+                <!--<TextBox x:Name="hfsSoldDateTextBox" Text="" Height="25" DockPanel.Dock="Top" />-->
+                <DatePicker SelectedDate="2020-08-08" x:Name="hfsSoldDatePicker" Height="27" DockPanel.Dock="Top" Margin="0,5"></DatePicker>
                 <Label Content="Sale Amount" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesSaleAmountTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-                <Label Content="Buyer ID" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesBuyerIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="hfsSaleAmountTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Buyer" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="hfsBuyerIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <ComboBox x:Name="hfsExistingBuyersCombobox" ItemsSource="{Binding}" DockPanel.Dock="Top" Margin="0,10,0,0" />
+                <Separator Height="5" DockPanel.Dock="Top" Margin="0,5" />
+
                 <Label Content="Market Date" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesMarketDateTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-                <Label Content="Company ID" Height="25" DockPanel.Dock="Top"  />
-                <TextBox x:Name="homeSalesCompanyIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <!--<TextBox x:Name="hfsMarketDateTextbox" Text="" Height="25" DockPanel.Dock="Top"  />-->
+                <DatePicker SelectedDate="2020-08-08" x:Name="hfsMarketDatePicker" Height="27" DockPanel.Dock="Top" Margin="0,5" IsEnabled="False" ></DatePicker>
+                <Separator Height="5" DockPanel.Dock="Top" Margin="0,5" />
+
+                <Label Content="Agent" Height="27" DockPanel.Dock="Top"  />
+                <TextBox x:Name="homeAgentTextbox" Text="(agent name)" Height="25" DockPanel.Dock="Top"  />
+                <ComboBox x:Name="hfsExistingAgentsCombobox" ItemsSource="{Binding}" DockPanel.Dock="Top" Margin="0,10,0,0" />
+                <Separator Height="5" DockPanel.Dock="Top" Margin="0,5" />
+
+                <Label Content="Real Estate Company" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="hfsCompanyIdTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <ComboBox x:Name="hfsExistingRecosCombobox" ItemsSource="{Binding}" DockPanel.Dock="Top" Margin="0,10,0,0" />
+
                 <Separator Margin="0,10" DockPanel.Dock="Top"  />
-                <Button x:Name="updateChangedHomeSalesFields" Content="Update Changes" Height="25" Margin="5,5" 
-                    Click="UpdateChangedHomeSalesFieldsButton_Click" DockPanel.Dock="Top"  />
+                <Button x:Name="updateChangedHfsFields" Content="Update Changes" Height="25" Margin="5,5" 
+                    Click="UpdateChangedHfsFieldsButton_Click" DockPanel.Dock="Top"  />
             </DockPanel>
 
             <DockPanel x:Name="updateRealEstateCoPanel" Margin="10,10" Visibility="Collapsed"
                     HorizontalAlignment="Stretch" MinWidth="250" >
-            <Label Content="Company ID" Height="25" DockPanel.Dock="Top" />
-            <TextBox x:Name="companyIdTextBox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
-            <Label Content="Company Name (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="companyNameTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Label Content="Phone (Required)" Height="25" DockPanel.Dock="Top"  />
-            <TextBox x:Name="companyPhoneTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
-            <Separator Margin="0,10" DockPanel.Dock="Top"  />
-            <Button x:Name="updateChangedRECoFields" Content="Update Changes" Height="25" Margin="5,5" 
+                <Label Content="Update Existing Real Estate Company" Height="27" DockPanel.Dock="Top" FontWeight="Bold" />
+                <Label Content="Company ID" Height="25" DockPanel.Dock="Top" />
+                <TextBox x:Name="companyIdTextBox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
+                <Label Content="Company Name (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="companyNameTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Label Content="Phone (Required)" Height="25" DockPanel.Dock="Top"  />
+                <TextBox x:Name="companyPhoneTextbox" Text="" Height="25" DockPanel.Dock="Top"  />
+                <Separator Margin="0,10" DockPanel.Dock="Top"  />
+                <Button x:Name="updateChangedRECoFields" Content="Update Changes" Height="25" Margin="5,5" 
                     Click="UpdateChangedRecoFieldsButton_Click" MinWidth="25" DockPanel.Dock="Top"  />
         </DockPanel>
 
             <DockPanel x:Name="updatePersonPanel" Margin="10,10" Visibility="Collapsed" 
                     HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Update Existing Person" Height="27" DockPanel.Dock="Top" FontWeight="Bold" />
                 <Label Content="Person ID" Height="25"  DockPanel.Dock="Top" />
                 <TextBox x:Name="personIdTextbox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
                 <Label Content="First name (Required)" Height="25" DockPanel.Dock="Top"  />
@@ -90,8 +115,9 @@
             </DockPanel>
 
 
-            <DockPanel x:Name="updateAgentPanel" Margin="10,10" Visibility="Visible" 
+            <DockPanel x:Name="updateAgentPanel" Margin="10,10" Visibility="Collapsed" 
                     HorizontalAlignment="Stretch" MinWidth="250" >
+                <Label Content="Update Existing Agent" Height="27" DockPanel.Dock="Top" FontWeight="Bold" />
                 <Label Content="Agent ID" Height="25"  DockPanel.Dock="Top" />
                 <TextBox x:Name="updateAgentAgentIdTextbox" Text="" Height="25" IsReadOnly="True"  DockPanel.Dock="Top" />
                 <Label Content="Agent Name" Height="25" DockPanel.Dock="Top" />

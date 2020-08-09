@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
@@ -35,14 +36,6 @@ namespace HomeSalesTrackerApp
         public static HomeSalesCollection homeSalesCollection = null;
         public static RealEstateCosCollection reCosCollection = null;
 
-        public Person APerson { get; set; }
-        public Owner AnOwner { get; set; }
-        public Home AHome { get; set; }
-        public RealEstateCompany RECo { get; set; }
-        public Agent AnAgent { get; set; }
-        public Buyer ABuyer { get; set; }
-        public HomeSale AHomeSale { get; set; }
-
         public static Person NewPersonAddedToCollection { get; set; }
 
         public MainWindow()
@@ -54,8 +47,6 @@ namespace HomeSalesTrackerApp
         {
             if (App.DatabaseLoadCompleted)
             {
-                //peopleCollection = new PeopleCollection<Person>();
-                //peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
                 InitializeCollections();
                 DisplayStatusMessage("Database data loaded.");
             };
@@ -116,10 +107,14 @@ namespace HomeSalesTrackerApp
 
         private void ClearFieldsButton_Click(object sender, RoutedEventArgs e)
         {
-            //searchResultsListview.ItemsSource = null;
-            searchTermsTextbox.Text = string.Empty;
+            ClearSearchTermsTextbox();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready.");
+        }
+
+        private void ClearSearchTermsTextbox()
+        {
+            searchTermsTextbox.Text = string.Empty;
         }
 
         private void ClearSearchResultsViews()
@@ -129,6 +124,8 @@ namespace HomeSalesTrackerApp
             FoundSoldHomesView.Visibility = Visibility.Hidden;
             FoundPeopleView.Visibility = Visibility.Hidden;
         }
+
+
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -232,7 +229,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// NEED TO FINISH IMPLEMENTING!! Use the Search textbox and UpdateHomeAsSold Menu Item to search for and update a HomeSale, Home, and OwnerID.
+        /// Use the Search textbox and UpdateHomeAsSold Menu Item to search for and update a HomeSale, Home, and OwnerID.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -251,8 +248,64 @@ namespace HomeSalesTrackerApp
 
             //  TODO: Complete MenuUpdateHomeAsSold_Click method
 
-            //  TODO: Save to Entities
-            LogicBroker.SaveEntity<HomeSale>(new HomeSale()); //  context.Save() will update db with changes only according to text in "Pro C# 7" book
+            //  lots of opportunity for data to be missing or incorrect for this opereration so track error messages for return when canceling out
+            StringBuilder statusMessage = new StringBuilder("Ok. ");
+
+            //  take a selected HomeForSale item and use it to pre-load the UpdaterWindow Sold HomeForSale panel
+            HomeForSaleView selectedHomesaleView = null;
+            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            FoundHomesForSaleView.SelectedIndex = -1;
+
+            var homeid = selectedHomesaleView.HomeID;
+            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+                                                                  .FirstOrDefault();
+
+            Home hfsHome = new Home();
+            hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
+            if (hfsHome != null)
+            {
+                Person hfsAgent = new Person();
+                hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
+
+                //  Agent must have a CompanyID
+                if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                {
+                    RealEstateCompany hfsReco = new RealEstateCompany();
+                    hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                    if (hfsReco != null)
+                    {
+                        //  pass selected HomeForSale to UpdaterWindow 
+                        UpdaterWindow uw = new UpdaterWindow();
+                        uw.UpdateType = "HomeSold";
+                        uw.UpdateHomeSale = hfsHomesale;
+                        uw.UpdateAgent = hfsAgent.Agent;
+                        uw.UpdateAgentPerson = hfsAgent;
+                        uw.UpdateBuyerPerson = new Person();
+                        uw.UpdateBuyer = new Buyer();
+                        uw.UpdateHome = hfsHome;
+                        uw.UpdateReco = hfsReco;
+                        DisplayStatusMessage("Loading update window");
+                        uw.Show();
+
+                    }
+                    else
+                    {
+                        statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
+                    }
+                }
+                else
+                {
+                    statusMessage.Append($"Agent not associated with a Real Estate Co. ");
+                }
+            }
+            else
+            {
+                statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
+            }
+            if (statusMessage.Length > 4)
+            {
+                DisplayStatusMessage(statusMessage.ToString());
+            }
 
             //  Update collections
             InitializeCollections();
@@ -377,11 +430,17 @@ namespace HomeSalesTrackerApp
             apw.Show();
         }
 
+        /// <summary>
+        /// Regardless of Search results, add a new Buyer instance to the DB and attach it to a new or existing Person instance.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuAddBuyer_Click(object sender, RoutedEventArgs e)
         {
             AddPersonWindow apw = new AddPersonWindow();
             apw.AddType = "Buyer";
             apw.Show();
+            ClearSearchResultsViews();
         }
 
 
@@ -391,7 +450,7 @@ namespace HomeSalesTrackerApp
             shr.Show();
         }
 
-        private void menuDisplayBuyers_Click(object sender, RoutedEventArgs e)
+        private void MenuDisplayBuyers_Click(object sender, RoutedEventArgs e)
         {
             //  Display all Buyers: personid, fname, lname, phone, email, preferred lender
             var foundBuyers = (from p in peopleCollection
@@ -409,6 +468,7 @@ namespace HomeSalesTrackerApp
             BuyersResultsReport brr = new BuyersResultsReport();
             brr.iFoundBuyers = foundBuyers;
             brr.Show();
+            foundBuyers = null;
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
         }
@@ -428,9 +488,9 @@ namespace HomeSalesTrackerApp
             MessageBox.Show(messageBoxText, messageBoxCaption, button, icon);
         }
 
-        private void modifyItemButton_Click(object sender, RoutedEventArgs e)
+        private void getItemDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            DisplayStatusMessage("Modify button not yet implemented");
+            DisplayStatusMessage("Detail button not yet implemented");
 
         }
 
@@ -460,10 +520,26 @@ namespace HomeSalesTrackerApp
             foreach (var searchTerm in searchTerms)
             {
                 string capSearchTerm = searchTerm.ToUpper().Trim();
+                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.HomeID.ToString().Contains(capSearchTerm)));
                 searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.Address.ToUpper().Contains(capSearchTerm)));
                 searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.City.ToUpper().Contains(capSearchTerm)));
                 searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.State.ToUpper().Contains(capSearchTerm)));
                 searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.Zip.Contains(searchTerm)));
+            }
+
+            searchResults.Distinct();
+        }
+
+        private static void PersonSearchHelper(ref List<Person> searchResults, ref List<string> searchTerms)
+        {
+            foreach (var searchTerm in searchTerms)
+            {
+                string capSearchTerm = searchTerm.ToUpper().Trim();
+                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.PersonID.ToString().Contains(capSearchTerm)));
+                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.FirstName.ToUpper().Contains(capSearchTerm)));
+                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.LastName.ToUpper().Contains(capSearchTerm)));
+                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.Phone.ToUpper().Contains(capSearchTerm)));
+                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => !string.IsNullOrEmpty(p.Email) && p.Email.ToUpper().Contains(capSearchTerm)));
             }
 
             searchResults.Distinct();
@@ -476,10 +552,70 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
-            //  take a selected HomeForSale item and pass it to UpdaterWindow with arguments to update HomeSale
-            UpdaterWindow uw = new UpdaterWindow();
-            uw.UpdateType = "HomeSale";
-            uw.Show();
+            //  lots of opportunity for data to be missing or incorrect for this opereration so track error messages for return when canceling out
+            StringBuilder statusMessage = new StringBuilder("Ok. ");
+
+            //  take a selected HomeForSale item and 
+            HomeForSaleView selectedHomesaleView = null;
+            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            FoundHomesForSaleView.SelectedIndex = -1;
+
+            var homeid = selectedHomesaleView.HomeID;
+            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+                                                                  .FirstOrDefault();
+
+            Home hfsHome = new Home();
+            hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
+            if (hfsHome != null)
+            {
+                Person hfsBuyer = new Person();
+                hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
+                if (hfsBuyer != null)
+                {
+                    Person hfsAgent = new Person();
+                    hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
+
+                    //  Agent must have a CompanyID
+                    if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                    {
+                        RealEstateCompany hfsReco = new RealEstateCompany();
+                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                        if (hfsReco != null)
+                        {
+                            //  pass selected HomeForSale to UpdaterWindow 
+                            UpdaterWindow uw = new UpdaterWindow();
+                            uw.UpdateType = "HomeSale";
+                            uw.UpdateHomeSale = hfsHomesale;
+                            uw.UpdateAgent = hfsAgent.Agent;
+                            uw.UpdateAgentPerson = hfsAgent;
+                            uw.UpdateBuyer = hfsBuyer.Buyer;
+                            uw.UpdateBuyerPerson = hfsBuyer;
+                            uw.UpdateHome = hfsHome;
+                            uw.UpdateReco = hfsReco;
+                            DisplayStatusMessage("Loading update window");
+                            uw.Show();
+
+                        }
+                        else
+                        {
+                            statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
+                        }
+                    }
+                    else
+                    {
+                        statusMessage.Append($"Agent not associated with a Real Estate Co. ");
+                    }
+                }
+                else
+                {
+                    statusMessage.Append($"Buyer record not found. ");
+                }
+            }
+            statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
+            if(statusMessage.Length > 4)
+            {
+                DisplayStatusMessage(statusMessage.ToString());
+            }
         }
 
         private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
@@ -493,10 +629,10 @@ namespace HomeSalesTrackerApp
             //  this menu item can be used to change the Agent (new or existing)
             HomeForSaleView selectedHomesaleView = null;
             selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
-            FoundHomesForSaleView.SelectedItem = -1;    //  always clear the combobox before moving on
+            FoundHomesForSaleView.SelectedItem = -1;    //  clear the selection on the combobox
 
             var homeid = selectedHomesaleView.HomeID;
-            HomeSale homesaleByID = MainWindow.homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+            HomeSale homesaleByID = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
                                                                   .FirstOrDefault();
             Agent homesaleAgent = new Agent()
             {
@@ -544,6 +680,44 @@ namespace HomeSalesTrackerApp
         private void MenuSearchBuyers_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
+            var searchResults = new List<Person>();
+            var searchTerms = new List<String>();
+            string searchTermsText = searchTermsTextbox.Text;
+            string[] searchTermsArr = searchTermsText.Split(',');
+            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
+
+            if (searchTerms.Count > 0)
+            {
+                PersonSearchHelper(ref searchResults, ref searchTerms);
+            }
+
+            if (searchResults.Count > 0)
+            {
+                //  deliver results to the screen
+                var results = (from p in searchResults
+                               from b in homeSalesCollection
+                               where p != null && b.BuyerID == p.PersonID
+                               select new FoundBuyerView
+                               {
+                                   BuyerID = p.PersonID,
+                                   FirstName = p.FirstName,
+                                   LastName = p.LastName,
+                                   Phone = p.Phone,
+                                   Email = p.Email,
+                                   CreditRating = p.Buyer.CreditRating,
+                                   OwnerBuyerAgent = "Buyer"
+                               });
+
+                var listResults = results.ToList();
+                FoundPeopleView.ItemsSource = listResults;
+                FoundPeopleView.Visibility = Visibility.Visible;
+                DisplayStatusMessage($"Found { listResults.Count } Buyers. Select a result and use Update or Remove menus to make changes.");
+            }
+
+            if (searchTerms.Count < 1 || searchResults.Count < 1)
+            {
+                DisplayZeroResultsMessage();
+            }
 
         }
 

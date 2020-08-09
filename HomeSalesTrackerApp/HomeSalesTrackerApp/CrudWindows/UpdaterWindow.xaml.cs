@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.DisplayModels;
+using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace HomeSalesTrackerApp.CrudWindows
         
         public string UpdateType { get; set; }
         public Person UpdatePerson { get; set; }
+        public Person UpdateAgentPerson { get; set; }
+        public Person UpdateBuyerPerson { get; set; }
+        public Person UpdateOwnerPerson { get; set; }
+
         public Home UpdateHome { get; set; }
         public RealEstateCompany UpdateReco { get; set; }
         public HomeSale UpdateHomeSale { get; set; }
@@ -49,6 +54,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                     MainWindow.InitPeopleCollection();
                     MainWindow.InitHomesCollection();
                     MainWindow.InitRealEstateCompaniesCollection();
+                    MainWindow.InitHomeSalesCollection();
                 }
                 catch (Exception ex)
                 {
@@ -148,11 +154,112 @@ namespace HomeSalesTrackerApp.CrudWindows
             closeButton.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// Update Selected Home For Sale. Allows updating existing Agent (Person and Agent types) and Home (Home type).
+        /// </summary>
         private void LoadHomeSalesPanel()
         {
+            SetDatePickerDefaults();
 
-            closeButton.Visibility = Visibility.Hidden;
+            //  Attached requirements: Update a selected HomeForSale with new/existing Agent, or a new Home.
+            hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
+            string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
+            string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
+            hfsHomeIdTextbox.Text = homeForSaleAddressZip;
+            //hfsSoldDateTextBox.Text = UpdateHomeSale.SoldDate.ToString();
+            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
+            hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
+            hfsBuyerIdTextbox.Text = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
+
+            var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
+                                         from hs in MainWindow.homeSalesCollection
+                                         where p.PersonID == hs.BuyerID
+                                         select p).ToList();
+
+            hfsExistingBuyersCombobox.ItemsSource = hfsExistingBuyersList;
+
+            //hfsMarketDateTextbox.Text = UpdateHomeSale.MarketDate.ToString();   //  might have to manage datetime formatting
+            hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
+            hfsHomeIdTextbox.Text = $"{ UpdateAgentPerson.FirstName } { UpdateAgentPerson.LastName }";
+
+            var hfsExistingAgentsList = (from p in MainWindow.peopleCollection
+                                         from hs in MainWindow.homeSalesCollection
+                                         where p.PersonID == hs.AgentID
+                                         select p).ToList();
+
+            hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
+
+            hfsCompanyIdTextbox.Text = UpdateReco.CompanyID.ToString();
+            
+            closeButton.Visibility = Visibility.Visible;
         }
+
+        private void SetDatePickerDefaults()
+        {
+            DateTime date1 = new DateTime(2020, 1, 1, 0, 0, 0);
+            DateTime date2 = new DateTime(2020, 1, 11, 0, 0, 0);
+            TimeSpan fortnight = date2.Subtract(date1);
+            hfsSoldDatePicker.BlackoutDates.Add(new CalendarDateRange(DateTime.Now, DateTime.Now.Subtract(fortnight)));
+        }
+
+        /// <summary>
+        /// Update HomeForSale as Sold. Allows updating SoldDate, SaleAmount, and associate an existing Buyer of type Buyer and of type Person.
+        /// </summary>
+        private void LoadHomeSoldPanel()
+        {
+            SetDatePickerDefaults();
+            
+            //  Attached requirements: Only SoldDate, SaleAmount, and Buyer information can be edited
+            hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
+            string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
+            string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
+            
+            hfsHomeIdTextbox.IsReadOnly = true;
+            hfsHomeIdTextbox.Text = homeForSaleAddressZip;
+
+            //hfsSoldDateTextBox.Text = UpdateHomeSale.SoldDate.ToString();
+            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
+            hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
+            
+            //  BUYER INFO
+            hfsBuyerIdTextbox.IsReadOnly = true;
+            string buyerFirstLastname = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
+            hfsBuyerIdTextbox.Text = buyerFirstLastname;
+
+            var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
+                                         from hs in MainWindow.homeSalesCollection
+                                         where p.PersonID == hs.BuyerID
+                                         select p).ToList();
+
+            hfsExistingBuyersCombobox.ItemsSource = hfsExistingBuyersList;
+            var selectedBuyerIndex = hfsExistingBuyersList.FindIndex(p => p.PersonID == UpdateBuyerPerson.PersonID);
+            hfsExistingBuyersCombobox.SelectedIndex = selectedBuyerIndex;
+
+
+            //  MARKET DATE INFO
+            //hfsMarketDateTextbox.Text = UpdateHomeSale.MarketDate.ToString();
+            hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
+
+            hfsHomeIdTextbox.IsReadOnly = true;
+            hfsHomeIdTextbox.Text = $"{ UpdateAgentPerson.FirstName } { UpdateAgentPerson.LastName }";
+
+            var hfsExistingAgentsList = (from p in MainWindow.peopleCollection
+                                         from hs in MainWindow.homeSalesCollection
+                                         where p.PersonID == hs.AgentID
+                                         select p).ToList();
+
+            hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
+
+            hfsCompanyIdTextbox.IsReadOnly = true;
+            hfsCompanyIdTextbox.Text = UpdateReco.CompanyID.ToString();
+
+            closeButton.Visibility = Visibility.Visible;
+
+            //  Update button: Will save changes via LogicBroker
+            updateChangedHfsFields.Visibility = Visibility.Visible;
+        }
+
+
 
         private void LoadAgentPanel()
         {
@@ -202,6 +309,11 @@ namespace HomeSalesTrackerApp.CrudWindows
                 case "HOMESALE":
                     {
                         LoadHomeSalesPanel();
+                        break;
+                    }
+                case "HOMESOLD":
+                    {
+                        LoadHomeSoldPanel();
                         break;
                     }
                 case "OWNER":
@@ -304,9 +416,52 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
-        private void UpdateChangedHomeSalesFieldsButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateChangedHfsFieldsButton_Click(object sender, RoutedEventArgs e)
         {
+            if (UpdateHomeSale != null) {
+                if (UpdateType.Trim().ToUpper() == "HOMESOLD")
+                {
+                    //  the only field changes that matter are:
+                    //      SoldDate
+                    //      SaleAmount
+                    //      Buyer instance (from comboBox)
+                    //      Person instance of the Buyer that was selected
+                    var soldDate = hfsSoldDatePicker.SelectedDate.Value;
+                    Decimal saleAmount = Decimal.Parse(hfsSaleAmountTextbox.Text);
+                    Person buyerPerson = hfsExistingBuyersCombobox.SelectedItem as Person;
+                    Buyer selectedBuyer = (from hs in MainWindow.homeSalesCollection
+                                           where hs.BuyerID == buyerPerson.PersonID
+                                           select hs.Buyer).FirstOrDefault();
+                    if (buyerPerson == null)
+                    {
+                        DisplayStatusMessage("Buyer Person could not be selected.");
+                    }
+                    else
+                    {
+                        UpdateHomeSale.SoldDate = soldDate;
+                        UpdateHomeSale.SaleAmount = saleAmount;
+                        UpdateHomeSale.BuyerID = selectedBuyer.BuyerID;
+                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale)) 
+                        {
+                            DisplayStatusMessage("Home Sale saved to database!");
+                        }
+                        else
+                        {
+                            DisplayStatusMessage("No changes were saved.");
+                        }
+                    }
 
+                }
+                else
+                {
+                    DisplayStatusMessage("Cannot update HomeSale if it is missing.");
+                }
+
+            }
+            else
+            {
+                //  UpdateType is "HOMESALE"
+            }
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
