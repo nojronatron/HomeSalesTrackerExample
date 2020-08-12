@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    public class FoundBuyerView : PersonView
+    public class BuyerView : PersonView
     {
         public int BuyerID { get; set; }
         public string PreferredLender { get; set; }

@@ -70,13 +70,13 @@
     <Compile Include="CrudWindows\AddPersonWindow.xaml.cs">
       <DependentUpon>AddPersonWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrudWindows\PersonAddUpdateWindow.xaml.cs">
-      <DependentUpon>PersonAddUpdateWindow.xaml</DependentUpon>
+    <Compile Include="CrudWindows\PersonUpdaterWindow.xaml.cs">
+      <DependentUpon>PersonUpdaterWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrudWindows\UpdaterWindow.xaml.cs">
-      <DependentUpon>UpdaterWindow.xaml</DependentUpon>
+    <Compile Include="CrudWindows\HomeUpdaterWindow.xaml.cs">
+      <DependentUpon>HomeUpdaterWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DisplayModels\FoundBuyerView.cs" />
+    <Compile Include="DisplayModels\BuyerView.cs" />
     <Compile Include="DisplayModels\HomeForSaleView.cs" />
     <Compile Include="DisplayModels\HomeSearchView.cs" />
     <Compile Include="DisplayModels\PersonView.cs" />
@@ -101,11 +101,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CrudWindows\PersonAddUpdateWindow.xaml">
+    <Page Include="CrudWindows\PersonUpdaterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CrudWindows\UpdaterWindow.xaml">
+    <Page Include="CrudWindows\HomeUpdaterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

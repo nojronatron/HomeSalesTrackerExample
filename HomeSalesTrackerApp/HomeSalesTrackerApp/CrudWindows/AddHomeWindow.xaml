@@ -36,7 +36,7 @@
             <Separator Margin="0,5" />
             <Label Content="Select Owner from list below." HorizontalContentAlignment="Center" Height="25" Margin="0,5"
                    Background="Red" FontWeight="Bold" Foreground="White" />
-            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" DropDownOpened="OwnersComboBoxOpened" SelectionChanged="OwnerComboBox_SelectionChanged" />
+            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" SelectionChanged="OwnerComboBox_SelectionChanged" />
             <DockPanel>
                 <Label Content="If Owner not in list above, click Add Owner:" HorizontalAlignment="Right" Height="25" />
                 <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" Click="AddOwnerButton_click" Margin="5,5,5,5" />

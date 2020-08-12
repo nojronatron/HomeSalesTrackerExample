@@ -26,7 +26,7 @@
             <MenuItem Header="Add">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuAddHome_Click"></MenuItem>
-                <MenuItem Header="Homes For Sale" Click="menuAddHomesForSale_Click"></MenuItem>
+                <MenuItem Header="Homes For Sale" Click="MenuAddHomesForSale_Click"></MenuItem>
                 <MenuItem Header="Owner" Click="MenuAddOwner_Click"></MenuItem>
                 <MenuItem Header="Agent" Click="MenuAddAgent_Click"></MenuItem>
                 <MenuItem Header="Buyer" Click="MenuAddBuyer_Click"></MenuItem>
@@ -39,7 +39,7 @@
                 <MenuItem Header="Sold Home" Click="menuUpdateSoldHome_Click"></MenuItem>
                 <MenuItem Header="Owner" Click="menuUpdateOwner_Click"></MenuItem>
                 <MenuItem Header="Agent" Click="menuUpdateAgent_Click"></MenuItem>
-                <MenuItem Header="Buyer" Click="menuUpdateBuyer_Click"></MenuItem>
+                <MenuItem Header="Buyer" Click="MenuUpdateBuyer_Click"></MenuItem>
                 <MenuItem Header="Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>

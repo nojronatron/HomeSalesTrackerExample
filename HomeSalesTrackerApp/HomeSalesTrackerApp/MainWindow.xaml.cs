@@ -409,6 +409,11 @@ namespace HomeSalesTrackerApp
             }
         }
 
+        /// <summary>
+        /// Add a new Home instance to the DB and a attach it to new or existing Agent or Owner instance, regardless of Search results.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuAddHome_Click(object sender, RoutedEventArgs e)
         {
             AddHomeWindow ahw = new AddHomeWindow();
@@ -416,6 +421,11 @@ namespace HomeSalesTrackerApp
             ahw.Show();
         }
 
+        /// <summary>
+        /// Add a new Owner instance to the DB and attach it to a new or existing Person instance, regardless of Search results.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuAddOwner_Click(object sender, RoutedEventArgs e)
         {
             AddPersonWindow apw = new AddPersonWindow();
@@ -423,6 +433,11 @@ namespace HomeSalesTrackerApp
             apw.Show();
         }
 
+        /// <summary>
+        /// Add a new Agent instance to the DB and attach it to a new or existing Person instance, regardless of Search results.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuAddAgent_Click(object sender, RoutedEventArgs e)
         {
             AddPersonWindow apw = new AddPersonWindow();
@@ -431,7 +446,7 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// Regardless of Search results, add a new Buyer instance to the DB and attach it to a new or existing Person instance.
+        /// Add a new Buyer instance to the DB and attach it to a new or existing Person instance, regardless of Search results.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -456,7 +471,7 @@ namespace HomeSalesTrackerApp
             var foundBuyers = (from p in peopleCollection
                                                 from b in homeSalesCollection
                                                 where b.BuyerID == p.PersonID
-                                                select new FoundBuyerView
+                                                select new BuyerView
                                                 {
                                                    PersonID = p.PersonID,
                                                    FirstName = p.FirstName,
@@ -547,7 +562,12 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  Home must already exist
+            //  Menu -> Search -> Home, highlight Home in results, then Menu -> Update -> Home
+            HomeSearchView selectedHome = null;
+            selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+            FoundHomesView.SelectedItem = -1;
+
         }
 
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
@@ -653,9 +673,14 @@ namespace HomeSalesTrackerApp
             ClearSearchResultsViews();
         }
 
-        private void menuUpdateBuyer_Click(object sender, RoutedEventArgs e)
+        private void MenuUpdateBuyer_Click(object sender, RoutedEventArgs e)
         {
-            //  
+            //  When a HOME or HOMESALE is selected in the Search Results window
+            //  this menu item can be used to change the Buyer
+
+            HomeSearchView selectedHomeView = null;
+            selectedHomeView = FoundHomesView.SelectedItem as HomeSearchView;
+
         }
 
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
@@ -697,7 +722,7 @@ namespace HomeSalesTrackerApp
                 var results = (from p in searchResults
                                from b in homeSalesCollection
                                where p != null && b.BuyerID == p.PersonID
-                               select new FoundBuyerView
+                               select new BuyerView
                                {
                                    BuyerID = p.PersonID,
                                    FirstName = p.FirstName,
@@ -721,7 +746,7 @@ namespace HomeSalesTrackerApp
 
         }
 
-        private void menuAddHomesForSale_Click(object sender, RoutedEventArgs e)
+        private void MenuAddHomesForSale_Click(object sender, RoutedEventArgs e)
         {
             //
         }

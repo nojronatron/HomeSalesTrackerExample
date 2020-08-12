@@ -23,8 +23,8 @@ namespace HomeSalesTrackerApp
     {
         public Buyer buyer { get; set; }
         public Person person { get; set; }
-        public IEnumerable<FoundBuyerView> iFoundBuyers { get; set; }
-        public List<FoundBuyerView> FoundBuyers { get; set; }
+        public IEnumerable<BuyerView> iFoundBuyers { get; set; }
+        public List<BuyerView> FoundBuyers { get; set; }
 
         public BuyersResultsReport()
         {

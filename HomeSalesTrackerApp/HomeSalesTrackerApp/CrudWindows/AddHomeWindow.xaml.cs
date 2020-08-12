@@ -90,7 +90,6 @@ namespace HomeSalesTrackerApp
                 if (comboBoxPerson == null && APerson != null)
                 {
                     int ownerId = APerson.PersonID;
-                    //  create the new Home instance
                     newHome = new Home()
                     {
                         Address = address,
@@ -121,15 +120,25 @@ namespace HomeSalesTrackerApp
 
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
-            //AddPersonWindow apw = new AddPersonWindow();
-            //apw.AddType = "Owner";
-            //apw.Show();
             PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
             pauw.UpdateAgent = new Agent();
-            pauw.UpdatePerson = new Person();
+            pauw.UpdateBuyer = new Buyer();
             pauw.UpdateOwner = new Owner();
+            pauw.UpdatePerson = new Person();
             pauw.UpdateType = "Owner";
+            pauw.Show();
             RefreshOwnersComboBox();
+        }
+
+        private void AddAgentButton_Click(object sender, RoutedEventArgs e)
+        {
+            PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
+            pauw.UpdateAgent = new Agent();
+            pauw.UpdateBuyer = new Buyer();
+            pauw.UpdateOwner = new Owner();
+            pauw.UpdatePerson = new Person();
+            pauw.UpdateType = "Buyer";
+            pauw.Show();
         }
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
@@ -204,13 +213,6 @@ namespace HomeSalesTrackerApp
             }
 
             ownersComboBox.ItemsSource = existingOwnersList;
-        }
-
-        private void OwnersComboBoxOpened(object sender, EventArgs e)
-        {
-            //  ComboBox did not always should bound data at FormOpened() method so force refresh when user clicks the drop-down arrow
-            RefreshOwnersComboBox();
-            //  TODO: Confirm AdHomeWindow succeeds in refresh OwnersComboBox if that fails then fallback to doing it in OwnersComboBoxOpened
             DisplayStatusMessage("Refreshed Owners list for display.");
         }
 

@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="PersonAddUpdateWindow" Height="685" Width="450"
+        Title="PersonAddUpdateWindow" Height="620" Width="460"
         Closing="Window_Closing" Loaded="Window_Loaded">
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
             <MenuItem Header="_File">
-                <MenuItem Header="_Exit" Click="menuExit_Click"/>
+                <MenuItem Header="_Exit" Click="MenuExit_Click"/>
             </MenuItem>
             <Separator Width="5" />
-            <!--<MenuItem Header="_Edit">
-                <MenuItem Header="_Refresh" Click="menuRefresh_Click"/>
-            </MenuItem>-->
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Refresh" Click="MenuRefresh_Click"/>
+            </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>
@@ -25,13 +25,14 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="9*"/>
-                <ColumnDefinition Width="9*"/>
-                <ColumnDefinition Width="202*"/>
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="219*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="200*" />
+                <ColumnDefinition Width="5"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Vertical" MinWidth="130" Margin="5,5" Grid.ColumnSpan="3" >
+            
+            <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="130" Margin="5,5" >
                 <Label Content="Basic Information" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
                 <Label Content="First Name" Height="27" />
                 <TextBox x:Name="fNameTextbox" Text="" Height="27" />
@@ -45,34 +46,32 @@
                 <Label Content="Owner Details" FontWeight="Bold" Height="25" HorizontalAlignment="Center" />
                 <Label Content="Owner's Preferred Lender" Height="27" />
                 <TextBox x:Name="preferredLenderTextbox" Text="" Height="27" />
-                <Button x:Name="addOwnerButton" Content="Add This Owner" Height="27" Margin="10" MinWidth="25" />
-                <!-- Click="addOwnerButton_Click" /> -->
+                <Button x:Name="addOwnerButton" Content="Add This Owner" Height="27" Margin="10" MinWidth="25" 
+                    Click="AddOwnerButton_Click" />
                 <Label Content="Or Select Existing Owner:" Height="27" HorizontalAlignment="Center" />
-                <ComboBox x:Name="existingOwnersCombobox" ItemsSource="{Binding}" />
-                <!-- SelectionChanged="existingOwnersCombobox_SelectionChanged" />-->
+                <ComboBox x:Name="existingOwnersCombobox" ItemsSource="{Binding}" 
+                          SelectionChanged="ExistingOwnersCombobox_SelectionChanged" />
                 <Separator Margin="0,10" />
             </StackPanel>
-            <StackPanel Grid.Column="3" Background="WhiteSmoke" />
-            <StackPanel Grid.Column="4" Orientation="Vertical" MinWidth="130" Margin="5,5" >
+            <StackPanel Grid.Column="2" Background="WhiteSmoke" />
+            <StackPanel Grid.Column="3" Orientation="Vertical" MinWidth="130" Margin="5,5" >
                 <Label Content="Buyer Details" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
                 <Label Content="Buyer's Credit Rating" Height="27" />
                 <TextBox x:Name="creditRatingTextbox" Text="" Height="27" />
-                <Button x:Name="addBuyerButton" Content="Add This Buyer" Height="27" Margin="10" MinWidth="25" />
-                <!-- Click="addBuyerButton_Click" /> -->
+                <Button x:Name="addBuyerButton" Content="Add This Buyer" Height="27" Margin="10" MinWidth="25" 
+                    Click="AddBuyerButton_Click" />
                 <Label Content="Or Select Existing Buyer:" Height="27" HorizontalAlignment="Center" />
-                <ComboBox x:Name="existingBuyersCombobox" ItemsSource="{Binding}" />
-                <!-- SelectionChanged="existingBuyersCombobox_SelectionChanged" />-->
+                <ComboBox x:Name="existingBuyersCombobox" ItemsSource="{Binding}" 
+                          SelectionChanged="ExistingBuyersCombobox_SelectionChanged" />
                 <Separator Margin="0,10" />
                 <Label Content="Agent Details" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
-                <Label Content="Agent ID (read only)" Height="27" />
-                <TextBox x:Name="agentIdTextbox" Text="" Height="27" />
                 <Label Content="Commission Percent example: 0.04" Height="27" />
                 <TextBox x:Name="agentCommissionTextbox" Text="" Height="27" />
                 <Label Content="Agent's RE Company Name" Height="27" />
-                <TextBox x:Name="agentRecoTextbox" Text="" Height="27" />
-                <Button x:Name="addAgentButton" Content="Add Agent" Height="27" Margin="10" Click="addAgentButton_Click" MinWidth="25" />
+                <TextBox x:Name="AgentReCompanyTextbox" Text="" Height="27" />
+                <Button x:Name="addAgentButton" Content="Add Agent" Height="27" Margin="10" Click="AddAgentButton_Click" MinWidth="25" />
                 <Label Content="Or Select Existing Agent:" Height="27" HorizontalAlignment="Center" />
-                <ComboBox x:Name="existingAgentsCombobox" ItemsSource="{Binding}" SelectionChanged="existingAgentsCombobox_SelectionChanged" />
+                <ComboBox x:Name="existingAgentsCombobox" ItemsSource="{Binding}" SelectionChanged="ExistingAgentsCombobox_SelectionChanged" />
                 <Separator Margin="0,10" />
                 <Button x:Name="updateButton" Content="Update Existing and Close" Height="27" Margin="10,5" Click="UpdateAndCloseWindowButton_Click"
                         MinWidth="25" VerticalAlignment="Bottom" />

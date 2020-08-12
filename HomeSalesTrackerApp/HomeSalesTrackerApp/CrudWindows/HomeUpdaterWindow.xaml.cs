@@ -122,36 +122,23 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
-        private void LoadPersonPanel()
-        {
-            personIdTextbox.Text = UpdatePerson.PersonID.ToString();
-            personFirstNameTextbox.Text = UpdatePerson.FirstName;
-            personLastNameTextbox.Text = UpdatePerson.LastName;
-            personPhoneTextbox.Text = UpdatePerson.Phone;
-            personEmailTextbox.Text = UpdatePerson.Email;
-            updatePersonPanel.Visibility = Visibility.Visible;
-            closeButton.Visibility = Visibility.Hidden;
-        }
-
         private void LoadHomePanel()
         {
-            homeIdTextBox.Text = UpdateHome.HomeID.ToString();
+            //homeIdTextBox.Text = UpdateHome.HomeID.ToString();
             homeAddressTextbox.Text = UpdateHome.Address;
             homeCityTextbox.Text = UpdateHome.City;
             homeStateTextbox.Text = UpdateHome.State;
             homeZipTextbox.Text = UpdateHome.Zip;
             //  Note: Could add OwnerID field here but users should not need it
             updateHomePanel.Visibility = Visibility.Visible;
-            closeButton.Visibility = Visibility.Hidden;
         }
 
         private void LoadRECoPanel()
         {
-            companyIdTextBox.Text = UpdateReco.CompanyID.ToString();
+            //companyIdTextBox.Text = UpdateReco.CompanyID.ToString();
             companyNameTextbox.Text = UpdateReco.CompanyName;
             companyPhoneTextbox.Text = UpdateReco.Phone;
             updateRealEstateCoPanel.Visibility = Visibility.Visible;
-            closeButton.Visibility = Visibility.Hidden;
         }
 
         /// <summary>
@@ -162,14 +149,14 @@ namespace HomeSalesTrackerApp.CrudWindows
             SetDatePickerDefaults();
 
             //  Attached requirements: Update a selected HomeForSale with new/existing Agent, or a new Home.
-            hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
+            //hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
             string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
             string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
             hfsHomeIdTextbox.Text = homeForSaleAddressZip;
             //hfsSoldDateTextBox.Text = UpdateHomeSale.SoldDate.ToString();
             hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
             hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
-            hfsBuyerIdTextbox.Text = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
+            hfsBuyerNameTextbox.Text = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
 
             var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
                                          from hs in MainWindow.homeSalesCollection
@@ -189,9 +176,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
 
-            hfsCompanyIdTextbox.Text = UpdateReco.CompanyID.ToString();
-            
-            closeButton.Visibility = Visibility.Visible;
+            companyNameTextbox.Text = UpdateReco.CompanyID.ToString();
         }
 
         private void SetDatePickerDefaults()
@@ -210,7 +195,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             SetDatePickerDefaults();
             
             //  Attached requirements: Only SoldDate, SaleAmount, and Buyer information can be edited
-            hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
+            //hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
             string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
             string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
             
@@ -222,9 +207,9 @@ namespace HomeSalesTrackerApp.CrudWindows
             hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
             
             //  BUYER INFO
-            hfsBuyerIdTextbox.IsReadOnly = true;
+            //hfsBuyerIdTextbox.IsReadOnly = true;
             string buyerFirstLastname = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
-            hfsBuyerIdTextbox.Text = buyerFirstLastname;
+            hfsBuyerNameTextbox.Text = buyerFirstLastname;
 
             var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
                                          from hs in MainWindow.homeSalesCollection
@@ -250,52 +235,41 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
 
-            hfsCompanyIdTextbox.IsReadOnly = true;
-            hfsCompanyIdTextbox.Text = UpdateReco.CompanyID.ToString();
-
-            closeButton.Visibility = Visibility.Visible;
+            //hfsCompanyIdTextbox.IsReadOnly = true;
+            companyNameTextbox.Text = UpdateReco.CompanyID.ToString();
 
             //  Update button: Will save changes via LogicBroker
             updateChangedHfsFields.Visibility = Visibility.Visible;
         }
 
-
-
         private void LoadAgentPanel()
         {
-            updateAgentPanel.Visibility = Visibility.Visible;
-            updateAgentAgentIdTextbox.Text = UpdateAgent.AgentID.ToString();
-            updateAgentAgentPersonNameTextbox.Text = $"{UpdatePerson.FirstName} {UpdatePerson.LastName}";
-            updateAgentCompanyIdTextbox.Text = UpdateAgent.CompanyID.ToString();
-            updateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
+            //updateAgentAgentIdTextbox.Text = UpdateAgent.AgentID.ToString();
+            UpdateAgentAgentPersonNameTextbox.Text = $"{UpdatePerson.FirstName} {UpdatePerson.LastName}";
+            //updateAgentCompanyIdTextbox.Text = UpdateAgent.CompanyID.ToString();
+            UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
             var listOfHomesalesAgents = (from hs in MainWindow.homeSalesCollection
                                          from a in MainWindow.peopleCollection
                                          where a.PersonID == hs.AgentID
                                          select a).ToList();
             //  TODO: Fix the output so it displays data in the combobox instead of entity wrappers
             listOfExistingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
-            closeButton.Visibility = Visibility.Visible;
         }
 
         private void ShowCloseButtonOnly()
         {
-            updatePersonPanel.Visibility = Visibility.Collapsed;
             updateHomePanel.Visibility = Visibility.Collapsed;
             updateRealEstateCoPanel.Visibility = Visibility.Collapsed;
-            closeButton.Visibility = Visibility.Visible;
+            CloseButton.Visibility = Visibility.Visible;
         }
 
         private void LoadPanelsAndFields()
         {
-            closeButton.Visibility = Visibility.Visible;
+            CloseButton.Visibility = Visibility.Visible;
+            
             string updateType = UpdateType.Trim().ToUpper();
             switch (updateType)
             {
-                case "PERSON":
-                    {
-                        LoadPersonPanel();
-                        break;
-                    }
                 case "HOME":
                     {
                         LoadHomePanel();
@@ -342,47 +316,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             IsButtonClose = true;
             this.Close();
-        }
-
-        private void UpdateChangedPersonFieldsButton_Click(object sender, RoutedEventArgs e)
-        {
-            //  1)  Validate changed input(s)
-            string fName = personFirstNameTextbox.Text.ToString().Trim();
-            string lName = personLastNameTextbox.Text.ToString().Trim();
-            string phone = personPhoneTextbox.Text.ToString().Trim();
-            string email = personEmailTextbox.Text.ToString().Trim();
-
-            if (string.IsNullOrWhiteSpace(fName) || string.IsNullOrWhiteSpace(lName) || string.IsNullOrWhiteSpace(phone))
-            {
-                //  display nuguduh message
-                DisplayStatusMessage("Make sure to fill in required fields");
-                return; //  TODO: Test that return in a void method actually breaks out right then and there
-            }
-
-            var comparisonPerson = new Person()
-            {
-                FirstName = fName,
-                LastName = lName,
-                Phone = phone,
-                Email = email
-            };
-
-            //  2)  Update object instance with change(s)
-            if (UpdatePerson.Equals(comparisonPerson))
-            {
-                DisplayStatusMessage("No changes detected.");
-                return;
-            }
-
-            //  3)  Store changes in the DB via entities helper
-            if (LogicBroker.SaveEntity<Person>(UpdatePerson))
-            {
-                DisplayStatusMessage("Changes saved!");
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to save changes. Fill all required fields.");
-            }
         }
 
         private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
@@ -469,8 +402,14 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void listOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
+        }
+
+        private void UpdateHomeForSaleFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+            //  TODO: After user changes HomeForSale information and clicks this button the in memory object(s) must be updated
 
         }
     }
