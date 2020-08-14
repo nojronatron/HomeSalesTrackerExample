@@ -14,10 +14,13 @@ namespace HomeSalesTrackerApp.DisplayModels
         public int? CreditRating { get; set; }
         public RealEstateCompany Company { get; set; }
         public Decimal CommissionRate { get; set; }
-
+        public override string PersonType => this.GetType().Name;
+        public override string GetPersonType()
+        {
+            return this.GetPersonType();
+        }
         public override string ToString()
         {
-            //  {this.PreferredLender }     { this.Company.CompanyName }{ this.CommissionRate:c}
             return $"{ base.ToString() }{ this.CreditRating:D0}";
         }
     }

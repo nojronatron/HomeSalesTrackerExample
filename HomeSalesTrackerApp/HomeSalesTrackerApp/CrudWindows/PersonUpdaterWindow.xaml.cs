@@ -18,22 +18,19 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// <summary>
     /// Interaction logic for PersonAddUpdateWindow.xaml
     /// </summary>
-    public partial class PersonAddUpdateWindow : Window
+    public partial class PersonUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
-
-        public string UpdateType { get; set; }
+        public bool CalledByUpdateMenu { get; set; }    //  Called from MainWindow UPDATE menu item
+        public string CalledByUpdateMenuType { get; set; }  //  The person sub-type: Agent, Buyer, Owner
 
         public Person UpdatePerson { get; set; }
-        public Home UpdateHome { get; set; }
-        public RealEstateCompany UpdateReco { get; set; }
-        public HomeSale UpdateHomeSale { get; set; }
         public Agent UpdateAgent { get; set; }
         public Owner UpdateOwner { get; set; }
         public Buyer UpdateBuyer { get; set; }
 
 
-        public PersonAddUpdateWindow()
+        public PersonUpdaterWindow()
         {
             InitializeComponent();
         }
@@ -88,6 +85,43 @@ namespace HomeSalesTrackerApp.CrudWindows
             phoneTextbox.Text = string.Empty;
             emailTextbox.Text = string.Empty;
             DisplayStatusMessage("Cleared all inputs.");
+        }
+
+        /// <summary>
+        /// Validates user input for Person information and creates a new instance of this.UpdatePerson property.
+        /// </summary>
+        private void GetPersonInfoFromTextboxes()
+        {
+            StringBuilder resultMessage = new StringBuilder();
+            resultMessage.Append("Required info: ");
+            if (string.IsNullOrEmpty(fNameTextbox.Text) || string.IsNullOrWhiteSpace(fNameTextbox.Text))
+            {
+                resultMessage.Append("First Name ");
+            }
+            if (string.IsNullOrEmpty(lNameTextbox.Text) || string.IsNullOrWhiteSpace(lNameTextbox.Text))
+            {
+                resultMessage.Append("Last Name ");
+            }
+            if (string.IsNullOrEmpty(phoneTextbox.Text) || string.IsNullOrWhiteSpace(phoneTextbox.Text))
+            {
+                resultMessage.Append("Phone Numer ");
+            }
+            if (resultMessage.Length > 15)
+            {
+                resultMessage.Append(".");
+                DisplayStatusMessage(resultMessage.ToString());
+            }
+            else
+            {
+                UpdatePerson = new Person()
+                {
+                    FirstName = fNameTextbox.Text.Trim(),
+                    LastName = lNameTextbox.Text.Trim(),
+                    Phone = phoneTextbox.Text.Trim(),
+                    Email = emailTextbox.Text.Trim() ?? null
+                };
+            }
+
         }
 
         private void LoadBuyerPanel()
@@ -241,143 +275,180 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
-        private void UpdateAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
-        {
-            //  store the a new or updated person but not a match
-            Person checkForDouble = (from p in MainWindow.peopleCollection
-                                     where UpdatePerson.FirstName == p.FirstName &&
-                                     UpdatePerson.LastName == p.LastName &&
-                                     UpdatePerson.Phone == p.Phone
-                                     select p).SingleOrDefault();
-            if (checkForDouble == null)
-            {
-                LogicBroker.UpdateEntity<Person>(UpdatePerson);
-            }
+        ///// <summary>
+        ///// REFACTOR THIS! Used to call LogicBroker Update method (rather than Add method).
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void UpdateAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //  TODO: Refactor this method to add Agent, Buyer, Owner information to the existing Person object THEN send it to LogicBroker for saving/updating.
 
-            //  store the new/existing person Type depending on the workflow context
-            string updateType = UpdateType.Trim().ToUpper();
-            switch (updateType)
-            {
-                case "AGENT":
-                    {
-                        //  TODO: Test this
-                        UpdateHomeSale.AgentID = UpdateAgent.AgentID;
-                        //UpdateHomeSale.Agent = UpdateAgent;
-                        LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale);
-                        break;
-                    }
-                case "OWNER":
-                    {
-                        //  TODO: Test this
-                        UpdateHome.OwnerID = UpdateOwner.OwnerID;
-                        LogicBroker.UpdateEntity<Home>(UpdateHome);
-                        break;
-                    }
-                case "BUYER":
-                    {
-                        //  TODO: Test this
-                        UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
-                        LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale);
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
+        //    GetPersonInfoFromTextboxes();
 
-            IsButtonClose = true;
-            this.Close();
-        }
-        
+        //    //  store the a new or updated person but not a match
+        //    Person checkForDouble = (from p in MainWindow.peopleCollection
+        //                             where UpdatePerson.FirstName == p.FirstName &&
+        //                             UpdatePerson.LastName == p.LastName &&
+        //                             UpdatePerson.Phone == p.Phone
+        //                             select p).SingleOrDefault();
+        //    if (checkForDouble == null)
+        //    {
+        //        LogicBroker.UpdateEntity<Person>(UpdatePerson);
+        //    }
+
+        //    //  store the new/existing person Type depending on the workflow context
+        //    string updateType = CalledByUpdateMenuType.Trim().ToUpper();
+        //    switch (updateType)
+        //    {
+        //        case "AGENT":
+        //            {
+        //                //  TODO: Test this
+                        
+        //                LogicBroker.UpdateEntity<Agent>(UpdateAgent);
+        //                break;
+        //            }
+        //        case "OWNER":
+        //            {
+        //                //  TODO: Test this
+        //                LogicBroker.UpdateEntity<Owner>(UpdateOwner);
+        //                break;
+        //            }
+        //        case "BUYER":
+        //            {
+        //                //  TODO: Test this
+        //                LogicBroker.UpdateEntity<Buyer>(UpdateBuyer);
+        //                break;
+        //            }
+        //        default:
+        //            {
+        //                break;
+        //            }
+        //    }
+
+        //    IsButtonClose = true;
+        //    this.Close();
+        //}
+
+        /// <summary>
+        /// Save NEW record(s) to the DB and then close the current Window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            //  store the a new or updated person but not a match
-            Person checkForDouble = (from p in MainWindow.peopleCollection
-                                     where UpdatePerson.FirstName == p.FirstName &&
-                                     UpdatePerson.LastName == p.LastName &&
-                                     UpdatePerson.Phone == p.Phone
-                                     select p).SingleOrDefault();
-            if (checkForDouble == null)
-            {
-                LogicBroker.SaveEntity<Person>(UpdatePerson);
+            //  IF an Owner, Buyer, or Agent have been created they will be attached to the new or existing Person in the Basic Information fields on the form
+            GetPersonInfoFromTextboxes();
+
+            //  Only add updated fields to the Person instance (remember this form CREATES a new Person)
+            if (UpdateAgent != null) {
+                UpdatePerson.Agent = UpdateAgent;
+            }
+            if (UpdateBuyer != null) {
+                UpdatePerson.Buyer = UpdateBuyer;
+            }
+            if (UpdateOwner != null) {
+                UpdatePerson.Owner = UpdateOwner;
             }
 
-            //  store the new/existing person Type depending on the workflow context
-            string updateType = UpdateType.Trim().ToUpper();
-            switch (updateType)
-            {
-                case "AGENT":
-                    {
-                        //  TODO: Test this
-                        UpdateHomeSale.AgentID = UpdateAgent.AgentID;
-                        UpdateHomeSale.Agent = UpdateAgent;
-                        //LogicBroker.SaveEntity<Agent>(UpdateAgent);
-                        LogicBroker.SaveEntity<HomeSale>(UpdateHomeSale);
-                        break;
-                    }
-                case "OWNER":
-                    {
-                        //  TODO: Test this
-                        UpdateHome.OwnerID = UpdateOwner.OwnerID;
-                        LogicBroker.SaveEntity<Home>(UpdateHome);
-                        LogicBroker.SaveEntity<Owner>(UpdateOwner);
-                        break;
-                    }
-                case "BUYER":
-                    {
-                        //  TODO: Test this
-                        UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
-                        LogicBroker.SaveEntity<HomeSale>(UpdateHomeSale);
-                        LogicBroker.SaveEntity<Buyer>(UpdateBuyer);
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
+            //  Save!
 
-            IsButtonClose = true;
+            if (LogicBroker.UpdateEntity<Person>(UpdatePerson))
+            {
+                DisplayStatusMessage("Saved!");
+                IsButtonClose = true;
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to save.");
+            }
             this.Close();
+
+            ////  store the a new or updated person but not a match
+            //Person checkForDouble = (from p in MainWindow.peopleCollection
+            //                         where UpdatePerson.FirstName == p.FirstName &&
+            //                         UpdatePerson.LastName == p.LastName &&
+            //                         UpdatePerson.Phone == p.Phone
+            //                         select p).SingleOrDefault();
+            //if (checkForDouble == null)
+            //{
+
+            //    //  store the new/existing person Type depending on the workflow context
+            //    string updateType = CalledByUpdateMenuType.Trim().ToUpper();
+            //    switch (updateType)
+            //    {
+            //        case "AGENT":
+            //            {
+            //                //  TODO: Test this
+            //                UpdatePerson.Agent = UpdateAgent;
+            //                //LogicBroker.SaveEntity<Agent>(UpdateAgent);
+            //                break;
+            //            }
+            //        case "OWNER":
+            //            {
+            //                //  TODO: Test this
+            //                UpdatePerson.Owner = UpdateOwner;
+            //                break;
+            //            }
+            //        case "BUYER":
+            //            {
+            //                //  TODO: Test this
+            //                UpdatePerson.Buyer = UpdateBuyer;
+            //                break;
+            //            }
+            //        default:
+            //            {
+            //                break;
+            //            }
+            //    }
+
+            //    if (LogicBroker.SaveEntity<Person>(UpdatePerson))
+            //    {
+            //        IsButtonClose = true;
+            //        AddHomeWindow.APerson = UpdatePerson;
+            //    }
+            //    else
+            //    {
+            //        IsButtonClose = false;
+            //        DisplayStatusMessage("Unable to save to database.");
+            //    }
+            //}
+            //else
+            //{
+            //    string flName = $"{ UpdatePerson.FirstName } { UpdatePerson.LastName }";
+            //    DisplayStatusMessage($"Not added: { flName } already exists.");
+            //}
         }
 
+        /// <summary>
+        /// Refresh all collections with updated DB data before returning to a parent window so data is up-to-date.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (IsButtonClose)
             {
                 e.Cancel = false;
-
-                try
-                {
-                    //  Reload collections
-                    MainWindow.InitPeopleCollection();
-                    MainWindow.InitHomesCollection();
-                    MainWindow.InitHomeSalesCollection();
-                    MainWindow.InitRealEstateCompaniesCollection();
-                }
-                catch (Exception ex)
-                {
-                    var userResponse = MessageBox.Show("An error occurred. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
-                    if (userResponse == MessageBoxResult.No)
-                    {
-                        IsButtonClose = false;
-                        e.Cancel = true;
-                    }
-                }
             }
             else
             {
-                MessageBox.Show("Use the Save And Close button to exit.", "Warning!", MessageBoxButton.OK);
-                IsButtonClose = false;
-                e.Cancel = true;
+                var userResponse = MessageBox.Show("Closing Add Home Window", "Changes will not be saved. Continue?", MessageBoxButton.YesNo);
+                if (userResponse == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    e.Cancel = false;
+                }
             }
 
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string updateType = UpdateType.Trim().ToUpper();
+            string updateType = CalledByUpdateMenuType.Trim().ToUpper();
             switch (updateType)
             {
                 case "AGENT":
@@ -445,11 +516,11 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void AddBuyerButton_Click(object sender, RoutedEventArgs e)
         {
             int updateCreditRating = 0;
-            if (string.IsNullOrEmpty(creditRatingTextbox.Text.Trim()))
+            if (string.IsNullOrEmpty(creditRatingTextbox.Text) || string.IsNullOrWhiteSpace(creditRatingTextbox.Text))
             {
                 DisplayStatusMessage("To Update, enter a new Credit Rating. Example: 650");
             }
-            else if(int.TryParse(creditRatingTextbox.Text.Trim(), out updateCreditRating))
+            if(int.TryParse(creditRatingTextbox.Text.Trim(), out updateCreditRating))
             {
                 if(updateCreditRating > 299 && updateCreditRating < 851)
                 {
@@ -478,23 +549,25 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void AddOwnerButton_Click(object sender, RoutedEventArgs e)
         {
+            //  TODO: Refactor this to ensure the Person object is storing the Owner object
             string quote = char.ToString('"');
             string updatePreferredLender = string.Empty;
-            if (string.IsNullOrEmpty(preferredLenderTextbox.Text.Trim()))
+            if (string.IsNullOrEmpty(preferredLenderTextbox.Text) || string.IsNullOrWhiteSpace(preferredLenderTextbox.Text))
             {
                 DisplayStatusMessage($"To Update, enter a new Preferred Lender. Example: { quote }US Bank NA{ quote }.");
             }
-            else if (updatePreferredLender.Length > 2)
+            else
             {
-                if (updatePreferredLender != UpdateOwner.PreferredLender)
+                updatePreferredLender = preferredLenderTextbox.Text.Trim();
+            }
+            if (updatePreferredLender.Length > 2)
+            {
+                if (UpdateOwner == null) 
                 {
-                    UpdateOwner.PreferredLender = updatePreferredLender;
-                    DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
+                    UpdateOwner = new Owner();
                 }
-                else
-                {
-                    DisplayStatusMessage($"To Update, enter a new Preferred Lender name. Example: { quote }HSBC{ quote }.");
-                }
+                UpdateOwner.PreferredLender = updatePreferredLender;
+                DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
             }
             else
             {

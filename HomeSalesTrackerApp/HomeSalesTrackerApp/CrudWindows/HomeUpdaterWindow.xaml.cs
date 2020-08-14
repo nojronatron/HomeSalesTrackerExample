@@ -20,7 +20,7 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// <summary>
     /// Interaction logic for UpdaterWindow.xaml
     /// </summary>
-    public partial class UpdaterWindow : Window
+    public partial class HomeUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
         
@@ -37,7 +37,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         public Owner UpdateOwner { get; set; }
         public Buyer UpdateBuyer { get; set; }
                 
-        public UpdaterWindow()
+        public HomeUpdaterWindow()
         {
             InitializeComponent();
         }

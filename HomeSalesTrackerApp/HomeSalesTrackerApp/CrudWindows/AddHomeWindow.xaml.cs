@@ -55,7 +55,8 @@ namespace HomeSalesTrackerApp
 
         private void AddNewHomeButton_Click(object sender, RoutedEventArgs e)
         {
-            Home newHome = null;
+            //  Address, City, State, and Zip fields are validated and an existing Owner in the ComboBox will be attached to the new Home.
+            NewHome = null; //  must be initialized as null to test for null later
 
             string address = this.homeAddressTextbox.Text.Trim();
             string city = this.homeCityTextbox.Text.Trim();
@@ -71,75 +72,69 @@ namespace HomeSalesTrackerApp
             }
             else
             {
-                Person comboBoxPerson = null;
-                comboBoxPerson = ownersComboBox.SelectedItem as Person;
-                if (comboBoxPerson != null)
+                Person tempPerson = ownersComboBox.SelectedItem as Person;
+                if (tempPerson != null)
                 {
-                    var ownerID = comboBoxPerson.PersonID;
-
-                    newHome = new Home()
+                    var selectedOwnerPerson = (from p in MainWindow.peopleCollection
+                                               where p.FirstName == tempPerson.FirstName &&
+                                               p.LastName == tempPerson.LastName
+                                               select p).FirstOrDefault();
+                    NewHome = new Home()
                     {
                         Address = address,
                         City = city,
                         State = state,
                         Zip = zip,
-                        OwnerID = ownerID
+                        OwnerID = selectedOwnerPerson.PersonID,
+                        Owner = selectedOwnerPerson.Owner
                     };
-                }
 
-                if (comboBoxPerson == null && APerson != null)
-                {
-                    int ownerId = APerson.PersonID;
-                    newHome = new Home()
+                    if (LogicBroker.SaveEntity<Home>(NewHome))
                     {
-                        Address = address,
-                        City = city,
-                        State = state,
-                        Zip = zip,
-                        OwnerID = ownerId
-                    };
-                }
-
-                if (newHome == null)
-                {
-                    DisplayStatusMessage("Home not created. Ensure required fields are completed.");
-                    isButtonClose = false;
+                        isButtonClose = true;
+                        DisplayStatusMessage("New Home saved! You can now close this window.");
+                        MainWindow.InitializeCollections();
+                        APerson = null;
+                        NewHome = null;
+                        AnOwner = null;
+                    }
+                    else
+                    {
+                        DisplayStatusMessage("Unable to save Home.");
+                        isButtonClose = false;
+                    }
                 }
                 else
                 {
-                    SaveHomeAndUpdateCollection(newHome);
-                    isButtonClose = true;
-                    DisplayStatusMessage("New Home saved! You can now close this window.");
-                    APerson = null;
-                    NewHome = null;
-                    AnOwner = null;
-                    closeButton.Visibility = Visibility.Visible;
+                    DisplayStatusMessage("Be sure to select an Owner before saving this new home.");
+                    isButtonClose = false;
                 }
+               
             }
+
         }
 
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
-            PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
-            pauw.UpdateAgent = new Agent();
-            pauw.UpdateBuyer = new Buyer();
-            pauw.UpdateOwner = new Owner();
-            pauw.UpdatePerson = new Person();
-            pauw.UpdateType = "Owner";
-            pauw.Show();
-            RefreshOwnersComboBox();
+            PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
+            personUpdaterWindow.UpdateAgent = new Agent();
+            personUpdaterWindow.UpdateBuyer = new Buyer();
+            personUpdaterWindow.UpdateOwner = new Owner();
+            personUpdaterWindow.UpdatePerson = new Person();
+            personUpdaterWindow.CalledByUpdateMenuType = "Owner";
+            personUpdaterWindow.Show();
         }
 
-        private void AddAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            PersonAddUpdateWindow pauw = new PersonAddUpdateWindow();
-            pauw.UpdateAgent = new Agent();
-            pauw.UpdateBuyer = new Buyer();
-            pauw.UpdateOwner = new Owner();
-            pauw.UpdatePerson = new Person();
-            pauw.UpdateType = "Buyer";
-            pauw.Show();
-        }
+        //private void AddAgentButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
+        //    //personUpdaterWindow.UpdateAgent = new Agent();
+        //    //personUpdaterWindow.UpdateBuyer = new Buyer();
+        //    //personUpdaterWindow.UpdateOwner = new Owner();
+        //    //personUpdaterWindow.UpdatePerson = new Person();
+        //    //personUpdaterWindow.CalledByUpdateMenuType = "Buyer";
+        //    //personUpdaterWindow.Show();
+        //}
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
@@ -199,20 +194,25 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            MainWindow.peopleCollection = new PeopleCollection<Person>( EntityLists.GetListOfPeople() );
-            MainWindow.homesCollection = new HomesCollection(EntityLists.GetTreeListOfHomes());
-            
+            MainWindow.InitializeCollections();
+
+            //var existingOwnersList = (from p in MainWindow.peopleCollection
+            //                          from h in MainWindow.homesCollection
+            //                          where p.PersonID == h.OwnerID
+            //                          select p).ToList();
             var existingOwnersList = (from p in MainWindow.peopleCollection
-                                      from h in MainWindow.homesCollection
-                                      where p.PersonID == h.OwnerID
+                                      where p.Owner != null
                                       select p).ToList();
 
-            if (APerson != null)
+            if (APerson == null)
+            {
+                ownersComboBox.ItemsSource = existingOwnersList;
+            }
+            else
             {
                 existingOwnersList.Add(APerson);
             }
 
-            ownersComboBox.ItemsSource = existingOwnersList;
             DisplayStatusMessage("Refreshed Owners list for display.");
         }
 
@@ -225,9 +225,7 @@ namespace HomeSalesTrackerApp
         {
             if (LogicBroker.SaveEntity<Home>(h))
             {
-                MainWindow.InitHomesCollection();
-                AddHomeWindow ahw = new AddHomeWindow();
-                ahw.RefreshOwnersComboBox();
+                MainWindow.InitializeCollections();
             }
             else
             {
@@ -245,39 +243,18 @@ namespace HomeSalesTrackerApp
             if (isButtonClose)
             {
                 e.Cancel = false;
-
-                try
-                {
-                    SaveHomeAndUpdateCollection(NewHome);
-                }
-                catch (Exception ex)
-                {
-                    var userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
-                    if (userResponse == MessageBoxResult.No)
-                    {
-                        isButtonClose = false;
-                        e.Cancel = true;
-                    }
-                }
+                MainWindow.InitializeCollections();
             }
             else
             {
-                var userResponse = MessageBox.Show("Save changes?", "Closing Add Home Window", MessageBoxButton.YesNo);
-                if (userResponse == MessageBoxResult.Yes)
+                var userResponse = MessageBox.Show("Closing Add Home Window", "Changes will not be saved. Continue?", MessageBoxButton.YesNo);
+                if (userResponse == MessageBoxResult.No)
                 {
-                    try
-                    {
-                        SaveHomeAndUpdateCollection(NewHome);
-                    }
-                    catch (Exception ex)
-                    {
-                        userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
-                        if (userResponse == MessageBoxResult.No)
-                        {
-                            isButtonClose = false;
-                            e.Cancel = true;
-                        }
-                    }
+                    e.Cancel = true;
+                }
+                else
+                {
+                    e.Cancel = false;
                 }
             }
         }

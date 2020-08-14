@@ -35,7 +35,7 @@ namespace HomeSalesTrackerApp
             //  TODO: Call to flush DB contents to XML files here
             if (LogicBroker.BackUpDatabase())
             {
-                MessageBox.Show("Backup executed.... muwahahaha!");
+                //MessageBox.Show("Backup executed.... muwahahaha!");
             }
             else
             {

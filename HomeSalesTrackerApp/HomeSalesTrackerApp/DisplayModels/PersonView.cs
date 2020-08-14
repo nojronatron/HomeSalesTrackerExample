@@ -13,10 +13,15 @@ namespace HomeSalesTrackerApp.DisplayModels
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public string OwnerBuyerAgent { get; set; }
+        public virtual string PersonType { get; set; }
+        public virtual string GetPersonType()
+        {
+            return this.PersonType;
+        }
 
         public override string ToString()
         {
+            //  TODO: solve why a null Phone property gets sent and which caller sends it
             long phonenumber = long.Parse(Phone);
             return $"{ this.PersonID }{ this.FirstName }{ this.LastName }{ string.Format("{0:###-###-####}", this.Phone)}{ this.Email }";
         }

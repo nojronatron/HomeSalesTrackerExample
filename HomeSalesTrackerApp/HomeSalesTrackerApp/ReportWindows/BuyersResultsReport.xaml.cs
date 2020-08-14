@@ -21,8 +21,6 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class BuyersResultsReport : Window
     {
-        public Buyer buyer { get; set; }
-        public Person person { get; set; }
         public IEnumerable<BuyerView> iFoundBuyers { get; set; }
         public List<BuyerView> FoundBuyers { get; set; }
 

@@ -30,7 +30,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         public AddPersonWindow()
         {
             InitializeComponent();
-            this.Title = "Add Person";
+            this.Title = $"Add { AddType }";
             
         }
 
@@ -46,7 +46,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void addOwnerButton_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Add validation, preferredLender is not required but limited to 30 chars
             string preferredLenderText = this.preferredLenderTextbox.Text.Trim();
 
             if (preferredLenderText.Length == 0)
