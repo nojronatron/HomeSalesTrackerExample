@@ -21,9 +21,11 @@ namespace HomeSalesTrackerApp.DisplayModels
 
         public override string ToString()
         {
-            //  TODO: solve why a null Phone property gets sent and which caller sends it
-            long phonenumber = long.Parse(Phone);
-            return $"{ this.PersonID }{ this.FirstName }{ this.LastName }{ string.Format("{0:###-###-####}", this.Phone)}{ this.Email }";
+            if (string.IsNullOrWhiteSpace(Phone))
+            {
+                Phone = " ";
+            }
+            return $"{ this.PersonID }{ this.FirstName }{ this.LastName }{ this.Phone }{ this.Email }";
         }
     }
 

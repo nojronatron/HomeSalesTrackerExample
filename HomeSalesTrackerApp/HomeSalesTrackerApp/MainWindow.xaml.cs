@@ -119,9 +119,13 @@ namespace HomeSalesTrackerApp
 
         private void ClearSearchResultsViews()
         {
+            FoundHomesView.ItemsSource = null;
             FoundHomesView.Visibility = Visibility.Hidden;
+            FoundHomesForSaleView.ItemsSource = null;
             FoundHomesForSaleView.Visibility = Visibility.Hidden;
+            FoundSoldHomesView.ItemsSource = null;
             FoundSoldHomesView.Visibility = Visibility.Hidden;
+            FoundPeopleView.ItemsSource = null;
             FoundPeopleView.Visibility = Visibility.Hidden;
         }
 
