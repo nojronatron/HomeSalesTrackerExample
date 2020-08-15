@@ -48,7 +48,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             AgentCommissionTextbox.IsReadOnly = true;
             AgentReCompanyTextbox.IsReadOnly = true;
             ExistingAgentsCombobox.IsEnabled = false;
-
+            UpdateAgentButton.IsEnabled = false;
         }
 
         private void DisableBuyerDetailsControls()
@@ -58,7 +58,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             CreditRatingTextbox.IsReadOnly = true;
             UpdateBuyerButton.IsEnabled = false;
             ExistingBuyersCombobox.IsEnabled = false;
-
+            UpdateBuyerButton.IsEnabled = false;
         }
 
         private void DisableOwnerDetailsControls()
@@ -67,7 +67,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             preferredLenderTextbox.IsReadOnly = true;
             UpdateOwnerButton.IsEnabled = false;
             existingOwnersCombobox.IsEnabled = false;
-
+            UpdateOwnerButton.IsEnabled = false;
         }
 
         private void DisableEditingPersonBasicInformation()
@@ -292,7 +292,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void ExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs sceArgs)
         {
             DisplayStatusMessage("Agent selection changed!");
-            //  get personid and correlate agentid
             Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
             Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault(); 
             Agent tempAgent = (from p in MainWindow.peopleCollection
@@ -301,7 +300,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             if (comboBoxPerson != null && tempAgent != null)
             {
-                //  update Person and update Agent with user selections
                 UpdatePerson = tempPerson;
                 UpdateAgent = tempAgent;
 
@@ -435,8 +433,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 DisplayStatusMessage("Enter a valid Commission Rate between 1 and 99 percent.");
             }
 
-
-            //  get the "selected RealEstateCompany" information if not already saved to UpdateRECo
             if (SelectedReco != null)
             {
                 if (SelectedReco.CompanyName != UpdateRECo.CompanyName)
@@ -464,7 +460,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
             }
 
-            //  if at least one thing is changed return true
             if (resultCount > 0)
             {
                 result = true;
@@ -502,7 +497,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 DisplayStatusMessage("Buyer Credit Rating Updated. Click Save to close or File -> Exit to quit.");
             }
 
-            //  if at least one thing is changed return true
             if (resultCount > 0)
             {
                 result = true;
@@ -674,33 +668,8 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void UpdateOwnerButton_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Refactor this to ensure the Person object is storing the Owner object
             GetOwnerUpdateFields();
             GetPersonInfoFromTextboxes();
-
-            //string quote = char.ToString('"');
-            //string updatePreferredLender = string.Empty;
-            //if (string.IsNullOrEmpty(preferredLenderTextbox.Text) || string.IsNullOrWhiteSpace(preferredLenderTextbox.Text))
-            //{
-            //    DisplayStatusMessage($"To Update, enter a new Preferred Lender. Example: { quote }US Bank NA{ quote }.");
-            //}
-            //else
-            //{
-            //    updatePreferredLender = preferredLenderTextbox.Text.Trim();
-            //}
-            //if (updatePreferredLender.Length > 2)
-            //{
-            //    if (ReceivedOwner == null) 
-            //    {
-            //        ReceivedOwner = new Owner();
-            //    }
-            //    ReceivedOwner.PreferredLender = updatePreferredLender;
-            //    DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
-            //}
-            //else
-            //{
-            //    DisplayStatusMessage("Input was not null or empty but something went wrong. Hey Dev! Get over here!!");
-            //}
         }
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
