@@ -499,6 +499,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 UpdateBuyer.CreditRating = credRating;
                 resultCount++;
+                DisplayStatusMessage("Buyer Credit Rating Updated. Click Save to close or File -> Exit to quit.");
             }
 
             //  if at least one thing is changed return true
@@ -674,31 +675,32 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void UpdateOwnerButton_Click(object sender, RoutedEventArgs e)
         {
             //  TODO: Refactor this to ensure the Person object is storing the Owner object
+            GetOwnerUpdateFields();
             GetPersonInfoFromTextboxes();
 
-            string quote = char.ToString('"');
-            string updatePreferredLender = string.Empty;
-            if (string.IsNullOrEmpty(preferredLenderTextbox.Text) || string.IsNullOrWhiteSpace(preferredLenderTextbox.Text))
-            {
-                DisplayStatusMessage($"To Update, enter a new Preferred Lender. Example: { quote }US Bank NA{ quote }.");
-            }
-            else
-            {
-                updatePreferredLender = preferredLenderTextbox.Text.Trim();
-            }
-            if (updatePreferredLender.Length > 2)
-            {
-                if (ReceivedOwner == null) 
-                {
-                    ReceivedOwner = new Owner();
-                }
-                ReceivedOwner.PreferredLender = updatePreferredLender;
-                DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
-            }
-            else
-            {
-                DisplayStatusMessage("Input was not null or empty but something went wrong. Hey Dev! Get over here!!");
-            }
+            //string quote = char.ToString('"');
+            //string updatePreferredLender = string.Empty;
+            //if (string.IsNullOrEmpty(preferredLenderTextbox.Text) || string.IsNullOrWhiteSpace(preferredLenderTextbox.Text))
+            //{
+            //    DisplayStatusMessage($"To Update, enter a new Preferred Lender. Example: { quote }US Bank NA{ quote }.");
+            //}
+            //else
+            //{
+            //    updatePreferredLender = preferredLenderTextbox.Text.Trim();
+            //}
+            //if (updatePreferredLender.Length > 2)
+            //{
+            //    if (ReceivedOwner == null) 
+            //    {
+            //        ReceivedOwner = new Owner();
+            //    }
+            //    ReceivedOwner.PreferredLender = updatePreferredLender;
+            //    DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
+            //}
+            //else
+            //{
+            //    DisplayStatusMessage("Input was not null or empty but something went wrong. Hey Dev! Get over here!!");
+            //}
         }
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)

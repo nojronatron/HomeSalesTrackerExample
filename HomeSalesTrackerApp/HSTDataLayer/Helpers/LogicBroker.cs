@@ -82,7 +82,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// NOT TESTED. Should take a generic item and enable storing to the DB via EF.
+        /// TESTED good as of 15-Aug-20. Should take a generic item and enable storing to the DB via EF if different than existing item.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
@@ -99,99 +99,43 @@ namespace HSTDataLayer
                     case "Person":
                         {
                             Person person = item as Person;
-                            //Person updatePerson = new Person()
-                            //{
-                            //    FirstName = person.FirstName,
-                            //    LastName = person.LastName,
-                            //    Phone = person.Phone,
-                            //    Email = person.Email ?? null,
-                            //    Agent = person.Agent,
-                            //    Buyer = person.Buyer,
-                            //    Owner = person.Owner
-                            //};
-
                             context.People.AddOrUpdate(x => new { x.FirstName, x.LastName }, person);
-                            //context.People.Add(item as Person);
                             break;
                         }
                     case "Owner":
                         {
                             Owner owner = item as Owner;
-                            Owner updateOwner = new Owner()
-                            {
-                                PreferredLender = owner.PreferredLender ?? null
-                            };
-                            context.Owners.AddOrUpdate(o => new { o.PreferredLender }, updateOwner);
+                            context.Owners.AddOrUpdate(o => new { o.OwnerID }, owner);
                             break;
                         }
                     case "Home":
                         {
                             Home home = item as Home;
-                            Home updateHome = new Home()
-                            {
-                                Address = home.Address,
-                                City = home.City,
-                                State = home.State,
-                                Zip = home.Zip,
-                                OwnerID = home.OwnerID,
-                                Owner = home.Owner
-                            };
-                            context.Homes.AddOrUpdate(h => new { h.Address, h.Zip }, updateHome);
+                            context.Homes.AddOrUpdate(h => new { h.Address, h.Zip }, home);
                             break;
                         }
                     case "RealEstateCompany":
                         {
                             RealEstateCompany reco = item as RealEstateCompany;
-                            RealEstateCompany updateReco = new RealEstateCompany()
-                            {
-                                CompanyName = reco.CompanyName,
-                                Phone = reco.Phone
-                            };
-                            context.RealEstateCompanies.AddOrUpdate(re => new { re.CompanyID }, updateReco);
+                            context.RealEstateCompanies.AddOrUpdate(re => new { re.CompanyID }, reco);
                             break;
                         }
                     case "Agent":
                         {
                             Agent agent = item as Agent;
-                            //Agent updateAgent = new Agent()
-                            //{
-                            //    CommissionPercent = agent.CommissionPercent,
-                            //    CompanyID = agent.CompanyID ?? null,
-                            //    Person = agent.Person,
-                            //    HomeSales = agent.HomeSales
-                            //};
-
                             context.Agents.AddOrUpdate(a => new { a.AgentID }, agent);
-                            //context.Agents.Add(item as Agent);
                             break;
                         }
                     case "Buyer":
                         {
                             Buyer buyer = item as Buyer;
-                            Buyer updateBuyer = new Buyer()
-                            {
-                                CreditRating = buyer.CreditRating ?? null
-                            };
-                            context.Buyers.AddOrUpdate(b => new { b.BuyerID }, updateBuyer);
+                            context.Buyers.AddOrUpdate(b => new { b.BuyerID }, buyer);
                             break;
                         }
                     case "HomeSale":
                         {
                             HomeSale homesale = item as HomeSale;
-                            HomeSale updateHomesale = new HomeSale()
-                            {
-                                HomeID = homesale.HomeID,
-                                SoldDate = homesale.SoldDate ?? null,
-                                AgentID = homesale.AgentID,
-                                SaleAmount = homesale.SaleAmount,
-                                BuyerID = homesale.BuyerID ?? null,
-                                MarketDate = homesale.MarketDate,
-                                CompanyID = homesale.CompanyID,
-                                Agent = homesale.Agent
-                            };
-
-                            context.HomeSales.AddOrUpdate(hs => new { hs.HomeID }, updateHomesale);
-                            //context.HomeSales.Add(item as HomeSale);
+                            context.HomeSales.AddOrUpdate(hs => new { hs.SaleID }, homesale);
                             break;
                         }
                     default:
@@ -302,7 +246,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// IN TEST. Take a generic item and enable updating a field in an existing entry via EF. If no existing Entities match, new Entity is created.
+        /// !SUSPECT! Take a generic item and enable updating a field in an existing entry via EF. If no existing Entities match, new Entity is created.
         /// People Typed Entities must contain a new or existing Person Type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
