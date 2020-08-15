@@ -21,61 +21,77 @@ namespace HomeSalesTrackerApp.CrudWindows
     public partial class PersonUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
+        private RealEstateCompany SelectedReco { get; set; }
+
         public bool CalledByUpdateMenu { get; set; }    //  Called from MainWindow UPDATE menu item
         public string CalledByUpdateMenuType { get; set; }  //  The person sub-type: Agent, Buyer, Owner
 
-        public Person UpdatePerson { get; set; }
-        public Agent UpdateAgent { get; set; }
-        public Owner UpdateOwner { get; set; }
-        public Buyer UpdateBuyer { get; set; }
-
+        public Person ReceivedPerson { get; set; }
+        private Person UpdatePerson { get; set; }
+        public Agent ReceivedAgent { get; set; }
+        private Agent UpdateAgent { get; set; }
+        public Owner ReceivedOwner { get; set; }
+        private Owner UpdateOwner { get; set; }
+        public Buyer ReceivedBuyer { get; set; }
+        private Buyer UpdateBuyer { get; set; }
+        public RealEstateCompany RecievedRECo { get; set; } //  does this window ever need to receive a RECo?
+        private RealEstateCompany UpdateRECo { get; set; }
 
         public PersonUpdaterWindow()
         {
             InitializeComponent();
         }
 
-        private void LoadAgentPanel()
+        private void DisableAgentDetailsControls()
         {
-            if (UpdateAgent != null)
-            {
-                LoadPersonInformation();
-                //agentIdTextbox.Text = UpdateAgent.AgentID.ToString() ?? string.Empty;
+            //  Agent Details
+            AgentCommissionTextbox.IsReadOnly = true;
+            AgentReCompanyTextbox.IsReadOnly = true;
+            ExistingAgentsCombobox.IsEnabled = false;
 
-                //  query the recoCollection to get RE Company Name
-                if (UpdateAgent.CompanyID == null)
-                {
-                    AgentReCompanyTextbox.Text = "Agent no longer active";
-                }
-                else
-                {
-                    RealEstateCompany tempRECo = (from reco in MainWindow.reCosCollection
-                                                  where reco.CompanyID == UpdateAgent.CompanyID
-                                                  select reco).FirstOrDefault();
+        }
 
+        private void DisableBuyerDetailsControls()
+        {
 
-                    AgentReCompanyTextbox.Text = tempRECo.CompanyName.ToString();
-                }
+            //  Buyer Details
+            CreditRatingTextbox.IsReadOnly = true;
+            UpdateBuyerButton.IsEnabled = false;
+            ExistingBuyersCombobox.IsEnabled = false;
 
-                agentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
-            }
-            else
-            {
-                //agentIdTextbox.Text = string.Empty;
-                agentCommissionTextbox.Text = string.Empty;
-                AgentReCompanyTextbox.Text = string.Empty;
-            }
-            
-            RefreshAgentsComboBox();
-            closeButton.Visibility = Visibility.Visible;
+        }
+
+        private void DisableOwnerDetailsControls()
+        {
+            //  Owner Details
+            preferredLenderTextbox.IsReadOnly = true;
+            UpdateOwnerButton.IsEnabled = false;
+            existingOwnersCombobox.IsEnabled = false;
+
+        }
+
+        private void DisableEditingPersonBasicInformation()
+        {
+            fNameTextbox.IsEnabled = false;
+            lNameTextbox.IsEnabled = false;
+            phoneTextbox.IsEnabled = false;
+            emailTextbox.IsEnabled = false;
+        }
+
+        private void EnableEditingPersonBasicInformation()
+        {
+            fNameTextbox.IsEnabled = true;
+            lNameTextbox.IsEnabled = true;
+            phoneTextbox.IsEnabled = true;
+            emailTextbox.IsEnabled = true;
         }
 
         private void LoadPersonInformation()
         {
-            fNameTextbox.Text = UpdatePerson.FirstName?.ToString() ?? string.Empty;
-            lNameTextbox.Text = UpdatePerson.LastName?.ToString() ?? string.Empty;
-            phoneTextbox.Text = UpdatePerson.Phone?.ToString() ?? string.Empty;
-            emailTextbox.Text = UpdatePerson.Email?.ToString() ?? string.Empty;
+            fNameTextbox.Text = ReceivedPerson.FirstName?.ToString() ?? string.Empty;
+            lNameTextbox.Text = ReceivedPerson.LastName?.ToString() ?? string.Empty;
+            phoneTextbox.Text = ReceivedPerson.Phone?.ToString() ?? string.Empty;
+            emailTextbox.Text = ReceivedPerson.Email?.ToString() ?? string.Empty;
         }
 
         private void ClearPersonTextboxes()
@@ -113,65 +129,189 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             else
             {
-                UpdatePerson = new Person()
-                {
-                    FirstName = fNameTextbox.Text.Trim(),
-                    LastName = lNameTextbox.Text.Trim(),
-                    Phone = phoneTextbox.Text.Trim(),
-                    Email = emailTextbox.Text.Trim() ?? null
-                };
+                UpdatePerson.FirstName = fNameTextbox.Text.Trim();
+                UpdatePerson.LastName = lNameTextbox.Text.Trim();
+                UpdatePerson.Phone = phoneTextbox.Text.Trim();
+                UpdatePerson.Email = emailTextbox.Text.Trim() ?? null;
             }
 
         }
 
-        private void LoadBuyerPanel()
+        /// <summary>
+        /// IN TEST. Load Agent Details with received Agent properties. Also load Agent combobox and realestateco combobox.
+        /// </summary>
+        private void LoadAgentPanel()
         {
-            LoadPersonInformation();
-            //if (UpdateBuyer != null)
-            //{
-            //    if (string.IsNullOrEmpty(UpdateBuyer.CreditRating.ToString()))
-            //    {
-            //        creditRatingTextbox.Text = string.Empty;
-            //        DisplayStatusMessage("Buyer information must be updated and saved.");
-            //    }
-            //    else
-            //    {
-            //        creditRatingTextbox.Text = UpdateBuyer.CreditRating.ToString();
-            //        DisplayStatusMessage("Displaying existing Buyer information");
-            //    }
-            //}
-            //else
-            //{
-            //    creditRatingTextbox.Text = string.Empty;
-            //}
-            creditRatingTextbox.Text = UpdateBuyer.CreditRating?.ToString() ?? string.Empty;
-            RefreshBuyersComboBox();
-            closeButton.Visibility = Visibility.Visible;
+            UpdateAgent = new Agent();
+            UpdatePerson = new Person();
+            UpdateRECo = new RealEstateCompany();
+
+            //  make sure the Agent received from sender is fully loaded from latest Collections' data
+            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedAgent.AgentID).FirstOrDefault();
+            var tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == ReceivedAgent.CompanyID).FirstOrDefault();
+            var tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedAgent.AgentID).ToList();
+
+            ReceivedAgent.Person = tempPerson;
+            ReceivedAgent.RealEstateCompany = tempRECo;
+            ReceivedAgent.HomeSales = tempHomesales;
+
+            if (ReceivedAgent != null)
+            {
+
+                if (ReceivedAgent.CompanyID == null)
+                {
+                    AgentReCompanyTextbox.Text = "Agent no longer active";
+                }
+                else
+                {
+                    AgentReCompanyTextbox.Text = tempRECo.CompanyName.ToString();
+                    AgentReCompanyTextbox.IsReadOnly = true;
+                }
+
+                AgentCommissionTextbox.Text = ReceivedAgent.CommissionPercent.ToString();
+                AgentCommissionTextbox.IsEnabled = true;
+                DisableBuyerDetailsControls();
+                DisableOwnerDetailsControls();
+                ExistingAgentsCombobox.IsEnabled = false;
+                EnableEditingPersonBasicInformation();
+            }
+            else
+            {
+                AgentCommissionTextbox.Text = string.Empty;
+                AgentReCompanyTextbox.Text = string.Empty;
+            }
+            RefreshAgentsComboBox();
+            LoadRealEstateCoCombobox();
         }
 
+        /// <summary>
+        /// INCOMPLETE. Load Buyer Details with ereceived Buyer properties. Also load the Buyer Combobox.
+        /// </summary>
+        private void LoadBuyerPanel()
+        {
+            UpdateBuyer = new Buyer();
+            UpdatePerson = new Person();
+
+            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedBuyer.BuyerID).FirstOrDefault();
+            var tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedBuyer.BuyerID).ToList();
+
+            ReceivedBuyer.Person = tempPerson;
+            ReceivedBuyer.HomeSales = tempHomesales;
+
+            if (ReceivedBuyer == null)
+            {
+                CreditRatingTextbox.Text = "";
+            }
+            else 
+            { 
+                CreditRatingTextbox.Text = ReceivedBuyer.CreditRating?.ToString();
+                //CreditRatingTextbox.Text = ReceivedBuyer.CreditRating?.ToString() ?? string.Empty;
+            }
+
+            CreditRatingTextbox.IsEnabled = true;
+            DisableAgentDetailsControls();
+            DisableOwnerDetailsControls();
+            ExistingBuyersCombobox.IsEnabled = true;
+            EnableEditingPersonBasicInformation();
+
+            RefreshBuyersComboBox();
+        }
+
+        /// <summary>
+        /// INCOMPLETE. Load Owner Details and the OWners ComboBox.
+        /// </summary>
         private void LoadOwnerPanel()
         {
-            LoadPersonInformation();
-            //if (UpdateOwner != null)
-            //{
-            //    if (string.IsNullOrEmpty(UpdateOwner.PreferredLender.ToString()))
-            //    {
-            //        preferredLenderTextbox.Text = string.Empty;
-            //        DisplayStatusMessage("Owner information must be updated and saved.");
-            //    }
-            //    else
-            //    {
-            //        preferredLenderTextbox.Text = UpdateOwner.PreferredLender.ToString();
-            //        DisplayStatusMessage("Displaying existing Owner information.");
-            //    }
-            //}
-            //else
-            //{
-            //    preferredLenderTextbox.Text = string.Empty;
-            //}
-            preferredLenderTextbox.Text = UpdateOwner.PreferredLender?.ToString() ?? string.Empty;
+            UpdateOwner = new Owner();
+            UpdatePerson = new Person();
+
+            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
+            var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+
+            ReceivedOwner.Person = tempPerson;
+            ReceivedOwner.Homes = tempHomes;
+
+            if (ReceivedOwner == null)
+            {
+                preferredLenderTextbox.Text = "";
+            }
+            else
+            {
+                preferredLenderTextbox.Text = ReceivedOwner.PreferredLender?.ToString();
+                //preferredLenderTextbox.Text = ReceivedOwner.PreferredLender?.ToString() ?? string.Empty;
+            }
+
+            preferredLenderTextbox.IsEnabled = true;
+            DisableAgentDetailsControls();
+            DisableBuyerDetailsControls();
+            existingOwnersCombobox.IsEnabled = true;
+            EnableEditingPersonBasicInformation();
+
             RefreshOwnersComboBox();
-            closeButton.Visibility = Visibility.Visible;
+        }
+
+        private void LoadRealEstateCoCombobox()
+        {
+            var comboBoxRECos = (from re in MainWindow.reCosCollection
+                                 select re).ToList();
+            ExistingRECoComboBox.ItemsSource = comboBoxRECos;
+        }
+
+        private void ExistingRECosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //  When user changes the selection, RE Company Name TextBox should be updated and the selection stored in a Property of this instance
+            DisplayStatusMessage("Real Estate Co selection changed!");
+
+            RealEstateCompany comboBoxRECo = (sender as ComboBox).SelectedItem as RealEstateCompany;
+
+            RealEstateCompany tempRECo = (from re in MainWindow.reCosCollection
+                                          where comboBoxRECo.CompanyID == re.CompanyID
+                                          select re).FirstOrDefault();
+
+            Agent tempAgent = (from hs in MainWindow.homeSalesCollection
+                               from a in MainWindow.peopleCollection
+                               where hs.AgentID == tempRECo.CompanyID &&
+                               a.PersonID == hs.AgentID
+                               select a.Agent).FirstOrDefault();
+
+            if (comboBoxRECo != null && tempRECo != null && tempAgent != null)
+            {
+                UpdateAgent = tempAgent;
+                UpdateAgent.CompanyID = tempRECo.CompanyID;
+                UpdateAgent.RealEstateCompany = tempRECo;
+                SelectedReco = tempRECo;
+                AgentReCompanyTextbox.Text = tempRECo.CompanyName;
+                DisplayStatusMessage("Loaded the selected RE Company.");
+            }
+            else
+            {
+                DisplayStatusMessage("Could not find RE Company info.");
+            }
+        }
+
+        private void ExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs sceArgs)
+        {
+            DisplayStatusMessage("Agent selection changed!");
+            //  get personid and correlate agentid
+            Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
+            Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault(); 
+            Agent tempAgent = (from p in MainWindow.peopleCollection
+                               where comboBoxPerson.PersonID == p.Agent.AgentID
+                               select p.Agent).FirstOrDefault();
+
+            if (comboBoxPerson != null && tempAgent != null)
+            {
+                //  update Person and update Agent with user selections
+                UpdatePerson = tempPerson;
+                UpdateAgent = tempAgent;
+
+                LoadAgentPanel();
+                DisplayStatusMessage("Loaded the selected existing Agent.");
+            }
+            else
+            {
+                DisplayStatusMessage("Could not find Agent information.");
+            }
         }
 
         private void ExistingOwnersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -179,14 +319,15 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Owner selection changed!");
 
             Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
+            Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault();
             Owner tempOwner = (from p in MainWindow.peopleCollection
                                where comboBoxPerson.PersonID == p.Owner.OwnerID
                                select p.Owner).FirstOrDefault();
 
-            if (comboBoxPerson!= null && tempOwner != null)
+            if (comboBoxPerson != null && tempOwner != null)
             {
-                UpdatePerson = comboBoxPerson;
-                UpdateOwner = tempOwner;
+                ReceivedPerson = tempPerson;
+                ReceivedOwner = tempOwner;
                 LoadOwnerPanel();
                 DisplayStatusMessage("Loaded the selected existing Owner.");
             }
@@ -199,46 +340,21 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
+            Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault();
             Buyer tempBuyer = (from p in MainWindow.peopleCollection
                                where comboBoxPerson.PersonID == p.Buyer.BuyerID
                                select p.Buyer).FirstOrDefault();
 
             if (comboBoxPerson != null && tempBuyer != null)
             {
-                UpdatePerson = comboBoxPerson;
-                UpdateBuyer = tempBuyer;
+                ReceivedPerson = tempPerson;
+                ReceivedBuyer = tempBuyer;
                 LoadBuyerPanel();
-                DisplayStatusMessage("Loaded the seelcted existing Buyer.");
+                DisplayStatusMessage("Loaded the selected existing Buyer.");
             }
             else
             {
                 DisplayStatusMessage("Could not find Buyer information.");
-            }
-        }
-
-        private void ExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs sceArgs)
-        {
-            DisplayStatusMessage("Agent selection changed!");
-            //  get personid and correlate agentid
-            Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
-            Agent tempAgent = (from p in MainWindow.peopleCollection
-                               where comboBoxPerson.PersonID == p.Agent.AgentID
-                               select p.Agent).FirstOrDefault();
-
-            if (comboBoxPerson != null && tempAgent != null)
-            {
-                //  return new Basic Information
-                UpdatePerson = comboBoxPerson;
-
-                //  return new Agent Details
-                UpdateAgent = tempAgent;
-
-                LoadAgentPanel();
-                DisplayStatusMessage("Loaded the selected existing Agent.");
-            }
-            else
-            {
-                DisplayStatusMessage("Could not find Agent information.");
             }
         }
 
@@ -248,7 +364,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                                          from a in MainWindow.peopleCollection
                                          where a.PersonID == hs.AgentID
                                          select a).ToList();
-            existingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
+            ExistingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
 
         }
 
@@ -258,7 +374,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                                 from a in MainWindow.peopleCollection
                                 where a.PersonID == hs.BuyerID
                                 select a).ToList();
-            existingBuyersCombobox.ItemsSource = listOfBuyers;
+            ExistingBuyersCombobox.ItemsSource = listOfBuyers;
         }
 
         private void RefreshOwnersComboBox()
@@ -275,60 +391,159 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
-        ///// <summary>
-        ///// REFACTOR THIS! Used to call LogicBroker Update method (rather than Add method).
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void UpdateAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //  TODO: Refactor this method to add Agent, Buyer, Owner information to the existing Person object THEN send it to LogicBroker for saving/updating.
+        /// <summary>
+        /// Initialize and set properties to the UpdateAgent object (this.UpdateAgent property). UpdateAgent gets initialized here EVERY TIME this is run.
+        /// </summary>
+        /// <returns></returns>
+        private bool GetAgentUpdatedFields()
+        {
+            bool result = false;
+            int resultCount = 0;
+            decimal updateAgentCommish = 0.0m;
+            UpdateAgent = new Agent();
+            UpdatePerson = ReceivedPerson;
+            UpdateAgent = ReceivedAgent;    //  captures AgentID
+            UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
 
-        //    GetPersonInfoFromTextboxes();
 
-        //    //  store the a new or updated person but not a match
-        //    Person checkForDouble = (from p in MainWindow.peopleCollection
-        //                             where UpdatePerson.FirstName == p.FirstName &&
-        //                             UpdatePerson.LastName == p.LastName &&
-        //                             UpdatePerson.Phone == p.Phone
-        //                             select p).SingleOrDefault();
-        //    if (checkForDouble == null)
-        //    {
-        //        LogicBroker.UpdateEntity<Person>(UpdatePerson);
-        //    }
+            if (string.IsNullOrWhiteSpace(AgentCommissionTextbox.Text.Trim()))
+            {
+                DisplayStatusMessage("To Update, enter a new Commission Rate. Example 4% would be: 0.04");
+            }
+            if (Decimal.TryParse(AgentCommissionTextbox.Text.Trim(), out updateAgentCommish))
+            {
+                if (updateAgentCommish > 0.00m && updateAgentCommish < 1.0m)
+                {
+                    if (updateAgentCommish != ReceivedAgent.CommissionPercent)
+                    {
+                        UpdateAgent.CommissionPercent = updateAgentCommish;
+                        resultCount++;
+                        DisplayStatusMessage("Agent Commission updated. Click Save to close or File -> Exit to quit.");
+                    }
+                    else
+                    {
+                        DisplayStatusMessage("To Update, enter a new Commission Rate. Example 4% would be: 0.04");
+                    }
+                }
+                else
+                {
+                    DisplayStatusMessage("Enter a valid Commission Rate between 1 and 99 percent.");
+                }
+            }
+            else
+            {
+                DisplayStatusMessage("Enter a valid Commission Rate between 1 and 99 percent.");
+            }
 
-        //    //  store the new/existing person Type depending on the workflow context
-        //    string updateType = CalledByUpdateMenuType.Trim().ToUpper();
-        //    switch (updateType)
-        //    {
-        //        case "AGENT":
-        //            {
-        //                //  TODO: Test this
-                        
-        //                LogicBroker.UpdateEntity<Agent>(UpdateAgent);
-        //                break;
-        //            }
-        //        case "OWNER":
-        //            {
-        //                //  TODO: Test this
-        //                LogicBroker.UpdateEntity<Owner>(UpdateOwner);
-        //                break;
-        //            }
-        //        case "BUYER":
-        //            {
-        //                //  TODO: Test this
-        //                LogicBroker.UpdateEntity<Buyer>(UpdateBuyer);
-        //                break;
-        //            }
-        //        default:
-        //            {
-        //                break;
-        //            }
-        //    }
 
-        //    IsButtonClose = true;
-        //    this.Close();
-        //}
+            //  get the "selected RealEstateCompany" information if not already saved to UpdateRECo
+            if (SelectedReco != null)
+            {
+                if (SelectedReco.CompanyName != UpdateRECo.CompanyName)
+                {
+                    UpdateAgent.RealEstateCompany = SelectedReco;
+                    UpdateRECo = SelectedReco;
+                    resultCount++;
+                }
+            }
+            else
+            {
+                string recoName = AgentReCompanyTextbox.Text.Trim();
+                if (string.IsNullOrWhiteSpace(recoName) != true)
+                {
+                    var inferredReco = (from re in MainWindow.reCosCollection
+                                        where re.CompanyName == recoName
+                                        select re).FirstOrDefault();
+                    if (inferredReco != null && inferredReco.CompanyName != UpdateAgent.RealEstateCompany.CompanyName)
+                    {
+                        UpdateRECo = inferredReco;
+                        UpdateAgent.RealEstateCompany = UpdateRECo;
+                        UpdateAgent.CompanyID = UpdateRECo.CompanyID;
+                        resultCount++;
+                    }
+                }
+            }
+
+            //  if at least one thing is changed return true
+            if (resultCount > 0)
+            {
+                result = true;
+            }
+            
+            return result;
+        }
+
+        private bool GetBuyerUpdateFields()
+        {
+            bool result = false;
+            int resultCount = 0;
+            string creditRating = string.Empty;
+            UpdateBuyer = new Buyer();
+            UpdatePerson = ReceivedPerson;
+            UpdateBuyer = ReceivedBuyer;    //  captures BuyerID
+            UpdateBuyer.HomeSales = ReceivedBuyer.HomeSales;
+
+            if (string.IsNullOrWhiteSpace(CreditRatingTextbox.Text.Trim()))
+            {
+                DisplayStatusMessage("To Update, enter a new Credit Rating from 300 850.");
+            }
+            else 
+            {
+                creditRating = CreditRatingTextbox.Text.Trim();
+            }
+            if (creditRating.Length != 3)
+            {
+                DisplayStatusMessage("Enter a valid Credit Rating between 299 and 851.");
+            }
+            else if (int.TryParse(creditRating, out int credRating))
+            {
+                UpdateBuyer.CreditRating = credRating;
+                resultCount++;
+            }
+
+            //  if at least one thing is changed return true
+            if (resultCount > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private bool GetOwnerUpdateFields()
+        {
+            bool result = false;
+            int resultCount = 0;
+            string preferredLender = string.Empty;
+            UpdateOwner = new Owner();
+            UpdatePerson = ReceivedPerson;
+            UpdateOwner = ReceivedOwner;    //  captures OwnerID
+            UpdateOwner.Homes = ReceivedOwner.Homes;
+
+            if (string.IsNullOrWhiteSpace(preferredLenderTextbox.Text.Trim()))
+            {
+                DisplayStatusMessage("To update, enter the name of Owner's preferred lending Bank.");
+            }
+            else
+            {
+                preferredLender = preferredLenderTextbox.Text.Trim();
+            }
+            if(preferredLender.Length < 3 || preferredLender.Length > 30)
+            {
+                DisplayStatusMessage("Enter a Bank Name that is from 3 to 30 characters long.");
+            }
+            else
+            {
+                UpdateOwner.PreferredLender = preferredLender;
+                resultCount++;
+            }
+
+            if(resultCount > 0)
+            {
+                result = true;
+            }
+            return result;
+        }
 
         /// <summary>
         /// Save NEW record(s) to the DB and then close the current Window.
@@ -337,23 +552,41 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void SaveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            //  IF an Owner, Buyer, or Agent have been created they will be attached to the new or existing Person in the Basic Information fields on the form
-            GetPersonInfoFromTextboxes();
+            IsButtonClose = true;
+            int aboSaveCount = 0;
+            bool personSaved = false;
 
-            //  Only add updated fields to the Person instance (remember this form CREATES a new Person)
-            if (UpdateAgent != null) {
+            if (CalledByUpdateMenuType == "Agent")
+            {
                 UpdatePerson.Agent = UpdateAgent;
+                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
+                if (LogicBroker.SaveEntity<Agent>(UpdateAgent))
+                {
+                    aboSaveCount++;
+                }
             }
-            if (UpdateBuyer != null) {
+
+            if (CalledByUpdateMenuType == "Buyer")
+            {
                 UpdatePerson.Buyer = UpdateBuyer;
+                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
+                if(LogicBroker.SaveEntity<Buyer>(UpdateBuyer))
+                {
+                    aboSaveCount++;
+                }
             }
-            if (UpdateOwner != null) {
+
+            if(CalledByUpdateMenuType == "Owner")
+            {
                 UpdatePerson.Owner = UpdateOwner;
+                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
+                if (LogicBroker.SaveEntity<Owner>(UpdateOwner))
+                {
+                    aboSaveCount++;
+                }
             }
 
-            //  Save!
-
-            if (LogicBroker.UpdateEntity<Person>(UpdatePerson))
+            if (personSaved || aboSaveCount > 0)
             {
                 DisplayStatusMessage("Saved!");
                 IsButtonClose = true;
@@ -361,63 +594,9 @@ namespace HomeSalesTrackerApp.CrudWindows
             else
             {
                 DisplayStatusMessage("Unable to save.");
+                IsButtonClose = false;
             }
             this.Close();
-
-            ////  store the a new or updated person but not a match
-            //Person checkForDouble = (from p in MainWindow.peopleCollection
-            //                         where UpdatePerson.FirstName == p.FirstName &&
-            //                         UpdatePerson.LastName == p.LastName &&
-            //                         UpdatePerson.Phone == p.Phone
-            //                         select p).SingleOrDefault();
-            //if (checkForDouble == null)
-            //{
-
-            //    //  store the new/existing person Type depending on the workflow context
-            //    string updateType = CalledByUpdateMenuType.Trim().ToUpper();
-            //    switch (updateType)
-            //    {
-            //        case "AGENT":
-            //            {
-            //                //  TODO: Test this
-            //                UpdatePerson.Agent = UpdateAgent;
-            //                //LogicBroker.SaveEntity<Agent>(UpdateAgent);
-            //                break;
-            //            }
-            //        case "OWNER":
-            //            {
-            //                //  TODO: Test this
-            //                UpdatePerson.Owner = UpdateOwner;
-            //                break;
-            //            }
-            //        case "BUYER":
-            //            {
-            //                //  TODO: Test this
-            //                UpdatePerson.Buyer = UpdateBuyer;
-            //                break;
-            //            }
-            //        default:
-            //            {
-            //                break;
-            //            }
-            //    }
-
-            //    if (LogicBroker.SaveEntity<Person>(UpdatePerson))
-            //    {
-            //        IsButtonClose = true;
-            //        AddHomeWindow.APerson = UpdatePerson;
-            //    }
-            //    else
-            //    {
-            //        IsButtonClose = false;
-            //        DisplayStatusMessage("Unable to save to database.");
-            //    }
-            //}
-            //else
-            //{
-            //    string flName = $"{ UpdatePerson.FirstName } { UpdatePerson.LastName }";
-            //    DisplayStatusMessage($"Not added: { flName } already exists.");
-            //}
         }
 
         /// <summary>
@@ -433,7 +612,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             else
             {
-                var userResponse = MessageBox.Show("Closing Add Home Window", "Changes will not be saved. Continue?", MessageBoxButton.YesNo);
+                var userResponse = MessageBox.Show("Changes will not be saved. Continue?", "Closing Add Home Window", MessageBoxButton.YesNo);
                 if (userResponse == MessageBoxResult.No)
                 {
                     e.Cancel = true;
@@ -448,20 +627,21 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string updateType = CalledByUpdateMenuType.Trim().ToUpper();
+            LoadPersonInformation();
+            string updateType = CalledByUpdateMenuType.Trim();
             switch (updateType)
             {
-                case "AGENT":
+                case "Agent":
                     {
                         LoadAgentPanel();
                         break;
                     }
-                case "OWNER":
+                case "Owner":
                     {
                         LoadOwnerPanel();
                         break;
                     }
-                case "BUYER":
+                case "Buyer":
                     {
                         LoadBuyerPanel();
                         break;
@@ -471,85 +651,31 @@ namespace HomeSalesTrackerApp.CrudWindows
                         break;
                     }
             }
-
             IsButtonClose = false;
         }
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
-            IsButtonClose = true;
+            this.Close();
         }
 
-        private void AddAgentButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateAgentButton_Click(object sender, RoutedEventArgs e)
         {
-            decimal updateAgentCommish = 0.0m;
-            if (string.IsNullOrEmpty(agentCommissionTextbox.Text.Trim()))
-            {
-                DisplayStatusMessage("To Update, enter a new Commission Rate. Example 4% would be: 0.04");
-            }
-            else if (Decimal.TryParse(agentCommissionTextbox.Text.Trim(), out updateAgentCommish))
-            {
-                if (updateAgentCommish > 0.00m && updateAgentCommish < 1.0m)
-                {
-                    if (updateAgentCommish != UpdateAgent.CommissionPercent)
-                    {
-                        UpdateAgent.CommissionPercent = updateAgentCommish;
-                        DisplayStatusMessage("Agent Commission updated. Click Save to continue or Close to abort.");
-                    }
-                    else
-                    {
-                        DisplayStatusMessage("To Update, enter a new Commission Rate. Example 4% would be: 0.04");
-                    }
-                }
-                else
-                {
-                    DisplayStatusMessage("Enter a valid Commission Rate between 1 and 99 percent.");
-                }
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to parse input. Hey developer! Check this out!!");
-            }
-
+            GetAgentUpdatedFields();
+            GetPersonInfoFromTextboxes();
         }
 
-        private void AddBuyerButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateBuyerButton_Click(object sender, RoutedEventArgs e)
         {
-            int updateCreditRating = 0;
-            if (string.IsNullOrEmpty(creditRatingTextbox.Text) || string.IsNullOrWhiteSpace(creditRatingTextbox.Text))
-            {
-                DisplayStatusMessage("To Update, enter a new Credit Rating. Example: 650");
-            }
-            if(int.TryParse(creditRatingTextbox.Text.Trim(), out updateCreditRating))
-            {
-                if(updateCreditRating > 299 && updateCreditRating < 851)
-                {
-                    if (updateCreditRating != UpdateBuyer.CreditRating)
-                    {
-                        UpdateBuyer.CreditRating = updateCreditRating;
-                        DisplayStatusMessage("Credit Rating updated. Click Save to continue or Close to exit without saving.");
-                    }
-                    else
-                    {
-                        DisplayStatusMessage("To Update, enter a new Credit Rating between 300 and 850.");
-                    }
-                }
-                else
-                {
-                    //  see Equifax for an explanation of the credit rating range. Experian has a similar explanation under different branding.
-                    DisplayStatusMessage("Enter a valid Credit Rating between 300 and 850.");
-                }
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to parse input. Hey developer! Check this out!!");
-            }
-
+            GetBuyerUpdateFields();
+            GetPersonInfoFromTextboxes();
         }
 
-        private void AddOwnerButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateOwnerButton_Click(object sender, RoutedEventArgs e)
         {
             //  TODO: Refactor this to ensure the Person object is storing the Owner object
+            GetPersonInfoFromTextboxes();
+
             string quote = char.ToString('"');
             string updatePreferredLender = string.Empty;
             if (string.IsNullOrEmpty(preferredLenderTextbox.Text) || string.IsNullOrWhiteSpace(preferredLenderTextbox.Text))
@@ -562,11 +688,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             if (updatePreferredLender.Length > 2)
             {
-                if (UpdateOwner == null) 
+                if (ReceivedOwner == null) 
                 {
-                    UpdateOwner = new Owner();
+                    ReceivedOwner = new Owner();
                 }
-                UpdateOwner.PreferredLender = updatePreferredLender;
+                ReceivedOwner.PreferredLender = updatePreferredLender;
                 DisplayStatusMessage("Preferred Lender udpated. Click Save to continue or Close to exit without saving.");
             }
             else

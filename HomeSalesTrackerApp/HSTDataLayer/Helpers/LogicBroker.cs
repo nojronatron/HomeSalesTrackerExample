@@ -99,18 +99,18 @@ namespace HSTDataLayer
                     case "Person":
                         {
                             Person person = item as Person;
-                            Person updatePerson = new Person()
-                            {
-                                FirstName = person.FirstName,
-                                LastName = person.LastName,
-                                Phone = person.Phone,
-                                Email = person.Email ?? null//,
-                                //Agent = person.Agent,
-                                //Buyer = person.Buyer,
-                                //Owner = person.Owner
-                            };
+                            //Person updatePerson = new Person()
+                            //{
+                            //    FirstName = person.FirstName,
+                            //    LastName = person.LastName,
+                            //    Phone = person.Phone,
+                            //    Email = person.Email ?? null,
+                            //    Agent = person.Agent,
+                            //    Buyer = person.Buyer,
+                            //    Owner = person.Owner
+                            //};
 
-                            context.People.AddOrUpdate(x => new { x.FirstName, x.LastName }, updatePerson);
+                            context.People.AddOrUpdate(x => new { x.FirstName, x.LastName }, person);
                             //context.People.Add(item as Person);
                             break;
                         }
@@ -147,19 +147,21 @@ namespace HSTDataLayer
                                 CompanyName = reco.CompanyName,
                                 Phone = reco.Phone
                             };
-                            context.RealEstateCompanies.AddOrUpdate(re => new { re.CompanyName }, updateReco);
+                            context.RealEstateCompanies.AddOrUpdate(re => new { re.CompanyID }, updateReco);
                             break;
                         }
                     case "Agent":
                         {
                             Agent agent = item as Agent;
-                            Agent updateAgent = new Agent()
-                            {
-                                CommissionPercent = agent.CommissionPercent,
-                                CompanyID = agent.CompanyID ?? null
-                            };
+                            //Agent updateAgent = new Agent()
+                            //{
+                            //    CommissionPercent = agent.CommissionPercent,
+                            //    CompanyID = agent.CompanyID ?? null,
+                            //    Person = agent.Person,
+                            //    HomeSales = agent.HomeSales
+                            //};
 
-                            context.Agents.AddOrUpdate(a => new { a.CommissionPercent }, updateAgent);
+                            context.Agents.AddOrUpdate(a => new { a.AgentID }, agent);
                             //context.Agents.Add(item as Agent);
                             break;
                         }
@@ -170,7 +172,7 @@ namespace HSTDataLayer
                             {
                                 CreditRating = buyer.CreditRating ?? null
                             };
-                            context.Buyers.AddOrUpdate(b => new { b.CreditRating }, updateBuyer);
+                            context.Buyers.AddOrUpdate(b => new { b.BuyerID }, updateBuyer);
                             break;
                         }
                     case "HomeSale":

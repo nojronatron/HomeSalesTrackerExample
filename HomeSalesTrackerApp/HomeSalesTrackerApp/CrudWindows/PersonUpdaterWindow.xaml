@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="Person Updater Window" Height="620" Width="460"
+        Title="Person Updater Window" Height="630" Width="460"
         Closing="Window_Closing" Loaded="Window_Loaded">
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
@@ -46,9 +46,9 @@
                 <Label Content="Owner Details" FontWeight="Bold" Height="25" HorizontalAlignment="Center" />
                 <Label Content="Owner's Preferred Lender" Height="27" />
                 <TextBox x:Name="preferredLenderTextbox" Height="27" />
-                <Button x:Name="addOwnerButton" Content="Add This Owner" Height="27" Margin="10" MinWidth="25" 
-                    Click="AddOwnerButton_Click" />
-                <Label Content="Or Select Existing Owner:" Height="27" HorizontalAlignment="Center" />
+                <Button x:Name="UpdateOwnerButton" Content="Update This Owner" Height="27" Margin="10" MinWidth="25" 
+                    Click="UpdateOwnerButton_Click" Visibility="Visible" />
+                <Label Content="Select Existing Owner:" Height="27" HorizontalAlignment="Center" />
                 <ComboBox x:Name="existingOwnersCombobox" ItemsSource="{Binding}" 
                           SelectionChanged="ExistingOwnersCombobox_SelectionChanged" />
                 <Separator Margin="0,10" />
@@ -57,26 +57,28 @@
             <StackPanel Grid.Column="3" Orientation="Vertical" MinWidth="130" Margin="5,5" >
                 <Label Content="Buyer Details" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
                 <Label Content="Buyer's Credit Rating" Height="27" />
-                <TextBox x:Name="creditRatingTextbox" Text="" Height="27" />
-                <Button x:Name="addBuyerButton" Content="Add This Buyer" Height="27" Margin="10" MinWidth="25" 
-                    Click="AddBuyerButton_Click" />
-                <Label Content="Or Select Existing Buyer:" Height="27" HorizontalAlignment="Center" />
-                <ComboBox x:Name="existingBuyersCombobox" ItemsSource="{Binding}" 
+                <TextBox x:Name="CreditRatingTextbox" Text="" Height="27" />
+                <Button x:Name="UpdateBuyerButton" Content="Update This Buyer" Height="27" Margin="10" MinWidth="25" 
+                    Click="UpdateBuyerButton_Click" Visibility="Visible" />
+                <Label Content="Select Existing Buyer:" Height="27" HorizontalAlignment="Center" />
+                <ComboBox x:Name="ExistingBuyersCombobox" ItemsSource="{Binding}" 
                           SelectionChanged="ExistingBuyersCombobox_SelectionChanged" />
                 <Separator Margin="0,10" />
                 <Label Content="Agent Details" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
                 <Label Content="Commission Percent example: 0.04" Height="27" />
-                <TextBox x:Name="agentCommissionTextbox" Text="" Height="27" />
+                <TextBox x:Name="AgentCommissionTextbox" Text="" Height="27" />
                 <Label Content="Agent's RE Company Name" Height="27" />
                 <TextBox x:Name="AgentReCompanyTextbox" Text="" Height="27" />
-                <Button x:Name="addAgentButton" Content="Add Agent" Height="27" Margin="10" Click="AddAgentButton_Click" MinWidth="25" />
-                <Label Content="Or Select Existing Agent:" Height="27" HorizontalAlignment="Center" />
-                <ComboBox x:Name="existingAgentsCombobox" ItemsSource="{Binding}" SelectionChanged="ExistingAgentsCombobox_SelectionChanged" />
+                <Label Content="Select Real Estate Company" Height="27" HorizontalAlignment="Center" />
+                <ComboBox x:Name="ExistingRECoComboBox" ItemsSource="{Binding}" SelectionChanged="ExistingRECosCombobox_SelectionChanged" />
+                <Label Content="Select Existing Agent:" Height="27" HorizontalAlignment="Center" />
+                <ComboBox x:Name="ExistingAgentsCombobox" ItemsSource="{Binding}" SelectionChanged="ExistingAgentsCombobox_SelectionChanged" />
+                <Button x:Name="UpdateAgentButton" Content="Update This Agent" Height="27" Margin="10" MinWidth="25" 
+                        Click="UpdateAgentButton_Click" Visibility="Visible" />
                 <Separator Margin="0,10" />
-                <!--<Button x:Name="updateButton" Content="Update Existing and Close" Height="27" Margin="10,5" Click="UpdateAndCloseWindowButton_Click"
-                        MinWidth="25" VerticalAlignment="Bottom" />-->
-                <Button x:Name="closeButton" Content="Save and Close" Height="27" Margin="10,5" Click="SaveAndCloseWindowButton_Click" 
-                        MinWidth="25" VerticalAlignment="Bottom" />
+                <Button x:Name="SaveAndCloseButton" Content="Save Changes and Close" Height="27" Margin="10,5" MinWidth="25" 
+                        Click="SaveAndCloseWindowButton_Click" VerticalAlignment="Bottom" />
+                <Separator Margin="0,10" />
             </StackPanel>
         </Grid>
     </DockPanel>

@@ -117,10 +117,10 @@ namespace HomeSalesTrackerApp
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
             PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-            personUpdaterWindow.UpdateAgent = new Agent();
-            personUpdaterWindow.UpdateBuyer = new Buyer();
-            personUpdaterWindow.UpdateOwner = new Owner();
-            personUpdaterWindow.UpdatePerson = new Person();
+            personUpdaterWindow.ReceivedAgent = new Agent();
+            personUpdaterWindow.ReceivedBuyer = new Buyer();
+            personUpdaterWindow.ReceivedOwner = new Owner();
+            personUpdaterWindow.ReceivedPerson = new Person();
             personUpdaterWindow.CalledByUpdateMenuType = "Owner";
             personUpdaterWindow.Show();
         }

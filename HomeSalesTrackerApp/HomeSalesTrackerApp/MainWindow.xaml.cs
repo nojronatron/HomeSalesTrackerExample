@@ -664,6 +664,32 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
+            //    alternate code:
+            /*
+            HomeForSaleView selectedHomesaleView = null;
+            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            FoundHomesForSaleView.SelectedItem = -1;    //  clear the selection on the combobox
+
+            var homeid = selectedHomesaleView.HomeID;
+            HomeSale homesaleByID = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+                                                                  .FirstOrDefault();
+            Agent homesaleAgent = new Agent()
+            {
+                AgentID = homesaleByID.AgentID,
+                CompanyID = homesaleByID.CompanyID,
+                CommissionPercent = homesaleByID.Agent.CommissionPercent
+            };
+
+            Person agentPerson = MainWindow.peopleCollection.Where(p => p.PersonID == homesaleByID.AgentID).FirstOrDefault();
+
+            PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
+            personUpdaterWindow.CalledByUpdateMenuType = "Agent";
+            personUpdaterWindow.CalledByUpdateMenu = false;
+            personUpdaterWindow.UpdateAgent = homesaleAgent;
+            personUpdaterWindow.UpdatePerson = agentPerson;
+            personUpdaterWindow.Show();
+            */
+
             //  lots of opportunity for data to be missing or incorrect for this opereration so track error messages for return when canceling out
             StringBuilder statusMessage = new StringBuilder("Ok. ");
 
@@ -732,47 +758,84 @@ namespace HomeSalesTrackerApp
 
         private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
         {
-            //
+            PersonView selectedperson = FoundPeopleView.SelectedItem as PersonView;
+            string statusMessage = "Select a search result prior to using the Update Menu.";
+            Person updatePerson = null;
+            Owner updateOwner = null;
+
+            if (selectedperson != null)
+            {
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedperson.PersonID).FirstOrDefault();
+                if (updatePerson != null)
+                {
+                    updateOwner = updatePerson.Owner;
+                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
+                    var puw = new PersonUpdaterWindow();
+                    puw.CalledByUpdateMenu = true;
+                    puw.CalledByUpdateMenuType = "Owner";
+                    puw.ReceivedPerson = updatePerson;
+                    puw.ReceivedOwner = updateOwner;
+                    puw.Show();
+                }
+            }
+            DisplayStatusMessage(statusMessage);
+
         }
 
+        /// <summary>
+        /// Take a selected item from Search Results and open a the Person Updater Window to make changes to the selected Person Type.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuUpdateAgent_Click(object sender, RoutedEventArgs e)
         {
-            //  when a HomeSale is selected in the Search Results window
-            //  this menu item can be used to change the Agent (new or existing)
-            HomeForSaleView selectedHomesaleView = null;
-            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
-            FoundHomesForSaleView.SelectedItem = -1;    //  clear the selection on the combobox
+            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            string statusMessage = "Select a search result prior to using the Update Menu.";
+            Person updatePerson = null;
+            Agent updateAgent = null;
 
-            var homeid = selectedHomesaleView.HomeID;
-            HomeSale homesaleByID = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
-                                                                  .FirstOrDefault();
-            Agent homesaleAgent = new Agent()
+            if (selectedPerson != null)
             {
-                AgentID = homesaleByID.AgentID,
-                CompanyID = homesaleByID.CompanyID,
-                CommissionPercent = homesaleByID.Agent.CommissionPercent
-            };
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                if (updatePerson != null)
+                {
+                    updateAgent = updatePerson.Agent;
+                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
+                    var puw = new PersonUpdaterWindow();
+                    puw.CalledByUpdateMenu = true;
+                    puw.CalledByUpdateMenuType = "Agent";
+                    puw.ReceivedPerson = updatePerson;
+                    puw.ReceivedAgent = updateAgent;
+                    puw.Show();
+                }
+            }
+            DisplayStatusMessage(statusMessage);
 
-            Person agentPerson = MainWindow.peopleCollection.Where(p => p.PersonID == homesaleByID.AgentID).FirstOrDefault();
-
-            PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-            personUpdaterWindow.CalledByUpdateMenuType = "Agent";
-            personUpdaterWindow.CalledByUpdateMenu = false;
-            personUpdaterWindow.UpdateAgent = homesaleAgent;
-            personUpdaterWindow.UpdatePerson = agentPerson;
-            personUpdaterWindow.Show();
-
-            ClearSearchResultsViews();
         }
 
         private void MenuUpdateBuyer_Click(object sender, RoutedEventArgs e)
         {
-            //  When a HOME or HOMESALE is selected in the Search Results window
-            //  this menu item can be used to change the Buyer
+            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            string statusMessage = "Select a search result prior to using the Update Menu.";
+            Person updatePerson = null;
+            Buyer updateBuyer = null;
 
-            HomeSearchView selectedHomeView = null;
-            selectedHomeView = FoundHomesView.SelectedItem as HomeSearchView;
-            HomeUpdaterWindow huw = new HomeUpdaterWindow();
+            if (selectedPerson != null)
+            {
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                if (updatePerson != null)
+                {
+                    updateBuyer = updatePerson.Buyer;
+                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
+                    var puw = new PersonUpdaterWindow();
+                    puw.CalledByUpdateMenu = true;
+                    puw.CalledByUpdateMenuType = "Buyer";
+                    puw.ReceivedPerson = updatePerson;
+                    puw.ReceivedBuyer = updateBuyer;
+                    puw.Show();
+                }
+            }
+            DisplayStatusMessage(statusMessage);
 
         }
 
