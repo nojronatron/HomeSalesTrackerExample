@@ -20,18 +20,20 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class AddPersonWindow : Window
     {
-        private bool isButtonClose = false;
-        private Agent newAgent = null;
-        private Buyer newBuyer = null;
-        private Owner newOwner = null;
-        private Person newPerson = null;
+        private bool IsButtonClose = false;
+        private Agent NewAgent = null;
+        private Buyer NewBuyer = null;
+        private Owner NewOwner = null;
+        private Person NewPerson = null;
+        private RealEstateCompany ExistingRECo = null;
+
         public string AddType { get; set; }
 
         public AddPersonWindow()
         {
             InitializeComponent();
             this.Title = $"Add { AddType }";
-            
+
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
@@ -41,11 +43,18 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void menuRefresh_Click(object sender, RoutedEventArgs e)
         {
-
+            NewAgent = null;
+            ExistingRECo = null;
+            NewBuyer = null;
+            NewOwner = null;
+            NewPerson = null;
+            LoadRECoComboBox();
+            DisplayStatusMessage("Refreshed entries and updates.");
         }
 
-        private void addOwnerButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateLenderButton_Click(object sender, RoutedEventArgs e)
         {
+            //  PreferredLender is an optional field
             string preferredLenderText = this.preferredLenderTextbox.Text.Trim();
 
             if (preferredLenderText.Length == 0)
@@ -56,74 +65,51 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             if (preferredLenderText.Length > 31)
             {
-                DisplayStatusMessage("Preferred Lender Name is too long for this database. Trimmed-down to 31 characters.");
+                DisplayStatusMessage("Preferred Lender Name will be trimmed-down to 31 characters (max).");
                 preferredLenderText = preferredLenderText.Substring(0, 30);
             }
 
-            newOwner = new Owner()
+            NewOwner = new Owner()
             {
                 PreferredLender = preferredLenderText
             };
 
-            string createNewPersonErrorMessages = CreateNewPerson();
-
-            if (newPerson != null)
-            {
-                newPerson.Owner = newOwner;
-                DisplayStatusMessage("Added a new Owner.");
-            }
-            else
-            {
-                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
-                newOwner = null;
-                DisplayStatusMessage(createNewPersonErrorMessages);
-            }
+            DisplayStatusMessage("New Owner information created.");
         }
 
         private void AddBuyerButton_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Add preemptive input validation prior to creating the new Buyer object instance
+            NewBuyer = new Buyer() { };
             string credRating = this.creditRatingTextbox.Text.Trim();
-            newBuyer = new Buyer()
+            if (credRating.Length > 0)
             {
-                CreditRating = int.Parse(credRating)
-            };
-            
-            string createNewPersonErrorMessage = CreateNewPerson();
-            if (newPerson != null)
-            {
-                newPerson.Buyer = newBuyer;
-                DisplayStatusMessage("Added new Buyer.");
-                SavePersonAndRefreshCollection(newPerson);
+                if (int.TryParse(credRating, out int creditRating))
+                {
+                    NewBuyer.CreditRating = creditRating;
+                    DisplayStatusMessage("Added new Buyer.");
+                }
             }
             else
             {
-                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get reused
-                DisplayStatusMessage(createNewPersonErrorMessage);
+                NewBuyer.CreditRating = null;
             }
+
         }
 
         private void addAgentButton_Click(object sender, RoutedEventArgs e)
         {
             //  TODO; Add preemptive input validation prior to creating the new Agent object instance
+            NewAgent = new Agent();
             string commission = this.commissionTextbox.Text.Trim();
-            newAgent = new Agent()
+            if (Decimal.TryParse(commission, out decimal commish))
             {
-                CommissionPercent = Decimal.Parse(commission)
-            };
+                NewAgent.CommissionPercent = commish;
+                if (ExistingRECo != null)
+                {
+                    NewAgent.RealEstateCompany = ExistingRECo;
+                }
+            }
 
-            string createNewPersonErrorMessage = CreateNewPerson();
-            if (newPerson != null)
-            {
-                newPerson.Agent = newAgent;
-                SavePersonAndRefreshCollection(newPerson);
-                DisplayStatusMessage("Added new Agent.");
-            }
-            else
-            {
-                newPerson = null;   //  explicitly reset newPerson to null to ensure it does not get re-used
-                DisplayStatusMessage(createNewPersonErrorMessage);
-            }
         }
 
         /// <summary>
@@ -132,14 +118,9 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="p"></param>
         private void SavePersonAndRefreshCollection(Person p)
         {
-            //  TODO: Verify updatePersonCollection(Person p) saves the new entity then refreshes the peopleCollection as expected
             if (SaveToEntities())
             {
                 MainWindow.InitPeopleCollection();
-                AddHomeWindow ahw = new AddHomeWindow();
-                //ahw.RefreshOwnersComboBox();
-                AddHomeWindow.APerson = p;
-                ahw.AddPersonLoadOwnerToAddHomeComboBox();
             }
             else
             {
@@ -152,10 +133,12 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// If user input(s) do not pass validation then a null Person is stored in this.newPerson and the validation error(s) are returns as a string.
         /// </summary>
         /// <returns></returns>
-        private string CreateNewPerson()
+        private bool CreateNewPerson()
         {
-            StringBuilder result = new StringBuilder();
-            result.Append("Missing required field(s) ");
+            bool result = false;
+            int itemsCount = 0;
+            var resultMessage = new StringBuilder();
+            resultMessage.Append("Missing required fields: ");
             
             //  TODO: confirm the null coalescing operator used on email string is properly implemented
             string firstName = this.fNameTextbox.Text.Trim();
@@ -163,31 +146,53 @@ namespace HomeSalesTrackerApp.CrudWindows
             string phone = this.phoneTextbox.Text.Trim();
             string email = this.emailTextbox?.Text.Trim() ?? string.Empty;
 
-            if (firstName.Length < 1)
+            if (firstName.Length > 0 || firstName.Length < 30)
             {
-                result.Append("First Name ");
+                itemsCount++;
             }
-            if (lastName.Length < 1)
+            else
             {
-                DisplayStatusMessage("Last Name ");
+                resultMessage.Append("First Name ");
             }
-            if (phone.Length < 1)
+
+            if (lastName.Length > 0 && lastName.Length < 50)
             {
-                DisplayStatusMessage("Phone Number ");
+                itemsCount++;
             }
-            if (result.ToString() == "Missing required field(s) ")
+            else 
             {
-                result.Clear();
-                newPerson = new Person()
+                resultMessage.Append("Last Name ");
+            }
+
+            if (phone.Length == 10)
+            {
+                itemsCount++;
+            }
+            else 
+            { 
+                resultMessage.Append("Phone Number ");
+            }
+
+            if (itemsCount > 2)
+            {
+                resultMessage.Clear();
+                NewPerson = new Person()
                 {
                     FirstName = firstName,
                     LastName = lastName,
                     Phone = phone,
                     Email = email,
                 };
+                DisplayStatusMessage("Person created!");
+                result = true;
+            }
+            else
+            {
+                DisplayStatusMessage(resultMessage.ToString());
+                result = false;
             }
 
-            return result.ToString();
+            return result;
         }
 
         private void DisplayStatusMessage(string message)
@@ -203,31 +208,10 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void AddPersonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (isButtonClose)
+            if (IsButtonClose)
             {
                 e.Cancel = false;
-                //  TODO: verify this updates the db and the PeopleCollection
-                var userResponse = MessageBox.Show("Save changes?", "Changes not saved!", MessageBoxButton.YesNo);
-                if (userResponse == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        SaveToEntities();
-                        MainWindow.InitPeopleCollection();
-                        MainWindow.InitHomeSalesCollection();
-                        MainWindow.InitHomesCollection();
-                        AddHomeWindow.APerson = newPerson;
-                    }
-                    catch (Exception ex)
-                    {
-                        userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
-                        if (userResponse == MessageBoxResult.No)
-                        {
-                            isButtonClose = false;
-                            e.Cancel = true;
-                        }
-                    }
-                }
+                MainWindow.InitializeCollections();
             }
             else
             {
@@ -241,9 +225,9 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SaveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            isButtonClose = true;
+            IsButtonClose = true;
             DisplayStatusMessage("Closing.");
             this.Close();
         }
@@ -255,32 +239,131 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             bool result = false;
             int count = 0;
-            if (newAgent != null)
+            if (LogicBroker.SaveEntity<Person>(NewPerson))
             {
-                if (LogicBroker.SaveEntity<Person>(newPerson))
-                {
-                    count++;
-                }
-            }
-            if (newBuyer != null)
-            {
-                if (LogicBroker.SaveEntity<Person>(newPerson))
-                {
-                    count++;
-                }
-            }
-            if (newOwner != null)
-            {
-                if(LogicBroker.SaveEntity<Person>(newPerson))
-                {
-                    count++;
-                }
+                count++;
             }
             if (count > 0)
             {
                 result = true;
             }
             return result;
+        }
+
+        private void LoadAgentPanel()
+        {
+            //  TODO: LoadAgentPanel() for path where new Person: Agent is created and possibly associated with a Real Estate Company.
+        }
+
+        /// <summary>
+        /// Load necessary Window controls to allow creating a new Owner Person.
+        /// </summary>
+        private void LoadOwnerPanel()
+        {
+            creditRatingTextbox.IsReadOnly = true;
+            addBuyerButton.IsEnabled = false;
+
+            commissionTextbox.IsReadOnly = true;
+            agentRecoTextbox.IsReadOnly = true;
+            addAgentButton.IsEnabled = false;
+        }
+
+        private void LoadBuyerPanel()
+        {
+            //  TODO: LoadBuyerPanel() for path where new Person: Buyer is created.
+        }
+
+        private void LoadRECoComboBox()
+        {
+            var recosList = (from re in MainWindow.reCosCollection
+                             select re).ToList();
+            ExistingRECoComboBox.ItemsSource = recosList;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.IsButtonClose = false;
+
+            switch (this.AddType)
+            {
+                case "Agent":
+                    {
+                        LoadAgentPanel();
+                        break;
+                    }
+                case "Owner":
+                    {
+                        LoadOwnerPanel();
+                        break;
+                    }
+                case "Buyer":
+                    {
+                        LoadBuyerPanel();
+                        break;
+                    }
+                default:
+                    {
+                        DisplayStatusMessage("No type included. Click Close to exit without saving.");
+                        addOwnerButton.IsEnabled = false;
+                        addBuyerButton.IsEnabled = false;
+                        addAgentButton.IsEnabled = false;
+
+                        UpdatePersonInfoButton.IsEnabled = false;
+                        CloseButton.IsEnabled = true;
+
+                        this.IsButtonClose = true;
+                        break;
+                    }
+            }
+
+        }
+
+        private void CreateThisPersonButton_Click(object sender, RoutedEventArgs e)
+        {
+            int itemsCount = 0;
+            if(CreateNewPerson()) 
+            {
+                if (NewAgent != null)
+                {
+                    NewPerson.Agent = NewAgent;
+                    itemsCount++;
+                }
+                if (NewBuyer != null)
+                {
+                    NewPerson.Buyer = NewBuyer;
+                    itemsCount++;
+                }
+                if (NewOwner != null)
+                {
+                    NewPerson.Owner = NewOwner;
+                    itemsCount++;
+                }
+                if (itemsCount > 0)
+                {
+                    SavePersonAndRefreshCollection(NewPerson);
+                }
+            }
+            else
+            {
+                IsButtonClose = false;  //  no person created so no save possible
+            }
+
+        }
+
+        private void ExistingRECosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //  TODO: ExistingRECosCombobox_SelctionChanged Decide if any checks against user's entered Agent details are needed
+            var selectedRECo = (sender as ComboBox).SelectedItem as RealEstateCompany;
+            ExistingRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == selectedRECo.CompanyID).FirstOrDefault();
+            if (ExistingRECo != null)
+            {
+                agentRecoTextbox.Text = selectedRECo.CompanyName;
+            }
+            else
+            {
+                agentRecoTextbox.Text = "Agent no longer active.";
+            }
+
         }
     }
 }

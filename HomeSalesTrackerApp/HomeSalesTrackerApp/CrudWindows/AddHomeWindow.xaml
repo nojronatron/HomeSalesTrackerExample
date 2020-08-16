@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
         mc:Ignorable="d"
-        Title="Add New Home" Height="500" Width="400" Loaded="Window_Loaded">
+        Title="Add New Home" Height="530" Width="370" Loaded="Window_Loaded">
 
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
@@ -34,13 +34,14 @@
             <Label Content="Zip Code + 4 (Required)" Height="25" />
             <TextBox x:Name="homeZipTextbox" Text="" Height="25" />
             <Separator Margin="0,5" />
-            <Label Content="Select Owner from list below." HorizontalContentAlignment="Center" Height="25" Margin="0,5"
-                   Background="Red" FontWeight="Bold" Foreground="White" />
-            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" SelectionChanged="OwnerComboBox_SelectionChanged" />
             <DockPanel>
-                <Label Content="If Owner not in list above, click Add Owner:" HorizontalAlignment="Right" Height="25" />
-                <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" Click="AddOwnerButton_click" Margin="5,5,5,5" />
+            <Label Content="To create a new Owner click Add Owner:" Height="27"  />
+            <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" 
+                    Click="AddOwnerButton_click" Margin="5,5,5,5" />
             </DockPanel>
+            <Label Content="Or select an existing Owner from the list below:" HorizontalContentAlignment="Center" Height="25" Margin="0,5" />
+            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" 
+                      SelectionChanged="OwnerComboBox_SelectionChanged" />
             <Separator Margin="0,5"/>
             <Button x:Name="AddNewHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="AddNewHomeButton_Click" MinWidth="25" />
             <Button x:Name="closeButton" Content="Close" Height="25" Margin="5,5" Click="CloseButton_Click" MinWidth="25" />

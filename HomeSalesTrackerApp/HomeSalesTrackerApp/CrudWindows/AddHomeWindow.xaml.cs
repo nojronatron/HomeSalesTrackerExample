@@ -116,25 +116,17 @@ namespace HomeSalesTrackerApp
 
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
-            PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-            personUpdaterWindow.ReceivedAgent = new Agent();
-            personUpdaterWindow.ReceivedBuyer = new Buyer();
-            personUpdaterWindow.ReceivedOwner = new Owner();
-            personUpdaterWindow.ReceivedPerson = new Person();
-            personUpdaterWindow.CalledByUpdateMenuType = "Owner";
-            personUpdaterWindow.Show();
+            //PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
+            //personUpdaterWindow.ReceivedAgent = new Agent();
+            //personUpdaterWindow.ReceivedBuyer = new Buyer();
+            //personUpdaterWindow.ReceivedOwner = new Owner();
+            //personUpdaterWindow.ReceivedPerson = new Person();
+            //personUpdaterWindow.CalledByUpdateMenuType = "Owner";
+            //personUpdaterWindow.Show();
+            var addPersonWindow = new AddPersonWindow();
+            addPersonWindow.AddType = "Owner";
+            addPersonWindow.Show();
         }
-
-        //private void AddAgentButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-        //    //personUpdaterWindow.UpdateAgent = new Agent();
-        //    //personUpdaterWindow.UpdateBuyer = new Buyer();
-        //    //personUpdaterWindow.UpdateOwner = new Owner();
-        //    //personUpdaterWindow.UpdatePerson = new Person();
-        //    //personUpdaterWindow.CalledByUpdateMenuType = "Buyer";
-        //    //personUpdaterWindow.Show();
-        //}
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
@@ -235,7 +227,8 @@ namespace HomeSalesTrackerApp
 
         private void OwnerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DisplayStatusMessage("Selecting an existing owner.");
+            //DisplayStatusMessage("Selecting an existing owner.");
+            RefreshOwnersComboBox();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

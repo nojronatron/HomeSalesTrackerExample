@@ -670,6 +670,10 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             GetOwnerUpdateFields();
             GetPersonInfoFromTextboxes();
+            //  TODO: UpdateOwnerButton_Click validate these are the correct steps to take here
+            UpdatePerson.Owner = UpdateOwner;
+            UpdateOwner.Person = UpdatePerson;
+            DisplayStatusMessage("Owner information updated!");
         }
 
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
