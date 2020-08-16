@@ -2,7 +2,6 @@
 using HomeSalesTrackerApp.DisplayModels;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -250,9 +249,6 @@ namespace HomeSalesTrackerApp
             //  5)  Propagate update to the Entities (save to DB)
             //  6)  Allow user to abandon this process
 
-            //  TODO: Complete MenuUpdateHomeAsSold_Click method
-
-            //  lots of opportunity for data to be missing or incorrect for this opereration so track error messages for return when canceling out
             StringBuilder statusMessage = new StringBuilder("Ok. ");
 
             //  take a selected HomeForSale item and use it to pre-load the UpdaterWindow Sold HomeForSale panel
@@ -279,17 +275,14 @@ namespace HomeSalesTrackerApp
                     if (hfsReco != null)
                     {
                         //  pass selected HomeForSale to UpdaterWindow 
-                        HomeUpdaterWindow uw = new HomeUpdaterWindow();
-                        uw.UpdateType = "HomeSold";
-                        uw.UpdateHomeSale = hfsHomesale;
-                        uw.UpdateAgent = hfsAgent.Agent;
-                        uw.UpdateAgentPerson = hfsAgent;
-                        uw.UpdateBuyerPerson = new Person();
-                        uw.UpdateBuyer = new Buyer();
-                        uw.UpdateHome = hfsHome;
-                        uw.UpdateReco = hfsReco;
+                        HomeUpdaterWindow homeUpdaterWindow = new HomeUpdaterWindow();
+                        homeUpdaterWindow.UpdateType = "HomeSold";
+                        homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
+                        homeUpdaterWindow.UpdateHome = hfsHome;
+                        homeUpdaterWindow.UpdateHomeSale = hfsHomesale;
+                        homeUpdaterWindow.UpdateReco = hfsReco;
                         DisplayStatusMessage("Loading update window");
-                        uw.Show();
+                        homeUpdaterWindow.Show();
 
                     }
                     else
@@ -323,21 +316,15 @@ namespace HomeSalesTrackerApp
         private void MenuRemoveHomeFromMarket_Click(object sender, RoutedEventArgs e)
         {
             //  Golden Path 4: Remove a home off the market
-            //  1)  Search > HomeSale Collection for user-provided search term(s)
-            //  2)  Home is sold (has marketdate value) ? StatusMessage tells user cannot be removed
-            //      Otherwise REMOVE MARKETDATE from Collection
-            //  3)  Update HomeSale Collection and Database Context
-            //      Allow the user to abandon the remove/update process
-
             HomeForSaleView selectedHomeForSale = (HomeForSaleView)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
                 int homeID = selectedHomeForSale.HomeID;
                 var homeSaleToRemove = (from h in homesCollection
                                         from hs in homeSalesCollection
-                                        where h.HomeID == hs.HomeID 
-                                            && hs.MarketDate != null 
-                                            && hs.SoldDate == null 
+                                        where h.HomeID == hs.HomeID
+                                            && hs.MarketDate != null
+                                            && hs.SoldDate == null
                                         select hs).FirstOrDefault();
 
                 if (homeSaleToRemove != null)
@@ -479,7 +466,7 @@ namespace HomeSalesTrackerApp
 
             var shResultsList = new List<SoldHomesView>();
             SoldHomesView shv = null;
-            foreach(var soldHome in soldHomesQuery)
+            foreach (var soldHome in soldHomesQuery)
             {
                 var homeInstance = homesCollection.Where(h => h.HomeID == soldHome.HomeID).FirstOrDefault();
                 var recoInstance = reCosCollection.Where(reco => reco.CompanyID == soldHome.CompanyID).FirstOrDefault();
@@ -494,7 +481,7 @@ namespace HomeSalesTrackerApp
                     SaleAmount = soldHome.SaleAmount,
                     SoldDate = soldHome.SoldDate
                 };
-                
+
                 if (soldHome.Agent != null)
                 {
                     var personAgent = peopleCollection.Where(p => p.PersonID == soldHome.AgentID).FirstOrDefault();
@@ -518,33 +505,6 @@ namespace HomeSalesTrackerApp
                 shResultsList.Add(shv);
             }
 
-            //var foundSoldHomes = (from hs in homeSalesCollection
-            //                      from h in homesCollection
-            //                      from a in peopleCollection
-            //                      from b in peopleCollection
-            //                      from re in reCosCollection
-            //                      where hs.SoldDate != null &&
-            //                      h.HomeID == hs.HomeID &&
-            //                      re.CompanyID == hs.CompanyID &&
-            //                      (a.PersonID == hs.AgentID ||
-            //                      b.PersonID == hs.BuyerID)
-            //                      select new SoldHomesView
-            //                      {
-            //                          HomeID = h.HomeID,
-            //                          Address = h.Address,
-            //                          City = h.City,
-            //                          State = h.State,
-            //                          Zip = h.Zip,
-            //                          BuyerFirstLastName = $"{ b.FirstName } { b.LastName }" ?? string.Empty,
-            //                          AgentFirstLastName = $"{ a.FirstName } { a.LastName }" ?? string.Empty,
-            //                          RealEstateCompanyName = re.CompanyName,
-            //                          SaleAmount = hs.SaleAmount,
-            //                          SaleDate = hs.SoldDate
-            //                      });
-
-            //var foundSoldHomes = shAgentsList;
-            //foundSoldHomes.Concat(shBuyersList);
-
             SoldHomesReport shr = new SoldHomesReport();
             shr.iFoundSoldHomes = shResultsList;
             shr.Show();
@@ -554,18 +514,16 @@ namespace HomeSalesTrackerApp
 
         private void MenuDisplayBuyers_Click(object sender, RoutedEventArgs e)
         {
-            //  Display all Buyers: personid, fname, lname, phone, email, preferred lender
             var foundBuyers = (from p in peopleCollection
-                               from b in homeSalesCollection
-                               where b.BuyerID == p.PersonID
+                               where p.Buyer != null
                                select new BuyerView
                                {
-                                    PersonID = p.PersonID,
-                                    FirstName = p.FirstName,
-                                    LastName = p.LastName,
-                                    Phone = p.Phone,
-                                    Email = p.Email ?? null,
-                                    CreditRating = b.Buyer.CreditRating ?? 0
+                                   PersonID = p.PersonID,
+                                   FirstName = p.FirstName,
+                                   LastName = p.LastName,
+                                   Phone = p.Phone,
+                                   Email = p.Email ?? null,
+                                   CreditRating = p.Buyer.CreditRating ?? 0
                                });
             BuyersResultsReport brr = new BuyersResultsReport();
             brr.iFoundBuyers = foundBuyers;
@@ -664,40 +622,10 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
-            //    alternate code:
-            /*
-            HomeForSaleView selectedHomesaleView = null;
-            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
-            FoundHomesForSaleView.SelectedItem = -1;    //  clear the selection on the combobox
-
-            var homeid = selectedHomesaleView.HomeID;
-            HomeSale homesaleByID = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
-                                                                  .FirstOrDefault();
-            Agent homesaleAgent = new Agent()
-            {
-                AgentID = homesaleByID.AgentID,
-                CompanyID = homesaleByID.CompanyID,
-                CommissionPercent = homesaleByID.Agent.CommissionPercent
-            };
-
-            Person agentPerson = MainWindow.peopleCollection.Where(p => p.PersonID == homesaleByID.AgentID).FirstOrDefault();
-
-            PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-            personUpdaterWindow.CalledByUpdateMenuType = "Agent";
-            personUpdaterWindow.CalledByUpdateMenu = false;
-            personUpdaterWindow.UpdateAgent = homesaleAgent;
-            personUpdaterWindow.UpdatePerson = agentPerson;
-            personUpdaterWindow.Show();
-            */
-
-            //  lots of opportunity for data to be missing or incorrect for this opereration so track error messages for return when canceling out
             StringBuilder statusMessage = new StringBuilder("Ok. ");
-
-            //  take a selected HomeForSale item and 
             HomeForSaleView selectedHomesaleView = null;
             selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
             FoundHomesForSaleView.SelectedIndex = -1;
-
             var homeid = selectedHomesaleView.HomeID;
             HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
                                                                   .FirstOrDefault();
@@ -712,22 +640,17 @@ namespace HomeSalesTrackerApp
                 {
                     Person hfsAgent = new Person();
                     hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
-
-                    //  Agent must have a CompanyID
                     if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
                     {
                         RealEstateCompany hfsReco = new RealEstateCompany();
                         hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                         if (hfsReco != null)
                         {
-                            //  pass selected HomeForSale to UpdaterWindow 
                             HomeUpdaterWindow uw = new HomeUpdaterWindow();
                             uw.UpdateType = "HomeSale";
                             uw.UpdateHomeSale = hfsHomesale;
                             uw.UpdateAgent = hfsAgent.Agent;
-                            uw.UpdateAgentPerson = hfsAgent;
                             uw.UpdateBuyer = hfsBuyer.Buyer;
-                            uw.UpdateBuyerPerson = hfsBuyer;
                             uw.UpdateHome = hfsHome;
                             uw.UpdateReco = hfsReco;
                             DisplayStatusMessage("Loading update window");
@@ -750,7 +673,7 @@ namespace HomeSalesTrackerApp
                 }
             }
             statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
-            if(statusMessage.Length > 4)
+            if (statusMessage.Length > 4)
             {
                 DisplayStatusMessage(statusMessage.ToString());
             }
@@ -847,7 +770,6 @@ namespace HomeSalesTrackerApp
 
         private void DisplayPeopleSearchResults()
         {
-            ClearSearchResultsViews();
             var searchResults = new List<Person>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
@@ -869,32 +791,62 @@ namespace HomeSalesTrackerApp
                 PersonView newPersonView = null;
                 foreach (var person in resultSet)
                 {
-                    newPersonView = new PersonView()
+                    if (person.Agent == null && person.Buyer == null && person.Owner == null)
                     {
-                        PersonID = person.PersonID,
-                        FirstName = person.FirstName,
-                        LastName = person.LastName,
-                        Phone = person.Phone,
-                        Email = person.Email ?? null
-                    };
-
-                    if(person.Agent != null)
-                    {
-                        newPersonView.PersonType = person.Agent.GetType().Name;
+                        newPersonView = new PersonView()
+                        {
+                            PersonID = person.PersonID,
+                            FirstName = person.FirstName,
+                            LastName = person.LastName,
+                            Phone = person.Phone,
+                            Email = person.Email ?? null
+                        };
+                        viewResults.Add(newPersonView);
                     }
-                    if(person.Buyer != null)
+                    else
                     {
-                        newPersonView.PersonType = person.Buyer.GetType().Name;
+                        if (person.Agent != null)
+                        {
+                            newPersonView = new PersonView()
+                            {
+                                PersonID = person.PersonID,
+                                FirstName = person.FirstName,
+                                LastName = person.LastName,
+                                Phone = person.Phone,
+                                Email = person.Email ?? null,
+                                PersonType = person.Agent.GetType().Name
+                            };
+                            viewResults.Add(newPersonView);
+                        }
+                        if (person.Buyer != null)
+                        {
+                            newPersonView = new PersonView()
+                            {
+                                PersonID = person.PersonID,
+                                FirstName = person.FirstName,
+                                LastName = person.LastName,
+                                Phone = person.Phone,
+                                Email = person.Email ?? null,
+                                PersonType = person.Buyer.GetType().Name
+                            };
+                            viewResults.Add(newPersonView);
+                        }
+                        if (person.Owner != null)
+                        {
+                            newPersonView = new PersonView()
+                            {
+                                PersonID = person.PersonID,
+                                FirstName = person.FirstName,
+                                LastName = person.LastName,
+                                Phone = person.Phone,
+                                Email = person.Email ?? null,
+                                PersonType = person.Owner.GetType().Name
+                            };
+                            viewResults.Add(newPersonView);
+                        }
                     }
-                    if (person.Owner != null)
-                    {
-                        newPersonView.PersonType = person.Owner.GetType().Name;
-                    }
-
-                    viewResults.Add(newPersonView);
                 }
 
-                //var listResults = results.ToList();
                 FoundPeopleView.ItemsSource = viewResults;
                 FoundPeopleView.Visibility = Visibility.Visible;
                 DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and use Details or Modify to make changes.");
@@ -910,8 +862,8 @@ namespace HomeSalesTrackerApp
         /// <summary>
         /// DO NOT CALL THIS TEMPLATE METHOD.
         /// </summary>
-        private void SearchBuyers() 
-        { 
+        private void SearchBuyers()
+        {
             ClearSearchResultsViews();
             var searchResults = new List<Person>();
             var searchTerms = new List<String>();
@@ -995,6 +947,7 @@ namespace HomeSalesTrackerApp
 
         private void MenuSearchPeople_Click(object sender, RoutedEventArgs e)
         {
+            ClearSearchResultsViews();
             DisplayPeopleSearchResults();
         }
     }

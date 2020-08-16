@@ -23,23 +23,29 @@ namespace HomeSalesTrackerApp.CrudWindows
     public partial class HomeUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
-        
+
         public string UpdateType { get; set; }
         public Person UpdatePerson { get; set; }
-        public Person UpdateAgentPerson { get; set; }
-        public Person UpdateBuyerPerson { get; set; }
-        public Person UpdateOwnerPerson { get; set; }
-
-        public Home UpdateHome { get; set; }
-        public RealEstateCompany UpdateReco { get; set; }
-        public HomeSale UpdateHomeSale { get; set; }
         public Agent UpdateAgent { get; set; }
         public Owner UpdateOwner { get; set; }
         public Buyer UpdateBuyer { get; set; }
-                
+        public Home UpdateHome { get; set; }
+        public HomeSale UpdateHomeSale { get; set; }
+        public RealEstateCompany UpdateReco { get; set; }
+
         public HomeUpdaterWindow()
         {
             InitializeComponent();
+        }
+
+        private void SetDatePickerDefaults()
+        {
+            DateTime date1 = new DateTime(2020, 1, 1, 0, 0, 0);
+            DateTime date2 = new DateTime(2020, 1, 11, 0, 0, 0);
+            TimeSpan fortnight = date2.Subtract(date1);
+            CalendarDateRange calendarDateRange = new CalendarDateRange(DateTime.Now, DateTime.Now.Subtract(fortnight));
+            hfsSoldDatePicker.BlackoutDates.Add(calendarDateRange);
+            hfsMarketDatePicker.BlackoutDates.Add(calendarDateRange);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -75,10 +81,168 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void MenuExit_Click(object sender, RoutedEventArgs e)
+        private bool RehydrateAgent()
         {
-            IsButtonClose = true;
-            this.Close();
+            if (UpdateAgent != null)
+            {
+                Person tempAgent = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateAgent.AgentID).FirstOrDefault();
+                if (tempAgent != null)
+                {
+                    UpdateAgent = tempAgent.Agent;
+                    RealEstateCompany tempReco = MainWindow.reCosCollection.Where(re => re.CompanyID == tempAgent.Agent.CompanyID).FirstOrDefault();
+                    if (tempReco != null)
+                    {
+                        UpdateAgent.RealEstateCompany = tempReco;
+                        UpdateAgent.CompanyID = tempReco.CompanyID;
+                    }
+
+                    List<HomeSale> tempHomesalesList = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == tempAgent.Agent.AgentID).ToList();
+                    if (tempHomesalesList != null)
+                    {
+                        UpdateAgent.HomeSales = tempHomesalesList;
+                    }
+                    return true;
+
+                }
+            }
+
+            return false;
+        }
+
+        private bool RehydrateBuyer()
+        {
+            if (UpdateBuyer != null)
+            {
+                Person tempBuyer = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
+                if (tempBuyer != null)
+                {
+                    UpdateBuyer = tempBuyer.Buyer;
+                    List<HomeSale> tempHomesalesList = MainWindow.homeSalesCollection.Where(hs => hs.BuyerID == tempBuyer.Buyer.BuyerID).ToList();
+                    if (tempHomesalesList.Count > 0)
+                    {
+                        UpdateBuyer.HomeSales = tempHomesalesList;
+                    }
+                    return true;
+
+                }
+            }
+
+            return false;
+        }
+
+        private bool RehydrateOwner()
+        {
+            //  TODO: Wire up RehydrateOwner for the appropriate code path
+            if (UpdateOwner != null)
+            {
+                Person tempOwner = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateOwner.OwnerID).FirstOrDefault();
+                if (tempOwner != null)
+                {
+                    UpdateOwner = tempOwner.Owner;
+                    List<Home> tempHomesList = MainWindow.homesCollection.Where(h => h.OwnerID == UpdateOwner.OwnerID).ToList();
+                    if (tempHomesList.Count > 0)
+                    {
+                        UpdateOwner.Homes = tempHomesList;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool RehydrateHome()
+        {
+            //  TODO: Wire up RehydrateHome for an appropriate code path
+            if (UpdateHome != null)
+            {
+                Home tempHome = MainWindow.homesCollection.Where(h => h.HomeID == UpdateHome.HomeID).FirstOrDefault();
+                if (tempHome != null)
+                {
+                    UpdateHome = tempHome;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool RehydrateHomeSale()
+        {
+            //  TODO: Wire up RehydrateHomeSale for an appropriate code path
+            if (UpdateHomeSale != null)
+            {
+                HomeSale tempHomeSale = MainWindow.homeSalesCollection.Where(hs => hs.HomeID == UpdateHomeSale.HomeID).FirstOrDefault();
+                if (tempHomeSale != null)
+                {
+                    UpdateHomeSale = tempHomeSale;
+                    UpdateHomeSale.Agent = tempHomeSale.Agent;
+                    UpdateHomeSale.Buyer = tempHomeSale.Buyer;
+                    RealEstateCompany tempReco = MainWindow.reCosCollection.Where(re => re.CompanyID == UpdateHomeSale.AgentID).FirstOrDefault();
+                    if (tempReco != null)
+                    {
+                        UpdateHomeSale.RealEstateCompany = tempReco;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool RehydrateRealEstateCompany()
+        {
+            if (UpdateReco != null)
+            {
+                RealEstateCompany tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == UpdateReco.CompanyID).FirstOrDefault();
+                if (tempRECo != null)
+                {
+                    UpdateReco = tempRECo;
+                    List<HomeSale> tempHomeSalesList = MainWindow.homeSalesCollection.Where(hs => hs.CompanyID == UpdateReco.CompanyID).ToList();
+                    if (tempHomeSalesList.Count > 0)
+                    {
+                        UpdateReco.HomeSales = tempHomeSalesList;
+                    }
+                    List<Agent> tempAgentList = (from p in MainWindow.peopleCollection
+                                                 from hs in MainWindow.homeSalesCollection
+                                                 where p.PersonID == hs.AgentID &&
+                                                 hs.Agent.CompanyID == UpdateReco.CompanyID
+                                                 select hs.Agent).ToList();
+                    if (tempAgentList.Count > 0)
+                    {
+                        UpdateReco.Agents = tempAgentList;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void LoadAgentsCombobox()
+        {
+            var existingAgentPeopleList = (from a in MainWindow.homeSalesCollection
+                                           from p in MainWindow.peopleCollection
+                                           where a.AgentID == p.PersonID
+                                           select p).ToList();
+            ExistingAgentsCombobox.ItemsSource = existingAgentPeopleList;
+        }
+
+        private void LoadBuyersCombobox()
+        {
+            var existingBuyersList = (from p in MainWindow.peopleCollection
+                                      where p.Buyer != null
+                                      select p).ToList();
+            ExistingBuyersCombobox.ItemsSource = existingBuyersList;
+        }
+
+        private void LoadRECosCombobox()
+        {
+            var existingRECosList = (from re in MainWindow.reCosCollection
+                                     select re).ToList();
+            ExistingRecosCombobox.ItemsSource = existingRECosList;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -122,185 +286,103 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
-        private void LoadHomePanel()
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            //homeIdTextBox.Text = UpdateHome.HomeID.ToString();
-            homeAddressTextbox.Text = UpdateHome.Address;
-            homeCityTextbox.Text = UpdateHome.City;
-            homeStateTextbox.Text = UpdateHome.State;
-            homeZipTextbox.Text = UpdateHome.Zip;
-            //  Note: Could add OwnerID field here but users should not need it
-            updateHomePanel.Visibility = Visibility.Visible;
-        }
-
-        private void LoadRECoPanel()
-        {
-            //companyIdTextBox.Text = UpdateReco.CompanyID.ToString();
-            companyNameTextbox.Text = UpdateReco.CompanyName;
-            companyPhoneTextbox.Text = UpdateReco.Phone;
-            updateRealEstateCoPanel.Visibility = Visibility.Visible;
+            //  Close Without Saving button
+            IsButtonClose = true;
+            this.Close();
         }
 
         /// <summary>
-        /// Update Selected Home For Sale. Allows updating existing Agent (Person and Agent types) and Home (Home type).
+        /// Scenario: User want to update a Home For Sale as Sold with a Buyer and possibly new Agent and/or RECo.
         /// </summary>
-        private void LoadHomeSalesPanel()
+        private void Case_HomeSold()
         {
-            SetDatePickerDefaults();
+            LoadHomeInfoFields();
+            UpdateChangedHomeFields_Button.IsEnabled = false;
 
-            //  Attached requirements: Update a selected HomeForSale with new/existing Agent, or a new Home.
-            //hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
-            string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
-            string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
-            hfsHomeIdTextbox.Text = homeForSaleAddressZip;
-            //hfsSoldDateTextBox.Text = UpdateHomeSale.SoldDate.ToString();
-            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
-            hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
-            hfsBuyerNameTextbox.Text = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
-
-            var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
-                                         from hs in MainWindow.homeSalesCollection
-                                         where p.PersonID == hs.BuyerID
-                                         select p).ToList();
-
-            hfsExistingBuyersCombobox.ItemsSource = hfsExistingBuyersList;
-
-            //hfsMarketDateTextbox.Text = UpdateHomeSale.MarketDate.ToString();   //  might have to manage datetime formatting
-            hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
-            hfsHomeIdTextbox.Text = $"{ UpdateAgentPerson.FirstName } { UpdateAgentPerson.LastName }";
-
-            var hfsExistingAgentsList = (from p in MainWindow.peopleCollection
-                                         from hs in MainWindow.homeSalesCollection
-                                         where p.PersonID == hs.AgentID
-                                         select p).ToList();
-
-            hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
-
-            companyNameTextbox.Text = UpdateReco.CompanyID.ToString();
-        }
-
-        private void SetDatePickerDefaults()
-        {
-            DateTime date1 = new DateTime(2020, 1, 1, 0, 0, 0);
-            DateTime date2 = new DateTime(2020, 1, 11, 0, 0, 0);
-            TimeSpan fortnight = date2.Subtract(date1);
-            hfsSoldDatePicker.BlackoutDates.Add(new CalendarDateRange(DateTime.Now, DateTime.Now.Subtract(fortnight)));
-        }
-
-        /// <summary>
-        /// Update HomeForSale as Sold. Allows updating SoldDate, SaleAmount, and associate an existing Buyer of type Buyer and of type Person.
-        /// </summary>
-        private void LoadHomeSoldPanel()
-        {
-            SetDatePickerDefaults();
-            
-            //  Attached requirements: Only SoldDate, SaleAmount, and Buyer information can be edited
-            //hfsSaleIdTextBox.Text = UpdateHomeSale.SaleID.ToString();
-            string TestMessage = UpdateHomeSale.SaleID.ToString();  //  might have to be a Property with get/set
-            string homeForSaleAddressZip = $"{ UpdateHome.Address }, { UpdateHome.Zip }";
-            
-            hfsHomeIdTextbox.IsReadOnly = true;
-            hfsHomeIdTextbox.Text = homeForSaleAddressZip;
-
-            //hfsSoldDateTextBox.Text = UpdateHomeSale.SoldDate.ToString();
-            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
-            hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
-            
             //  BUYER INFO
-            //hfsBuyerIdTextbox.IsReadOnly = true;
-            string buyerFirstLastname = $"{ UpdateBuyerPerson.FirstName } {UpdateBuyerPerson.LastName }";
-            hfsBuyerNameTextbox.Text = buyerFirstLastname;
+            BuyerNameTextbox.IsReadOnly = true;
+            LoadBuyersCombobox();
 
-            var hfsExistingBuyersList = (from p in MainWindow.peopleCollection
-                                         from hs in MainWindow.homeSalesCollection
-                                         where p.PersonID == hs.BuyerID
-                                         select p).ToList();
+            //  RECO INFO
+            companyNameTextbox.Text = UpdateReco.CompanyName.ToString();
+            companyNameTextbox.IsReadOnly = true;
+            companyPhoneTextbox.Text = UpdateReco.Phone.ToString();
+            companyPhoneTextbox.IsReadOnly = true;
+            UpdateRECoFieldsButton.IsEnabled = false;
+            LoadRECosCombobox();
 
-            hfsExistingBuyersCombobox.ItemsSource = hfsExistingBuyersList;
-            var selectedBuyerIndex = hfsExistingBuyersList.FindIndex(p => p.PersonID == UpdateBuyerPerson.PersonID);
-            hfsExistingBuyersCombobox.SelectedIndex = selectedBuyerIndex;
-
-
-            //  MARKET DATE INFO
-            //hfsMarketDateTextbox.Text = UpdateHomeSale.MarketDate.ToString();
+            //  HOMESALE INFO
+            SetDatePickerDefaults();
+            forSaleHomeIdTextbox.IsReadOnly = true;
+            forSaleHomeIdTextbox.Text = UpdateHomeSale.HomeID.ToString();
+            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
+            hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
             hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
+            hfsMarketDatePicker.IsEnabled = false;
 
-            hfsHomeIdTextbox.IsReadOnly = true;
-            hfsHomeIdTextbox.Text = $"{ UpdateAgentPerson.FirstName } { UpdateAgentPerson.LastName }";
-
-            var hfsExistingAgentsList = (from p in MainWindow.peopleCollection
-                                         from hs in MainWindow.homeSalesCollection
-                                         where p.PersonID == hs.AgentID
-                                         select p).ToList();
-
-            hfsExistingAgentsCombobox.ItemsSource = hfsExistingAgentsList;
-
-            //hfsCompanyIdTextbox.IsReadOnly = true;
-            companyNameTextbox.Text = UpdateReco.CompanyID.ToString();
-
-            //  Update button: Will save changes via LogicBroker
-            updateChangedHfsFields.Visibility = Visibility.Visible;
-        }
-
-        private void LoadAgentPanel()
-        {
-            //updateAgentAgentIdTextbox.Text = UpdateAgent.AgentID.ToString();
-            UpdateAgentAgentPersonNameTextbox.Text = $"{UpdatePerson.FirstName} {UpdatePerson.LastName}";
-            //updateAgentCompanyIdTextbox.Text = UpdateAgent.CompanyID.ToString();
-            UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
-            var listOfHomesalesAgents = (from hs in MainWindow.homeSalesCollection
-                                         from a in MainWindow.peopleCollection
-                                         where a.PersonID == hs.AgentID
-                                         select a).ToList();
-            //  TODO: Fix the output so it displays data in the combobox instead of entity wrappers
-            listOfExistingAgentsCombobox.ItemsSource = listOfHomesalesAgents;
+            //  AGENT INFO
+            AgentNameTextbox.IsReadOnly = true;
+            UpdateAgentCompanyNameTextbox.IsReadOnly = true;
+            UpdateAgentCommissionTextbox.IsReadOnly = true;
+            updateChangedAgentFieldsButton.IsEnabled = false;
+            LoadAgentsCombobox();
         }
 
         private void ShowCloseButtonOnly()
         {
-            updateHomePanel.Visibility = Visibility.Collapsed;
-            updateRealEstateCoPanel.Visibility = Visibility.Collapsed;
             CloseButton.Visibility = Visibility.Visible;
         }
 
         private void LoadPanelsAndFields()
         {
             CloseButton.Visibility = Visibility.Visible;
-            
+
             string updateType = UpdateType.Trim().ToUpper();
             switch (updateType)
             {
                 case "HOME":
                     {
-                        LoadHomePanel();
+                        this.Title = "Update Home Information";
+                        LoadHomeInfoFields();
                         break;
                     }
                 case "REALESTATECOMPANY":
                     {
-                        LoadRECoPanel();
+                        this.Title = "Update Real Estate Company";
+                        LoadRECoInfoFields();
                         break;
                     }
                 case "HOMESALE":
                     {
-                        LoadHomeSalesPanel();
+                        this.Title = "Update Home Sale Information";
+                        LoadHomeInfoFields();
                         break;
                     }
                 case "HOMESOLD":
                     {
-                        LoadHomeSoldPanel();
+                        this.Title = "Update Home Sale as SOLD!";
+                        LoadHomeInfoFields();
+                        Case_HomeSold();
                         break;
                     }
                 case "OWNER":
                     {
+                        this.Title = "Update Owner information";
+                        LoadHomeInfoFields();
                         break;
                     }
                 case "BUYER":
                     {
+                        this.Title = "Update Buyer information";
+                        LoadHomeInfoFields();
                         break;
                     }
                 case "AGENT":
                     {
-                        LoadAgentPanel();
+                        this.Title = "Update Agent information";
+                        LoadHomeInfoFields();
                         break;
                     }
                 default:
@@ -312,36 +394,21 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void LoadRECoInfoFields()
         {
-            IsButtonClose = true;
-            this.Close();
-        }
-
-        private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (LogicBroker.SaveEntity<RealEstateCompany>(UpdateReco))
-            {
-                DisplayStatusMessage("Changes saved!");
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to save changes. Fill all required fields.");
-            }
+            //  TODO: code this function: called by LoadPanelsAndFields()
 
         }
 
-        private void UpdateChangedHomeFieldsButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Loads caller's passed-in data into the Update Existing Home section of the Home Update Window
+        /// </summary>
+        private void LoadHomeInfoFields()
         {
-            if (LogicBroker.SaveEntity<Home>(UpdateHome))
-            {
-                DisplayStatusMessage("Changes saved!");
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to save changes. Fill all required fields.");
-            }
-
+            homeAddressTextbox.Text = UpdateHome.Address;
+            homeCityTextbox.Text = UpdateHome.City;
+            homeStateTextbox.Text = UpdateHome.State;
+            homeZipTextbox.Text = UpdateHome.Zip;
         }
 
         private void DisplayStatusMessage(string message)
@@ -349,68 +416,248 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.statusBarText.Text = message;
         }
 
-        private void UpdateChangedHfsFieldsButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// In-memory objects are updated if SoldDate and SaleAmount fields are valid otherwise no update happens and user is prompted to try again.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateHomeForSaleFieldsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (UpdateHomeSale != null) {
-                if (UpdateType.Trim().ToUpper() == "HOMESOLD")
-                {
-                    //  the only field changes that matter are:
-                    //      SoldDate
-                    //      SaleAmount
-                    //      Buyer instance (from comboBox)
-                    //      Person instance of the Buyer that was selected
-                    var soldDate = hfsSoldDatePicker.SelectedDate.Value;
-                    Decimal saleAmount = Decimal.Parse(hfsSaleAmountTextbox.Text);
-                    Person buyerPerson = hfsExistingBuyersCombobox.SelectedItem as Person;
-                    Buyer selectedBuyer = (from hs in MainWindow.homeSalesCollection
-                                           where hs.BuyerID == buyerPerson.PersonID
-                                           select hs.Buyer).FirstOrDefault();
-                    if (buyerPerson == null)
-                    {
-                        DisplayStatusMessage("Buyer Person could not be selected.");
-                    }
-                    else
-                    {
-                        UpdateHomeSale.SoldDate = soldDate;
-                        UpdateHomeSale.SaleAmount = saleAmount;
-                        UpdateHomeSale.BuyerID = selectedBuyer.BuyerID;
-                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale)) 
-                        {
-                            DisplayStatusMessage("Home Sale saved to database!");
-                        }
-                        else
-                        {
-                            DisplayStatusMessage("No changes were saved.");
-                        }
-                    }
+            int countChanges = 0;
+            DateTime updatedSoldDate = new DateTime();
+            Decimal updatedSaleAmount = new decimal();
+            if (DateTime.TryParse(hfsSoldDatePicker.SelectedDate.ToString(), out updatedSoldDate))
+            {
+                countChanges++;
+            }
 
-                }
-                else
+            if (Decimal.TryParse(hfsSaleAmountTextbox.Text.Trim(), out updatedSaleAmount))
+            {
+                if (updatedSaleAmount > 0 && updatedSaleAmount < Decimal.MaxValue)
                 {
-                    DisplayStatusMessage("Cannot update HomeSale if it is missing.");
+                    countChanges++;
                 }
+            }
 
+            if (countChanges == 2)
+            {
+                UpdateHomeSale.SoldDate = updatedSoldDate;
+                UpdateHomeSale.SaleAmount = updatedSaleAmount;
+                DisplayStatusMessage("Home Sale Information Updated!");
             }
             else
             {
-                //  UpdateType is "HOMESALE"
+                DisplayStatusMessage("Unable to make updates. Check entries and try again.");
             }
+        }
+
+        /// <summary>
+        /// In-memory objects are updated if Address, City, State, and Zip fields are valid otherwise no update happens and user is prompted to try again.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateChangedHomeFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+            int countChanges = 0;
+            string address = homeAddressTextbox.Text.Trim();
+            string city = homeCityTextbox.Text.Trim();
+            string state = homeStateTextbox.Text.Trim();
+            string zip = homeZipTextbox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(address) || string.IsNullOrWhiteSpace(city) || string.IsNullOrWhiteSpace(state) || string.IsNullOrWhiteSpace(zip))
+            {
+                DisplayStatusMessage("Unable to update. Address, City, State, and Zip are required.");
+            }
+
+            if (address.Length < 50 || city.Length > 30 || state.Length > 2 || zip.Length > 9)
+            {
+                DisplayStatusMessage("Maximum characters exceeded: Address 50; City 30; State 2; Zip 9");
+            }
+            else
+            {
+                if (address.Length > 0)
+                {
+                    countChanges++;
+                }
+                if (city.Length > 0)
+                {
+                    countChanges++;
+                }
+                if (state.Length > 0)
+                {
+                    countChanges++;
+                }
+                if (zip.Length > 4)
+                {
+                    countChanges++;
+                }
+            }
+
+            if (countChanges == 4)
+            {
+                UpdateHome.Address = address;
+                UpdateHome.City = city;
+                UpdateHome.State = state;
+                UpdateHome.Zip = zip;
+                DisplayStatusMessage("Home Information Updated!");
+            }
+            else
+            {
+                DisplayStatusMessage("Unable to make updates. Check entries and try again.");
+            }
+
+        }
+
+        private void UpdateBuyerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (UpdateBuyer != null)
+            {
+                UpdateHomeSale.Buyer = UpdateBuyer;
+                DisplayStatusMessage("Buyer information updated!");
+            }
+            else
+            {
+                DisplayStatusMessage("Select an Existing Buyer first.");
+            }
+
+        }
+
+        private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayStatusMessage("UpdateChangedRecoFieldsButton Clicked!");
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
+            DisplayStatusMessage("UpdateChangedAgentFieldsButton Clicked!");
+        }
+
+        private void SaveChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            int savedCount = 0;
+            string updateType = UpdateType.Trim().ToUpper();
+            switch (updateType)
+            {
+                case "HOME":
+                    {
+                        if (LogicBroker.UpdateEntity<Home>(UpdateHome))
+                        {
+                            savedCount++;
+                        }
+
+                        break;
+                    }
+                case "REALESTATECOMPANY":
+                    {
+                        if (LogicBroker.UpdateEntity<RealEstateCompany>(UpdateReco))
+                        {
+                            savedCount++;
+                        }
+
+                        break;
+                    }
+                case "HOMESALE":
+                    {
+                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                        {
+                            savedCount++;
+                        }
+
+                        break;
+                    }
+                case "HOMESOLD":
+                    {
+                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                        {
+                            savedCount++;
+                        }
+
+                        break;
+                    }
+                case "OWNER":
+                    {
+                        savedCount = -1;
+                        break;
+                    }
+                case "BUYER":
+                    {
+                        savedCount = -1;
+                        break;
+                    }
+                case "AGENT":
+                    {
+                        savedCount = -1;
+                        break;
+                    }
+                default:
+                    {
+                        DisplayStatusMessage("Nothing was saved.");
+                        ShowCloseButtonOnly();
+                        break;
+                    }
+            }
+
+            if (savedCount < 0)
+            {
+                DisplayStatusMessage("Home or Home Sale info required for: Agent, Buyer, and Owner changes.");
+            }
+            if (savedCount > 0)
+            {
+                DisplayStatusMessage("Save completed! Click Close to exit.");
+            }
+        }
+
+        private void ListOfExistingRecosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RealEstateCompany selectedReco = (sender as ComboBox).SelectedItem as RealEstateCompany;
+            if (selectedReco != null)
+            {
+                UpdateReco = selectedReco;
+                RehydrateRealEstateCompany();
+            }
+            companyNameTextbox.Text = UpdateReco.CompanyName;
+            companyPhoneTextbox.Text = UpdateReco.CompanyName;
 
         }
 
         private void ListOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            Person selectedAgent = (sender as ComboBox).SelectedItem as Person;
+            if (selectedAgent != null)
+            {
+                UpdateAgent = (from p in MainWindow.peopleCollection
+                               where p.PersonID == selectedAgent.PersonID
+                               select p.Agent).FirstOrDefault();
+                RehydrateAgent();
+                AgentNameTextbox.Text = $"{ UpdateAgent.Person.FirstName } { UpdateAgent.Person.LastName }";
+                if (UpdateAgent.RealEstateCompany != null)
+                {
+                    UpdateAgentCompanyNameTextbox.Text = UpdateAgent.RealEstateCompany.CompanyName;
+                }
+                else
+                {
+                    UpdateAgentCompanyNameTextbox.Text = "Agent no longer active";
+                }
+                UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
+            }
         }
 
-        private void UpdateHomeForSaleFieldsButton_Click(object sender, RoutedEventArgs e)
+        private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //  TODO: After user changes HomeForSale information and clicks this button the in memory object(s) must be updated
+            Person selectedBuyer = (sender as ComboBox).SelectedItem as Person;
+            if (selectedBuyer != null)
+            {
+                UpdateBuyer = selectedBuyer.Buyer;
+                RehydrateBuyer();
+                BuyerNameTextbox.Text = $"{ UpdateBuyer.Person.FirstName } {UpdateBuyer.Person.LastName }";
+            }
 
         }
+
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
+        {
+            IsButtonClose = true;
+            this.Close();
+        }
+
     }
 }

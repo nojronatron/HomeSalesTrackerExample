@@ -180,7 +180,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 AgentCommissionTextbox.Text = string.Empty;
                 AgentReCompanyTextbox.Text = string.Empty;
             }
-            RefreshAgentsComboBox();
+            LoadAgentsComboBox();
             LoadRealEstateCoCombobox();
         }
 
@@ -214,7 +214,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             ExistingBuyersCombobox.IsEnabled = true;
             EnableEditingPersonBasicInformation();
 
-            RefreshBuyersComboBox();
+            LoadBuyersComboBox();
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             existingOwnersCombobox.IsEnabled = true;
             EnableEditingPersonBasicInformation();
 
-            RefreshOwnersComboBox();
+            LoadOwnersComboBox();
         }
 
         private void LoadRealEstateCoCombobox()
@@ -356,7 +356,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
-        private void RefreshAgentsComboBox()
+        private void LoadAgentsComboBox()
         {
             var listOfHomesalesAgents = (from hs in MainWindow.homeSalesCollection
                                          from a in MainWindow.peopleCollection
@@ -366,7 +366,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void RefreshBuyersComboBox()
+        private void LoadBuyersComboBox()
         {
             var listOfBuyers = (from hs in MainWindow.homeSalesCollection
                                 from a in MainWindow.peopleCollection
@@ -375,7 +375,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             ExistingBuyersCombobox.ItemsSource = listOfBuyers;
         }
 
-        private void RefreshOwnersComboBox()
+        private void LoadOwnersComboBox()
         {
             var listOfOwners = (from h in MainWindow.homesCollection
                                 from a in MainWindow.peopleCollection

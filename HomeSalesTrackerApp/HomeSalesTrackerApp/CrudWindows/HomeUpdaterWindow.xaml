@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
-        Title="UpdaterWindow (Home, Homesales)" Height="880" Width="560" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="Home and HomeSale Updater Window" Height="880" Width="560" Closing="Window_Closing" Loaded="Window_Loaded">
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top"  HorizontalAlignment="Stretch" BorderBrush="Black">
             <MenuItem Header="_File">
@@ -27,91 +27,78 @@
                 <ColumnDefinition Width="5"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="1" x:Name="updateHomePanel" Orientation="Vertical" MinWidth="130" Margin="5,5"  >
-                <Label Content="Update Existing Home" Height="27" FontWeight="Bold"/>
-                <Label Content="Address (Required)" Height="25" />
-                <TextBox x:Name="homeAddressTextbox" Text="" Height="25"  />
-                <Label Content="City (Required)" Height="25" />
-                <TextBox x:Name="homeCityTextbox" Text="" Height="25"    />
-                <Label Content="State (Required)" Height="25"    />
-                <TextBox x:Name="homeStateTextbox" Text="" Height="25"    />
-                <Label Content="Zip Code + 4 (Required)" Height="25"    />
-                <TextBox x:Name="homeZipTextbox" Text="" Height="25"    />
-                <Button x:Name="UpdateChangedHomeFields_Button" Content="Update Home" Height="25" Margin="5,10" 
+            <StackPanel Grid.Column="1" Orientation="Vertical" MinWidth="130" Margin="5,5"  >
+                <Label Content="Existing Home Information" Height="27" FontWeight="Bold"/>
+                <Label Content="Address (Required)" Height="27" />
+                <TextBox x:Name="homeAddressTextbox" Text="" Height="27"  />
+                <Label Content="City (Required)" Height="27" />
+                <TextBox x:Name="homeCityTextbox" Text="" Height="27"    />
+                <Label Content="State (Required)" Height="27"    />
+                <TextBox x:Name="homeStateTextbox" Text="" Height="27"    />
+                <Label Content="Zip Code + 4 (Required)" Height="27"    />
+                <TextBox x:Name="homeZipTextbox" Text="" Height="27"    />
+                <Button x:Name="UpdateChangedHomeFields_Button" Content="Update Home Info" Height="27" Margin="5,10" 
                     Click="UpdateChangedHomeFieldsButton_Click"    />
                 <Separator Height="5" Margin="5,10" />
 
-                <Label Content="Update Existing Home For Sale" Height="27"   FontWeight="Bold" />
-                <Label Content="Home For Sale" Height="25"    />
-                <TextBox x:Name="hfsHomeIdTextbox" Text="(should show home address and zip)" IsReadOnly="True" Height="25"   />
-                <Label Content="Sold Date" Height="25"   />
-                <DatePicker SelectedDate="2020-08-08" x:Name="hfsSoldDatePicker" Height="27"   Margin="0,5"></DatePicker>
-                <Label Content="Sale Amount" Height="25"    />
-                <TextBox x:Name="hfsSaleAmountTextbox" Text="" Height="25"    />
-                <Label Content="Market Date" Height="25"    />
-                <DatePicker SelectedDate="2020-08-08" x:Name="hfsMarketDatePicker" Height="27"   Margin="0,5" IsEnabled="False" ></DatePicker>
-                <Button x:Name="UpdateChangedHomeForSale_Button" Content="Update Home Sale" Height="27" Margin="5,10"
-                        Click="UpdateHomeForSaleFieldsButton_Click" />
-
+                <Label Content="Existing Buyer Information" Height="27" FontWeight="Bold" />
+                <Label Content="Buyer Name" Height="27"    />
+                <TextBox x:Name="BuyerNameTextbox" Text="" Height="27"    />
+                <Label Content="Select an Existing Buyer:" Height="27" Margin="5" />
+                <ComboBox x:Name="ExistingBuyersCombobox" ItemsSource="{Binding}"  Margin="0,10,0,0" 
+                          SelectionChanged="ExistingBuyersCombobox_SelectionChanged" />
+                <Button x:Name="UpdateBuyerButton" Content="Update Buyer Info" Height="27" Margin="5,10" 
+                    Click="UpdateBuyerButton_Click"    />
                 <Separator Height="5" Margin="5,10" />
 
-                <Label Content="Update Existing Buyer Info" Height="27" FontWeight="Bold" />
-                <Label Content="Buyer Name" Height="25"    />
-                <TextBox x:Name="hfsBuyerNameTextbox" Text="" Height="25"    />
-                <ComboBox x:Name="hfsExistingBuyersCombobox" ItemsSource="{Binding}"   Margin="0,10,0,0" />
-                <Button x:Name="updateChangedHfsFields" Content="Update Changes" Height="25" Margin="5,10" 
-                    Click="UpdateChangedHfsFieldsButton_Click"    />
-
-                <Separator Height="5" Margin="5,10" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="2"  Background="WhiteSmoke"></StackPanel>
-            
-            <StackPanel Grid.Column="3" x:Name="updateRealEstateCoPanel"  Orientation="Vertical" MinWidth="130" Margin="5,5" >
-                <Label Content="Update Existing Real Estate Company" Height="27"   FontWeight="Bold" />
-                <Label Content="Company Name (Required)" Height="25"    />
-                <TextBox x:Name="companyNameTextbox" Text="" Height="25"    />
-                <Label Content="Company Phone (Required)" Height="25"    />
-                <TextBox x:Name="companyPhoneTextbox" Text="" Height="25"    />
-                <Label Content="Existing Real Estate Companies:" Height="25"    />
-                <ComboBox x:Name="hfsExistingRecosCombobox" ItemsSource="{Binding}"   Margin="5,10" />
-                <Button x:Name="updateChangedRECoFields" Content="Update Changes" Height="25" Margin="5,10" 
+                <Label Content="Existing Real Estate Company" Height="27"   FontWeight="Bold" />
+                <Label Content="Company Name (Required)" Height="27"    />
+                <TextBox x:Name="companyNameTextbox" Text="" Height="27"    />
+                <Label Content="Company Phone (Required)" Height="27"    />
+                <TextBox x:Name="companyPhoneTextbox" Text="" Height="27"    />
+                <Label Content="Select an Existing Real Estate Company:" Height="27"    />
+                <ComboBox x:Name="ExistingRecosCombobox" ItemsSource="{Binding}" Margin="5,10"
+                          SelectionChanged="ListOfExistingRecosCombobox_SelectionChanged" />
+                <Button x:Name="UpdateRECoFieldsButton" Content="Update Real Estate Company Info" Height="27" Margin="5,10" 
                     Click="UpdateChangedRecoFieldsButton_Click" MinWidth="25"    />
                 <Separator Height="5" Margin="5,10" />
 
-                <!--<Label Content="Update Existing Person" Height="27"   FontWeight="Bold" />
-                <Label Content="Person ID" Height="25"    />
-                <TextBox x:Name="personIdTextbox" Text="" Height="25" IsReadOnly="True"    />
-                <Label Content="First name (Required)" Height="25"    />
-                <TextBox x:Name="personFirstNameTextbox" Text="" Height="25"    />
-                <Label Content="Last name (Required)" Height="25"    />
-                <TextBox x:Name="personPhoneTextbox" Text="" Height="25"    />
-                <Label Content="Phone Number (Required)" Height="25"    />
-                <TextBox x:Name="personLastNameTextbox" Text="" Height="25"    />
-                <Label Content="Email Address" Height="25"    />
-                <TextBox x:Name="personEmailTextbox" Text="" Height="25"    />
-                <Separator Margin="0,10"    />
-                <Button x:Name="updateChangedPersonFieldsButton" Content="Update Changes" Height="25" Margin="5,5" 
-                    Click="UpdateChangedPersonFieldsButton_Click" MinWidth="25"    />-->
-            
-                <Label Content="Update Existing Agent" Height="27"   FontWeight="Bold" />
-                <Label Content="Agent Name" Height="25"   />
-                <TextBox x:Name="UpdateAgentAgentPersonNameTextbox" Text="" Height="25" IsReadOnly="True"   />
-                <Label Content="Company Affiliation" Height="25"    />
-                <TextBox x:Name="UpdateAgentCompanyNameTextbox" Text="" Height="25"  />
-                <Label Content="Commission (Percentage)" Height="25"  />
-                <TextBox x:Name="UpdateAgentCommissionTextbox" Text="" Height="25"    />
-                <Label Content="Existing Agents:" Height="25"   Margin="5,5" />
-                <ComboBox x:Name="listOfExistingAgentsCombobox" ItemsSource="{Binding}" Margin="5,10" />
-                <ComboBox x:Name="hfsExistingAgentsCombobox" ItemsSource="{Binding}"   Margin="5,10" />
+            </StackPanel>
 
-                <Button x:Name="updateChangedAgentFieldsButton" Content="Update Agent" Height="25" Margin="5,5" 
+            <StackPanel Grid.Column="2" Background="WhiteSmoke"></StackPanel>
+            
+            <StackPanel Grid.Column="3" Orientation="Vertical" MinWidth="130" Margin="5,5" >
+                <Label Content="Existing Home For Sale Information" Height="27"   FontWeight="Bold" />
+                <Label Content="For Sale Home ID" Height="27"    />
+                <TextBox x:Name="forSaleHomeIdTextbox" Text="" IsReadOnly="True" Height="27"   />
+                <Label Content="Sold Date" Height="27"   />
+                <DatePicker SelectedDate="2020-08-08" x:Name="hfsSoldDatePicker" Height="27"   Margin="0,5"></DatePicker>
+                <Label Content="Sale Amount" Height="27"    />
+                <TextBox x:Name="hfsSaleAmountTextbox" Text="" Height="27"    />
+                <Label Content="Market Date" Height="27"    />
+                <DatePicker SelectedDate="2020-08-08" x:Name="hfsMarketDatePicker" Height="27"   Margin="0,5" IsEnabled="False" ></DatePicker>
+                <Button x:Name="hfsUpdateHomeSaleButton" Content="Update Home Sale Info" Height="27" Margin="5,10"
+                        Click="UpdateHomeForSaleFieldsButton_Click" />
+                <Separator Height="5" Margin="5,10" />
+
+                <Label Content="Existing Agent Information" Height="27"   FontWeight="Bold" />
+                <Label Content="Agent Name" Height="27"   />
+                <TextBox x:Name="AgentNameTextbox" Text="" Height="27" IsReadOnly="True"   />
+                <Label Content="Company Affiliation" Height="27"    />
+                <TextBox x:Name="UpdateAgentCompanyNameTextbox" Text="" Height="27"  />
+                <Label Content="Commission (Percentage)" Height="27"  />
+                <TextBox x:Name="UpdateAgentCommissionTextbox" Text="" Height="27"    />
+                <Label Content="Select an Existing Agent:" Height="27"   Margin="5,5" />
+                <ComboBox x:Name="ExistingAgentsCombobox" ItemsSource="{Binding}" Margin="5,10"
+                          SelectionChanged="ListOfExistingAgentsCombobox_SelectionChanged" />
+                <Button x:Name="updateChangedAgentFieldsButton" Content="Update Agent Info" Height="27" Margin="5,5" 
                     Click="UpdateChangedAgentFieldsButton_Click" MinWidth="25"    />
                 <Separator Height="5" Margin="5,10" />
 
-                <Button x:Name="SaveChangesButton" Content="Save Changes" Height="27" Margin="5,10"/>
-                <Button x:Name="CloseButton" Content="Close Window" Height="27" Margin="5,5"
-                Click="CloseButton_Click" MinWidth="25" />
+                <Button x:Name="SaveChangesButton" Content="Save Changes" Height="27" Margin="5,10"
+                        Click="SaveChangesButton_Click" MinWidth="25" />
+                <Button x:Name="CloseButton" Content="Close" Height="27" Margin="5,5"
+                    Click="CloseButton_Click" MinWidth="25" />
             </StackPanel>
         </Grid>
     </DockPanel>
