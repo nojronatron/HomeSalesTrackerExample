@@ -146,10 +146,14 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdatePerson = new Person();
             UpdateRECo = new RealEstateCompany();
 
+            var tempPerson = new Person();
+            var tempRECo = new RealEstateCompany();
+            var tempHomesales = new List<HomeSale>();
+
             //  make sure the Agent received from sender is fully loaded from latest Collections' data
-            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedAgent.AgentID).FirstOrDefault();
-            var tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == ReceivedAgent.CompanyID).FirstOrDefault();
-            var tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedAgent.AgentID).ToList();
+            tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedAgent.AgentID).FirstOrDefault();
+            tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == ReceivedAgent.CompanyID).FirstOrDefault();
+            tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedAgent.AgentID).ToList();
 
             ReceivedAgent.Person = tempPerson;
             ReceivedAgent.RealEstateCompany = tempRECo;
@@ -225,8 +229,24 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateOwner = new Owner();
             UpdatePerson = new Person();
 
-            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
-            var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+            var tempPerson = new Person();
+            var tempHomes = new List<Home>();
+            if (ReceivedOwner == null && ReceivedPerson == null)
+            {
+                MessageBox.Show("Need a Person or an Owner object to work with. Closing.", "Nothing to do!", MessageBoxButton.OK);
+                IsButtonClose = true;
+                this.Close();
+            }
+            if (ReceivedOwner != null)
+            {
+                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
+                tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+            }
+            if (ReceivedPerson != null)
+            {
+                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedPerson.PersonID).FirstOrDefault();
+            }
+
 
             ReceivedOwner.Person = tempPerson;
             ReceivedOwner.Homes = tempHomes;

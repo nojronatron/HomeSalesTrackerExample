@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
         mc:Ignorable="d"
-        Title="Add New Home" Height="530" Width="370" Loaded="Window_Loaded">
+        Title="Add New Home" Height="550" Width="370" Loaded="Window_Loaded">
 
     <DockPanel Background="Azure">
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch" BorderBrush="Black">
@@ -33,46 +33,27 @@
             <TextBox x:Name="homeStateTextbox" Text="" Height="25" />
             <Label Content="Zip Code + 4 (Required)" Height="25" />
             <TextBox x:Name="homeZipTextbox" Text="" Height="25" />
-            <Separator Margin="0,5" />
+            <Separator Margin="0,10" />
             <DockPanel>
             <Label Content="To create a new Owner click Add Owner:" Height="27"  />
             <Button x:Name="addOwnerButton" Content="Add Owner" HorizontalAlignment="Right" Width="100" 
-                    Click="AddOwnerButton_click" Margin="5,5,5,5" />
+                    Click="AddOwnerButton_click" Margin="5,5" />
             </DockPanel>
-            <Label Content="Or select an existing Owner from the list below:" HorizontalContentAlignment="Center" Height="25" Margin="0,5" />
-            <ComboBox x:Name="ownersComboBox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" 
-                      SelectionChanged="OwnerComboBox_SelectionChanged" />
-            <Separator Margin="0,5"/>
-            <Button x:Name="AddNewHomeButton" Content="Add New Home" Height="25" Margin="5,10" Click="AddNewHomeButton_Click" MinWidth="25" />
-            <Button x:Name="closeButton" Content="Close" Height="25" Margin="5,5" Click="CloseButton_Click" MinWidth="25" />
+            <Label Content="Or select an existing Owner from the list below:" 
+                   HorizontalContentAlignment="Center" Height="27" Margin="0" />
+            <ComboBox x:Name="PotentialOwnerPeopleCombobox" IsEditable="False" ItemsSource="{Binding}" Margin="5,10" 
+                      SelectionChanged="PotentialOwnerPeopleCombobox_SelectionChange" />
+            <DockPanel>
+                <Label Content="Preferred Lender:" Height="27" Margin="5,0" />
+                <TextBox x:Name="PreferredLenderTextbox" Height="27" Width="180" Margin="5,0" IsReadOnly="True" />
+                <Button x:Name="AddPreferredLenderButton" Content="Add" Width="35" HorizontalAlignment="Right"
+                         Click="AddPreferredLenderButton_Click" IsEnabled="False" />
+            </DockPanel>
+            <Separator Margin="0,10"/>
+            <Button x:Name="AddNewHomeButton" Content="Add New Home" Height="25" Margin="5,10" 
+                    Click="AddNewHomeButton_Click" MinWidth="25" />
+            <Button x:Name="closeButton" Content="Close" Height="25" Margin="5,5" 
+                    Click="CloseButton_Click" MinWidth="25" />
         </StackPanel>
     </DockPanel>
 </Window>
-
-    
-    
-    <!--<StackPanel Orientation="Vertical" MinWidth="130" Margin="10,10">
-            <Label x:Name="personElementLabel" Content="Contact Information" Height="25" />
-            <Label Content="First Name" Height="25" />
-            <TextBox x:Name="firstnameTextbox" Text="" Height="25" />
-            <Label Content="Last Name" Height="25" />
-            <TextBox x:Name="lastnameTextbox" Text="" Height="25" />
-            <Label Content="Phone Number" Height="25" />
-            <TextBox x:Name="phoneTextbox" Text="" Height="25" />
-            <Label Content="Email Address" Height="25" />
-            <TextBox x:Name="emailTextbox" Text="" Height="25" />
-        </StackPanel>
-        <StackPanel Orientation="Vertical" MinWidth="100" Margin="10,10">
-            <Label x:Name="personTypeLabel" Content="Additional Information" Height="25" />
-            <Label Content="Select Agent, Buyer, or Owner" Height="25" />
-            <ComboBox x:Name="personTypeComboBox" Text="Roles" ItemsSource="{Binding}" IsEditable="False" />
-            <Label Content="Preferred Lender (if any)" Height="25" />
-            <TextBox x:Name="preferredLenderTextbox" Text="" Height="25" />
-            <Label Content="Buyer Credit Rating" Height="25" />
-            <TextBox x:Name="creditRatingTextbox" Text="" Height="25" />
-            <Label Content="Real Estate Commpany" Height="25" />
-            <TextBox x:Name="agentRECompany" Text="" Height="25" />
-            <Label Content="Agent Commission" Height="25" />
-            <TextBox x:Name="commissionPercentTextbox" Text="" Height="25" />
-            <Button x:Name="submitButton" Content="Submit" Height="25" Click="submitButton_Click" Margin="10,10" />
-        </StackPanel>-->

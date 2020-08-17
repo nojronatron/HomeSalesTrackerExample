@@ -620,6 +620,11 @@ namespace HomeSalesTrackerApp
 
         }
 
+        /// <summary>
+        /// Update selected HomeForSale. Requires: HomeForSale instance as a Collection of a Home, a RE Company, and of an Agent, at a minimum.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder statusMessage = new StringBuilder("Ok. ");
@@ -636,43 +641,41 @@ namespace HomeSalesTrackerApp
             {
                 Person hfsBuyer = new Person();
                 hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
-                if (hfsBuyer != null)
+                Person hfsAgent = new Person();
+                hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
+                if (hfsAgent != null)
                 {
-                    Person hfsAgent = new Person();
-                    hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
-                    if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                    RealEstateCompany hfsReco = new RealEstateCompany();
+                    hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                    if (hfsReco != null)
                     {
-                        RealEstateCompany hfsReco = new RealEstateCompany();
-                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
-                        if (hfsReco != null)
-                        {
-                            HomeUpdaterWindow uw = new HomeUpdaterWindow();
-                            uw.UpdateType = "HomeSale";
-                            uw.UpdateHomeSale = hfsHomesale;
-                            uw.UpdateAgent = hfsAgent.Agent;
-                            uw.UpdateBuyer = hfsBuyer.Buyer;
-                            uw.UpdateHome = hfsHome;
-                            uw.UpdateReco = hfsReco;
-                            DisplayStatusMessage("Loading update window");
-                            uw.Show();
-
-                        }
-                        else
-                        {
-                            statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
-                        }
+                        HomeUpdaterWindow huw = new HomeUpdaterWindow();
+                        huw.UpdateType = "HomeSale";
+                        huw.UpdateHomeSale = hfsHomesale;
+                        huw.UpdateAgent = hfsAgent.Agent;
+                        huw.UpdateBuyer = hfsBuyer.Buyer;
+                        huw.UpdateHome = hfsHome;
+                        huw.UpdateReco = hfsReco;
+                        DisplayStatusMessage("Loading update window");
+                        huw.Show();
                     }
                     else
                     {
-                        statusMessage.Append($"Agent not associated with a Real Estate Co. ");
+                        statusMessage.Append("RE Company not associated with this Home For Sale record. ");
                     }
+
                 }
                 else
                 {
-                    statusMessage.Append($"Buyer record not found. ");
+                    statusMessage.Append($"Agent not associated with this Home For Sale record. ");
                 }
+
             }
-            statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
+            else
+            {
+            statusMessage.Append($"DB Data problem: No Home found for this Home For Sale record. ");
+            }
+
             if (statusMessage.Length > 4)
             {
                 DisplayStatusMessage(statusMessage.ToString());

@@ -245,9 +245,22 @@ namespace HomeSalesTrackerApp.CrudWindows
             ExistingRecosCombobox.ItemsSource = existingRECosList;
         }
 
+        /// <summary>
+        /// Validate that minimal inputs are received when this Window Opens, otherwise turn off all editing options and only allow user to Close it.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             int count = 0;
+            if (UpdateHome != null)
+            {
+                count++;
+            }
+            if (UpdateType.Count() > 3)
+            {
+                count++;
+            }
             if (UpdatePerson != null)
             {
                 count++;
@@ -276,7 +289,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 count++;
             }
-            if (count > 0)
+            if (count > 2)  //  UpdateHome and UpdateType are absolutely required
             {
                 LoadPanelsAndFields();
             }
@@ -383,6 +396,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                     {
                         this.Title = "Update Agent information";
                         LoadHomeInfoFields();
+                        //  TODO: anything else???
                         break;
                     }
                 default:
