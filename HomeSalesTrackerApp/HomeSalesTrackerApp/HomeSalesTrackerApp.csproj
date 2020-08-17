@@ -66,6 +66,7 @@
     <Compile Include="DisplayModels\OwnerView.cs" />
     <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
     <Compile Include="DisplayModels\SoldHomesView.cs" />
+    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="ReportWindows\BuyersResultsReport.xaml.cs">
       <DependentUpon>BuyersResultsReport.xaml</DependentUpon>
     </Compile>

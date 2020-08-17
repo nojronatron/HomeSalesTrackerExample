@@ -67,6 +67,7 @@
     <Compile Include="Helpers\BackUpDataFilesTests.cs" />
     <Compile Include="Helpers\EntityListsTests.cs" />
     <Compile Include="Helpers\FilesHelperTests.cs" />
+    <Compile Include="Helpers\LoggerTests.cs" />
     <Compile Include="Helpers\XmlHelperTests.cs" />
     <Compile Include="HomeSalesCollectionTests.cs" />
     <Compile Include="HomesCollectionTests.cs" />

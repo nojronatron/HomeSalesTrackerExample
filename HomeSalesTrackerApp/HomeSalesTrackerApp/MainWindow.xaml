@@ -58,8 +58,9 @@
                 <MenuItem Header="Real Estate Co. Totals" Click="menuDisplayRECoTotals_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
-            <MenuItem Header="_About" Click="menuAboutAppInfo_Click" >
-            </MenuItem>
+            <MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>
+            <Separator Width="10"/>
+            <MenuItem Header="_About" Click="menuAboutAppInfo_Click" ></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>

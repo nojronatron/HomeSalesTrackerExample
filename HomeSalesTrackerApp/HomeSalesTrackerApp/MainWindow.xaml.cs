@@ -953,5 +953,16 @@ namespace HomeSalesTrackerApp
             ClearSearchResultsViews();
             DisplayPeopleSearchResults();
         }
+
+        /// <summary>
+        /// Throws an error for testing Exception handling and logging.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuThrowError_Click(object sender, RoutedEventArgs e)
+        {
+            int zero = 0;
+            int number = 2 / zero;
+        }
     }
 }
