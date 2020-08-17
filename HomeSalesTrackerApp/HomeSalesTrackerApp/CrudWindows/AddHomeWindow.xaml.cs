@@ -290,7 +290,7 @@ namespace HomeSalesTrackerApp
             if(tempPreferredLender.Length > 2)
             {
                 AnOwner.PreferredLender = tempPreferredLender;
-
+                DisplayStatusMessage("Preferred Lender added.");
             }
         }
     }
