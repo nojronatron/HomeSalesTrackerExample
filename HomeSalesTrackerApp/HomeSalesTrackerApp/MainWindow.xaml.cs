@@ -1,5 +1,6 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HomeSalesTrackerApp.DisplayModels;
+using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 using System;
@@ -30,6 +31,7 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Logger logger = null;
         public static HomesCollection homesCollection = null;
         public static PeopleCollection<Person> peopleCollection = null;
         public static HomeSalesCollection homeSalesCollection = null;
@@ -44,11 +46,18 @@ namespace HomeSalesTrackerApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            logger = new Logger();
             if (App.DatabaseLoadCompleted)
             {
                 InitializeCollections();
+                logger.Data("MainWindow Loaded", "Database data loaded.");
                 DisplayStatusMessage("Database data loaded.");
-            };
+            }
+            else
+            {
+                logger.Data("MainWindow Loaded", "Database data NOT loaded.");
+            }
+            logger.Flush();
         }
 
         public static void AlertPersonAddedToCollection(Person p)
@@ -567,7 +576,8 @@ namespace HomeSalesTrackerApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //  Placeholder Window_Closing method. There could be actions to take here
+            logger.Data("Main Window Closing", "Closing.");
+            logger.Flush();
         }
 
         private void GetItemDetailsButton_Click(object sender, RoutedEventArgs e)
@@ -612,12 +622,15 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
         {
+            //  TODO: Complete Upate Home workflow.
             //  Home must already exist
             //  Menu -> Search -> Home, highlight Home in results, then Menu -> Update -> Home
             HomeSearchView selectedHome = null;
             selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
             FoundHomesView.SelectedItem = -1;
 
+            DisplayStatusMessage("NOT IMPLEMENTED");
+            ClearSearchResultsViews();
         }
 
         /// <summary>
@@ -627,58 +640,66 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder statusMessage = new StringBuilder("Ok. ");
-            HomeForSaleView selectedHomesaleView = null;
-            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
-            FoundHomesForSaleView.SelectedIndex = -1;
-            var homeid = selectedHomesaleView.HomeID;
-            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
-                                                                  .FirstOrDefault();
-
-            Home hfsHome = new Home();
-            hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
-            if (hfsHome != null)
+            try
             {
-                Person hfsBuyer = new Person();
-                hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
-                Person hfsAgent = new Person();
-                hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
-                if (hfsAgent != null)
+                StringBuilder statusMessage = new StringBuilder("Ok. ");
+                HomeForSaleView selectedHomesaleView = null;
+                selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+                FoundHomesForSaleView.SelectedIndex = -1;
+                var homeid = selectedHomesaleView.HomeID;
+                HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
+                                                                   .FirstOrDefault();
+
+                Home hfsHome = new Home();
+                hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
+                if (hfsHome != null)
                 {
-                    RealEstateCompany hfsReco = new RealEstateCompany();
-                    hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
-                    if (hfsReco != null)
+                    Person hfsBuyer = new Person();
+                    hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
+                    Person hfsAgent = new Person();
+                    hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
+                    if (hfsAgent != null)
                     {
-                        HomeUpdaterWindow huw = new HomeUpdaterWindow();
-                        huw.UpdateType = "HomeSale";
-                        huw.UpdateHomeSale = hfsHomesale;
-                        huw.UpdateAgent = hfsAgent.Agent;
-                        huw.UpdateBuyer = hfsBuyer.Buyer;
-                        huw.UpdateHome = hfsHome;
-                        huw.UpdateReco = hfsReco;
-                        DisplayStatusMessage("Loading update window");
-                        huw.Show();
+                        RealEstateCompany hfsReco = new RealEstateCompany();
+                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                        if (hfsReco != null)
+                        {
+                            HomeUpdaterWindow huw = new HomeUpdaterWindow();
+                            huw.UpdateType = "HomeSale";
+                            huw.UpdateHomeSale = hfsHomesale;
+                            huw.UpdateAgent = hfsAgent.Agent;
+                            huw.UpdateBuyer = hfsBuyer.Buyer;
+                            huw.UpdateHome = hfsHome;
+                            huw.UpdateReco = hfsReco;
+                            DisplayStatusMessage("Loading update window");
+                            huw.Show();
+                        }
+                        else
+                        {
+                            statusMessage.Append("RE Company not associated with this Home For Sale record. ");
+                        }
+
                     }
                     else
                     {
-                        statusMessage.Append("RE Company not associated with this Home For Sale record. ");
+                        statusMessage.Append($"Agent not associated with this Home For Sale record. ");
                     }
 
                 }
                 else
                 {
-                    statusMessage.Append($"Agent not associated with this Home For Sale record. ");
+                    statusMessage.Append($"DB Data problem: No Home found for this Home For Sale record. ");
                 }
 
+                if (statusMessage.Length > 4)
+                {
+                    DisplayStatusMessage(statusMessage.ToString());
+                }
             }
-            else
+            catch
             {
-            statusMessage.Append($"DB Data problem: No Home found for this Home For Sale record. ");
-            }
-
-            if (statusMessage.Length > 4)
-            {
-                DisplayStatusMessage(statusMessage.ToString());
+                logger.Data("Main Window MenuUpdateHomeForSale", "You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
+                DisplayStatusMessage("You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
             }
         }
 
@@ -911,7 +932,19 @@ namespace HomeSalesTrackerApp
 
         private void MenuAddHomesForSale_Click(object sender, RoutedEventArgs e)
         {
-            //
+            //  TODO: Add Home For Sale and allow adding a new Agent Person or adding an existing one
+            var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+            Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+            List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
+            hfsHome.HomeSales = hfsHomesales;
+
+            var huw = new HomeUpdaterWindow();
+            huw.UpdateType = "HomeSale";
+            huw.UpdateAgent = new Agent();
+            huw.UpdatePerson = new Person();
+            huw.UpdateHome = hfsHome;
+            huw.UpdateHomeSale = new HomeSale();
+            huw.Show();
         }
 
         private void menuUpdateSoldHome_Click(object sender, RoutedEventArgs e)

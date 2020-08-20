@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,21 +22,23 @@ namespace HomeSalesTrackerApp.CrudWindows
     public partial class PersonUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
+        private Agent UpdateAgent { get; set; }
+        private Buyer UpdateBuyer { get; set; }
+        private Owner UpdateOwner { get; set; }
+        private Person UpdatePerson { get; set; }
         private RealEstateCompany SelectedReco { get; set; }
+        private RealEstateCompany UpdateRECo { get; set; }
+
+        private Logger logger = null;
 
         public bool CalledByUpdateMenu { get; set; }    //  Called from MainWindow UPDATE menu item
         public string CalledByUpdateMenuType { get; set; }  //  The person sub-type: Agent, Buyer, Owner
 
         public Person ReceivedPerson { get; set; }
-        private Person UpdatePerson { get; set; }
         public Agent ReceivedAgent { get; set; }
-        private Agent UpdateAgent { get; set; }
         public Owner ReceivedOwner { get; set; }
-        private Owner UpdateOwner { get; set; }
         public Buyer ReceivedBuyer { get; set; }
-        private Buyer UpdateBuyer { get; set; }
         public RealEstateCompany RecievedRECo { get; set; } //  does this window ever need to receive a RECo?
-        private RealEstateCompany UpdateRECo { get; set; }
 
         public PersonUpdaterWindow()
         {
@@ -138,7 +141,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         }
 
         /// <summary>
-        /// IN TEST. Load Agent Details with received Agent properties. Also load Agent combobox and realestateco combobox.
+        /// IN TEST. Heavily refactored to enable adding Agent to existing Person for Add HFS scenario.
+        /// Load Agent Details with received Agent properties. Also load Agent combobox and realestateco combobox.
         /// </summary>
         private void LoadAgentPanel()
         {
@@ -150,17 +154,16 @@ namespace HomeSalesTrackerApp.CrudWindows
             var tempRECo = new RealEstateCompany();
             var tempHomesales = new List<HomeSale>();
 
-            //  make sure the Agent received from sender is fully loaded from latest Collections' data
-            tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedAgent.AgentID).FirstOrDefault();
-            tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == ReceivedAgent.CompanyID).FirstOrDefault();
-            tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedAgent.AgentID).ToList();
-
-            ReceivedAgent.Person = tempPerson;
-            ReceivedAgent.RealEstateCompany = tempRECo;
-            ReceivedAgent.HomeSales = tempHomesales;
-
             if (ReceivedAgent != null)
             {
+                //  make sure the Agent received from sender is fully loaded from latest Collections' data
+                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedAgent.AgentID).FirstOrDefault();
+                tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == ReceivedAgent.CompanyID).FirstOrDefault();
+                tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedAgent.AgentID).ToList();
+
+                ReceivedAgent.Person = tempPerson;
+                ReceivedAgent.RealEstateCompany = tempRECo;
+                ReceivedAgent.HomeSales = tempHomesales;
 
                 if (ReceivedAgent.CompanyID == null)
                 {
@@ -178,13 +181,28 @@ namespace HomeSalesTrackerApp.CrudWindows
                 DisableOwnerDetailsControls();
                 ExistingAgentsCombobox.IsEnabled = false;
                 EnableEditingPersonBasicInformation();
+                LoadAgentsComboBox();
             }
-            else
+
+            if (ReceivedAgent == null && ReceivedPerson != null)
             {
+                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedPerson.PersonID).FirstOrDefault();
+                tempRECo = null;
+                tempHomesales = new List<HomeSale>();
+
+                UpdateAgent.Person = tempPerson;
+                UpdateAgent.RealEstateCompany = null;
+                AgentReCompanyTextbox.IsReadOnly = true;
+                AgentCommissionTextbox.IsEnabled = true;
+                DisableBuyerDetailsControls();
+                DisableOwnerDetailsControls();
+                ExistingAgentsCombobox.IsEnabled = false;   //  user is here to create new Agent props for existing person
+                DisableEditingPersonBasicInformation(); //  user is NOT here to change the Person
                 AgentCommissionTextbox.Text = string.Empty;
                 AgentReCompanyTextbox.Text = string.Empty;
+                LoadRealEstateCoCombobox();
             }
-            LoadAgentsComboBox();
+
             LoadRealEstateCoCombobox();
         }
 
@@ -410,7 +428,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         }
 
         /// <summary>
-        /// Initialize and set properties to the UpdateAgent object (this.UpdateAgent property). UpdateAgent gets initialized here EVERY TIME this is run.
+        /// Initialize and set properties to the UpdateAgent object (this.UpdateAgent property).
         /// </summary>
         /// <returns></returns>
         private bool GetAgentUpdatedFields()
@@ -419,7 +437,21 @@ namespace HomeSalesTrackerApp.CrudWindows
             int resultCount = 0;
             decimal updateAgentCommish = 0.0m;
             UpdateAgent = new Agent();
-            UpdatePerson = ReceivedPerson;
+            UpdatePerson = ReceivedPerson;  //  example: Lyle Hutton PersonID = 5
+
+            ////  GetAgentUpdateFields might get called without an ReceivedAgent (via HFS -> New Home For Sale -> New Agent) so an Agent must be CREATED instead.
+            //if (ReceivedAgent == null)
+            //{
+            //    ReceivedAgent = new Agent()
+            //    {
+            //        AgentID = UpdatePerson.PersonID,
+            //        CommissionPercent = 0.0m,
+            //        CompanyID = null,
+            //        Person = UpdatePerson ?? null,
+            //        RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
+            //    };
+            //}
+
             UpdateAgent = ReceivedAgent;    //  captures AgentID
             UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
 
@@ -459,6 +491,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 {
                     UpdateAgent.RealEstateCompany = SelectedReco;
                     UpdateRECo = SelectedReco;
+                    UpdateAgent.CompanyID = UpdateRECo.CompanyID;
                     resultCount++;
                 }
             }
@@ -486,6 +519,23 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             
             return result;
+            //try
+            //{
+            //    if (LogicBroker.UpdateEntity<Agent>(ReceivedAgent)) //  update an existing entity do not create new
+            //    {
+            //        DisplayStatusMessage("Saved updated Agent!");
+            //    }
+            //    else
+            //    {
+            //        DisplayStatusMessage("Updated Agent was not saved or was same as existing.");
+            //    }
+            //}
+            //catch
+            //{
+            //    logger.Data("PUW.GetAgentUpatedFields", "Unable to save ReceivedAgent.");
+            //    logger.Flush();
+            //    DisplayStatusMessage("Unable to save Agent. A required field or member was null.");
+            //}
         }
 
         private bool GetBuyerUpdateFields()
@@ -574,8 +624,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (CalledByUpdateMenuType == "Agent")
             {
                 UpdatePerson.Agent = UpdateAgent;
-                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
-                if (LogicBroker.SaveEntity<Agent>(UpdateAgent))
+                personSaved = LogicBroker.UpdateEntity<Person>(UpdatePerson);
+                if (LogicBroker.UpdateEntity<Agent>(UpdateAgent))
                 {
                     aboSaveCount++;
                 }
@@ -604,6 +654,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (personSaved || aboSaveCount > 0)
             {
                 DisplayStatusMessage("Saved!");
+                MainWindow.InitializeCollections();
                 IsButtonClose = true;
             }
             else
@@ -643,6 +694,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadPersonInformation();
+            logger = new Logger();
             string updateType = CalledByUpdateMenuType.Trim();
             switch (updateType)
             {

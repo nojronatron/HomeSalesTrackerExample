@@ -289,6 +289,7 @@ namespace HSTDataLayer
                                 }
                                 else
                                 {
+                                    //  TODO: should this be add Agent only or add Person only? or Person with an Agent instance?
                                     context.Agents.Add(agent);
                                 }
                             }
@@ -408,6 +409,10 @@ namespace HSTDataLayer
                                 homesaleToUpdate.BuyerID = homeSale.BuyerID ?? null;
                                 homesaleToUpdate.MarketDate = homeSale.MarketDate;
                                 homesaleToUpdate.CompanyID = homeSale.CompanyID;
+                                homesaleToUpdate.Agent = homeSale.Agent ?? null;
+                                homesaleToUpdate.Buyer = homeSale.Buyer ?? null;
+                                homesaleToUpdate.Home = homeSale.Home ?? null;
+                                homesaleToUpdate.RealEstateCompany = homeSale.RealEstateCompany ?? null;
                             }
 
                             break;

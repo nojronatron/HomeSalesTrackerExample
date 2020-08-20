@@ -86,7 +86,7 @@
     <Compile Include="DisplayModels\HomeForSaleView.cs" />
     <Compile Include="DisplayModels\HomeSearchView.cs" />
     <Compile Include="DisplayModels\PersonView.cs" />
-    <Compile Include="Helpers\CollectionsManager.cs" />
+    <Compile Include="Collections\CollectionsManager.cs" />
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
     </Compile>
@@ -171,7 +171,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BusinessModels\Extensions\" />
     <Folder Include="WpfResources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

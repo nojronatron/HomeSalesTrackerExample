@@ -11,6 +11,11 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Exit" Click="MenuExit_Click"/>
             </MenuItem>
+            <MenuItem Header="_Refresh">
+                <MenuItem Header="_Agents List" Click="MenuRefreshAgents_Click" />
+                <MenuItem Header="_Non-Agents and Agents List" Click="MenuRefreshAgentsInclusive_Click" />
+                <MenuItem Header="_Buyers List" Click="MenuRefreshBuyers_Click" />
+            </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>
@@ -88,7 +93,11 @@
                 <TextBox x:Name="UpdateAgentCompanyNameTextbox" Text="" Height="27"  />
                 <Label Content="Commission (Percentage)" Height="27"  />
                 <TextBox x:Name="UpdateAgentCommissionTextbox" Text="" Height="27"    />
-                <Label Content="Select an Existing Agent:" Height="27"   Margin="5,5" />
+                <DockPanel>
+                    <Label Content="Select an Existing Agent:" Height="27"   Margin="5,5" HorizontalAlignment="Left" />
+                    <Button x:Name="AddNewAgentButton" Content="Add New" HorizontalAlignment="Right" Margin="5" Width="80"
+                            Click="AddNewAgentButton_Click" Visibility="Hidden" />
+                </DockPanel>
                 <ComboBox x:Name="ExistingAgentsCombobox" ItemsSource="{Binding}" Margin="5,10"
                           SelectionChanged="ListOfExistingAgentsCombobox_SelectionChanged" />
                 <Button x:Name="updateChangedAgentFieldsButton" Content="Update Agent Info" Height="27" Margin="5,5" 
