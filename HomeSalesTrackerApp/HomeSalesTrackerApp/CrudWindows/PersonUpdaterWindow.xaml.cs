@@ -439,18 +439,18 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateAgent = new Agent();
             UpdatePerson = ReceivedPerson;  //  example: Lyle Hutton PersonID = 5
 
-            ////  GetAgentUpdateFields might get called without an ReceivedAgent (via HFS -> New Home For Sale -> New Agent) so an Agent must be CREATED instead.
-            //if (ReceivedAgent == null)
-            //{
-            //    ReceivedAgent = new Agent()
-            //    {
-            //        AgentID = UpdatePerson.PersonID,
-            //        CommissionPercent = 0.0m,
-            //        CompanyID = null,
-            //        Person = UpdatePerson ?? null,
-            //        RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
-            //    };
-            //}
+            //  GetAgentUpdateFields might get called without an ReceivedAgent (via HFS -> New Home For Sale -> New Agent) so an Agent must be CREATED instead.
+            if (ReceivedAgent == null)
+            {
+                ReceivedAgent = new Agent()
+                {
+                    AgentID = UpdatePerson.PersonID,
+                    CommissionPercent = 0.0m,
+                    CompanyID = null,
+                    Person = UpdatePerson ?? null,
+                    RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
+                };
+            }
 
             UpdateAgent = ReceivedAgent;    //  captures AgentID
             UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
