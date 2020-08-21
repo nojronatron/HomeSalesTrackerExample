@@ -932,19 +932,26 @@ namespace HomeSalesTrackerApp
 
         private void MenuAddHomesForSale_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Add Home For Sale and allow adding a new Agent Person or adding an existing one
-            var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
-            Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
-            List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
-            hfsHome.HomeSales = hfsHomesales;
+            try
+            {
+                var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
+                hfsHome.HomeSales = hfsHomesales;
 
-            var huw = new HomeUpdaterWindow();
-            huw.UpdateType = "HomeSale";
-            huw.UpdateAgent = new Agent();
-            huw.UpdatePerson = new Person();
-            huw.UpdateHome = hfsHome;
-            huw.UpdateHomeSale = new HomeSale();
-            huw.Show();
+                var huw = new HomeUpdaterWindow();
+                huw.UpdateType = "HomeSale";
+                huw.UpdateAgent = new Agent();
+                huw.UpdatePerson = new Person();
+                huw.UpdateHome = hfsHome;
+                huw.UpdateHomeSale = new HomeSale();
+                huw.UpdateReco = new RealEstateCompany();
+                huw.Show();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private void menuUpdateSoldHome_Click(object sender, RoutedEventArgs e)

@@ -276,6 +276,10 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadRECosCombobox();
+            LoadBuyersCombobox();
+            LoadAgentsCombobox(true);
+
             logger = new Logger();
             int count = 0;
             if (UpdateHome != null)
@@ -365,7 +369,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             AgentNameTextbox.IsReadOnly = true;
             UpdateAgentCompanyNameTextbox.IsReadOnly = true;
             UpdateAgentCommissionTextbox.IsReadOnly = true;
-            updateChangedAgentFieldsButton.IsEnabled = false;
+            updateChangedAgentFieldsButton.IsEnabled = true;
             LoadAgentsCombobox(false);
         }
 
@@ -378,17 +382,18 @@ namespace HomeSalesTrackerApp.CrudWindows
             //  HOMESALE INFO
             SetDatePickerDefaults();
             forSaleHomeIdTextbox.IsReadOnly = true;
-            forSaleHomeIdTextbox.Text = UpdateHomeSale.HomeID.ToString();
+            forSaleHomeIdTextbox.Text = UpdateHome.HomeID.ToString();
             hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
+            hfsSoldDatePicker.IsEnabled = false;
             hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
             hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
-            hfsMarketDatePicker.IsEnabled = false;
+            hfsMarketDatePicker.IsEnabled = true;
 
             //  AGENT INFO
             AgentNameTextbox.IsReadOnly = true;
             UpdateAgentCompanyNameTextbox.IsReadOnly = true;
             UpdateAgentCommissionTextbox.IsReadOnly = true;
-            updateChangedAgentFieldsButton.IsEnabled = false;
+            updateChangedAgentFieldsButton.IsEnabled = true;
             LoadAgentsCombobox(true);
         }
 
@@ -400,7 +405,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void LoadPanelsAndFields()
         {
             CloseButton.Visibility = Visibility.Visible;
-
             string updateType = UpdateType.Trim().ToUpper();
             switch (updateType)
             {
@@ -487,8 +491,15 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             int countChanges = 0;
             DateTime updatedSoldDate = new DateTime();
+            DateTime updatedMarketDate = new DateTime();
             Decimal updatedSaleAmount = new decimal();
+
             if (DateTime.TryParse(hfsSoldDatePicker.SelectedDate.ToString(), out updatedSoldDate))
+            {
+                countChanges++;
+            }
+
+            if (DateTime.TryParse(hfsMarketDatePicker.SelectedDate.ToString(), out updatedMarketDate))
             {
                 countChanges++;
             }
@@ -501,16 +512,38 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
             }
 
-            if (countChanges == 2)
+            if (countChanges >= 2)
             {
-                UpdateHomeSale.SoldDate = updatedSoldDate;
+                if (updatedSoldDate.Year < 2020)
+                {
+                    UpdateHomeSale.SoldDate = null;
+                }
+                else
+                {
+                    UpdateHomeSale.SoldDate = updatedSoldDate;
+                }
+
+                UpdateHomeSale.MarketDate = updatedMarketDate;
                 UpdateHomeSale.SaleAmount = updatedSaleAmount;
                 DisplayStatusMessage("Home Sale Information Updated!");
+
+                if (UpdateBuyer != null)
+                {
+                    UpdateHomeSale.Buyer = UpdateBuyer;
+                    UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
+                }
+                if (UpdateHome != null)
+                {
+                    UpdateHomeSale.Home = UpdateHome;
+                    UpdateHomeSale.HomeID = UpdateHome.HomeID;
+                }
+
             }
             else
             {
-                DisplayStatusMessage("Unable to make updates. Check entries and try again.");
+                DisplayStatusMessage("Only update Sale Amount and Market Date or Sold Date.");
             }
+
         }
 
         /// <summary>
@@ -585,86 +618,99 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
         {
-            DisplayStatusMessage("UpdateChangedRecoFieldsButton Clicked!");
+            UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
+            UpdateHomeSale.RealEstateCompany = UpdateReco;
+            DisplayStatusMessage("Real Estate Company updated.");
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
+            UpdateHomeSale.AgentID = UpdateAgent.AgentID;
+            UpdateHomeSale.Agent = UpdateAgent;
+            UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
+            UpdateHomeSale.RealEstateCompany = UpdateReco;
             DisplayStatusMessage("UpdateChangedAgentFieldsButton Clicked!");
         }
 
         private void SaveChangesButton_Click(object sender, RoutedEventArgs e)
         {
-            int savedCount = 0;
-            string updateType = UpdateType.Trim().ToUpper();
-            switch (updateType)
+            try
             {
-                case "HOME":
-                    {
-                        if (LogicBroker.UpdateEntity<Home>(UpdateHome))
+                int savedCount = 0;
+                string updateType = UpdateType.Trim().ToUpper();
+                switch (updateType)
+                {
+                    case "HOME":
                         {
-                            savedCount++;
-                        }
+                            if (LogicBroker.UpdateEntity<Home>(UpdateHome))
+                            {
+                                savedCount++;
+                            }
 
-                        break;
-                    }
-                case "REALESTATECOMPANY":
-                    {
-                        if (LogicBroker.UpdateEntity<RealEstateCompany>(UpdateReco))
+                            break;
+                        }
+                    case "REALESTATECOMPANY":
                         {
-                            savedCount++;
-                        }
+                            if (LogicBroker.UpdateEntity<RealEstateCompany>(UpdateReco))
+                            {
+                                savedCount++;
+                            }
 
-                        break;
-                    }
-                case "HOMESALE":
-                    {
-                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                            break;
+                        }
+                    case "HOMESALE":
                         {
-                            savedCount++;
-                        }
+                            if (LogicBroker.SaveEntity<HomeSale>(UpdateHomeSale))
+                            {
+                                savedCount++;
+                            }
 
-                        break;
-                    }
-                case "HOMESOLD":
-                    {
-                        if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                            break;
+                        }
+                    case "HOMESOLD":
                         {
-                            savedCount++;
-                        }
+                            if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                            {
+                                savedCount++;
+                            }
 
-                        break;
-                    }
-                case "OWNER":
-                    {
-                        savedCount = -1;
-                        break;
-                    }
-                case "BUYER":
-                    {
-                        savedCount = -1;
-                        break;
-                    }
-                case "AGENT":
-                    {
-                        savedCount = -1;
-                        break;
-                    }
-                default:
-                    {
-                        DisplayStatusMessage("Nothing was saved.");
-                        ShowCloseButtonOnly();
-                        break;
-                    }
+                            break;
+                        }
+                    case "OWNER":
+                        {
+                            savedCount = -1;
+                            break;
+                        }
+                    case "BUYER":
+                        {
+                            savedCount = -1;
+                            break;
+                        }
+                    case "AGENT":
+                        {
+                            savedCount = -1;
+                            break;
+                        }
+                    default:
+                        {
+                            DisplayStatusMessage("Nothing was saved.");
+                            ShowCloseButtonOnly();
+                            break;
+                        }
+                }
+
+                if (savedCount < 1)
+                {
+                    DisplayStatusMessage("Home or Home Sale info required for: Agent, Buyer, and Owner changes.");
+                }
+                if (savedCount > 0)
+                {
+                    DisplayStatusMessage("Save completed! Click Close to exit.");
+                }
             }
-
-            if (savedCount < 1)
+            catch
             {
-                DisplayStatusMessage("Home or Home Sale info required for: Agent, Buyer, and Owner changes.");
-            }
-            if (savedCount > 0)
-            {
-                DisplayStatusMessage("Save completed! Click Close to exit.");
+                throw;
             }
         }
 
@@ -684,30 +730,34 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void ListOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Person selectedAgent = (sender as ComboBox).SelectedItem as Person;
+
             if (selectedAgent != null)
             {
-                UpdateAgent = (from p in MainWindow.peopleCollection
-                               where p.PersonID == selectedAgent.PersonID
-                               select p.Agent).FirstOrDefault();
-                if (RehydrateAgent() != false)
-                {
-                    logger.Data("ListOfExistingAgentsCombobox_SelectionChanged", "RehydrageAgent returned False.");
-                    logger.Flush();
-                    DisplayStatusMessage("Working.");
-                }
+                UpdatePerson = selectedAgent;
+                UpdateAgent = selectedAgent.Agent;
+                //if (RehydrateAgent() != false)
+                //{
+                //    logger.Data("ListOfExistingAgentsCombobox_SelectionChanged", "RehydrageAgent returned False.");
+                //    logger.Flush();
+                //    DisplayStatusMessage("Working.");
+                //}
 
-                if (UpdateAgent != null)
-                {
+                //if (UpdateAgent != null)
+                //{
                     AgentNameTextbox.Text = $"{ UpdateAgent.Person.FirstName } { UpdateAgent.Person.LastName }";
-                    if (UpdateAgent.RealEstateCompany != null)
+                    if (selectedAgent.Agent.CompanyID != null)
                     {
-                        UpdateAgentCompanyNameTextbox.Text = UpdateAgent.RealEstateCompany.CompanyName;
+                    var agentsAffiliatedReco = (from re in MainWindow.reCosCollection
+                                                where selectedAgent.Agent.CompanyID == re.CompanyID
+                                                select re).FirstOrDefault();
+                        UpdateAgentCompanyNameTextbox.Text = agentsAffiliatedReco.CompanyName;
+                    UpdateReco = agentsAffiliatedReco;
                     }
                     else
                     {
                         UpdateAgentCompanyNameTextbox.Text = "Agent no longer active";
                     }
-                    UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString();
+                    UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString().Trim();
                 }
                 else
                 {
@@ -724,13 +774,13 @@ namespace HomeSalesTrackerApp.CrudWindows
                                    select p.Agent).FirstOrDefault();
                         //MainWindow.peopleCollection.Where(p => p.PersonID == UpdatePerson.PersonID).FirstOrDefault();  //  set UpdateAgent so it can be used
                 }
-            }
-            else
-            {
-                logger.Data("Existing Agents combobox selection changed", "A selected Agent could not be acquired.");
-                logger.Flush();
-                DisplayStatusMessage("Unable to use selected item. Menu > Refresh could help.");
-            }
+            //}
+            //else
+            //{
+            //    logger.Data("Existing Agents combobox selection changed", "A selected Agent could not be acquired.");
+            //    logger.Flush();
+            //    DisplayStatusMessage("Unable to use selected item. Menu > Refresh could help.");
+            //}
             UpdateHomeSale.Agent = UpdateAgent; //  this forces the changes to UpdateHomeSale so the correct Agent is saved along with the HomeSale record update.
         }
 

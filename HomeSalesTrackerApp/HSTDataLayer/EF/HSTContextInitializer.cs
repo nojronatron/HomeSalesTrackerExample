@@ -8,7 +8,7 @@ using System.Data.Entity.Validation;
 
 namespace HSTDataLayer
 {
-    public class HSTContextInitializer : DropCreateDatabaseAlways<HSTDataModel>
+    public class HSTContextInitializer : CreateDatabaseIfNotExists<HSTDataModel>
     {
         private static List<string> filenames = FilesHelper.GetFileNames();
         private static List<string> descendantNames = FilesHelper.GetDescendantNames();

@@ -135,7 +135,8 @@ namespace HSTDataLayer
                     case "HomeSale":
                         {
                             HomeSale homesale = item as HomeSale;
-                            context.HomeSales.AddOrUpdate(hs => new { hs.SaleID }, homesale);
+                            context.HomeSales.AddOrUpdate(hs => new { hs.HomeID, hs.SaleAmount, hs.MarketDate }, homesale);
+                            //  context.HomeSales.AddOrUpdate(hs => new { hs.SaleID }, homesale);
                             break;
                         }
                     default:
