@@ -405,7 +405,7 @@ namespace HomeSalesTrackerApp
                                  where sr.HomeID == sh.HomeID
                                  select sr).ToList();
 
-                searchResults.Distinct();
+                searchResults = searchResults.Distinct().ToList();
             }
         }
 
@@ -602,7 +602,7 @@ namespace HomeSalesTrackerApp
                 searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.Zip.Contains(searchTerm)));
             }
 
-            searchResults.Distinct();
+            searchResults = searchResults.Distinct().ToList();
         }
 
         private static void PersonSearchHelper(ref List<Person> searchResults, ref List<string> searchTerms)

@@ -5,7 +5,7 @@ using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
-    public class HomesCollection : IEnumerable<Home>//, INotifyPropertyChanged
+    public class HomesCollection : IEnumerable<Home>    //, INotifyPropertyChanged
     {
         private List<Home> _homesList = null;
 
