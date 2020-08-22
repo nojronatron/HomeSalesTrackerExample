@@ -42,16 +42,13 @@ namespace HomeSalesTrackerApp
                     else
                     {
                         logger.Data("AppExit", "Application Startup failed to load file data.");
+                        logger.Flush();
                     }
                 }
                 catch (Exception ex)
                 {
-                    _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
-
-                }
-                finally
-                {
-                    logger.Flush();
+                    logger.Data("WindowLoading Exception thrown", ex.Message);
+                    logger.Flush(); _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
                 }
             }
         }
@@ -72,6 +69,7 @@ namespace HomeSalesTrackerApp
 
         private void LogUnhandledException(Exception exception, string @event)
         {
+            logger.Data("Unhandled Exception Catcher", "Next log entry will have exception and atEvent.");
             logger.Data(exception.ToString(), @event);
             logger.Flush();
         }

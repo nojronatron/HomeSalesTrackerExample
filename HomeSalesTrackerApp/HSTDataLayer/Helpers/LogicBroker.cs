@@ -1,23 +1,16 @@
-﻿using HomeSalesTrackerDataLayer;
-using HSTDataLayer.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core.Metadata.Edm;
+﻿using HSTDataLayer.Helpers;
 using System.Data.Entity.Migrations;
-using System.Net.Http;
-using System.Runtime.Remoting.Contexts;
 using System.Linq;
 
 namespace HSTDataLayer
 {
     /// <summary>
-    /// Class to contain all code needed to communicate between UI and DB
+    /// Contain all code needed to communicate between UI and DB
     /// </summary>
     public class LogicBroker
     {
         /// <summary>
-        /// Method that inits a new DB and calls to load the db with XML file data
+        /// Inits a new DB and calls to load the db with XML file data
         /// </summary>
         /// <returns></returns>
         public static bool InitDatabase()
@@ -27,7 +20,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// Method that handles Main App calls to load db with XML file data.
+        /// Load DB with XML file data.
         /// </summary>
         /// <returns></returns>
         public static bool LoadData()
@@ -37,7 +30,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// Method that handles Main App calls to shutdown (dump DB to XML Files with overwrite)
+        /// Dump Database Tables to XML Files with overwrite enabled.
         /// </summary>
         /// <returns></returns>
         public static bool BackUpDatabase()
@@ -82,7 +75,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// TESTED good as of 15-Aug-20. Should take a generic item and enable storing to the DB via EF if different than existing item.
+        /// Take a generic item and enable storing to the DB via EF if different than existing item.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
@@ -146,11 +139,20 @@ namespace HSTDataLayer
                         }
                 }
 
-                itemsAffected = context.SaveChanges();
+                try
+                {
+                    itemsAffected = context.SaveChanges();
+                }
+                catch
+                {
+                    _ = 0;
+                }
+
                 if (itemsAffected > 0)
                 {
                     result = true;
                 }
+
                 if (itemsAffected < 0)
                 {
                     //  TODO: Write a log entry indicating that the Default Case was matched which would be a bug.
@@ -162,7 +164,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// NOT TESTED. Should take a generic item and enable removing from the DB via EF.
+        /// Take a generic item and enable removing from the DB via EF.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
@@ -230,12 +232,20 @@ namespace HSTDataLayer
                             break;
                         }
                 }
+                try
+                {
+                    itemsAffected = context.SaveChanges();
+                }
+                catch 
+                {
+                    _ = 0;
+                }
 
-                itemsAffected = context.SaveChanges();
                 if (itemsAffected > 0)
                 {
                     result = true;
                 }
+
                 if (itemsAffected < 0)
                 {
                     //  TODO: Write a log entry indicating that the Default Case was matched which would be a bug.
@@ -247,7 +257,7 @@ namespace HSTDataLayer
         }
 
         /// <summary>
-        /// !SUSPECT! Take a generic item and enable updating a field in an existing entry via EF. If no existing Entities match, new Entity is created.
+        /// Take a generic item and enable updating a field in an existing entry via EF. If no existing Entities match, new Entity is created.
         /// People Typed Entities must contain a new or existing Person Type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -272,7 +282,6 @@ namespace HSTDataLayer
                 {
                     case "Agent":
                         {
-                            //  IComparable<Agent> uses AgentID for comparison
                             agent = item as Agent;
                             Agent agentToUpdate = context.Agents.Find(agent.AgentID);
                             if (agentToUpdate != null)
@@ -290,7 +299,6 @@ namespace HSTDataLayer
                                 }
                                 else
                                 {
-                                    //  TODO: should this be add Agent only or add Person only? or Person with an Agent instance?
                                     context.Agents.Add(agent);
                                 }
                             }
@@ -299,7 +307,6 @@ namespace HSTDataLayer
                         }
                     case "Buyer":
                         {
-                            //  IComparable<Buyer> not implemented so use BuyerID as comparable element
                             buyer = item as Buyer;
                             Buyer buyerToUpdate = context.Buyers.Find(buyer.BuyerID);
                             if (buyerToUpdate != null)
@@ -324,7 +331,6 @@ namespace HSTDataLayer
                         }
                     case "Owner":
                         {
-                            //  Only comparable item is OwnerID
                             owner = item as Owner;
                             Owner ownerToUpdate = context.Owners.Find(owner.OwnerID);
                             if (ownerToUpdate != null)
@@ -349,21 +355,17 @@ namespace HSTDataLayer
                         }
                     case "Person":
                         {
-                            //  IComparable<Person> comparison uses FirstName and LastName fields
                             person = item as Person;
-
-                            //  try to match an existing person
                             Person personToUpdate = (from p in context.People
                                                      where p.FirstName == person.FirstName &&
                                                      p.LastName == person.LastName
                                                      select p).FirstOrDefault();
 
-                            //  If null this will be a new record
                             if (personToUpdate == null)
                             {
                                 context.People.Add(person);
                             }
-                            else    //  returned record was hydrated with existing Person entity so update only
+                            else
                             {
                                 personToUpdate.Phone = person.Phone;
                                 personToUpdate.Email = person.Email ?? null;
@@ -373,7 +375,6 @@ namespace HSTDataLayer
                         }
                     case "Home":
                         {
-                            //  IComparable<Home> comparison uses Address and Zip fields
                             home = item as Home;
 
                             Home homeToUpdate = (from h in context.Homes
@@ -398,7 +399,6 @@ namespace HSTDataLayer
                         }
                     case "HomeSale":
                         {
-                            //  ICOmparable<HomeSale> implemented but will not use it here
                             homeSale = item as HomeSale;
                             HomeSale homesaleToUpdate = context.HomeSales.Find(homeSale.SaleID);
                             if (homesaleToUpdate != null)
@@ -410,17 +410,12 @@ namespace HSTDataLayer
                                 homesaleToUpdate.BuyerID = homeSale.BuyerID ?? null;
                                 homesaleToUpdate.MarketDate = homeSale.MarketDate;
                                 homesaleToUpdate.CompanyID = homeSale.CompanyID;
-                                homesaleToUpdate.Agent = homeSale.Agent ?? null;
-                                homesaleToUpdate.Buyer = homeSale.Buyer ?? null;
-                                homesaleToUpdate.Home = homeSale.Home ?? null;
-                                homesaleToUpdate.RealEstateCompany = homeSale.RealEstateCompany ?? null;
                             }
 
                             break;
                         }
                     case "RealEstateCompany":
                         {
-                            //  IComparable<RealEstateCompany> exists but stick with CompanyID instead
                             realEstateCompany = item as RealEstateCompany;
                             RealEstateCompany recoToUpdate = context.RealEstateCompanies.Find(realEstateCompany.CompanyID);
                             if(recoToUpdate != null)
@@ -433,23 +428,30 @@ namespace HSTDataLayer
                         }
                     default:
                         {
-                            itemsAffected = -1;
                             break;
                         }
                 }
 
-                itemsAffected = context.SaveChanges();
+                try
+                {
+                    itemsAffected = context.SaveChanges();
+                }
+                catch
+                {
+                    _ = 0;
+                }
+
                 if (itemsAffected > 0)
                 {
                     result = true;
                 }
+
                 if (itemsAffected < 0)
                 {
-                    //  TODO: Write a log entry indicating that the Default Case was matched which would be a bug.
                     result = false;
                 }
-
             }
+
             return result;
         }
 

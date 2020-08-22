@@ -370,6 +370,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateAgentCompanyNameTextbox.IsReadOnly = true;
             UpdateAgentCommissionTextbox.IsReadOnly = true;
             updateChangedAgentFieldsButton.IsEnabled = true;
+            AddNewAgentButton.Visibility = Visibility.Hidden;
+            AddNewAgentButton.IsEnabled = false;
             LoadAgentsCombobox(false);
         }
 
@@ -394,6 +396,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateAgentCompanyNameTextbox.IsReadOnly = true;
             UpdateAgentCommissionTextbox.IsReadOnly = true;
             updateChangedAgentFieldsButton.IsEnabled = true;
+            AddNewAgentButton.Visibility = Visibility.Hidden;
+            AddNewAgentButton.IsEnabled = false;
             LoadAgentsCombobox(true);
         }
 
@@ -529,12 +533,12 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                 if (UpdateBuyer != null)
                 {
-                    UpdateHomeSale.Buyer = UpdateBuyer;
+                    //UpdateHomeSale.Buyer = UpdateBuyer;
                     UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
                 }
                 if (UpdateHome != null)
                 {
-                    UpdateHomeSale.Home = UpdateHome;
+                    //UpdateHomeSale.Home = UpdateHome;
                     UpdateHomeSale.HomeID = UpdateHome.HomeID;
                 }
 
@@ -606,7 +610,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             if (UpdateBuyer != null)
             {
-                UpdateHomeSale.Buyer = UpdateBuyer;
+                //UpdateHomeSale.Buyer = UpdateBuyer;
+                UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
                 DisplayStatusMessage("Buyer information updated!");
             }
             else
@@ -619,17 +624,17 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            UpdateHomeSale.RealEstateCompany = UpdateReco;
+            //UpdateHomeSale.RealEstateCompany = UpdateReco;
             DisplayStatusMessage("Real Estate Company updated.");
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.AgentID = UpdateAgent.AgentID;
-            UpdateHomeSale.Agent = UpdateAgent;
+            //UpdateHomeSale.Agent = UpdateAgent;
             UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            UpdateHomeSale.RealEstateCompany = UpdateReco;
-            DisplayStatusMessage("UpdateChangedAgentFieldsButton Clicked!");
+            //UpdateHomeSale.RealEstateCompany = UpdateReco;
+            DisplayStatusMessage("Agent information updated for this home sale.");
         }
 
         private void SaveChangesButton_Click(object sender, RoutedEventArgs e)
@@ -708,9 +713,9 @@ namespace HomeSalesTrackerApp.CrudWindows
                     DisplayStatusMessage("Save completed! Click Close to exit.");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                logger.Data("Home Updater Window Exception Caught!", ex.Message);
             }
         }
 
@@ -734,54 +739,51 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (selectedAgent != null)
             {
                 UpdatePerson = selectedAgent;
-                UpdateAgent = selectedAgent.Agent;
-                //if (RehydrateAgent() != false)
-                //{
-                //    logger.Data("ListOfExistingAgentsCombobox_SelectionChanged", "RehydrageAgent returned False.");
-                //    logger.Flush();
-                //    DisplayStatusMessage("Working.");
-                //}
+                if (selectedAgent.Agent != null)
+                {
+                    UpdateAgent = selectedAgent.Agent;
+                    AgentNameTextbox.Text = UpdatePerson.GetFirstAndLastName();
 
-                //if (UpdateAgent != null)
-                //{
-                    AgentNameTextbox.Text = $"{ UpdateAgent.Person.FirstName } { UpdateAgent.Person.LastName }";
                     if (selectedAgent.Agent.CompanyID != null)
                     {
-                    var agentsAffiliatedReco = (from re in MainWindow.reCosCollection
-                                                where selectedAgent.Agent.CompanyID == re.CompanyID
-                                                select re).FirstOrDefault();
+                        var agentsAffiliatedReco = (from re in MainWindow.reCosCollection
+                                                    where selectedAgent.Agent.CompanyID == re.CompanyID
+                                                    select re).FirstOrDefault();
                         UpdateAgentCompanyNameTextbox.Text = agentsAffiliatedReco.CompanyName;
-                    UpdateReco = agentsAffiliatedReco;
+                        UpdateReco = agentsAffiliatedReco;
                     }
                     else
                     {
                         UpdateAgentCompanyNameTextbox.Text = "Agent no longer active";
                     }
+
                     UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString().Trim();
                 }
-                else
+                if (selectedAgent.Agent == null)
                 {
-                    //  TODO: Test Enabling an Add New button to allow user to create a new Agent for Person SelectedAgent in a PUW window
-                    AddNewAgentButton.Visibility = Visibility.Visible;
-                    AddNewAgentButton.IsEnabled = true;
-                    AgentNameTextbox.Text = selectedAgent.GetFirstAndLastName();
+                    //  Enable an Add New button to allow user to create a new Agent for Person SelectedAgent in a PUW window
                     AgentNameTextbox.IsReadOnly = true;
-                    UpdateAgentCompanyNameTextbox.Text = "Not an agent. Click Add New.";
-                    UpdateAgentCommissionTextbox.Text = string.Empty;
-                    UpdatePerson = selectedAgent;   //  set UpdatePerson so it can be used 
-                    UpdateAgent = (from p in MainWindow.peopleCollection
-                                   where p.PersonID == UpdatePerson.PersonID
-                                   select p.Agent).FirstOrDefault();
-                        //MainWindow.peopleCollection.Where(p => p.PersonID == UpdatePerson.PersonID).FirstOrDefault();  //  set UpdateAgent so it can be used
+                    AddNewAgentButton.IsEnabled = true;
+                    AddNewAgentButton.Visibility = Visibility.Visible;
+                    UpdateAgentCompanyNameTextbox.Text = "Click ADD NEW.";
+                    UpdateAgentCommissionTextbox.Text = "Click ADD NEW";
                 }
-            //}
-            //else
-            //{
-            //    logger.Data("Existing Agents combobox selection changed", "A selected Agent could not be acquired.");
-            //    logger.Flush();
-            //    DisplayStatusMessage("Unable to use selected item. Menu > Refresh could help.");
-            //}
-            UpdateHomeSale.Agent = UpdateAgent; //  this forces the changes to UpdateHomeSale so the correct Agent is saved along with the HomeSale record update.
+
+                //UpdateHomeSale.Agent = UpdateAgent; //  this forces the changes to UpdateHomeSale so the correct Agent is saved along with the HomeSale record update.
+                UpdateHomeSale.AgentID = UpdateAgent.AgentID;
+            }
+        }
+
+        private void AddNewAgent()
+        {
+            var puw = new PersonUpdaterWindow();
+            puw.CalledByUpdateMenuType = "Agent";
+            puw.CalledByUpdateMenu = false;
+            puw.ReceivedPerson = UpdatePerson;
+            puw.ReceivedPerson.Agent = UpdateAgent;
+            puw.ReceivedAgent = UpdateAgent;
+            puw.ReceivedAgent.AgentID = UpdatePerson.PersonID;
+            puw.Show();
         }
 
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -806,12 +808,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             //  This button only appears when a non-Agent Person is selected in the Existing Agents combobox
             //      and it allows user to create a new Agent via PersonUpaterWindow
-            //  TODO: Examine what UpdateAgent looks like prior to editing a Person to add Agent to their instance.
-            var puw = new PersonUpdaterWindow();
-            puw.CalledByUpdateMenuType = "Agent";
-            puw.CalledByUpdateMenu = false;
-            puw.ReceivedPerson = UpdatePerson;
-            puw.Show();
+            AddNewAgent();
+            ;
         }
 
         private void MenuRefreshAgents_Click(object sender, RoutedEventArgs e)

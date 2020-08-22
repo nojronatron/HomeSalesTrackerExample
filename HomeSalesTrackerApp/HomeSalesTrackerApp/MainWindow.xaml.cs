@@ -354,7 +354,7 @@ namespace HomeSalesTrackerApp
             {
                 DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
-
+            InitializeCollections();
         }
 
         /// <summary>
@@ -699,6 +699,7 @@ namespace HomeSalesTrackerApp
             catch
             {
                 logger.Data("Main Window MenuUpdateHomeForSale", "You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
+                logger.Flush();
                 DisplayStatusMessage("You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
             }
         }
@@ -948,9 +949,11 @@ namespace HomeSalesTrackerApp
                 huw.UpdateReco = new RealEstateCompany();
                 huw.Show();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                DisplayStatusMessage("Add Home Sale closed. Pick another option instead.");
+                logger.Data("MenuAddHomesForSale Exception", ex.Message);
+                logger.Flush();
             }
         }
 

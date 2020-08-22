@@ -436,24 +436,24 @@ namespace HomeSalesTrackerApp.CrudWindows
             bool result = false;
             int resultCount = 0;
             decimal updateAgentCommish = 0.0m;
-            UpdateAgent = new Agent();
+            UpdateAgent = ReceivedAgent;
             UpdatePerson = ReceivedPerson;  //  example: Lyle Hutton PersonID = 5
 
             //  GetAgentUpdateFields might get called without an ReceivedAgent (via HFS -> New Home For Sale -> New Agent) so an Agent must be CREATED instead.
-            if (ReceivedAgent == null)
-            {
-                ReceivedAgent = new Agent()
-                {
-                    AgentID = UpdatePerson.PersonID,
-                    CommissionPercent = 0.0m,
-                    CompanyID = null,
-                    Person = UpdatePerson ?? null,
-                    RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
-                };
-            }
+            //if (ReceivedAgent == null)
+            //{
+            //    ReceivedAgent = new Agent()
+            //    {
+            //        AgentID = UpdatePerson.PersonID,
+            //        CommissionPercent = 0.0m,
+            //        CompanyID = null,
+            //        Person = UpdatePerson ?? null,
+            //        RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
+            //    };
+            //}
 
-            UpdateAgent = ReceivedAgent;    //  captures AgentID
-            UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
+            //UpdateAgent = ReceivedAgent;    //  captures AgentID
+            //UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
 
 
             if (string.IsNullOrWhiteSpace(AgentCommissionTextbox.Text.Trim()))
@@ -512,6 +512,8 @@ namespace HomeSalesTrackerApp.CrudWindows
                     }
                 }
             }
+
+            DisplayStatusMessage("Agent assigned to RE Company.");
 
             if (resultCount > 0)
             {
@@ -625,6 +627,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 UpdatePerson.Agent = UpdateAgent;
                 personSaved = LogicBroker.UpdateEntity<Person>(UpdatePerson);
+                UpdateAgent.Person = UpdatePerson;
+                UpdateAgent.AgentID = UpdatePerson.PersonID;
                 if (LogicBroker.UpdateEntity<Agent>(UpdateAgent))
                 {
                     aboSaveCount++;
@@ -730,6 +734,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             GetAgentUpdatedFields();
             GetPersonInfoFromTextboxes();
+            UpdatePerson.Agent = UpdateAgent;
         }
 
         private void UpdateBuyerButton_Click(object sender, RoutedEventArgs e)
