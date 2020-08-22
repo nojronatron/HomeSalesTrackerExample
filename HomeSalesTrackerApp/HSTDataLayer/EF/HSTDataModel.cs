@@ -9,8 +9,8 @@ namespace HSTDataLayer
         public HSTDataModel()
             : base("name=HSTDataModelConnection")
         {
-            Database.SetInitializer<HSTDataModel>(new DropCreateDatabaseAlways<HSTDataModel>());
-            //Database.SetInitializer<HSTDataModel>(new CreateDatabaseIfNotExists<HSTDataModel>());
+            //Database.SetInitializer<HSTDataModel>(new DropCreateDatabaseAlways<HSTDataModel>());
+            Database.SetInitializer<HSTDataModel>(new CreateDatabaseIfNotExists<HSTDataModel>());
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;
 

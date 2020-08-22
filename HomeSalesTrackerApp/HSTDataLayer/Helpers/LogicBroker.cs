@@ -224,6 +224,10 @@ namespace HSTDataLayer
                         {
                             int saleID = (item as HomeSale).SaleID;
                             HomeSale homeSaleToDelete = context.HomeSales.Find(saleID);
+                            homeSaleToDelete.Agent = null;
+                            homeSaleToDelete.Buyer = null;
+                            homeSaleToDelete.Home = null;
+                            homeSaleToDelete.RealEstateCompany = null;
                             context.HomeSales.Remove(homeSaleToDelete);
                             break;
                         }

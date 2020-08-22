@@ -41,14 +41,17 @@ namespace HomeSalesTrackerDataLayer
                 _fullFilePaths = new List<FileInfo>();
             }
         }
+
         public static List<FileInfo> GetFullFilePaths()
         {
             return _fullFilePaths;
         }
+
         public static List<string> GetFileNames()
         {
             return _filenames;
         }
+
         public static List<string> GetDescendantNames()
         {
             return _descendantNames;
