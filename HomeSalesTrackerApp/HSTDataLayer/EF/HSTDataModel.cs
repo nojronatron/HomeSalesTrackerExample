@@ -15,7 +15,7 @@ namespace HSTDataLayer
             Configuration.ProxyCreationEnabled = false;
 
             ////  disable initializer to avoid overwriting DB e.g. Production
-            //  Database.SetInitializer<HSTDataModel>(null);
+            //Database.SetInitializer<HSTDataModel>(null);
         }
 
         public virtual DbSet<Agent> Agents { get; set; }

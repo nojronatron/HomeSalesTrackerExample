@@ -42,8 +42,17 @@ namespace HomeSalesTrackerDataLayer
             }
         }
 
+        static FilesHelper()
+        {
+            _fullFilePaths = new List<FileInfo>();
+        }
+
         public static List<FileInfo> GetFullFilePaths()
         {
+            if (_fullFilePaths == null || _fullFilePaths.Count == 0)
+            {
+                GetFileInfos(_filenames);
+            }
             return _fullFilePaths;
         }
 

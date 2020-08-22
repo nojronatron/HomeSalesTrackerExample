@@ -47,7 +47,7 @@ namespace HomeSalesTrackerApp
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             logger = new Logger();
-            if (App.DatabaseLoadCompleted)
+            if (App.DatabaseInitLoaded)
             {
                 InitializeCollections();
                 logger.Data("MainWindow Loaded", "Database data loaded.");

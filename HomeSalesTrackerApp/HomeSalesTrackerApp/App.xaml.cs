@@ -15,15 +15,15 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class App : Application
     {
-        public static bool databaseLoadCompleted = false;
-        public static bool DatabaseLoadCompleted { get; set; }
-        public Logger logger { get; set; }
+        public static bool _databaseInitLoaded = false;
+        public static bool DatabaseInitLoaded { get; set; }
+        public Logger HSTLogger { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             //  portions of code are thanks to a Gist by Ronnie Overby at https://gist.github.com/ronnieoverby/7568387 
-            logger = new Logger();
-            if (logger.IsEnabled) {
+            HSTLogger = new Logger();
+            if (HSTLogger.IsEnabled) {
                 AppDomain.CurrentDomain.UnhandledException += (sig, exc) =>
                     LogUnhandledException((Exception)exc.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
 
@@ -33,22 +33,24 @@ namespace HomeSalesTrackerApp
                 TaskScheduler.UnobservedTaskException += (sig, exc) =>
                     LogUnhandledException(exc.Exception, "TaskScheduler.UnobservedTaskException");
 
+                HSTLogger.Data("Application Startup", "Initialize Database called");
                 try
                 {
-                    if (DatabaseLoadCompleted = LogicBroker.LoadData()) 
+                    if (DatabaseInitLoaded = LogicBroker.InitDatabase())
                     {
+                        HSTLogger.Data("Application Startup", "Initialize Database completed. Launching UI.");
                         new MainWindow().Show();
                     }
                     else
                     {
-                        logger.Data("AppExit", "Application Startup failed to load file data.");
-                        logger.Flush();
+                        HSTLogger.Data("Application Startup", "Application Startup failed to load file data.");
                     }
+                    HSTLogger.Flush();
                 }
                 catch (Exception ex)
                 {
-                    logger.Data("WindowLoading Exception thrown", ex.Message);
-                    logger.Flush(); _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
+                    HSTLogger.Data("WindowLoading Exception thrown", ex.Message);
+                    HSTLogger.Flush(); _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
                 }
             }
         }
@@ -57,21 +59,21 @@ namespace HomeSalesTrackerApp
         {
             if (LogicBroker.BackUpDatabase())
             {
-                logger.Data("App Exit", "Backup of files complete.");
+                HSTLogger.Data("App Exit", "Backup of files complete.");
             }
             else
             {
-                logger.Data("App Exit", "Unable to backup to file system.");
+                HSTLogger.Data("App Exit", "Unable to backup to file system.");
                 MessageBox.Show("Backup failed.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            logger.Flush();
+            HSTLogger.Flush();
         }
 
         private void LogUnhandledException(Exception exception, string @event)
         {
-            logger.Data("Unhandled Exception Catcher", "Next log entry will have exception and atEvent.");
-            logger.Data(exception.ToString(), @event);
-            logger.Flush();
+            HSTLogger.Data("Unhandled Exception Catcher", "Next log entry will have exception and atEvent.");
+            HSTLogger.Data(exception.ToString(), @event);
+            HSTLogger.Flush();
         }
     }
 }

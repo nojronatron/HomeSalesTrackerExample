@@ -15,22 +15,29 @@ namespace HSTDataLayer
 
         protected override void Seed(HSTDataModel context)
         {
-            base.Seed(context);
+            //base.Seed(context);
+            LoadDataIntoDatabase();
         }
 
         public static void InitDB()
         {
+            int recordCount = 0;
             using (HSTDataModel context = new HSTDataModel())
             {
                 var people = (from p in context.People
                               select p).ToList();
-                List<Person> ppl = new List<Person>(people);    //  TODO: Is this List<Person> even necessary in a DB initializer?
+                recordCount = people.Count;
+            }
+
+            if (recordCount == 0)
+            {
+                LoadDataIntoDatabase();
             }
         }
 
         public static void LoadDataIntoDatabase()
         {
-            using (HSTDataModel context = new HSTDataModel())
+            using (var context = new HSTDataModel())
             {
                 //  load data into Context in the specified order
                 List<FileInfo> filePaths = FilesHelper.GetFileInfos(filenames);
