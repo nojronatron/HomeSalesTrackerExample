@@ -15,9 +15,9 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class App : Application
     {
-        public static bool _databaseInitLoaded = false;
-        public static bool DatabaseInitLoaded { get; set; }
-        public Logger HSTLogger { get; set; }
+        private bool DoDbBackup { get; set; }
+        private Logger HSTLogger { get; set; }
+        public static bool DatabaseInitLoaded { get; private set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -39,6 +39,7 @@ namespace HomeSalesTrackerApp
                     if (DatabaseInitLoaded = LogicBroker.InitDatabase())
                     {
                         HSTLogger.Data("Application Startup", "Initialize Database completed. Launching UI.");
+                        DoDbBackup = true;
                         new MainWindow().Show();
                     }
                     else
@@ -50,9 +51,22 @@ namespace HomeSalesTrackerApp
                 catch (Exception ex)
                 {
                     HSTLogger.Data("WindowLoading Exception thrown", ex.Message);
-                    HSTLogger.Flush(); _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
+                    LogInnerExceptionMessages(ex, "WindowLoading InnerException");
+                    HSTLogger.Flush(); 
+                    _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
+                    DoDbBackup = false;
+                    App.Current.Shutdown();
                 }
             }
+        }
+
+        private void LogInnerExceptionMessages(Exception e, string title)
+        {
+            if (e.InnerException != null)
+            {
+                LogInnerExceptionMessages(e.InnerException, title);
+            }
+            HSTLogger.Data(title, e.Message);
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

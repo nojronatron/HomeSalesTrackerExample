@@ -872,6 +872,7 @@ namespace HomeSalesTrackerApp
                     }
                 }
 
+                viewResults = viewResults.Distinct().ToList();
                 FoundPeopleView.ItemsSource = viewResults;
                 FoundPeopleView.Visibility = Visibility.Visible;
                 DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and use Details or Modify to make changes.");
