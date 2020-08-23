@@ -129,7 +129,6 @@ namespace HSTDataLayer
                         {
                             HomeSale homesale = item as HomeSale;
                             context.HomeSales.AddOrUpdate(hs => new { hs.HomeID, hs.SaleAmount, hs.MarketDate }, homesale);
-                            //  context.HomeSales.AddOrUpdate(hs => new { hs.SaleID }, homesale);
                             break;
                         }
                     default:
@@ -155,7 +154,6 @@ namespace HSTDataLayer
 
                 if (itemsAffected < 0)
                 {
-                    //  TODO: Write a log entry indicating that the Default Case was matched which would be a bug.
                     result = false;
                 }
 
@@ -252,7 +250,6 @@ namespace HSTDataLayer
 
                 if (itemsAffected < 0)
                 {
-                    //  TODO: Write a log entry indicating that the Default Case was matched which would be a bug.
                     result = false;
                 }
             }

@@ -439,23 +439,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateAgent = ReceivedAgent;
             UpdatePerson = ReceivedPerson;  //  example: Lyle Hutton PersonID = 5
 
-            //  GetAgentUpdateFields might get called without an ReceivedAgent (via HFS -> New Home For Sale -> New Agent) so an Agent must be CREATED instead.
-            //if (ReceivedAgent == null)
-            //{
-            //    ReceivedAgent = new Agent()
-            //    {
-            //        AgentID = UpdatePerson.PersonID,
-            //        CommissionPercent = 0.0m,
-            //        CompanyID = null,
-            //        Person = UpdatePerson ?? null,
-            //        RealEstateCompany = UpdateAgent.RealEstateCompany ?? null
-            //    };
-            //}
-
-            //UpdateAgent = ReceivedAgent;    //  captures AgentID
-            //UpdateAgent.HomeSales = ReceivedAgent.HomeSales;
-
-
             if (string.IsNullOrWhiteSpace(AgentCommissionTextbox.Text.Trim()))
             {
                 DisplayStatusMessage("To Update, enter a new Commission Rate. Example 4% would be: 0.04");
@@ -521,23 +504,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             
             return result;
-            //try
-            //{
-            //    if (LogicBroker.UpdateEntity<Agent>(ReceivedAgent)) //  update an existing entity do not create new
-            //    {
-            //        DisplayStatusMessage("Saved updated Agent!");
-            //    }
-            //    else
-            //    {
-            //        DisplayStatusMessage("Updated Agent was not saved or was same as existing.");
-            //    }
-            //}
-            //catch
-            //{
-            //    logger.Data("PUW.GetAgentUpatedFields", "Unable to save ReceivedAgent.");
-            //    logger.Flush();
-            //    DisplayStatusMessage("Unable to save Agent. A required field or member was null.");
-            //}
         }
 
         private bool GetBuyerUpdateFields()
@@ -753,9 +719,13 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Owner information updated!");
         }
 
+        /// <summary>
+        /// Reset all input fields and refresh all comboboxes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuRefresh_Click(object sender, RoutedEventArgs e)
         {
-            //  reset all input fields and refresh all comboboxes
             ClearPersonTextboxes();
             LoadAgentPanel();
             LoadBuyerPanel();

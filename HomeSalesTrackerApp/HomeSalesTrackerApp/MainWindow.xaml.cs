@@ -266,6 +266,7 @@ namespace HomeSalesTrackerApp
                     {
                         HomeUpdaterWindow homeUpdaterWindow = new HomeUpdaterWindow();
                         homeUpdaterWindow.UpdateType = "HomeSold";
+                        homeUpdaterWindow.UpdatePerson = hfsAgent;
                         homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
                         homeUpdaterWindow.UpdateHome = hfsHome;
                         homeUpdaterWindow.UpdateHomeSale = hfsHomesale;

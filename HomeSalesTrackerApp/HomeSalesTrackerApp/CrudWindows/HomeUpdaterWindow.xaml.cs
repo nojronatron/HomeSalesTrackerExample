@@ -24,6 +24,7 @@ namespace HomeSalesTrackerApp.CrudWindows
     public partial class HomeUpdaterWindow : Window
     {
         private bool IsButtonClose { get; set; }
+        private bool BuyerUpdated { get; set; }
         private Logger logger = null;
 
         public string UpdateType { get; set; }
@@ -58,7 +59,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                 try
                 {
-                    //  Reload collections
                     MainWindow.InitPeopleCollection();
                     MainWindow.InitHomesCollection();
                     MainWindow.InitRealEstateCompaniesCollection();
@@ -257,7 +257,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void LoadBuyersCombobox()
         {
             var existingBuyersList = (from p in MainWindow.peopleCollection
-                                      where p.Buyer != null
                                       select p).ToList();
             ExistingBuyersCombobox.ItemsSource = existingBuyersList;
         }
@@ -328,9 +327,13 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
+        /// <summary>
+        /// User is closing the Window (close without saving).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            //  Close Without Saving button
             IsButtonClose = true;
             this.Close();
         }
@@ -345,7 +348,10 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateChangedHomeFields_Button.IsEnabled = false;
 
             //  BUYER INFO
+            BuyerUpdated = false;
             BuyerNameTextbox.IsReadOnly = true;
+            BuyerCreditRatingTextbox.IsReadOnly = true;
+            ExistingBuyersCombobox.IsEnabled = true;
             LoadBuyersCombobox();
 
             //  RECO INFO
@@ -372,6 +378,12 @@ namespace HomeSalesTrackerApp.CrudWindows
             updateChangedAgentFieldsButton.IsEnabled = true;
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
+            if (UpdateAgent != null)
+            {
+                UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString() ?? string.Empty;
+                UpdateAgentCompanyNameTextbox.Text = UpdateReco.CompanyName.ToString() ?? "Agent no longer active";
+                AgentNameTextbox.Text = UpdatePerson.GetFirstAndLastName();
+            }
             LoadAgentsCombobox(false);
         }
 
@@ -399,6 +411,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
             LoadAgentsCombobox(true);
+
+            //  BUYER INFO
+            BuyerNameTextbox.IsReadOnly = true;
+            BuyerCreditRatingTextbox.IsReadOnly = true;
+            ExistingBuyersCombobox.IsEnabled = false;
         }
 
         private void ShowCloseButtonOnly()
@@ -452,7 +469,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                     {
                         this.Title = "Update Agent information";
                         LoadHomeInfoFields();
-                        //  TODO: anything else???
                         break;
                     }
                 default:
@@ -494,9 +510,9 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void UpdateHomeForSaleFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             int countChanges = 0;
-            DateTime updatedSoldDate = new DateTime();
-            DateTime updatedMarketDate = new DateTime();
-            Decimal updatedSaleAmount = new decimal();
+            var updatedSoldDate = new DateTime();
+            var updatedMarketDate = new DateTime();
+            var updatedSaleAmount = new decimal();
 
             if (DateTime.TryParse(hfsSoldDatePicker.SelectedDate.ToString(), out updatedSoldDate))
             {
@@ -533,19 +549,17 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                 if (UpdateBuyer != null)
                 {
-                    //UpdateHomeSale.Buyer = UpdateBuyer;
                     UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
                 }
                 if (UpdateHome != null)
                 {
-                    //UpdateHomeSale.Home = UpdateHome;
                     UpdateHomeSale.HomeID = UpdateHome.HomeID;
                 }
 
             }
             else
             {
-                DisplayStatusMessage("Only update Sale Amount and Market Date or Sold Date.");
+                DisplayStatusMessage("Are you putting home on Market or has it Sold? Try again.");
             }
 
         }
@@ -610,13 +624,38 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             if (UpdateBuyer != null)
             {
-                //UpdateHomeSale.Buyer = UpdateBuyer;
+                if (!string.IsNullOrWhiteSpace(BuyerCreditRatingTextbox.Text))
+                {
+                    if (int.TryParse(BuyerCreditRatingTextbox.Text, out int credRating))
+                    {
+                        if (credRating < 300 || credRating > 850)
+                        {
+                            DisplayStatusMessage("Enter a valid Credit Rating between 300 and 850.");
+                            UpdateBuyer.CreditRating = null;
+                        }
+                        else
+                        {
+                            UpdateBuyer.CreditRating = credRating;
+                        }
+                    }
+                }
                 UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
-                DisplayStatusMessage("Buyer information updated!");
+                var buyerPerson = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
+                if (buyerPerson != null)
+                {
+                    BuyerUpdated = true;
+                    UpdateBuyer.Person = buyerPerson;
+                    UpdateBuyer.HomeSales.Add(UpdateHomeSale);
+                    DisplayStatusMessage("Buyer information updated!");
+                }
+                else
+                {
+                    DisplayStatusMessage("Selected Person could not be added as a Buyer.");
+                }
             }
             else
             {
-                DisplayStatusMessage("Select an Existing Buyer first.");
+                DisplayStatusMessage("First, select a Person to buy this home.");
             }
 
         }
@@ -624,16 +663,13 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            //UpdateHomeSale.RealEstateCompany = UpdateReco;
             DisplayStatusMessage("Real Estate Company updated.");
         }
 
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.AgentID = UpdateAgent.AgentID;
-            //UpdateHomeSale.Agent = UpdateAgent;
             UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            //UpdateHomeSale.RealEstateCompany = UpdateReco;
             DisplayStatusMessage("Agent information updated for this home sale.");
         }
 
@@ -674,9 +710,37 @@ namespace HomeSalesTrackerApp.CrudWindows
                         }
                     case "HOMESOLD":
                         {
-                            if (LogicBroker.UpdateEntity<HomeSale>(UpdateHomeSale))
+                            if (BuyerUpdated)
                             {
-                                savedCount++;
+                                UpdateBuyer.HomeSales.Add(UpdateHomeSale);
+                                var b = new Buyer()
+                                {
+                                    BuyerID = UpdateBuyer.BuyerID,
+                                    CreditRating = UpdateBuyer.CreditRating
+                                };
+
+                                if (LogicBroker.SaveEntity<Buyer>(b))
+                                {
+                                    savedCount++;
+
+                                    var hs = new HomeSale()
+                                    {
+                                        SaleID = UpdateHomeSale.SaleID,
+                                        HomeID = UpdateHomeSale.HomeID,
+                                        SoldDate = UpdateHomeSale.SoldDate,
+                                        AgentID = UpdateHomeSale.AgentID,
+                                        SaleAmount = UpdateHomeSale.SaleAmount,
+                                        BuyerID = UpdateBuyer.BuyerID,
+                                        MarketDate = UpdateHomeSale.MarketDate,
+                                        CompanyID = UpdateHomeSale.CompanyID
+                                    };
+
+                                    if (LogicBroker.UpdateEntity<HomeSale>(hs))
+                                    {
+                                        savedCount++;
+                                    }
+                                }
+
                             }
 
                             break;
@@ -769,7 +833,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                     UpdateAgentCommissionTextbox.Text = "Click ADD NEW";
                 }
 
-                //UpdateHomeSale.Agent = UpdateAgent; //  this forces the changes to UpdateHomeSale so the correct Agent is saved along with the HomeSale record update.
                 UpdateHomeSale.AgentID = UpdateAgent.AgentID;
             }
         }
@@ -791,9 +854,17 @@ namespace HomeSalesTrackerApp.CrudWindows
             Person selectedBuyer = (sender as ComboBox).SelectedItem as Person;
             if (selectedBuyer != null)
             {
-                UpdateBuyer = selectedBuyer.Buyer;
-                RehydrateBuyer();
-                BuyerNameTextbox.Text = $"{ UpdateBuyer.Person.FirstName } {UpdateBuyer.Person.LastName }";
+                UpdateBuyer = new Buyer()
+                {
+                    BuyerID = selectedBuyer.PersonID                    
+                };
+                if (selectedBuyer.Buyer == null)
+                {
+                    BuyerCreditRatingTextbox.Text = string.Empty;
+                    BuyerCreditRatingTextbox.IsEnabled = true;
+                    BuyerCreditRatingTextbox.IsReadOnly = false;
+                }
+                BuyerNameTextbox.Text = $"{ selectedBuyer.FirstName } {selectedBuyer.LastName }";
             }
 
         }

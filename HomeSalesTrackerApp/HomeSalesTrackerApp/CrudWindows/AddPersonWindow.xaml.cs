@@ -139,8 +139,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             var resultMessage = new StringBuilder();
             resultMessage.Append("Missing required fields: ");
-            
-            //  TODO: confirm the null coalescing operator used on email string is properly implemented
             string firstName = this.fNameTextbox.Text.Trim();
             string lastName = this.lNameTextbox.Text.Trim();
             string phone = this.phoneTextbox.Text.Trim();
