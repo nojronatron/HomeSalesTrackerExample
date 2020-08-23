@@ -137,17 +137,13 @@ namespace HomeSalesTrackerApp
             FoundPeopleView.Visibility = Visibility.Hidden;
         }
 
-
-
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            //  App.Exit triggers Application_Exit Method that calls data layer to backup DB to XML
             App.Current.Shutdown();
         }
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
-            //  App.Exit triggers Application_Exit Method that calls data layer to backup DB to XML
             App.Current.Shutdown();
         }
 
@@ -172,7 +168,6 @@ namespace HomeSalesTrackerApp
 
             if (searchResults.Count > 0)
             {
-                //  deliver results to the screen
                 var results = (from h in searchResults
                                where h != null
                                select new HomeSearchView
@@ -213,7 +208,6 @@ namespace HomeSalesTrackerApp
 
             if (searchResults.Count > 0)
             {
-                //  deliver results to the screen
                 var results = (from h in searchResults
                                from hs in homeSalesCollection
                                where (h.HomeID == hs.HomeID && hs.SoldDate == null)
@@ -247,20 +241,8 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuUpdateHomeAsSold_Click(object sender, RoutedEventArgs e)
         {
-            //  1)  Search for home for sale in the HomeSales collection
-            //      1a) Take home info from search box
-            //      2a) Store HomeID for use with HomeSales and Homes Collections
-            //  2)  Update:
-            //          Sale Amount; Buyer ID (add if not in the system); Sold Date
-            //  3)  Search for home in the Homes collection
-            //  4)  Update:
-            //          OwnerID (add if not in the system for same person as buyer)
-            //  5)  Propagate update to the Entities (save to DB)
-            //  6)  Allow user to abandon this process
-
             StringBuilder statusMessage = new StringBuilder("Ok. ");
 
-            //  take a selected HomeForSale item and use it to pre-load the UpdaterWindow Sold HomeForSale panel
             HomeForSaleView selectedHomesaleView = null;
             selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
             FoundHomesForSaleView.SelectedIndex = -1;
@@ -276,14 +258,12 @@ namespace HomeSalesTrackerApp
                 Person hfsAgent = new Person();
                 hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
 
-                //  Agent must have a CompanyID
                 if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
                 {
                     RealEstateCompany hfsReco = new RealEstateCompany();
                     hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                     if (hfsReco != null)
                     {
-                        //  pass selected HomeForSale to UpdaterWindow 
                         HomeUpdaterWindow homeUpdaterWindow = new HomeUpdaterWindow();
                         homeUpdaterWindow.UpdateType = "HomeSold";
                         homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
@@ -342,7 +322,7 @@ namespace HomeSalesTrackerApp
                     InitializeCollections();
 
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
-                    ClearSearchResultsViews();  //  user doesn't need to see remaining results right?
+                    ClearSearchResultsViews();
                 }
                 else
                 {
@@ -459,16 +439,13 @@ namespace HomeSalesTrackerApp
         }
 
 
+        /// <summary>
+        /// Display a summary of Sold Homes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuDisplaySoldHomes_Click(object sender, RoutedEventArgs e)
         {
-            //  Display Sold Homes
-            //  HomeID, Address, City, State, Zip
-            //  Buyer First & Last
-            //  Agent First & Last
-            //  Real Estate Co (name)
-            //  Sale Amount, Sale Date
-            //  Do NOT include Homes without a Sold Date
-
             var soldHomesQuery = (from hs in homeSalesCollection
                                   where hs.SoldDate != null
                                   select hs).ToList();
@@ -560,7 +537,6 @@ namespace HomeSalesTrackerApp
         private void getItemDetailsButton_Click(object sender, RoutedEventArgs e)
         {
             DisplayStatusMessage("Detail button not yet implemented");
-
         }
 
         private void DisplayStatusMessage(string message)
@@ -808,13 +784,11 @@ namespace HomeSalesTrackerApp
 
             if (searchResults.Count > 0)
             {
-                //  deliver results to the screen
                 var viewResults = new List<PersonView>();
-                List<Person> resultSet = (from p in searchResults
-                                          select p).ToList();
-
+                searchResults = searchResults.Distinct<Person>().ToList();
+                
                 PersonView newPersonView = null;
-                foreach (var person in resultSet)
+                foreach (var person in searchResults)
                 {
                     if (person.Agent == null && person.Buyer == null && person.Owner == null)
                     {
@@ -824,7 +798,8 @@ namespace HomeSalesTrackerApp
                             FirstName = person.FirstName,
                             LastName = person.LastName,
                             Phone = person.Phone,
-                            Email = person.Email ?? null
+                            Email = person.Email ?? null,
+                            PersonType = string.Empty
                         };
                         viewResults.Add(newPersonView);
                     }
@@ -872,7 +847,6 @@ namespace HomeSalesTrackerApp
                     }
                 }
 
-                viewResults = viewResults.Distinct().ToList();
                 FoundPeopleView.ItemsSource = viewResults;
                 FoundPeopleView.Visibility = Visibility.Visible;
                 DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and use Details or Modify to make changes.");
@@ -881,57 +855,16 @@ namespace HomeSalesTrackerApp
             if (searchTerms.Count < 1 || searchResults.Count < 1)
             {
                 DisplayZeroResultsMessage();
+                ClearSearchResultsViews();
             }
 
         }
 
         /// <summary>
-        /// DO NOT CALL THIS TEMPLATE METHOD.
+        /// Opens Home Updater Window to edit a selected Home to put it up for sale or change other For Sale properties.
         /// </summary>
-        private void SearchBuyers()
-        {
-            ClearSearchResultsViews();
-            var searchResults = new List<Person>();
-            var searchTerms = new List<String>();
-            string searchTermsText = searchTermsTextbox.Text;
-            string[] searchTermsArr = searchTermsText.Split(',');
-            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrWhiteSpace(st) == false).ToList();
-
-            if (searchTerms.Count > 0)
-            {
-                PersonSearchHelper(ref searchResults, ref searchTerms);
-            }
-
-            if (searchResults.Count > 0)
-            {
-                //  deliver results to the screen
-                var results = (from p in searchResults
-                               from b in homeSalesCollection
-                               where p != null && b.BuyerID == p.PersonID
-                               select new BuyerView
-                               {
-                                   BuyerID = p.PersonID,
-                                   FirstName = p.FirstName,
-                                   LastName = p.LastName,
-                                   Phone = p.Phone,
-                                   Email = p.Email,
-                                   CreditRating = p.Buyer.CreditRating,
-                                   PersonType = "Buyer"
-                               });
-
-                var listResults = results.ToList();
-                FoundPeopleView.ItemsSource = listResults;
-                FoundPeopleView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Found { listResults.Count } Buyers. Select a result and use Update or Remove menus to make changes.");
-            }
-
-            if (searchTerms.Count < 1 || searchResults.Count < 1)
-            {
-                DisplayZeroResultsMessage();
-            }
-
-        }
-
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void MenuAddHomesForSale_Click(object sender, RoutedEventArgs e)
         {
             try

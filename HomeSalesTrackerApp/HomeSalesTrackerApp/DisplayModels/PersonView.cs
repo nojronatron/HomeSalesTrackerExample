@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HSTDataLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,8 @@ namespace HomeSalesTrackerApp.DisplayModels
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public virtual string PersonType { get; set; }
+        public virtual string PersonType { get; set; } = string.Empty;
+
         public virtual string GetPersonType()
         {
             return this.PersonType;
@@ -27,6 +29,6 @@ namespace HomeSalesTrackerApp.DisplayModels
             }
             return $"{ this.PersonID }{ this.FirstName }{ this.LastName }{ this.Phone }{ this.Email }";
         }
-    }
 
+    }
 }
