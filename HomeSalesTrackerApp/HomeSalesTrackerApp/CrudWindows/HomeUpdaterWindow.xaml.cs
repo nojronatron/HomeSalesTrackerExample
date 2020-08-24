@@ -275,6 +275,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            AddNewAgentButton.Visibility = Visibility.Hidden;
+            AddNewAgentButton.IsEnabled = false;
             LoadRECosCombobox();
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
@@ -408,8 +410,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateAgentCompanyNameTextbox.IsReadOnly = true;
             UpdateAgentCommissionTextbox.IsReadOnly = true;
             updateChangedAgentFieldsButton.IsEnabled = true;
-            AddNewAgentButton.Visibility = Visibility.Hidden;
-            AddNewAgentButton.IsEnabled = false;
+            AddNewAgentButton.Visibility = Visibility.Visible;
+            AddNewAgentButton.IsEnabled = true;
             LoadAgentsCombobox(true);
 
             //  BUYER INFO

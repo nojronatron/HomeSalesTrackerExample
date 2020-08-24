@@ -214,6 +214,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateBuyer = new Buyer();
             UpdatePerson = new Person();
 
+            //  TODO: If user adds New Agent at Home Updater Window then clicks Menu Refresh the next line could throw an Exception.
             var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedBuyer.BuyerID).FirstOrDefault();
             var tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedBuyer.BuyerID).ToList();
 

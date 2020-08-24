@@ -312,7 +312,8 @@ namespace HomeSalesTrackerApp
                 int homeID = selectedHomeForSale.HomeID;
                 var homeSaleToRemove = (from h in homesCollection
                                         from hs in homeSalesCollection
-                                        where h.HomeID == hs.HomeID
+                                        where h.HomeID == homeID
+                                            && hs.HomeID == homeID
                                             && hs.MarketDate != null
                                             && hs.SoldDate == null
                                         select hs).FirstOrDefault();
@@ -335,7 +336,7 @@ namespace HomeSalesTrackerApp
             {
                 DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
-            InitializeCollections();
+            //InitializeCollections();
         }
 
         /// <summary>
