@@ -25,6 +25,7 @@ namespace HomeSalesTrackerApp.CrudWindows
     {
         private bool IsButtonClose { get; set; }
         private bool BuyerUpdated { get; set; }
+        private bool HomesaleUpdated { get; set; }
         private Logger logger = null;
 
         public string UpdateType { get; set; }
@@ -283,6 +284,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
 
+            UpdateHomeSale.HomeID = UpdateHome.HomeID;
+
             logger = new Logger();
             int count = 0;
             if (UpdateHome != null)
@@ -370,6 +373,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             //  HOMESALE INFO
             SetDatePickerDefaults();
+            HomesaleUpdated = false;
             forSaleHomeIdTextbox.IsReadOnly = true;
             forSaleHomeIdTextbox.Text = UpdateHomeSale.HomeID.ToString();
             hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
@@ -401,6 +405,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             //  HOMESALE INFO
             SetDatePickerDefaults();
+            HomesaleUpdated = false;
             forSaleHomeIdTextbox.IsReadOnly = true;
             forSaleHomeIdTextbox.Text = UpdateHome.HomeID.ToString();
             hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
@@ -419,6 +424,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             LoadAgentsCombobox(true);
 
             //  BUYER INFO
+            BuyerUpdated = false;
             BuyerNameTextbox.IsReadOnly = true;
             BuyerCreditRatingTextbox.IsReadOnly = true;
             ExistingBuyersCombobox.IsEnabled = false;
@@ -552,16 +558,11 @@ namespace HomeSalesTrackerApp.CrudWindows
                 UpdateHomeSale.MarketDate = updatedMarketDate;
                 UpdateHomeSale.SaleAmount = updatedSaleAmount;
                 DisplayStatusMessage("Home Sale Information Updated!");
-
                 if (UpdateBuyer != null)
                 {
                     UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
                 }
-                if (UpdateHome != null)
-                {
-                    UpdateHomeSale.HomeID = UpdateHome.HomeID;
-                }
-
+                HomesaleUpdated = true;
             }
             else
             {
@@ -675,8 +676,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.AgentID = UpdateAgent.AgentID;
-            UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            DisplayStatusMessage("Agent information updated for this home sale.");
+            UpdateHomeSale.CompanyID = UpdateReco.CompanyID;    //  TODO: Should UpdateHomeSale.CompanyID be acquired from UpdateAgent instead of UpdateReco?
+            DisplayStatusMessage("Agent information updated.");
         }
 
         private void SaveChangesButton_Click(object sender, RoutedEventArgs e)
@@ -716,9 +717,9 @@ namespace HomeSalesTrackerApp.CrudWindows
                         }
                     case "HOMESOLD":
                         {
-                            if (BuyerUpdated)
+                            if (BuyerUpdated && HomesaleUpdated)
                             {
-                                UpdateBuyer.HomeSales.Add(UpdateHomeSale);
+                                //UpdateBuyer.HomeSales.Add(UpdateHomeSale);
                                 var b = new Buyer()
                                 {
                                     BuyerID = UpdateBuyer.BuyerID,
@@ -728,23 +729,23 @@ namespace HomeSalesTrackerApp.CrudWindows
                                 if (LogicBroker.UpdateEntity<Buyer>(b))
                                 {
                                     savedCount++;
+                                }
 
-                                    var hs = new HomeSale()
-                                    {
-                                        SaleID = UpdateHomeSale.SaleID,
-                                        HomeID = UpdateHomeSale.HomeID,
-                                        SoldDate = UpdateHomeSale.SoldDate,
-                                        AgentID = UpdateHomeSale.AgentID,
-                                        SaleAmount = UpdateHomeSale.SaleAmount,
-                                        BuyerID = UpdateBuyer.BuyerID,
-                                        MarketDate = UpdateHomeSale.MarketDate,
-                                        CompanyID = UpdateHomeSale.CompanyID
-                                    };
+                                var hs = new HomeSale()
+                                {
+                                    SaleID = UpdateHomeSale.SaleID,
+                                    HomeID = UpdateHomeSale.HomeID,
+                                    SoldDate = UpdateHomeSale.SoldDate,
+                                    AgentID = UpdateHomeSale.AgentID,
+                                    SaleAmount = UpdateHomeSale.SaleAmount,
+                                    BuyerID = UpdateBuyer.BuyerID,
+                                    MarketDate = UpdateHomeSale.MarketDate,
+                                    CompanyID = UpdateHomeSale.CompanyID
+                                };
 
-                                    if (LogicBroker.UpdateEntity<HomeSale>(hs))
-                                    {
-                                        savedCount++;
-                                    }
+                                if (LogicBroker.UpdateEntity<HomeSale>(hs))
+                                {
+                                    savedCount++;
                                 }
 
                             }
