@@ -46,7 +46,7 @@
                 <Label Content="Owner Details" FontWeight="Bold" Height="25" HorizontalAlignment="Center" />
                 <Label Content="Owner's Preferred Lender" Height="27" HorizontalAlignment="Center" />
                 <TextBox x:Name="preferredLenderTextbox" Height="27" />
-                <Button x:Name="UpdateOwnerButton" Content="Update This Owner" Height="27" Margin="10" MinWidth="25" 
+                <Button x:Name="UpdateOwnerButton" Content="Save Preferred Lender Info" Height="27" Margin="10" MinWidth="25" 
                     Click="UpdateOwnerButton_Click" Visibility="Visible" />
                 <Label Content="Select Existing Owner:" Height="27" HorizontalAlignment="Center" />
                 <ComboBox x:Name="existingOwnersCombobox" ItemsSource="{Binding}" 
@@ -58,7 +58,7 @@
                 <Label Content="Buyer Details" FontWeight="Bold" Height="27" HorizontalAlignment="Center" />
                 <Label Content="Buyer's Credit Rating" Height="27" HorizontalAlignment="Center" />
                 <TextBox x:Name="CreditRatingTextbox" Text="" Height="27" />
-                <Button x:Name="UpdateBuyerButton" Content="Update This Buyer" Height="27" Margin="10" MinWidth="25" 
+                <Button x:Name="UpdateBuyerButton" Content="Save Credit Rating" Height="27" Margin="10" MinWidth="25" 
                     Click="UpdateBuyerButton_Click" Visibility="Visible" />
                 <Label Content="Select Existing Buyer:" Height="27" HorizontalAlignment="Center" />
                 <ComboBox x:Name="ExistingBuyersCombobox" ItemsSource="{Binding}" 
@@ -69,11 +69,11 @@
                 <TextBox x:Name="AgentCommissionTextbox" Text="" Height="27" />
                 <Label Content="Select Existing Agent:" Height="27" HorizontalAlignment="Center" />
                 <ComboBox x:Name="ExistingAgentsCombobox" ItemsSource="{Binding}" SelectionChanged="ExistingAgentsCombobox_SelectionChanged" />
-                <Label Content="Agent's RE Company Name" Height="27" HorizontalAlignment="Center" />
+                <Label Content="Agent's Real Estate Company Name" Height="27" HorizontalAlignment="Center" />
                 <TextBox x:Name="AgentReCompanyTextbox" Text="" Height="27" />
                 <Label Content="Select Real Estate Company" Height="27" HorizontalAlignment="Center" />
                 <ComboBox x:Name="ExistingRECoComboBox" ItemsSource="{Binding}" SelectionChanged="ExistingRECosCombobox_SelectionChanged" />
-                <Button x:Name="UpdateAgentButton" Content="Update This Agent" Height="27" Margin="10" MinWidth="25" 
+                <Button x:Name="UpdateAgentButton" Content="Save This Agent's Info" Height="27" Margin="10" MinWidth="25" 
                         Click="UpdateAgentButton_Click" Visibility="Visible" />
                 <Separator Margin="0,10" />
                 <Button x:Name="SaveAndCloseButton" Content="Save Changes and Close" Height="27" Margin="10,5" MinWidth="25" 

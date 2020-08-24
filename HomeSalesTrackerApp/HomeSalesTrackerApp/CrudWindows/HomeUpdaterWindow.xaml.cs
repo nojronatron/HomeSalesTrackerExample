@@ -390,7 +390,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 UpdateAgentCompanyNameTextbox.Text = UpdateReco.CompanyName.ToString() ?? "Agent no longer active";
                 AgentNameTextbox.Text = UpdatePerson.GetFirstAndLastName();
             }
-            LoadAgentsCombobox(false);
+            LoadAgentsCombobox(true);
         }
 
         private void Case_AddHfsWithAgent()
@@ -725,7 +725,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                                     CreditRating = UpdateBuyer.CreditRating
                                 };
 
-                                if (LogicBroker.SaveEntity<Buyer>(b))
+                                if (LogicBroker.UpdateEntity<Buyer>(b))
                                 {
                                     savedCount++;
 
@@ -875,17 +875,16 @@ namespace HomeSalesTrackerApp.CrudWindows
             Person selectedBuyer = (sender as ComboBox).SelectedItem as Person;
             if (selectedBuyer != null)
             {
+                BuyerCreditRatingTextbox.IsEnabled = true;
+                BuyerCreditRatingTextbox.IsReadOnly = false;
                 UpdateBuyer = new Buyer()
                 {
-                    BuyerID = selectedBuyer.PersonID                    
+                    BuyerID = selectedBuyer.PersonID,
+                    CreditRating = selectedBuyer.Buyer.CreditRating ?? null
                 };
-                if (selectedBuyer.Buyer == null)
-                {
-                    BuyerCreditRatingTextbox.Text = string.Empty;
-                    BuyerCreditRatingTextbox.IsEnabled = true;
-                    BuyerCreditRatingTextbox.IsReadOnly = false;
-                }
                 BuyerNameTextbox.Text = $"{ selectedBuyer.FirstName } {selectedBuyer.LastName }";
+                BuyerCreditRatingTextbox.Text = UpdateBuyer.CreditRating?.ToString() ?? string.Empty;
+                UpdateBuyerButton.IsEnabled = true;
             }
 
         }
@@ -901,12 +900,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             //  This button only appears when a non-Agent Person is selected in the Existing Agents combobox
             //      and it allows user to create a new Agent via PersonUpaterWindow
             AddNewAgent();
-            ;
         }
 
         private void MenuRefreshAgents_Click(object sender, RoutedEventArgs e)
         {
-            LoadAgentsCombobox(false);
+            LoadAgentsCombobox(true);
             DisplayStatusMessage("Refreshed List of Agents.");
         }
 
@@ -916,15 +914,21 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Refreshed List of Buyers.");
         }
 
-        private void MenuRefreshAgentsInclusive_Click(object sender, RoutedEventArgs e)
-        {
-            LoadAgentsCombobox(true);
-            DisplayStatusMessage("Refreshed Agents list including eligible people.");
-        }
+        //private void MenuRefreshAgentsInclusive_Click(object sender, RoutedEventArgs e)
+        //{
+        //    LoadAgentsCombobox(true);
+        //    DisplayStatusMessage("Refreshed Agents list including eligible people.");
+        //}
 
         private void AddNewBuyerButton_Click(object sender, RoutedEventArgs e)
         {
             AddNewBuyer();
+        }
+
+        private void MenuRefreshRecos_Click(object sender, RoutedEventArgs e)
+        {
+            LoadRECosCombobox();
+            DisplayStatusMessage("Refreshed List of Real Estate Companies.");
         }
     }
 }

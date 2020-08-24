@@ -264,7 +264,7 @@ namespace HomeSalesTrackerApp
                     hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                     if (hfsReco != null)
                     {
-                        HomeUpdaterWindow homeUpdaterWindow = new HomeUpdaterWindow();
+                        var homeUpdaterWindow = new HomeUpdaterWindow();
                         homeUpdaterWindow.UpdateType = "HomeSold";
                         homeUpdaterWindow.UpdatePerson = hfsAgent;
                         homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
@@ -887,7 +887,7 @@ namespace HomeSalesTrackerApp
             }
             catch (Exception ex)
             {
-                DisplayStatusMessage("Add Home Sale closed. Pick another option instead.");
+                DisplayStatusMessage("Select a Home that is not already for Sale then click Menu Add Home For Sale.");
                 logger.Data("MenuAddHomesForSale Exception", ex.Message);
                 logger.Flush();
             }
