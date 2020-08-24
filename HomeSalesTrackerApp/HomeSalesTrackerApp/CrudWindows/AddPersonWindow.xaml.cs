@@ -21,6 +21,7 @@ namespace HomeSalesTrackerApp.CrudWindows
     public partial class AddPersonWindow : Window
     {
         private bool IsButtonClose = false;
+        private int NewPersonID = -1;
         private Agent NewAgent = null;
         private Buyer NewBuyer = null;
         private Owner NewOwner = null;
@@ -43,18 +44,12 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void menuRefresh_Click(object sender, RoutedEventArgs e)
         {
-            NewAgent = null;
-            ExistingRECo = null;
-            NewBuyer = null;
-            NewOwner = null;
-            NewPerson = null;
             LoadRECoComboBox();
             DisplayStatusMessage("Refreshed entries and updates.");
         }
 
         private void UpdateLenderButton_Click(object sender, RoutedEventArgs e)
         {
-            //  PreferredLender is an optional field
             string preferredLenderText = this.preferredLenderTextbox.Text.Trim();
 
             if (preferredLenderText.Length == 0)
@@ -98,16 +93,23 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void addAgentButton_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO; Add preemptive input validation prior to creating the new Agent object instance
             NewAgent = new Agent();
             string commission = this.commissionTextbox.Text.Trim();
-            if (Decimal.TryParse(commission, out decimal commish))
+            if (commission.Length > 0)
             {
-                NewAgent.CommissionPercent = commish;
-                if (ExistingRECo != null)
+                if (Decimal.TryParse(commission, out decimal commish))
                 {
-                    NewAgent.RealEstateCompany = ExistingRECo;
+                    NewAgent.CommissionPercent = commish;
+                    if (ExistingRECo != null)
+                    {
+                        NewAgent.CompanyID = ExistingRECo.CompanyID;
+                        DisplayStatusMessage("Agent information updated!");
+                    }
                 }
+            }
+            else
+            {
+                DisplayStatusMessage("Enter a valid Commission Percentage.");
             }
 
         }
@@ -174,13 +176,16 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (itemsCount > 2)
             {
                 resultMessage.Clear();
-                NewPerson = new Person()
+                NewPerson.FirstName = firstName;
+                NewPerson.LastName = lastName;
+                NewPerson.Phone = phone;
+                NewPerson.Email = email;
+
+                if (LogicBroker.SaveEntity<Person>(NewPerson))
                 {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Phone = phone,
-                    Email = email,
-                };
+                    MainWindow.InitializeCollections();
+                    NewPersonID = MainWindow.peopleCollection.Where(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName).FirstOrDefault().PersonID;
+                }
                 DisplayStatusMessage("Person created!");
                 result = true;
             }
@@ -250,7 +255,11 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void LoadAgentPanel()
         {
-            //  TODO: LoadAgentPanel() for path where new Person: Agent is created and possibly associated with a Real Estate Company.
+            ExistingRECoComboBox.IsEnabled = true;
+            commissionTextbox.IsReadOnly = false;
+            commissionTextbox.IsEnabled = true;
+            agentRecoTextbox.IsReadOnly = true;
+            addAgentButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -258,17 +267,18 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         private void LoadOwnerPanel()
         {
-            creditRatingTextbox.IsReadOnly = true;
-            addBuyerButton.IsEnabled = false;
-
-            commissionTextbox.IsReadOnly = true;
-            agentRecoTextbox.IsReadOnly = true;
-            addAgentButton.IsEnabled = false;
+            preferredLenderTextbox.IsEnabled = true;
+            preferredLenderTextbox.IsReadOnly = false;
+            addOwnerButton.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Load necessary Window controls to allow creating a new Buyer Person.
+        /// </summary>
         private void LoadBuyerPanel()
         {
-            //  TODO: LoadBuyerPanel() for path where new Person: Buyer is created.
+            creditRatingTextbox.IsReadOnly = false;
+            addBuyerButton.IsEnabled = true;
         }
 
         private void LoadRECoComboBox()
@@ -281,22 +291,34 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.IsButtonClose = false;
+            NewPerson = new Person();
 
             switch (this.AddType)
             {
                 case "Agent":
                     {
+                        NewAgent = new Agent();
+                        ExistingRECo = new RealEstateCompany();
                         LoadAgentPanel();
+                        LoadRECoComboBox();
+                        DisableBuyerPanel();
+                        DisableOwnerPanel();
                         break;
                     }
                 case "Owner":
                     {
+                        NewOwner = new Owner();
                         LoadOwnerPanel();
+                        DisableAgentPanel();
+                        DisableBuyerPanel();
                         break;
                     }
                 case "Buyer":
                     {
+                        NewBuyer = new Buyer();
                         LoadBuyerPanel();
+                        DisableAgentPanel();
+                        DisableOwnerPanel();
                         break;
                     }
                 default:
@@ -305,10 +327,8 @@ namespace HomeSalesTrackerApp.CrudWindows
                         addOwnerButton.IsEnabled = false;
                         addBuyerButton.IsEnabled = false;
                         addAgentButton.IsEnabled = false;
-
                         UpdatePersonInfoButton.IsEnabled = false;
                         CloseButton.IsEnabled = true;
-
                         this.IsButtonClose = true;
                         break;
                     }
@@ -321,28 +341,38 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             if(CreateNewPerson()) 
             {
-                if (NewAgent != null)
+                if (NewAgent != null && NewPersonID > -1)
                 {
-                    NewPerson.Agent = NewAgent;
-                    itemsCount++;
+                    NewAgent.AgentID = NewPersonID;
+                    if (LogicBroker.SaveEntity<Agent>(NewAgent))
+                    {
+                        itemsCount++;
+                    }
                 }
-                if (NewBuyer != null)
+                if (NewBuyer != null && NewPersonID > -1)
                 {
-                    NewPerson.Buyer = NewBuyer;
-                    itemsCount++;
+                    NewBuyer.BuyerID = NewPersonID;
+                    if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
+                    {
+                        itemsCount++;
+                    }
                 }
-                if (NewOwner != null)
+                if (NewOwner != null && NewPersonID > -1)
                 {
-                    NewPerson.Owner = NewOwner;
+                    NewOwner.OwnerID = NewPersonID;
+                    if (LogicBroker.SaveEntity<Owner>(NewOwner))
+                    {
                     itemsCount++;
+                    }
                 }
                 if (itemsCount > 0)
                 {
-                    SavePersonAndRefreshCollection(NewPerson);
+                    DisplayStatusMessage($"{ AddType } saved! Clock Close button to exit this window.");
                 }
             }
             else
             {
+                DisplayStatusMessage($"Unable to save { AddType }");
                 IsButtonClose = false;  //  no person created so no save possible
             }
 
@@ -350,7 +380,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void ExistingRECosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //  TODO: ExistingRECosCombobox_SelctionChanged Decide if any checks against user's entered Agent details are needed
             var selectedRECo = (sender as ComboBox).SelectedItem as RealEstateCompany;
             ExistingRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == selectedRECo.CompanyID).FirstOrDefault();
             if (ExistingRECo != null)
@@ -361,7 +390,27 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 agentRecoTextbox.Text = "Agent no longer active.";
             }
-
+            NewAgent.CompanyID = ExistingRECo.CompanyID;
         }
+
+        private void DisableAgentPanel()
+        {
+            addAgentButton.IsEnabled = false;
+            agentRecoTextbox.IsReadOnly = true;
+            commissionTextbox.IsReadOnly = true;
+        }
+
+        private void DisableBuyerPanel()
+        {
+            addBuyerButton.IsEnabled = false;
+            creditRatingTextbox.IsReadOnly = true;
+        }
+
+        private void DisableOwnerPanel()
+        {
+            addOwnerButton.IsEnabled = false;
+            preferredLenderTextbox.IsReadOnly = true;
+        }
+
     }
 }

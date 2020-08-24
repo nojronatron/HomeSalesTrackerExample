@@ -51,7 +51,11 @@
                 <TextBox x:Name="BuyerNameTextbox" Text="" Height="27"    />
                 <Label Content="Buyer Credit Rating" Height="27" />
                 <TextBox x:Name="BuyerCreditRatingTextbox" Text="" Height="27" />
-                <Label Content="Select a Person to Buy This Home:" Height="27" Margin="5,5" />
+                <DockPanel>
+                <Label Content="Select a Buyer or Add New:" Height="27" Margin="5,5" />
+                    <Button x:Name="AddNewBuyerButton" Content="Add New" HorizontalAlignment="Right" Margin="5,5" 
+                            Click="AddNewBuyerButton_Click" />
+                </DockPanel>
                 <ComboBox x:Name="ExistingBuyersCombobox" ItemsSource="{Binding}"  Margin="5,5" 
                           SelectionChanged="ExistingBuyersCombobox_SelectionChanged" />
                 <Button x:Name="UpdateBuyerButton" Content="Update Buyer Info" Height="27" Margin="5,3" 

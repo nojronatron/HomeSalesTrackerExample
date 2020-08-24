@@ -223,12 +223,11 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             if (ReceivedBuyer == null)
             {
-                CreditRatingTextbox.Text = "";
+                CreditRatingTextbox.Text = string.Empty;
             }
             else 
             { 
                 CreditRatingTextbox.Text = ReceivedBuyer.CreditRating?.ToString();
-                //CreditRatingTextbox.Text = ReceivedBuyer.CreditRating?.ToString() ?? string.Empty;
             }
 
             CreditRatingTextbox.IsEnabled = true;

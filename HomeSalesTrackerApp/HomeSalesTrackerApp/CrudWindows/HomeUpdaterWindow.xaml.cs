@@ -277,6 +277,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
+            AddNewBuyerButton.Visibility = Visibility.Hidden;
+            AddNewBuyerButton.IsEnabled = false; 
             LoadRECosCombobox();
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
@@ -354,6 +356,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             BuyerNameTextbox.IsReadOnly = true;
             BuyerCreditRatingTextbox.IsReadOnly = true;
             ExistingBuyersCombobox.IsEnabled = true;
+            AddNewBuyerButton.Visibility = Visibility.Visible;
+            AddNewBuyerButton.IsEnabled = true;
             LoadBuyersCombobox();
 
             //  RECO INFO
@@ -839,16 +843,31 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
         }
 
+        private void AddNewBuyer()
+        {
+            var apw = new AddPersonWindow();
+            apw.AddType = "Buyer";
+            apw.Show();
+            //var puw = new PersonUpdaterWindow();
+            //puw.CalledByUpdateMenu = false;
+            //puw.CalledByUpdateMenuType = "Buyer";
+            //puw.ReceivedPerson = UpdatePerson;
+            //puw.Show();
+        }
+
         private void AddNewAgent()
         {
-            var puw = new PersonUpdaterWindow();
-            puw.CalledByUpdateMenuType = "Agent";
-            puw.CalledByUpdateMenu = false;
-            puw.ReceivedPerson = UpdatePerson;
-            puw.ReceivedPerson.Agent = UpdateAgent;
-            puw.ReceivedAgent = UpdateAgent;
-            puw.ReceivedAgent.AgentID = UpdatePerson.PersonID;
-            puw.Show();
+            var apw = new AddPersonWindow();
+            apw.AddType = "Agent";
+            apw.Show();
+            //var puw = new PersonUpdaterWindow();
+            //puw.CalledByUpdateMenuType = "Agent";
+            //puw.CalledByUpdateMenu = false;
+            //puw.ReceivedPerson = UpdatePerson;
+            //puw.ReceivedPerson.Agent = UpdateAgent;
+            //puw.ReceivedAgent = UpdateAgent;
+            //puw.ReceivedAgent.AgentID = UpdatePerson.PersonID;
+            //puw.Show();
         }
 
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -901,6 +920,11 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             LoadAgentsCombobox(true);
             DisplayStatusMessage("Refreshed Agents list including eligible people.");
+        }
+
+        private void AddNewBuyerButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddNewBuyer();
         }
     }
 }
