@@ -682,32 +682,6 @@ namespace HomeSalesTrackerApp
             }
         }
 
-        private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
-        {
-            PersonView selectedperson = FoundPeopleView.SelectedItem as PersonView;
-            string statusMessage = "Select a search result prior to using the Update Menu.";
-            Person updatePerson = null;
-            Owner updateOwner = null;
-
-            if (selectedperson != null)
-            {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedperson.PersonID).FirstOrDefault();
-                if (updatePerson != null)
-                {
-                    updateOwner = updatePerson.Owner;
-                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
-                    var puw = new PersonUpdaterWindow();
-                    puw.CalledByUpdateMenu = true;
-                    puw.CalledByUpdateMenuType = "Owner";
-                    puw.ReceivedPerson = updatePerson;
-                    puw.ReceivedOwner = updateOwner;
-                    puw.Show();
-                }
-            }
-            DisplayStatusMessage(statusMessage);
-
-        }
-
         /// <summary>
         /// Take a selected item from Search Results and open a the Person Updater Window to make changes to the selected Person Type.
         /// </summary>
@@ -715,28 +689,30 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void menuUpdateAgent_Click(object sender, RoutedEventArgs e)
         {
+            var updatePerson = new Person();
+            var updateAgent = new Agent();
             PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
-            string statusMessage = "Select a search result prior to using the Update Menu.";
-            Person updatePerson = null;
-            Agent updateAgent = null;
-
-            if (selectedPerson != null)
+            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+            try
             {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-                if (updatePerson != null)
+                if (selectedPerson != null)
                 {
-                    updateAgent = updatePerson.Agent;
-                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
-                    var puw = new PersonUpdaterWindow();
-                    puw.CalledByUpdateMenu = true;
-                    puw.CalledByUpdateMenuType = "Agent";
-                    puw.ReceivedPerson = updatePerson;
-                    puw.ReceivedAgent = updateAgent;
-                    puw.Show();
+                    if (updatePerson != null)
+                    {
+                        updateAgent = updatePerson.Agent;
+                        var puw = new PersonUpdaterWindow();
+                        puw.CalledByUpdateMenu = true;
+                        puw.CalledByUpdateMenuType = "Agent";
+                        puw.ReceivedPerson = updatePerson;
+                        puw.ReceivedAgent = updateAgent;
+                        puw.Show();
+                    }
                 }
             }
-            DisplayStatusMessage(statusMessage);
-
+            catch
+            {
+                DisplayStatusMessage("Unable to load Buyer Update Window. Refresh, search again, and select a Person in the results.");
+            }
         }
 
         private void MenuUpdateBuyer_Click(object sender, RoutedEventArgs e)
@@ -744,33 +720,66 @@ namespace HomeSalesTrackerApp
             var updatePerson = new Person();
             var updateBuyer = new Buyer();
             PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
-            string statusMessage = "Select a search result prior to using the Update Menu.";
             updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-            if (updatePerson.Buyer != null)
+            try
             {
-                updateBuyer = updatePerson.Buyer;
-            }
-
-            if (selectedPerson != null)
-            {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-                if (updatePerson != null)
+                if (updatePerson.Buyer != null)
                 {
-                    if (updatePerson.Buyer != null)
+                    updateBuyer = updatePerson.Buyer;
+                }
+
+                if (selectedPerson != null)
+                {
+                    if (updatePerson != null)
                     {
-                        updateBuyer = updatePerson.Buyer;
+                        var puw = new PersonUpdaterWindow();
+                        puw.CalledByUpdateMenu = true;
+                        puw.CalledByUpdateMenuType = "Buyer";
+                        puw.ReceivedPerson = updatePerson;
+                        puw.ReceivedBuyer = updateBuyer;
+                        puw.Show();
                     }
-                    statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
-                    var puw = new PersonUpdaterWindow();
-                    puw.CalledByUpdateMenu = true;
-                    puw.CalledByUpdateMenuType = "Buyer";
-                    puw.ReceivedPerson = updatePerson;
-                    puw.ReceivedBuyer = updateBuyer;
-                    puw.Show();
                 }
             }
-            DisplayStatusMessage(statusMessage);
+            catch
+            {
+                DisplayStatusMessage("Unable to load Buyer Update Window. Refresh, search again, and select a Person in the results.");
+            }
 
+        }
+
+        private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
+        {
+            var updatePerson = new Person();
+            var updateOwner = new Owner();
+            var updateAgent = new Agent();
+            var updateBuyer = new Buyer();
+            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+            try
+            {
+                if (updatePerson.Owner != null)
+                {
+                    updateOwner = updatePerson.Owner;
+                }
+
+                if (selectedPerson != null)
+                    {
+                    if (updatePerson != null)
+                    { 
+                        var puw = new PersonUpdaterWindow();
+                        puw.CalledByUpdateMenu = true;
+                        puw.CalledByUpdateMenuType = "Owner";
+                        puw.ReceivedPerson = updatePerson;
+                        puw.ReceivedOwner = updateOwner;
+                        puw.Show();
+                    }
+                }
+            }
+            catch
+            {
+                DisplayStatusMessage("Unable to load Owner Update Window. Refresh, search again, and then select a Person in the results.");
+            }
         }
 
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
