@@ -86,7 +86,8 @@ namespace HomeSalesTrackerApp
         private void LogUnhandledException(Exception exception, string @event)
         {
             HSTLogger.Data("Unhandled Exception Catcher", "Next log entry will have exception and atEvent.");
-            HSTLogger.Data(exception.ToString(), @event);
+            //HSTLogger.Data(exception.ToString(), @event);
+            LogInnerExceptionMessages(exception, @event);
             HSTLogger.Flush();
         }
     }

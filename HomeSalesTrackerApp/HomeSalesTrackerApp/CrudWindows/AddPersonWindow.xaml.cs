@@ -48,9 +48,9 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Refreshed entries and updates.");
         }
 
-        private void UpdateLenderButton_Click(object sender, RoutedEventArgs e)
+        private void SaveOwnerInfoButton_Click(object sender, RoutedEventArgs e)
         {
-            string preferredLenderText = this.preferredLenderTextbox.Text.Trim();
+            string preferredLenderText = this.PreferredLenderTextbox.Text.Trim();
 
             if (preferredLenderText.Length == 0)
             {
@@ -72,10 +72,10 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("New Owner information created.");
         }
 
-        private void AddBuyerButton_Click(object sender, RoutedEventArgs e)
+        private void SaveBuyerInfoButton_Click(object sender, RoutedEventArgs e)
         {
             NewBuyer = new Buyer() { };
-            string credRating = this.creditRatingTextbox.Text.Trim();
+            string credRating = this.CreditRatingTextbox.Text.Trim();
             if (credRating.Length > 0)
             {
                 if (int.TryParse(credRating, out int creditRating))
@@ -91,10 +91,10 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void addAgentButton_Click(object sender, RoutedEventArgs e)
+        private void SaveAgentInfoButton_Click(object sender, RoutedEventArgs e)
         {
             NewAgent = new Agent();
-            string commission = this.commissionTextbox.Text.Trim();
+            string commission = this.CommissionTextbox.Text.Trim();
             if (commission.Length > 0)
             {
                 if (Decimal.TryParse(commission, out decimal commish))
@@ -141,10 +141,10 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             var resultMessage = new StringBuilder();
             resultMessage.Append("Missing required fields: ");
-            string firstName = this.fNameTextbox.Text.Trim();
-            string lastName = this.lNameTextbox.Text.Trim();
-            string phone = this.phoneTextbox.Text.Trim();
-            string email = this.emailTextbox?.Text.Trim() ?? string.Empty;
+            string firstName = this.FNameTextbox.Text.Trim();
+            string lastName = this.LNameTextbox.Text.Trim();
+            string phone = this.PhoneTextbox.Text.Trim();
+            string email = this.EmailTextbox?.Text.Trim() ?? string.Empty;
 
             if (firstName.Length > 0 || firstName.Length < 30)
             {
@@ -256,10 +256,10 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void LoadAgentPanel()
         {
             ExistingRECoComboBox.IsEnabled = true;
-            commissionTextbox.IsReadOnly = false;
-            commissionTextbox.IsEnabled = true;
-            agentRecoTextbox.IsReadOnly = true;
-            addAgentButton.IsEnabled = true;
+            CommissionTextbox.IsReadOnly = false;
+            CommissionTextbox.IsEnabled = true;
+            AgentRecoTextbox.IsReadOnly = true;
+            AddAgentButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -267,9 +267,9 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         private void LoadOwnerPanel()
         {
-            preferredLenderTextbox.IsEnabled = true;
-            preferredLenderTextbox.IsReadOnly = false;
-            addOwnerButton.IsEnabled = true;
+            PreferredLenderTextbox.IsEnabled = true;
+            PreferredLenderTextbox.IsReadOnly = false;
+            AddOwnerButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -277,8 +277,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         private void LoadBuyerPanel()
         {
-            creditRatingTextbox.IsReadOnly = false;
-            addBuyerButton.IsEnabled = true;
+            CreditRatingTextbox.IsReadOnly = false;
+            AddBuyerButton.IsEnabled = true;
         }
 
         private void LoadRECoComboBox()
@@ -324,9 +324,9 @@ namespace HomeSalesTrackerApp.CrudWindows
                 default:
                     {
                         DisplayStatusMessage("No type included. Click Close to exit without saving.");
-                        addOwnerButton.IsEnabled = false;
-                        addBuyerButton.IsEnabled = false;
-                        addAgentButton.IsEnabled = false;
+                        AddOwnerButton.IsEnabled = false;
+                        AddBuyerButton.IsEnabled = false;
+                        AddAgentButton.IsEnabled = false;
                         UpdatePersonInfoButton.IsEnabled = false;
                         CloseButton.IsEnabled = true;
                         this.IsButtonClose = true;
@@ -367,7 +367,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
                 if (itemsCount > 0)
                 {
-                    DisplayStatusMessage($"{ AddType } saved! Clock Close button to exit this window.");
+                    DisplayStatusMessage($"{ AddType } saved! Click Close button to exit this window.");
                 }
             }
             else
@@ -384,32 +384,32 @@ namespace HomeSalesTrackerApp.CrudWindows
             ExistingRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == selectedRECo.CompanyID).FirstOrDefault();
             if (ExistingRECo != null)
             {
-                agentRecoTextbox.Text = selectedRECo.CompanyName;
+                AgentRecoTextbox.Text = selectedRECo.CompanyName;
             }
             else
             {
-                agentRecoTextbox.Text = "Agent no longer active.";
+                AgentRecoTextbox.Text = "Agent no longer active.";
             }
             NewAgent.CompanyID = ExistingRECo.CompanyID;
         }
 
         private void DisableAgentPanel()
         {
-            addAgentButton.IsEnabled = false;
-            agentRecoTextbox.IsReadOnly = true;
-            commissionTextbox.IsReadOnly = true;
+            AddAgentButton.IsEnabled = false;
+            AgentRecoTextbox.IsReadOnly = true;
+            CommissionTextbox.IsReadOnly = true;
         }
 
         private void DisableBuyerPanel()
         {
-            addBuyerButton.IsEnabled = false;
-            creditRatingTextbox.IsReadOnly = true;
+            AddBuyerButton.IsEnabled = false;
+            CreditRatingTextbox.IsReadOnly = true;
         }
 
         private void DisableOwnerPanel()
         {
-            addOwnerButton.IsEnabled = false;
-            preferredLenderTextbox.IsReadOnly = true;
+            AddOwnerButton.IsEnabled = false;
+            PreferredLenderTextbox.IsReadOnly = true;
         }
 
     }

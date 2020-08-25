@@ -218,8 +218,15 @@ namespace HomeSalesTrackerApp.CrudWindows
             var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedBuyer.BuyerID).FirstOrDefault();
             var tempHomesales = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == ReceivedBuyer.BuyerID).ToList();
 
-            ReceivedBuyer.Person = tempPerson;
-            ReceivedBuyer.HomeSales = tempHomesales;
+            if (tempPerson != null)
+            {
+                ReceivedBuyer.Person = tempPerson;
+            }
+
+            if (tempHomesales != null)
+            {
+                ReceivedBuyer.HomeSales = tempHomesales;
+            }
 
             if (ReceivedBuyer == null)
             {
@@ -235,7 +242,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisableOwnerDetailsControls();
             ExistingBuyersCombobox.IsEnabled = true;
             EnableEditingPersonBasicInformation();
-
             LoadBuyersComboBox();
         }
 
@@ -247,27 +253,18 @@ namespace HomeSalesTrackerApp.CrudWindows
             UpdateOwner = new Owner();
             UpdatePerson = new Person();
 
-            var tempPerson = new Person();
-            var tempHomes = new List<Home>();
-            if (ReceivedOwner == null && ReceivedPerson == null)
+            var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
+            var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+
+            if (tempPerson != null)
             {
-                MessageBox.Show("Need a Person or an Owner object to work with. Closing.", "Nothing to do!", MessageBoxButton.OK);
-                IsButtonClose = true;
-                this.Close();
-            }
-            if (ReceivedOwner != null)
-            {
-                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
-                tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
-            }
-            if (ReceivedPerson != null)
-            {
-                tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedPerson.PersonID).FirstOrDefault();
+                ReceivedOwner.Person = tempPerson;
             }
 
-
-            ReceivedOwner.Person = tempPerson;
-            ReceivedOwner.Homes = tempHomes;
+            if (tempHomes != null)
+            {
+                ReceivedOwner.Homes = tempHomes;
+            }
 
             if (ReceivedOwner == null)
             {
@@ -276,7 +273,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             else
             {
                 preferredLenderTextbox.Text = ReceivedOwner.PreferredLender?.ToString();
-                //preferredLenderTextbox.Text = ReceivedOwner.PreferredLender?.ToString() ?? string.Empty;
             }
 
             preferredLenderTextbox.IsEnabled = true;
@@ -284,7 +280,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisableBuyerDetailsControls();
             existingOwnersCombobox.IsEnabled = true;
             EnableEditingPersonBasicInformation();
-
             LoadOwnersComboBox();
         }
 
@@ -604,8 +599,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (CalledByUpdateMenuType == "Buyer")
             {
                 UpdatePerson.Buyer = UpdateBuyer;
-                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
-                if(LogicBroker.SaveEntity<Buyer>(UpdateBuyer))
+                //  try UpdateEntity instead (test to solve duplicated People appearing in DB)
+                personSaved = LogicBroker.UpdateEntity<Person>(UpdatePerson);
+                UpdateBuyer.Person = UpdatePerson;
+                UpdateBuyer.BuyerID = UpdatePerson.PersonID;
+                if(LogicBroker.UpdateEntity<Buyer>(UpdateBuyer))
                 {
                     aboSaveCount++;
                 }
@@ -614,8 +612,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             if(CalledByUpdateMenuType == "Owner")
             {
                 UpdatePerson.Owner = UpdateOwner;
-                personSaved = LogicBroker.SaveEntity<Person>(UpdatePerson);
-                if (LogicBroker.SaveEntity<Owner>(UpdateOwner))
+                //  try UpdateEntity instead (test to solve duplicated People appearing in DB)
+                personSaved = LogicBroker.UpdateEntity<Person>(UpdatePerson);
+                UpdateOwner.Person = UpdatePerson;
+                UpdateOwner.OwnerID = UpdatePerson.PersonID;
+                if (LogicBroker.UpdateEntity<Owner>(UpdateOwner))
                 {
                     aboSaveCount++;
                 }

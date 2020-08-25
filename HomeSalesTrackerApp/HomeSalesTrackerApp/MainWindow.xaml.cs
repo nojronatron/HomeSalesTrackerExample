@@ -741,17 +741,25 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateBuyer_Click(object sender, RoutedEventArgs e)
         {
+            var updatePerson = new Person();
+            var updateBuyer = new Buyer();
             PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
             string statusMessage = "Select a search result prior to using the Update Menu.";
-            Person updatePerson = null;
-            Buyer updateBuyer = null;
+            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+            if (updatePerson.Buyer != null)
+            {
+                updateBuyer = updatePerson.Buyer;
+            }
 
             if (selectedPerson != null)
             {
                 updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (updatePerson != null)
                 {
-                    updateBuyer = updatePerson.Buyer;
+                    if (updatePerson.Buyer != null)
+                    {
+                        updateBuyer = updatePerson.Buyer;
+                    }
                     statusMessage = $"{ updatePerson.GetFirstAndLastName() } selected.";
                     var puw = new PersonUpdaterWindow();
                     puw.CalledByUpdateMenu = true;
