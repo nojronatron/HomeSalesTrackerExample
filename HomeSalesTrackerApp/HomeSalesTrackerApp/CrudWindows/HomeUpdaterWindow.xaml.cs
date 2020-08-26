@@ -848,27 +848,16 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             var apw = new AddPersonWindow();
             apw.AddType = "Buyer";
+            apw.Title = "Add a new Buyer to the database";
             apw.Show();
-            //var puw = new PersonUpdaterWindow();
-            //puw.CalledByUpdateMenu = false;
-            //puw.CalledByUpdateMenuType = "Buyer";
-            //puw.ReceivedPerson = UpdatePerson;
-            //puw.Show();
         }
 
         private void AddNewAgent()
         {
             var apw = new AddPersonWindow();
             apw.AddType = "Agent";
+            apw.Title = "Add a new Agent to the database";
             apw.Show();
-            //var puw = new PersonUpdaterWindow();
-            //puw.CalledByUpdateMenuType = "Agent";
-            //puw.CalledByUpdateMenu = false;
-            //puw.ReceivedPerson = UpdatePerson;
-            //puw.ReceivedPerson.Agent = UpdateAgent;
-            //puw.ReceivedAgent = UpdateAgent;
-            //puw.ReceivedAgent.AgentID = UpdatePerson.PersonID;
-            //puw.Show();
         }
 
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -55,7 +55,6 @@ namespace HomeSalesTrackerApp
 
         private void AddNewHomeButton_Click(object sender, RoutedEventArgs e)
         {
-            //  Address, City, State, and Zip fields are validated and an existing Owner in the ComboBox will be attached to the new Home.
             NewHome = null; //  must be initialized as null to test for null later
 
             string address = this.homeAddressTextbox.Text.Trim();
@@ -113,16 +112,10 @@ namespace HomeSalesTrackerApp
 
         private void AddOwnerButton_click(object sender, RoutedEventArgs e)
         {
-            //PersonUpdaterWindow personUpdaterWindow = new PersonUpdaterWindow();
-            //personUpdaterWindow.ReceivedAgent = new Agent();
-            //personUpdaterWindow.ReceivedBuyer = new Buyer();
-            //personUpdaterWindow.ReceivedOwner = new Owner();
-            //personUpdaterWindow.ReceivedPerson = new Person();
-            //personUpdaterWindow.CalledByUpdateMenuType = "Owner";
-            //personUpdaterWindow.Show();
-            var addPersonWindow = new AddPersonWindow();
-            addPersonWindow.AddType = "Owner";
-            addPersonWindow.Show();
+            var Apw = new AddPersonWindow();
+            Apw.AddType = "Owner";
+            Apw.Title = "Add new Owner to the Database";
+            Apw.Show();
         }
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
@@ -141,36 +134,6 @@ namespace HomeSalesTrackerApp
             RefreshOwnersComboBox();
         }
 
-        //public void AddPersonLoadOwnerToAddHomeComboBox()
-        //{ 
-
-        //    var checkPerson = MainWindow.peopleCollection.FirstOrDefault(p => p.FirstName == APerson.FirstName && p.LastName == APerson.LastName);
-        //    if (APerson != null)    //  user created a new person and it might/not be in collection so deal with it then display JUST THE NEW PERSON in the combo box and select it
-        //    {
-        //        if (checkPerson == null)
-        //        {
-        //            LogicBroker.SaveEntity<Person>(APerson);
-        //            MainWindow.peopleCollection = new PeopleCollection<Person>(EntityLists.GetListOfPeople());
-        //            checkPerson = MainWindow.peopleCollection.FirstOrDefault(p => p.FirstName == APerson.FirstName && p.LastName == APerson.LastName);
-        //        }
-        //        if (checkPerson != null)
-        //        {
-        //            var newOwnerCreated = (from p in MainWindow.peopleCollection
-        //                                   where p.FirstName == APerson.FirstName
-        //                                   select p).ToList();
-        //            ownersComboBox.ItemsSource = newOwnerCreated;
-        //            ownersComboBox.SelectedIndex = 0;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //  refresh ComboBox with existing owner instances because user did NOT just create a new Person
-        //        RefreshOwnersComboBox();
-        //        ownersComboBox.SelectedIndex = -1;
-        //    }
-        //    DisplayStatusMessage("Owners List refreshed with latest data.");
-        //}
-
         private void ClearScreenElements()
         {
             homeAddressTextbox.Text = string.Empty;
@@ -184,14 +147,6 @@ namespace HomeSalesTrackerApp
         public void RefreshOwnersComboBox()
         {
             MainWindow.InitializeCollections();
-
-            //var existingOwnersList = (from p in MainWindow.peopleCollection
-            //                          from h in MainWindow.homesCollection
-            //                          where p.PersonID == h.OwnerID
-            //                          select p).ToList();
-            //var existingOwnersList = (from p in MainWindow.peopleCollection
-            //                          where p.Owner != null
-            //                          select p).ToList();
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       select p).ToList();
 
@@ -212,18 +167,6 @@ namespace HomeSalesTrackerApp
             this.statusBarText.Text = message;
         }
 
-        private void SaveHomeAndUpdateCollection(Home h)
-        {
-            if (LogicBroker.SaveEntity<Home>(h))
-            {
-                MainWindow.InitializeCollections();
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to update database with this home.");
-            }
-        }
-
         /// <summary>
         /// When a user selects a Person in the ComboBox it should return a hydrated Person and Owner even if Owner is null.
         /// </summary>
@@ -231,7 +174,6 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void PotentialOwnerPeopleCombobox_SelectionChange(object sender, SelectionChangedEventArgs e)
         {
-            //DisplayStatusMessage("Selecting an existing owner.");
             RefreshOwnersComboBox();
             var tempOwnerPerson = new Person();
             tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;

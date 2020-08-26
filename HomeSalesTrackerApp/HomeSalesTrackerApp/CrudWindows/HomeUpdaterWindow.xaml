@@ -13,7 +13,6 @@
             </MenuItem>
             <MenuItem Header="_Refresh">
                 <MenuItem Header="_Agents List" Click="MenuRefreshAgents_Click" />
-                <!--<MenuItem Header="_Non-Agents and Agents List" Click="MenuRefreshAgentsInclusive_Click" />-->
                 <MenuItem Header="_Buyers List" Click="MenuRefreshBuyers_Click" />
                 <MenuItem Header="_Real Estate Companies" Click="MenuRefreshRecos_Click" />
             </MenuItem>

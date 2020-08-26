@@ -299,13 +299,12 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// Search for home on-the-market with user-provided search terms and if found, remove it from market.
+        /// Selected Home For Sale is taken off the Market.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void MenuRemoveHomeFromMarket_Click(object sender, RoutedEventArgs e)
         {
-            //  Golden Path 4: Remove a home off the market
             HomeForSaleView selectedHomeForSale = (HomeForSaleView)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
@@ -336,7 +335,7 @@ namespace HomeSalesTrackerApp
             {
                 DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
-            //InitializeCollections();
+
         }
 
         /// <summary>
@@ -398,9 +397,11 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuAddHome_Click(object sender, RoutedEventArgs e)
         {
-            AddHomeWindow ahw = new AddHomeWindow();
+            var ahw = new AddHomeWindow();
             ahw.AddType = "Home";
+            ahw.Title = "Add New Home";
             ahw.Show();
+            ClearSearchResultsViews();
         }
 
         /// <summary>
@@ -410,9 +411,11 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuAddOwner_Click(object sender, RoutedEventArgs e)
         {
-            AddPersonWindow apw = new AddPersonWindow();
+            var apw = new AddPersonWindow();
             apw.AddType = "Owner";
+            apw.Title = "Add New Owner Person";
             apw.Show();
+            ClearSearchResultsViews();
         }
 
         /// <summary>
@@ -422,9 +425,11 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuAddAgent_Click(object sender, RoutedEventArgs e)
         {
-            AddPersonWindow apw = new AddPersonWindow();
+            var apw = new AddPersonWindow();
             apw.AddType = "Agent";
+            apw.Title = "Add New Agent Person";
             apw.Show();
+            ClearSearchResultsViews();
         }
 
         /// <summary>
@@ -434,8 +439,9 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuAddBuyer_Click(object sender, RoutedEventArgs e)
         {
-            AddPersonWindow apw = new AddPersonWindow();
+            var apw = new AddPersonWindow();
             apw.AddType = "Buyer";
+            apw.Title = "Add New Buyer Person";
             apw.Show();
             ClearSearchResultsViews();
         }
@@ -497,7 +503,7 @@ namespace HomeSalesTrackerApp
             shr.iFoundSoldHomes = shResultsList;
             shr.Show();
             ClearSearchResultsViews();
-            DisplayStatusMessage("ReadY");
+            DisplayStatusMessage("Ready");
         }
 
         private void MenuDisplayBuyers_Click(object sender, RoutedEventArgs e)
@@ -513,7 +519,7 @@ namespace HomeSalesTrackerApp
                                    Email = p.Email ?? null,
                                    CreditRating = p.Buyer.CreditRating ?? 0
                                });
-            BuyersResultsReport brr = new BuyersResultsReport();
+            var brr = new BuyersResultsReport();
             brr.iFoundBuyers = foundBuyers;
             brr.Show();
             foundBuyers = null;
@@ -523,11 +529,11 @@ namespace HomeSalesTrackerApp
 
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)
         {
-            AgentsResultsReport arr = new AgentsResultsReport();
+            var arr = new AgentsResultsReport();
             arr.Show();
         }
 
-        private void menuAboutAppInfo_Click(object sender, RoutedEventArgs e)
+        private void MenuAboutAppInfo_Click(object sender, RoutedEventArgs e)
         {
             string messageBoxCaption = "About: Home Sales Tracker App";
             string messageBoxText = $"App: Home Sales Tracker\nAuthor: Jon Rumsey\nDeadline: 20-Aug-2020";
@@ -603,12 +609,43 @@ namespace HomeSalesTrackerApp
             //  TODO: Complete Upate Home workflow.
             //  Home must already exist
             //  Menu -> Search -> Home, highlight Home in results, then Menu -> Update -> Home
-            HomeSearchView selectedHome = null;
-            selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
-            FoundHomesView.SelectedItem = -1;
+            HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+            
 
             DisplayStatusMessage("NOT IMPLEMENTED");
             ClearSearchResultsViews();
+        }
+
+        /// <summary>
+        /// Opens Home Updater Window to edit a selected Home to put it up for sale or change other For Sale properties.
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void MenuAddHomeForSale_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
+                hfsHome.HomeSales = hfsHomesales;
+
+                var huw = new HomeUpdaterWindow();
+                huw.UpdateType = "HomeSale";
+                huw.UpdateAgent = new Agent();
+                huw.UpdatePerson = new Person();
+                huw.UpdateHome = hfsHome;
+                huw.UpdateHomeSale = new HomeSale();
+                huw.UpdateReco = new RealEstateCompany();
+                huw.Title = "Add Home: For Sale";
+                huw.Show();
+            }
+            catch (Exception ex)
+            {
+                DisplayStatusMessage("Select a Home that is not already for Sale then click Menu Add Home For Sale.");
+                logger.Data("MenuAddHomesForSale Exception", ex.Message);
+                logger.Flush();
+            }
         }
 
         /// <summary>
@@ -620,7 +657,7 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                StringBuilder statusMessage = new StringBuilder("Ok. ");
+                var statusMessage = new StringBuilder("Ok. ");
                 HomeForSaleView selectedHomesaleView = null;
                 selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
                 FoundHomesForSaleView.SelectedIndex = -1;
@@ -628,27 +665,28 @@ namespace HomeSalesTrackerApp
                 HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
                                                                    .FirstOrDefault();
 
-                Home hfsHome = new Home();
+                var hfsHome = new Home();
                 hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
                 if (hfsHome != null)
                 {
-                    Person hfsBuyer = new Person();
+                    var hfsBuyer = new Person();
                     hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
-                    Person hfsAgent = new Person();
+                    var hfsAgent = new Person();
                     hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
                     if (hfsAgent != null)
                     {
-                        RealEstateCompany hfsReco = new RealEstateCompany();
+                        var hfsReco = new RealEstateCompany();
                         hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                         if (hfsReco != null)
                         {
-                            HomeUpdaterWindow huw = new HomeUpdaterWindow();
+                            var huw = new HomeUpdaterWindow();
                             huw.UpdateType = "HomeSale";
                             huw.UpdateHomeSale = hfsHomesale;
                             huw.UpdateAgent = hfsAgent.Agent;
                             huw.UpdateBuyer = hfsBuyer.Buyer;
                             huw.UpdateHome = hfsHome;
                             huw.UpdateReco = hfsReco;
+                            huw.Title = "Update Home: For Sale";
                             DisplayStatusMessage("Loading update window");
                             huw.Show();
                         }
@@ -687,7 +725,7 @@ namespace HomeSalesTrackerApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void menuUpdateAgent_Click(object sender, RoutedEventArgs e)
+        private void MenuUpdateAgent_Click(object sender, RoutedEventArgs e)
         {
             var updatePerson = new Person();
             var updateAgent = new Agent();
@@ -705,6 +743,7 @@ namespace HomeSalesTrackerApp
                         puw.CalledByUpdateMenuType = "Agent";
                         puw.ReceivedPerson = updatePerson;
                         puw.ReceivedAgent = updateAgent;
+                        puw.Title = "Update Person's Agent Info";
                         puw.Show();
                     }
                 }
@@ -737,6 +776,7 @@ namespace HomeSalesTrackerApp
                         puw.CalledByUpdateMenuType = "Buyer";
                         puw.ReceivedPerson = updatePerson;
                         puw.ReceivedBuyer = updateBuyer;
+                        puw.Title = "Update Person's Buyer Info";
                         puw.Show();
                     }
                 }
@@ -748,7 +788,7 @@ namespace HomeSalesTrackerApp
 
         }
 
-        private void menuUpdateOwner_Click(object sender, RoutedEventArgs e)
+        private void MenuUpdateOwner_Click(object sender, RoutedEventArgs e)
         {
             var updatePerson = new Person();
             var updateOwner = new Owner();
@@ -772,6 +812,7 @@ namespace HomeSalesTrackerApp
                         puw.CalledByUpdateMenuType = "Owner";
                         puw.ReceivedPerson = updatePerson;
                         puw.ReceivedOwner = updateOwner;
+                        puw.Title = "Update Person's Owner Info";
                         puw.Show();
                     }
                 }
@@ -784,6 +825,8 @@ namespace HomeSalesTrackerApp
 
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
+            //  TODO: Complete Search for Sold Homes workflow
+
             ClearSearchResultsViews();
             FoundSoldHomesView.Visibility = Visibility.Visible;
         }
@@ -791,7 +834,7 @@ namespace HomeSalesTrackerApp
         private void DisplayPeopleSearchResults()
         {
             var searchResults = new List<Person>();
-            var searchTerms = new List<String>();
+            var searchTerms = new List<string>();
             string searchTermsText = searchTermsTextbox.Text;
             string[] searchTermsArr = searchTermsText.Split(',');
             searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrWhiteSpace(st) == false).ToList();
@@ -879,37 +922,6 @@ namespace HomeSalesTrackerApp
 
         }
 
-        /// <summary>
-        /// Opens Home Updater Window to edit a selected Home to put it up for sale or change other For Sale properties.
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
-        private void MenuAddHomesForSale_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
-                Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
-                List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
-                hfsHome.HomeSales = hfsHomesales;
-
-                var huw = new HomeUpdaterWindow();
-                huw.UpdateType = "HomeSale";
-                huw.UpdateAgent = new Agent();
-                huw.UpdatePerson = new Person();
-                huw.UpdateHome = hfsHome;
-                huw.UpdateHomeSale = new HomeSale();
-                huw.UpdateReco = new RealEstateCompany();
-                huw.Show();
-            }
-            catch (Exception ex)
-            {
-                DisplayStatusMessage("Select a Home that is not already for Sale then click Menu Add Home For Sale.");
-                logger.Data("MenuAddHomesForSale Exception", ex.Message);
-                logger.Flush();
-            }
-        }
-
         private void menuUpdateSoldHome_Click(object sender, RoutedEventArgs e)
         {
             //
@@ -921,11 +933,6 @@ namespace HomeSalesTrackerApp
         }
 
         private void menuDisplayHomesForSale_Click(object sender, RoutedEventArgs e)
-        {
-            //
-        }
-
-        private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
             //
         }
@@ -960,5 +967,7 @@ namespace HomeSalesTrackerApp
             int zero = 0;
             int number = 2 / zero;
         }
+
+
     }
 }

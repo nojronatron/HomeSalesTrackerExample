@@ -27,21 +27,21 @@
             <MenuItem Header="Add">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuAddHome_Click"></MenuItem>
-                <MenuItem Header="Homes For Sale" Click="MenuAddHomesForSale_Click"></MenuItem>
-                <MenuItem Header="Owner" Click="MenuAddOwner_Click"></MenuItem>
+                <MenuItem Header="Home For Sale" Click="MenuAddHomeForSale_Click"></MenuItem>
                 <MenuItem Header="Agent" Click="MenuAddAgent_Click"></MenuItem>
                 <MenuItem Header="Buyer" Click="MenuAddBuyer_Click"></MenuItem>
+                <MenuItem Header="Owner" Click="MenuAddOwner_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
             <MenuItem Header="Update">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuUpdateHome_Click"></MenuItem>
-                <MenuItem Header="Home For Sale" Click="MenuUpdateHomeForSale_Click"></MenuItem>
-                <MenuItem Header="Sold Home" Click="menuUpdateSoldHome_Click"></MenuItem>
-                <MenuItem Header="Owner" Click="menuUpdateOwner_Click"></MenuItem>
-                <MenuItem Header="Agent" Click="menuUpdateAgent_Click"></MenuItem>
-                <MenuItem Header="Buyer" Click="MenuUpdateBuyer_Click"></MenuItem>
+                <!--<MenuItem Header="Home For Sale" Click="MenuUpdateHomeForSale_Click"></MenuItem>-->
+                <!--<MenuItem Header="Sold Home" Click="menuUpdateSoldHome_Click"></MenuItem>-->
                 <MenuItem Header="Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
+                <MenuItem Header="Agent" Click="MenuUpdateAgent_Click"></MenuItem>
+                <MenuItem Header="Buyer" Click="MenuUpdateBuyer_Click"></MenuItem>
+                <MenuItem Header="Owner" Click="MenuUpdateOwner_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
             <MenuItem Header="Remove">
@@ -60,7 +60,7 @@
             <Separator Width="10"/>
             <MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>
             <Separator Width="10"/>
-            <MenuItem Header="_About" Click="menuAboutAppInfo_Click" ></MenuItem>
+            <MenuItem Header="_About" Click="MenuAboutAppInfo_Click" ></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>
