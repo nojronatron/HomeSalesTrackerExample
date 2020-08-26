@@ -79,8 +79,9 @@ namespace HomeSalesTrackerApp
                         City = city,
                         State = state,
                         Zip = zip,
-                        OwnerID = APerson.PersonID,
-                        Owner = AnOwner
+                        OwnerID = APerson.PersonID
+                        //,
+                        //Owner = AnOwner
                     };
 
                     //  TODO: AddNewHome with existing Person that was not an Owner before saves a NEW PERSON instance, otherwise works fine. TShoot and fix this.
