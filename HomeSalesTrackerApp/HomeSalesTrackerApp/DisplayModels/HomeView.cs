@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    public class HomeView : AgentView
+    public class HomeView
     {
         public int HomeID { get; set;}
         public string Address { get; set; }

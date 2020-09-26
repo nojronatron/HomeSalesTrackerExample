@@ -15,6 +15,10 @@ namespace HomeSalesTrackerApp.DisplayModels
         public string RealEstateCompanyName { get; set; }
         public decimal SaleAmount { get; set; }
         public DateTime? SoldDate { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
 
         public override string ToString()
         {
