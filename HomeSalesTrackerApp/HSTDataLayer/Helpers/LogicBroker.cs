@@ -299,16 +299,6 @@ namespace HSTDataLayer
                                     AgentID = agent.Person.PersonID
                                 };
                                 context.Agents.Add(agentToUpdate);
-                                //person = context.People.Find(agent.AgentID);
-                                //if (person != null)
-                                //{
-                                //    agent.Person = person;
-                                //    person.Agent = agent;
-                                //}
-                                //else
-                                //{
-                                //    context.Agents.Add(agent);
-                                //}
                             }
 
                             break;
