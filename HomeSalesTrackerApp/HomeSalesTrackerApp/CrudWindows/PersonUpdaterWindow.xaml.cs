@@ -186,7 +186,10 @@ namespace HomeSalesTrackerApp.CrudWindows
                 ReceivedAgent.RealEstateCompany = null;
                 AgentReCompanyTextbox.IsReadOnly = true;
                 AgentCommissionTextbox.IsEnabled = true;
-                CreditRatingTextbox.Text = ReceivedPerson.Buyer.CreditRating?.ToString() ?? string.Empty;
+                if (ReceivedPerson.Buyer != null)
+                {
+                    CreditRatingTextbox.Text = ReceivedPerson.Buyer.CreditRating?.ToString() ?? string.Empty;
+                }
                 DisableBuyerDetailsControls();
                 DisableOwnerDetailsControls();
                 ExistingAgentsCombobox.IsEnabled = false;   //  user is here to create new Agent props for existing person
