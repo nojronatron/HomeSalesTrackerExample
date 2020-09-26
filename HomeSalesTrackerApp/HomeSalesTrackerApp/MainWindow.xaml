@@ -102,7 +102,7 @@
                 <ListView Name="FoundHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="HomeID" Width="50" DisplayMemberBinding="{Binding HomeID}">
+                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -145,7 +145,7 @@
                 <ListView Name="FoundHomesForSaleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="HomeID" Width="50" DisplayMemberBinding="{Binding HomeID}">
+                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -202,14 +202,14 @@
                 <ListView Name="FoundSoldHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="HomeID" Width="50" DisplayMemberBinding="{Binding HomeID}">
+                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
                                     </Style>
                                 </GridViewColumn.HeaderContainerStyle>
                             </GridViewColumn>
-                            <GridViewColumn Header="Address" Width="200" DisplayMemberBinding="{Binding Address}">
+                            <GridViewColumn Header="Address" Width="170" DisplayMemberBinding="{Binding Address}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -230,21 +230,21 @@
                                     </Style>
                                 </GridViewColumn.HeaderContainerStyle>
                             </GridViewColumn>
-                            <GridViewColumn Header="Zip Code" Width="100" DisplayMemberBinding="{Binding Zip}">
+                            <GridViewColumn Header="Zip Code" Width="80" DisplayMemberBinding="{Binding Zip}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
                                     </Style>
                                 </GridViewColumn.HeaderContainerStyle>
                             </GridViewColumn>
-                            <GridViewColumn Header="Sales Amount" Width="50" DisplayMemberBinding="{Binding SalesAmount}">
+                            <GridViewColumn Header="Sales Amount" Width="80" DisplayMemberBinding="{Binding SaleAmount}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left" />
                                     </Style>
                                 </GridViewColumn.HeaderContainerStyle>
                             </GridViewColumn>
-                            <GridViewColumn Header="Sold Date" Width="50" DisplayMemberBinding="{Binding SoldDate}">
+                            <GridViewColumn Header="Sold Date" Width="80" DisplayMemberBinding="{Binding SoldDate}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -259,7 +259,7 @@
                 <ListView Name="FoundPeopleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Person ID" Width="60" DisplayMemberBinding="{Binding PersonID}">
+                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding PersonID}">
                                 <GridViewColumn.HeaderContainerStyle>
                                     <Style TargetType="{x:Type GridViewColumnHeader}">
                                         <Setter Property="HorizontalContentAlignment" Value="Left"/>

@@ -5,24 +5,9 @@ using HSTDataLayer;
 using HSTDataLayer.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HomeSalesTrackerApp
 {
@@ -145,6 +130,96 @@ namespace HomeSalesTrackerApp
         private void MenuExit_Click(object sender, RoutedEventArgs e)
         {
             App.Current.Shutdown();
+        }
+
+        private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
+        {
+            ClearSearchResultsViews();
+            //  TODO: Debug Search for Sold Homes workflow
+            var soldHomes = (from hs in homeSalesCollection
+                             where hs.SoldDate != null
+                             select hs).ToList();
+
+            var searchHomesalesResults = new List<HomeSale>();
+            var searchHomesResults = new List<Home>();
+            var searchTerms = new List<String>();
+            string searchTermsText = searchTermsTextbox.Text;
+            string[] searchTermsArr = searchTermsText.Split(',');
+            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
+            var shvResults = new List<SoldHomesView>();
+
+            if (searchTerms.Count > 0)
+            {
+                HomesalesSearchHelper(ref searchHomesalesResults, ref searchTerms);
+                searchHomesalesResults = searchHomesalesResults.Distinct().ToList();
+                shvResults = (from hs in homeSalesCollection
+                              from shsr in searchHomesalesResults
+                              from h in homesCollection
+                              from sh in soldHomes
+                              where hs.SaleID == sh.SaleID
+                              && hs.SaleID == shsr.SaleID
+                              && h.HomeID == shsr.HomeID
+                              && shsr.SoldDate != null
+                              select new SoldHomesView
+                              {
+                                  HomeID = hs.HomeID,
+                                  Address = h.Address,
+                                  City = h.City,
+                                  State = h.State,
+                                  Zip = h.Zip,
+                                  SaleAmount = hs.SaleAmount,
+                                  SoldDate = hs.SoldDate
+                              })
+                              .ToList();
+
+                HomeSearchHelper(ref searchHomesResults, ref searchTerms);
+                searchHomesResults = searchHomesResults.Distinct().ToList();
+                shvResults.AddRange((from hs in homeSalesCollection
+                                     from shr in searchHomesResults
+                                     from h in homesCollection
+                                     from sh in soldHomes
+                                     where h.HomeID == sh.HomeID 
+                                     && h.HomeID == shr.HomeID
+                                     && h.HomeID == hs.HomeID
+                                     && hs.SoldDate != null
+                                     select new SoldHomesView
+                                     {
+                                         HomeID = hs.HomeID,
+                                         Address = h.Address,
+                                         City = h.City,
+                                         State = h.State,
+                                         Zip = h.Zip,
+                                         SaleAmount = hs.SaleAmount,
+                                         SoldDate = hs.SoldDate
+                                     })
+                                     .ToList());
+            }
+
+            if (shvResults.Count > 0)
+            {
+                FoundSoldHomesView.Visibility = Visibility.Visible;
+                FoundSoldHomesView.ItemsSource = shvResults;
+                DisplayStatusMessage($"Found { searchHomesalesResults.Count } Sold Homes. Select a result and use Update or Remove menus to make changes.");
+            }
+
+            if (searchTerms.Count < 1 || shvResults.Count < 1)
+            {
+                DisplayZeroResultsMessage();
+            }
+
+        }
+
+        private void HomesalesSearchHelper(ref List<HomeSale> searchHomesalesResults, ref List<String> searchTerms)
+        {
+            foreach (var searchTerm in searchTerms)
+            {
+                string capSearchTerms = searchTerm.ToUpper().Trim();
+                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SaleID.ToString().Contains(searchTerm)));
+                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.MarketDate.ToString().Contains(searchTerm)));
+                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SaleAmount.ToString().Contains(searchTerm)));
+                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SoldDate.ToString().Contains(searchTerm)));
+            }
+
         }
 
         /// <summary>
@@ -486,6 +561,7 @@ namespace HomeSalesTrackerApp
                     shv.Phone = personAgent.Phone;
                     shv.Email = personAgent.Email ?? null;
                 }
+
                 if (soldHome.Buyer != null)
                 {
                     var personBuyer = peopleCollection.Where(p => p.PersonID == soldHome.BuyerID).FirstOrDefault();
@@ -821,14 +897,6 @@ namespace HomeSalesTrackerApp
             {
                 DisplayStatusMessage("Unable to load Owner Update Window. Refresh, search again, and then select a Person in the results.");
             }
-        }
-
-        private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
-        {
-            //  TODO: Complete Search for Sold Homes workflow
-
-            ClearSearchResultsViews();
-            FoundSoldHomesView.Visibility = Visibility.Visible;
         }
 
         private void DisplayPeopleSearchResults()
