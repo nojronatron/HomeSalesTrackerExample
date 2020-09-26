@@ -43,7 +43,7 @@ namespace HomeSalesTrackerApp
         {
             get
             {
-                if (idx < 0 || idx > Count)
+                if (idx < 0 || idx > Count - 1)
                 {
                     throw new ArgumentOutOfRangeException();
                 }

@@ -141,7 +141,7 @@ namespace HomeSalesTrackerApp
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<Home>)_homeSalesList).GetEnumerator();
+            return ((IEnumerable<HomeSale>)_homeSalesList).GetEnumerator();
         }
 
         public IEnumerator<HomeSale> GetEnumerator()
