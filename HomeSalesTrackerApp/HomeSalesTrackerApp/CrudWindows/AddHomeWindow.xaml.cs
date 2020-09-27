@@ -25,10 +25,10 @@ namespace HomeSalesTrackerApp
     public partial class AddHomeWindow : Window
     {
         private bool IsButtonClose = false;
-
-        public static Home NewHome { get; set; }
-        public static Owner AnOwner { get; set; }
-        public static Person APerson { get; set; }
+        public bool UpdateInsteadOfAdd = false; //  Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
+        public Home NewHome { get; set; }
+        public Owner AnOwner { get; set; }
+        public Person APerson { get; set; }
         public string AddType { get; set; }
         //public static Person NewPersonAddedToCollection { get; set; }
 
@@ -39,10 +39,21 @@ namespace HomeSalesTrackerApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            RefreshOwnersComboBox();
-            string addType = AddType;
+            if (UpdateInsteadOfAdd)
+            {
+                statusBarText.Text = $"Update this home's address or Owner";
+                this.homeAddressTextbox.Text = NewHome.Address.Trim();
+                this.homeCityTextbox.Text = NewHome.City.Trim();
+                this.homeStateTextbox.Text = NewHome.State.Trim();
+                this.homeZipTextbox.Text = NewHome.Zip.Trim();
+            }
+            else 
+            { 
+                statusBarText.Text = $"Add a new { this.AddType } to the database.";
+            }
+
             //MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
-            statusBarText.Text = $"Add a new { addType } to the database.";
+            RefreshOwnersComboBox();
         }
 
         //public void AlertPersonAddedToCollection(Person p)
@@ -55,8 +66,6 @@ namespace HomeSalesTrackerApp
 
         private void AddNewHomeButton_Click(object sender, RoutedEventArgs e)
         {
-            NewHome = null; //  must be initialized as null to test for null later
-
             string address = this.homeAddressTextbox.Text.Trim();
             string city = this.homeCityTextbox.Text.Trim();
             string state = this.homeStateTextbox.Text.Trim();
@@ -71,22 +80,35 @@ namespace HomeSalesTrackerApp
             }
             else
             {
+                bool saveSucceeded = false;
                 if (APerson != null)
                 {
-                    NewHome = new Home()
+                    if (UpdateInsteadOfAdd)
                     {
-                        Address = address,
-                        City = city,
-                        State = state,
-                        Zip = zip,
-                        OwnerID = APerson.PersonID
-                        //,
-                        //Owner = AnOwner
-                    };
-
-                    //  TODO: AddNewHome with existing Person that was not an Owner before saves a NEW PERSON instance, otherwise works fine. TShoot and fix this.
-                    //if (LogicBroker.UpdateEntity<Home>(NewHome))
-                    if (LogicBroker.SaveEntity<Home>(NewHome))
+                        //  the HomeID would not have changed
+                        NewHome.Address = address;
+                        NewHome.City = city;
+                        NewHome.State = state;
+                        NewHome.Zip = zip;
+                        NewHome.OwnerID = AnOwner.OwnerID;
+                        saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
+                    }
+                    else 
+                    {
+                        //  TODO: AddNewHome with existing Person that was not an Owner before saves a NEW PERSON instance, otherwise works fine. TShoot and fix this.
+                        //if (LogicBroker.UpdateEntity<Home>(NewHome))
+                        NewHome = new Home()
+                        {
+                            //  HomeID does not matter when adding a new Home
+                            Address = address,
+                            City = city,
+                            State = state,
+                            Zip = zip,
+                            Owner = AnOwner
+                        };
+                        saveSucceeded = LogicBroker.SaveEntity<Home>(NewHome);
+                    }
+                    if (saveSucceeded)
                     {
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
@@ -103,7 +125,7 @@ namespace HomeSalesTrackerApp
                 }
                 else
                 {
-                    DisplayStatusMessage("Be sure to select an Owner before saving this new home.");
+                    DisplayStatusMessage("Be sure to select an Owner before saving this home.");
                     IsButtonClose = false;
                 }
 
@@ -151,15 +173,21 @@ namespace HomeSalesTrackerApp
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       select p).ToList();
 
-            if (APerson == null)
+            int selectedIndex = 0;
+            existingOwnersList = existingOwnersList.Distinct().ToList();
+            if (APerson != null)
             {
-                PotentialOwnerPeopleCombobox.ItemsSource = existingOwnersList;
-            }
-            else
-            {
-                existingOwnersList.Add(APerson);
+                selectedIndex = existingOwnersList.FindIndex(p => p.PersonID == APerson.PersonID);
+                if (APerson != null && selectedIndex < 0)
+                {
+                    existingOwnersList.Add(APerson);
+                    selectedIndex = existingOwnersList.Count - 1;
+                }
+
             }
 
+            PotentialOwnerPeopleCombobox.ItemsSource = existingOwnersList;
+            PotentialOwnerPeopleCombobox.SelectedIndex = selectedIndex;
             DisplayStatusMessage("Refreshed Owners list for display.");
         }
 
@@ -175,7 +203,7 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void PotentialOwnerPeopleCombobox_SelectionChange(object sender, SelectionChangedEventArgs e)
         {
-            RefreshOwnersComboBox();
+            //RefreshOwnersComboBox();
             var tempOwnerPerson = new Person();
             tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
             APerson = new Person();
@@ -185,17 +213,22 @@ namespace HomeSalesTrackerApp
                 AnOwner = new Owner();
                 AnOwner.Person = APerson;
 
+                var ownersHome = MainWindow.homesCollection.Where(h => h.OwnerID == tempOwnerPerson.PersonID).FirstOrDefault();
+                AnOwner = ownersHome.Owner;
+                DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
             }
             if (APerson.Owner != null)
             {
                 AnOwner = APerson.Owner;
                 PreferredLenderTextbox.Text = APerson.Owner.PreferredLender;
+                DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
             }
             else
             {
                 PreferredLenderTextbox.Text = "Enter Preferred Lender then click Add.";
                 PreferredLenderTextbox.IsReadOnly = false;
                 AddPreferredLenderButton.IsEnabled = true;
+                DisplayStatusMessage("New Owner selected. Enter Prefered Lender info.");
             }
 
         }

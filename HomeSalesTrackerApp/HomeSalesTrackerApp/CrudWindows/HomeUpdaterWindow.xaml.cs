@@ -284,8 +284,11 @@ namespace HomeSalesTrackerApp.CrudWindows
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
 
-            UpdateHomeSale.HomeID = UpdateHome.HomeID;
-
+            if (UpdateHome != null && UpdateHome.HomeID > -1)
+            { 
+                UpdateHomeSale.HomeID = UpdateHome.HomeID;
+            }
+            
             logger = new Logger();
             int count = 0;
             if (UpdateHome != null)

@@ -685,10 +685,26 @@ namespace HomeSalesTrackerApp
             //  TODO: Complete Upate Home workflow.
             //  Home must already exist
             //  Menu -> Search -> Home, highlight Home in results, then Menu -> Update -> Home
-            HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
-            
-
-            DisplayStatusMessage("NOT IMPLEMENTED");
+            try
+            {
+                HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                Home home = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                home.HomeSales = homeSalesCollection.Where(hs => hs.HomeID == home.HomeID).ToList();
+                home.Owner = peopleCollection.Where(o => o.PersonID == home.OwnerID).FirstOrDefault().Owner;
+                var ahw = new AddHomeWindow();
+                ahw.NewHome = home;
+                ahw.AnOwner = home.Owner;
+                ahw.APerson = peopleCollection.Where(p => p.PersonID == home.Owner.OwnerID).FirstOrDefault();
+                ahw.UpdateInsteadOfAdd = true;
+                ahw.Show();
+            }
+            catch (Exception ex)
+            {
+                DisplayStatusMessage("Select a Home first, then click Menu, Update Home.");
+                logger.Data("MenuUpdateHome Exception", ex.Message);
+                logger.Flush();
+            }
+            DisplayStatusMessage("!!TESTING!! Menu -> Update Home !!TESTING!!");
             ClearSearchResultsViews();
         }
 

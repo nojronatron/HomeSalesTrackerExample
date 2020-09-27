@@ -380,17 +380,43 @@ namespace HSTDataLayer
                                                  h.Zip == home.Zip
                                                  select h).FirstOrDefault();
 
+                            /*  If home not found by Address and Zip
+                             *  search for home by home.HomeID and if found then update with
+                             *  Address, City, State, and Zip and update Owner if different
+                             */
                             if (homeToUpdate == null)
                             {
-                                context.Homes.Add(home);
+                                var existingHome = context.Homes.Find(home.HomeID);
+                                if (existingHome == null)
+                                {
+                                    //  Add a new entry
+                                    context.Homes.Add(home);
+                                }
+                                if (existingHome != home)
+                                {
+                                    if (existingHome.HomeID == home.HomeID)
+                                    {
+                                        existingHome.Address = home.Address;
+                                        existingHome.City = home.City;
+                                        existingHome.State = home.State;
+                                        existingHome.Zip = home.Zip;
+                                    }
+                                    if (existingHome.OwnerID != home.OwnerID)
+                                    {
+                                        existingHome.OwnerID = home.OwnerID;
+                                    }
+                                }
+
                             }
                             else
                             {
-                                homeToUpdate.Address = home.Address;
-                                homeToUpdate.City = home.City;
-                                homeToUpdate.State = home.State;
-                                homeToUpdate.Zip = home.Zip;
-                                homeToUpdate.Owner = home.Owner;
+                                if (homeToUpdate.OwnerID != home.OwnerID)
+                                {
+                                    homeToUpdate.City = home.City;
+                                    homeToUpdate.State = home.State;
+                                    homeToUpdate.OwnerID = home.OwnerID;
+                                }
+
                             }
                             
                             break;
