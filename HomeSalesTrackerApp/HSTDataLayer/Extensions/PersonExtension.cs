@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace HSTDataLayer
 {
-    public partial class Person: IEquatable<Person>, IComparable<Person>
+    public partial class Person : IEquatable<Person>, IComparable<Person>
     {
         /// <summary>
         /// Override ToString() to control a basic string-output of a Person instance
@@ -47,7 +45,7 @@ namespace HSTDataLayer
         {
             if (this.FirstName == other.FirstName &&
                 this.LastName == other.LastName &&
-                this.Email == other.Email  &&
+                this.Email == other.Email &&
                 this.Phone == other.Phone)
             {
                 return true;

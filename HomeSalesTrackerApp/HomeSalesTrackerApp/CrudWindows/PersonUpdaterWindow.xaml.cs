@@ -1,18 +1,14 @@
 ﻿using HomeSalesTrackerApp.Helpers;
+
 using HSTDataLayer;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
@@ -307,7 +303,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             DisplayStatusMessage("Agent selection changed!");
             Person comboBoxPerson = (sender as ComboBox).SelectedItem as Person;
-            Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault(); 
+            Person tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == comboBoxPerson.PersonID).FirstOrDefault();
             Agent tempAgent = (from p in MainWindow.peopleCollection
                                where comboBoxPerson.PersonID == p.Agent.AgentID
                                select p.Agent).FirstOrDefault();
@@ -465,7 +461,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 result = true;
             }
-            
+
             return result;
         }
 
@@ -479,7 +475,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 DisplayStatusMessage("To Update, enter a new Credit Rating from 300 850.");
             }
-            else 
+            else
             {
                 creditRating = CreditRatingTextbox.Text.Trim();
             }
@@ -517,7 +513,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 preferredLender = preferredLenderTextbox.Text.Trim();
             }
-            if(preferredLender.Length < 3 || preferredLender.Length > 30)
+            if (preferredLender.Length < 3 || preferredLender.Length > 30)
             {
                 DisplayStatusMessage("Enter a Bank Name that is from 3 to 30 characters long.");
             }
@@ -527,7 +523,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 resultCount++;
             }
 
-            if(resultCount > 0)
+            if (resultCount > 0)
             {
                 result = true;
             }
@@ -569,7 +565,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
             }
 
-            if(CalledByUpdateMenuType == "Owner")
+            if (CalledByUpdateMenuType == "Owner")
             {
                 ReceivedPerson.Owner = ReceivedOwner;
                 personSaved = LogicBroker.UpdateEntity<Person>(ReceivedPerson);

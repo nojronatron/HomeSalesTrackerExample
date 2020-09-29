@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HomeSalesTrackerDataLayer;
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data.Entity;
-using System.IO;
-using HomeSalesTrackerDataLayer;
 using System.Data.Entity.Validation;
+using System.IO;
+using System.Linq;
 
 namespace HSTDataLayer
 {

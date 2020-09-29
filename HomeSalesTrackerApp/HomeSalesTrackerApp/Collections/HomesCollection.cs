@@ -1,7 +1,8 @@
-﻿using System;
+﻿using HSTDataLayer;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
@@ -33,7 +34,7 @@ namespace HomeSalesTrackerApp
         }
 
         public int Count { get { return _homesList.Count; } }
-        
+
         /// <summary>
         /// Indexer.
         /// </summary>

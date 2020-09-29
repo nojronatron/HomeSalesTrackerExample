@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HSTDataLayer;
+
+using System;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
@@ -158,7 +151,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 itemsCount++;
             }
-            else 
+            else
             {
                 resultMessage.Append("Last Name ");
             }
@@ -167,8 +160,8 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 itemsCount++;
             }
-            else 
-            { 
+            else
+            {
                 resultMessage.Append("Phone Number ");
             }
 
@@ -338,7 +331,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void CreateThisPersonButton_Click(object sender, RoutedEventArgs e)
         {
             int itemsCount = 0;
-            if(CreateNewPerson()) 
+            if (CreateNewPerson())
             {
                 if (NewAgent != null && NewPersonID > -1)
                 {
@@ -361,7 +354,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                     NewOwner.OwnerID = NewPersonID;
                     if (LogicBroker.SaveEntity<Owner>(NewOwner))
                     {
-                    itemsCount++;
+                        itemsCount++;
                     }
                 }
                 if (itemsCount > 0)

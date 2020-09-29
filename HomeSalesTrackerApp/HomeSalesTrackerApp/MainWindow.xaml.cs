@@ -1,8 +1,10 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
+
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,7 +180,7 @@ namespace HomeSalesTrackerApp
                                      from shr in searchHomesResults
                                      from h in homesCollection
                                      from sh in soldHomes
-                                     where h.HomeID == sh.HomeID 
+                                     where h.HomeID == sh.HomeID
                                      && h.HomeID == shr.HomeID
                                      && h.HomeID == hs.HomeID
                                      && hs.SoldDate != null
@@ -896,9 +898,9 @@ namespace HomeSalesTrackerApp
                 }
 
                 if (selectedPerson != null)
-                    {
+                {
                     if (updatePerson != null)
-                    { 
+                    {
                         var puw = new PersonUpdaterWindow();
                         puw.CalledByUpdateMenu = true;
                         puw.CalledByUpdateMenuType = "Owner";
@@ -932,7 +934,7 @@ namespace HomeSalesTrackerApp
             {
                 var viewResults = new List<PersonView>();
                 searchResults = searchResults.Distinct<Person>().ToList();
-                
+
                 PersonView newPersonView = null;
                 foreach (var person in searchResults)
                 {

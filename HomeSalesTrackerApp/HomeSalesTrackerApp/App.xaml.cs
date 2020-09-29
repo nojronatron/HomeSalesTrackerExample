@@ -1,10 +1,8 @@
 ﻿using HomeSalesTrackerApp.Helpers;
+
 using HSTDataLayer;
+
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -23,7 +21,8 @@ namespace HomeSalesTrackerApp
         {
             //  portions of code are thanks to a Gist by Ronnie Overby at https://gist.github.com/ronnieoverby/7568387 
             HSTLogger = new Logger();
-            if (HSTLogger.IsEnabled) {
+            if (HSTLogger.IsEnabled)
+            {
                 AppDomain.CurrentDomain.UnhandledException += (sig, exc) =>
                     LogUnhandledException((Exception)exc.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
 
@@ -52,7 +51,7 @@ namespace HomeSalesTrackerApp
                 {
                     HSTLogger.Data("WindowLoading Exception thrown", ex.Message);
                     LogInnerExceptionMessages(ex, "WindowLoading InnerException");
-                    HSTLogger.Flush(); 
+                    HSTLogger.Flush();
                     _ = MessageBox.Show($"While launching, the application was unable to load the backup files. Application will now close.", "Unable to load file data.", MessageBoxButton.OK);
                     DoDbBackup = false;
                     App.Current.Shutdown();

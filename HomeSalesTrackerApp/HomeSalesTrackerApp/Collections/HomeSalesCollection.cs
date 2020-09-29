@@ -1,15 +1,16 @@
-﻿using System;
+﻿using HSTDataLayer;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
     public class HomeSalesCollection : IEnumerable<HomeSale>
     {
         private List<HomeSale> _homeSalesList = null;
-        
+
         /// <summary>
         /// Default constructor initializes an empty Collection of type HomeSale.
         /// </summary>
@@ -28,7 +29,7 @@ namespace HomeSalesTrackerApp
             //_homeSalesList.Sort();
         }
 
-        public int Count {  get { return _homeSalesList.Count; } }
+        public int Count { get { return _homeSalesList.Count; } }
 
         /// <summary>
         /// Indexer. Allows indexing into this collection using square brackets.
@@ -58,9 +59,9 @@ namespace HomeSalesTrackerApp
         {
             if (homeSale != null)
             {
-                var hsInList = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID 
+                var hsInList = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID
                                                               && hs.SaleAmount == homeSale.SaleAmount);
-                if (hsInList == null )
+                if (hsInList == null)
                 {
                     _homeSalesList.Add(homeSale);
                     //_homeSalesList.Sort();

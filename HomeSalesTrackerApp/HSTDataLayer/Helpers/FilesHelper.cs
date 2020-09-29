@@ -132,7 +132,7 @@ namespace HomeSalesTrackerDataLayer
                 //  Too many XML files found - will return an empty List<FileInfo>
                 return new List<FileInfo>();
             }
-            
+
             //  retain the full filepaths for use later
             SetFullFilePaths(xmlFullFilePaths);
             return xmlFullFilePaths;

@@ -1,5 +1,7 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
+
 using HSTDataLayer;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -35,8 +37,8 @@ namespace HomeSalesTrackerApp
                 this.homeStateTextbox.Text = NewHome.State.Trim();
                 this.homeZipTextbox.Text = NewHome.Zip.Trim();
             }
-            else 
-            { 
+            else
+            {
                 statusBarText.Text = $"Add a new { this.AddType } to the database.";
             }
 
@@ -81,7 +83,7 @@ namespace HomeSalesTrackerApp
                         NewHome.OwnerID = APerson.PersonID;
                         saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
                     }
-                    else 
+                    else
                     {
                         LogicBroker.SaveEntity<Owner>(AnOwner);
                         NewHome = new Home()
@@ -269,7 +271,7 @@ namespace HomeSalesTrackerApp
         private void AddPreferredLenderButton_Click(object sender, RoutedEventArgs e)
         {
             string tempPreferredLender = PreferredLenderTextbox.Text.Trim();
-            if(tempPreferredLender.Length > 2)
+            if (tempPreferredLender.Length > 2)
             {
                 AnOwner.PreferredLender = tempPreferredLender;
                 DisplayStatusMessage("Preferred Lender added.");

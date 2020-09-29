@@ -1,14 +1,15 @@
-﻿using System;
+﻿using HSTDataLayer;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
     public class RealEstateCosCollection : IEnumerable<RealEstateCompany>
     {
         private List<RealEstateCompany> _recoList = null;
-        public int Count {  get { return _recoList.Count; } }
+        public int Count { get { return _recoList.Count; } }
 
         /// <summary>
         /// Constructor

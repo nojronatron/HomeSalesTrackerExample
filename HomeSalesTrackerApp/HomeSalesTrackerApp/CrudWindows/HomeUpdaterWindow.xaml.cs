@@ -1,20 +1,13 @@
-﻿using HomeSalesTrackerApp.DisplayModels;
-using HomeSalesTrackerApp.Helpers;
+﻿using HomeSalesTrackerApp.Helpers;
+
 using HSTDataLayer;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
@@ -279,16 +272,16 @@ namespace HomeSalesTrackerApp.CrudWindows
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
             AddNewBuyerButton.Visibility = Visibility.Hidden;
-            AddNewBuyerButton.IsEnabled = false; 
+            AddNewBuyerButton.IsEnabled = false;
             LoadRECosCombobox();
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
 
             if (UpdateHome != null && UpdateHome.HomeID > -1)
-            { 
+            {
                 UpdateHomeSale.HomeID = UpdateHome.HomeID;
             }
-            
+
             logger = new Logger();
             int count = 0;
             if (UpdateHome != null)
@@ -906,12 +899,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             LoadBuyersCombobox();
             DisplayStatusMessage("Refreshed List of Buyers.");
         }
-
-        //private void MenuRefreshAgentsInclusive_Click(object sender, RoutedEventArgs e)
-        //{
-        //    LoadAgentsCombobox(true);
-        //    DisplayStatusMessage("Refreshed Agents list including eligible people.");
-        //}
 
         private void AddNewBuyerButton_Click(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,5 @@
 ﻿using HSTDataLayer.Helpers;
+
 using System.Data.Entity.Migrations;
 using System.Linq;
 
@@ -35,7 +36,7 @@ namespace HSTDataLayer
         /// <returns></returns>
         public static bool BackUpDatabase()
         {
-            bool peopleFlushed = 
+            bool peopleFlushed =
             BackUpDataFiles.FlushPeopleTableToXml();
             if (peopleFlushed)
             {
@@ -238,7 +239,7 @@ namespace HSTDataLayer
                 {
                     itemsAffected = context.SaveChanges();
                 }
-                catch 
+                catch
                 {
                     _ = 0;
                 }
@@ -418,7 +419,7 @@ namespace HSTDataLayer
                                 }
 
                             }
-                            
+
                             break;
                         }
                     case "HomeSale":
@@ -442,7 +443,7 @@ namespace HSTDataLayer
                         {
                             realEstateCompany = item as RealEstateCompany;
                             RealEstateCompany recoToUpdate = context.RealEstateCompanies.Find(realEstateCompany.CompanyID);
-                            if(recoToUpdate != null)
+                            if (recoToUpdate != null)
                             {
                                 recoToUpdate.CompanyName = realEstateCompany.CompanyName;
                                 recoToUpdate.Phone = realEstateCompany.Phone;

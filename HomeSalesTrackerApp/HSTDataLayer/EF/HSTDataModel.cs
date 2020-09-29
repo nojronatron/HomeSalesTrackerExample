@@ -1,9 +1,8 @@
-using System;
 using System.Data.Entity;
 
 namespace HSTDataLayer
 {
- 
+
     public partial class HSTDataModel : DbContext
     {
         public HSTDataModel()

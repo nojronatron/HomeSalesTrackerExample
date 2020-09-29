@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HSTDataLayer
 {
@@ -30,7 +27,7 @@ namespace HSTDataLayer
         public override string ToString()
         {
             string recoID = this.CompanyID == null ? "Agent no longer active." : this.CompanyID.ToString();
-            return $"{ base.ToString() } { this.AgentID } { recoID } { this.CommissionPercent }"; 
+            return $"{ base.ToString() } { this.AgentID } { recoID } { this.CommissionPercent }";
         }
 
         int IComparable<Agent>.CompareTo(Agent other)

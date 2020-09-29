@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HSTDataLayer;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp
 {
