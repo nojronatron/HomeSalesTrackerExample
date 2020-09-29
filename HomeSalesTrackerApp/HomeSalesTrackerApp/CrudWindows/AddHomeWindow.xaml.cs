@@ -1,21 +1,9 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HSTDataLayer;
-using HSTDataLayer.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HomeSalesTrackerApp
 {
@@ -54,6 +42,7 @@ namespace HomeSalesTrackerApp
 
             //MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
             RefreshOwnersComboBox();
+            //PotentialOwnerPeopleCombobox.SelectedIndex = -1;
         }
 
         //public void AlertPersonAddedToCollection(Person p)
@@ -85,29 +74,28 @@ namespace HomeSalesTrackerApp
                 {
                     if (UpdateInsteadOfAdd)
                     {
-                        //  the HomeID would not have changed
                         NewHome.Address = address;
                         NewHome.City = city;
                         NewHome.State = state;
                         NewHome.Zip = zip;
-                        NewHome.OwnerID = AnOwner.OwnerID;
+                        NewHome.OwnerID = APerson.PersonID;
                         saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
                     }
                     else 
                     {
-                        //  TODO: AddNewHome with existing Person that was not an Owner before saves a NEW PERSON instance, otherwise works fine. TShoot and fix this.
-                        //if (LogicBroker.UpdateEntity<Home>(NewHome))
+                        LogicBroker.SaveEntity<Owner>(AnOwner);
                         NewHome = new Home()
                         {
-                            //  HomeID does not matter when adding a new Home
                             Address = address,
                             City = city,
                             State = state,
                             Zip = zip,
-                            Owner = AnOwner
+                            OwnerID = APerson.PersonID
                         };
+
                         saveSucceeded = LogicBroker.SaveEntity<Home>(NewHome);
                     }
+
                     if (saveSucceeded)
                     {
                         IsButtonClose = true;
@@ -122,6 +110,7 @@ namespace HomeSalesTrackerApp
                         DisplayStatusMessage("Unable to save Home.");
                         IsButtonClose = false;
                     }
+
                 }
                 else
                 {
@@ -173,7 +162,7 @@ namespace HomeSalesTrackerApp
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       select p).ToList();
 
-            int selectedIndex = 0;
+            int selectedIndex = -1;
             existingOwnersList = existingOwnersList.Distinct().ToList();
             if (APerson != null)
             {
@@ -203,32 +192,49 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void PotentialOwnerPeopleCombobox_SelectionChange(object sender, SelectionChangedEventArgs e)
         {
-            //RefreshOwnersComboBox();
-            var tempOwnerPerson = new Person();
-            tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
-            APerson = new Person();
-            APerson = MainWindow.peopleCollection.Where(p => p.FirstName == tempOwnerPerson.FirstName && p.LastName == tempOwnerPerson.LastName).FirstOrDefault();
-            if (AnOwner == null)
-            {
-                AnOwner = new Owner();
-                AnOwner.Person = APerson;
+            var tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
+            PreferredLenderTextbox.IsReadOnly = false;
+            addOwnerButton.IsEnabled = false;
+            AddPreferredLenderButton.IsEnabled = false;
+            int personID = tempOwnerPerson.PersonID;
+            APerson = MainWindow.peopleCollection.Where(p => p.PersonID == personID).FirstOrDefault();
 
-                var ownersHome = MainWindow.homesCollection.Where(h => h.OwnerID == tempOwnerPerson.PersonID).FirstOrDefault();
-                AnOwner = ownersHome.Owner;
-                DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
-            }
             if (APerson.Owner != null)
             {
-                AnOwner = APerson.Owner;
-                PreferredLenderTextbox.Text = APerson.Owner.PreferredLender;
+                List<Home> homesOwnedByPerson = (from h in MainWindow.homesCollection
+                                                 where h.OwnerID == personID
+                                                 select h).ToList();
+
+                if (homesOwnedByPerson.Count > 0)
+                {
+                    AnOwner = (from o in MainWindow.homesCollection
+                               where o.OwnerID == personID
+                               select o.Owner).FirstOrDefault();
+
+                }
+                else
+                {
+                    AnOwner = (from o in MainWindow.peopleCollection
+                               where o.PersonID == personID
+                               select o.Owner).FirstOrDefault();
+                }
+
+                var preferredLender = AnOwner.PreferredLender.Trim();
+                PreferredLenderTextbox.Text = preferredLender;
+                PreferredLenderTextbox.IsReadOnly = true;
+                addOwnerButton.IsEnabled = true;
                 DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
             }
             else
             {
-                PreferredLenderTextbox.Text = "Enter Preferred Lender then click Add.";
                 PreferredLenderTextbox.IsReadOnly = false;
+                PreferredLenderTextbox.Text = "Enter Preferred Lender here.";
+                AnOwner = new Owner()
+                {
+                    OwnerID = personID
+                };
+                DisplayStatusMessage("Enter new Preferred Lender and then click Add button.");
                 AddPreferredLenderButton.IsEnabled = true;
-                DisplayStatusMessage("New Owner selected. Enter Prefered Lender info.");
             }
 
         }
