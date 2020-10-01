@@ -1,7 +1,7 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
-
+using HomeSalesTrackerApp.ReportWindows;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 
@@ -1020,7 +1020,8 @@ namespace HomeSalesTrackerApp
 
         private void menuDisplayHomesForSale_Click(object sender, RoutedEventArgs e)
         {
-            //
+            HomesForSaleReport hfsr = new HomesForSaleReport();
+            hfsr.Show();
         }
 
         private void RemoveHomeSaleAndUpdateCollection(HomeSale homesale)

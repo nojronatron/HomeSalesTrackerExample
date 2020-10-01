@@ -67,6 +67,8 @@
     <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
     <Compile Include="DisplayModels\SoldHomesView.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Report Models\HomesForSaleReportModel.cs" />
+    <Compile Include="ReportsViewModels\HomesForSaleViewModel.cs" />
     <Compile Include="ReportWindows\BuyersResultsReport.xaml.cs">
       <DependentUpon>BuyersResultsReport.xaml</DependentUpon>
     </Compile>
@@ -92,8 +94,14 @@
     </Compile>
     <Compile Include="Collections\HomeSalesCollection.cs" />
     <Compile Include="Collections\RealEstateCosCollection.cs" />
+    <Compile Include="ReportWindows\HomesForSaleReport.xaml.cs">
+      <DependentUpon>HomesForSaleReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
       <DependentUpon>SoldHomesReport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomesForSaleView.xaml.cs">
+      <DependentUpon>HomesForSaleView.xaml</DependentUpon>
     </Compile>
     <Page Include="ReportWindows\BuyersResultsReport.xaml">
       <SubType>Designer</SubType>
@@ -132,7 +140,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ReportWindows\HomesForSaleReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ReportWindows\SoldHomesReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomesForSaleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

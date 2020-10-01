@@ -1,5 +1,5 @@
 ﻿using HomeSalesTrackerApp.DisplayModels;
-
+using HomeSalesTrackerApp.Views;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -17,6 +17,8 @@ namespace HomeSalesTrackerApp
         public SoldHomesReport()
         {
             InitializeComponent();
+            HomesForSaleView hfsv = new HomesForSaleView();
+            DataContext = hfsv.DataContext;
         }
 
         private void SoldHomeReportWindowLoaded(object sender, RoutedEventArgs e)

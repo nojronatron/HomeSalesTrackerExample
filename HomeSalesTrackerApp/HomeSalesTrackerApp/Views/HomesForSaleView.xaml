@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="HomeSalesTrackerApp.Views.HomesForSaleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HomeSalesTrackerApp.Views"
+             xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type data:HomesForSaleReportModel}">
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Grid Background="Azure">
+        <DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" 
+                  CanUserAddRows="False" Margin="10" Background="Azure">
+        </DataGrid>
+    </Grid>
+
+<!--<DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" CanUserAddRows="False" Margin="20" Background="Azure">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Path=HomeID}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Address" Binding="{Binding Path=Address}"></DataGridTextColumn>
+                <DataGridTextColumn Header="City" Binding="{Binding Path=City}"></DataGridTextColumn>
+                <DataGridTextColumn Header="State" Binding="{Binding Path=State}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Zip" Binding="{Binding Path=Zip}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Owner" Binding="{Binding Path=OwnerFullName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Owner Phone" Binding="{Binding Path=OwnerPhone}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Owner Email" Binding="{Binding Path=OwnerEmail}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Preferred Lender" Binding="{Binding Path=PreferredLender}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Agent Name" Binding="{Binding Path=AgentFullName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Agent Phone" Binding="{Binding Path=AgentPhone}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Agent Email" Binding="{Binding Path=AgentEmail}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Company" Binding="{Binding Path=CompanyName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Market Date" Binding="{Binding Path=MarketDate}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Sale Amount" Binding="{Binding Path=SaleAmount}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>-->
+
+</UserControl>
