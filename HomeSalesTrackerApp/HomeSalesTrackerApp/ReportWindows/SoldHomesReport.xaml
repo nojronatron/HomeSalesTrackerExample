@@ -4,43 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp"
+        xmlns:views="clr-namespace:HomeSalesTrackerApp.Views"
         mc:Ignorable="d"
-        Title="Sold Homes Report" Height="450" Width="1010" Loaded="SoldHomeReportWindowLoaded" >
-    <DockPanel>
-        <Menu DockPanel.Dock="Top" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Exit" Click="menuExit_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Edit">
-                <MenuItem Header="_Refresh" Click="menuRefresh_Click"/>
-            </MenuItem>
-        </Menu>
-        <StatusBar DockPanel.Dock="Bottom" Background="Beige">
-            <StatusBarItem>
-                <TextBlock x:Name="statusBarText" Text="" TextAlignment="Center" Height="20"/>
-            </StatusBarItem>
-        </StatusBar>
-        <Grid DockPanel.Dock="Left">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="27*"/>
-                <ColumnDefinition Width="470*"/>
-            </Grid.ColumnDefinitions>
-            <ListView x:Name="soldHomesReportListview" ItemsSource="{Binding}" Grid.ColumnSpan="2">
-                <ListView.View>
-                    <GridView AllowsColumnReorder="True" ColumnHeaderToolTip="Sold Homes Report">
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=HomeID}" Header="ID" Width="20"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=Address}" Header="Address" Width="160"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=City}" Header="City" Width="100"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=State}" Header="State" Width="40"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=Zip}" Header="Zip Code" Width="80"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=BuyerFirstLastName}" Header="Buyer (First Last)" Width="115"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=AgentFirstLastName}" Header="Agent (First Last)" Width="115"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=RealEstateCompanyName}" Header="RE Company" Width="130"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=SaleAmount}" Header="Sale Amount" Width="100"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=SoldDate}" Header="Sold Date" Width="130"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Grid>
-    </DockPanel>
+        Title="Sold Homes Report" Height="300" Width="1000" >
+
+    <Grid>
+        <views:SoldHomesView x:Name="SoldHomesViewControl" />
+    </Grid>
 </Window>

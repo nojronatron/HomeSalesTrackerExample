@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
@@ -299,16 +296,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 SaleAmount.Equals(other.SaleAmount) && MarketDate.Equals(other.MarketDate);
         }
 
-        public override int GetHashCode()
-        {
-            int hashCode = 1752065002;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Zip);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
-            hashCode = hashCode * -1521134295 + EqualityComparer<decimal>.Default.GetHashCode(SaleAmount);
-            hashCode = hashCode * -1521134295 + EqualityComparer<DateTime>.Default.GetHashCode(MarketDate);
-            return hashCode;
-        }
-
         public bool Equals(HomesForSaleReportModel x, HomesForSaleReportModel y)
         {
             if (x == null && y == null)
@@ -319,12 +306,48 @@ namespace HomeSalesTrackerApp.Report_Models
             {
                 return false;
             }
-            return x.Address == y.Address && x.Zip == y.Zip && x.SaleAmount == y.SaleAmount && x.MarketDate == y.MarketDate; 
+            return x.Address == y.Address && x.Zip == y.Zip && 
+                x.SaleAmount == y.SaleAmount && x.MarketDate == y.MarketDate; 
         }
 
         public int GetHashCode(HomesForSaleReportModel obj)
         {
             return (this.Address + this.Zip + this.SaleAmount + this.MarketDate).GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -63552794;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Zip);
+            hashCode = hashCode * -1521134295 + MarketDate.GetHashCode();
+            hashCode = hashCode * -1521134295 + SaleAmount.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(HomesForSaleReportModel left, HomesForSaleReportModel right)
+        {
+            return EqualityComparer<HomesForSaleReportModel>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(HomesForSaleReportModel left, HomesForSaleReportModel right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            return this.GetType() == obj.GetType();
         }
     }
 }

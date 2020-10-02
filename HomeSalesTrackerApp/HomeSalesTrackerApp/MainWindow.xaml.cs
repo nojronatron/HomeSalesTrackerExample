@@ -148,7 +148,7 @@ namespace HomeSalesTrackerApp
             string searchTermsText = searchTermsTextbox.Text;
             string[] searchTermsArr = searchTermsText.Split(',');
             searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
-            var shvResults = new List<SoldHomesView>();
+            var shvResults = new List<XSoldHomesView>();
 
             if (searchTerms.Count > 0)
             {
@@ -162,7 +162,7 @@ namespace HomeSalesTrackerApp
                               && hs.SaleID == shsr.SaleID
                               && h.HomeID == shsr.HomeID
                               && shsr.SoldDate != null
-                              select new SoldHomesView
+                              select new XSoldHomesView
                               {
                                   HomeID = hs.HomeID,
                                   Address = h.Address,
@@ -184,7 +184,7 @@ namespace HomeSalesTrackerApp
                                      && h.HomeID == shr.HomeID
                                      && h.HomeID == hs.HomeID
                                      && hs.SoldDate != null
-                                     select new SoldHomesView
+                                     select new XSoldHomesView
                                      {
                                          HomeID = hs.HomeID,
                                          Address = h.Address,
@@ -531,54 +531,54 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuDisplaySoldHomes_Click(object sender, RoutedEventArgs e)
         {
-            var soldHomesQuery = (from hs in homeSalesCollection
-                                  where hs.SoldDate != null
-                                  select hs).ToList();
+            //var soldHomesQuery = (from hs in homeSalesCollection
+            //                      where hs.SoldDate != null
+            //                      select hs).ToList();
 
-            var shResultsList = new List<SoldHomesView>();
-            SoldHomesView shv = null;
-            foreach (var soldHome in soldHomesQuery)
-            {
-                var homeInstance = homesCollection.Where(h => h.HomeID == soldHome.HomeID).FirstOrDefault();
-                var recoInstance = reCosCollection.Where(reco => reco.CompanyID == soldHome.CompanyID).FirstOrDefault();
-                shv = new SoldHomesView()
-                {
-                    HomeID = soldHome.HomeID,
-                    Address = homeInstance.Address,
-                    City = homeInstance.City,
-                    State = homeInstance.State,
-                    Zip = homeInstance.Zip,
-                    RealEstateCompanyName = recoInstance.CompanyName,
-                    SaleAmount = soldHome.SaleAmount,
-                    SoldDate = soldHome.SoldDate
-                };
+            //var shResultsList = new List<XSoldHomesView>();
+            //XSoldHomesView shv = null;
+            //foreach (var soldHome in soldHomesQuery)
+            //{
+            //    var homeInstance = homesCollection.Where(h => h.HomeID == soldHome.HomeID).FirstOrDefault();
+            //    var recoInstance = reCosCollection.Where(reco => reco.CompanyID == soldHome.CompanyID).FirstOrDefault();
+            //    shv = new XSoldHomesView()
+            //    {
+            //        HomeID = soldHome.HomeID,
+            //        Address = homeInstance.Address,
+            //        City = homeInstance.City,
+            //        State = homeInstance.State,
+            //        Zip = homeInstance.Zip,
+            //        RealEstateCompanyName = recoInstance.CompanyName,
+            //        SaleAmount = soldHome.SaleAmount,
+            //        SoldDate = soldHome.SoldDate
+            //    };
 
-                if (soldHome.Agent != null)
-                {
-                    var personAgent = peopleCollection.Where(p => p.PersonID == soldHome.AgentID).FirstOrDefault();
-                    string firstLastName = $"{ personAgent.FirstName } { personAgent.LastName }";
-                    shv.AgentFirstLastName = firstLastName;
-                    shv.FirstName = personAgent.FirstName;
-                    shv.LastName = personAgent.LastName;
-                    shv.Phone = personAgent.Phone;
-                    shv.Email = personAgent.Email ?? null;
-                }
+            //    if (soldHome.Agent != null)
+            //    {
+            //        var personAgent = peopleCollection.Where(p => p.PersonID == soldHome.AgentID).FirstOrDefault();
+            //        string firstLastName = $"{ personAgent.FirstName } { personAgent.LastName }";
+            //        shv.AgentFirstLastName = firstLastName;
+            //        shv.FirstName = personAgent.FirstName;
+            //        shv.LastName = personAgent.LastName;
+            //        shv.Phone = personAgent.Phone;
+            //        shv.Email = personAgent.Email ?? null;
+            //    }
 
-                if (soldHome.Buyer != null)
-                {
-                    var personBuyer = peopleCollection.Where(p => p.PersonID == soldHome.BuyerID).FirstOrDefault();
-                    string firstLastName = $"{ personBuyer.FirstName } { personBuyer.LastName }";
-                    shv.BuyerFirstLastName = firstLastName;
-                    shv.FirstName = personBuyer.FirstName;
-                    shv.LastName = personBuyer.LastName;
-                    shv.Phone = personBuyer.Phone;
-                    shv.Email = personBuyer.Email ?? null;
-                }
-                shResultsList.Add(shv);
-            }
+            //    if (soldHome.Buyer != null)
+            //    {
+            //        var personBuyer = peopleCollection.Where(p => p.PersonID == soldHome.BuyerID).FirstOrDefault();
+            //        string firstLastName = $"{ personBuyer.FirstName } { personBuyer.LastName }";
+            //        shv.BuyerFirstLastName = firstLastName;
+            //        shv.FirstName = personBuyer.FirstName;
+            //        shv.LastName = personBuyer.LastName;
+            //        shv.Phone = personBuyer.Phone;
+            //        shv.Email = personBuyer.Email ?? null;
+            //    }
+            //    shResultsList.Add(shv);
+            //}
 
             SoldHomesReport shr = new SoldHomesReport();
-            shr.iFoundSoldHomes = shResultsList;
+            //shr.iFoundSoldHomes = shResultsList;
             shr.Show();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");

@@ -2,7 +2,7 @@
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    public class SoldHomesView : HomeView
+    public class XSoldHomesView : HomeView
     {
         public string BuyerFirstLastName { get; set; }
         public string AgentFirstLastName { get; set; }

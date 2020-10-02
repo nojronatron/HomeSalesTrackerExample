@@ -9,14 +9,12 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type data:HomesForSaleReportModel}">
-        </DataTemplate>
+        <DataTemplate DataType="{x:Type data:HomesForSaleReportModel}"></DataTemplate>
     </UserControl.Resources>
     
     <Grid Background="Azure">
         <DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" 
-                  CanUserAddRows="False" Margin="10" Background="Azure">
-        </DataGrid>
+                  CanUserAddRows="False" Margin="10"></DataGrid>
     </Grid>
 
 <!--<DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" CanUserAddRows="False" Margin="20" Background="Azure">

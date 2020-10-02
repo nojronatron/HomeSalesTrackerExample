@@ -65,10 +65,12 @@
     <Compile Include="DisplayModels\HomeView.cs" />
     <Compile Include="DisplayModels\OwnerView.cs" />
     <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
-    <Compile Include="DisplayModels\SoldHomesView.cs" />
+    <Compile Include="DisplayModels\XSoldHomesView.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Report Models\HomesForSaleReportModel.cs" />
+    <Compile Include="Report Models\SoldHomesReportModel.cs" />
     <Compile Include="ReportsViewModels\HomesForSaleViewModel.cs" />
+    <Compile Include="ReportsViewModels\SoldHomesViewModel.cs" />
     <Compile Include="ReportWindows\BuyersResultsReport.xaml.cs">
       <DependentUpon>BuyersResultsReport.xaml</DependentUpon>
     </Compile>
@@ -102,6 +104,9 @@
     </Compile>
     <Compile Include="Views\HomesForSaleView.xaml.cs">
       <DependentUpon>HomesForSaleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SoldHomesView.xaml.cs">
+      <DependentUpon>SoldHomesView.xaml</DependentUpon>
     </Compile>
     <Page Include="ReportWindows\BuyersResultsReport.xaml">
       <SubType>Designer</SubType>
@@ -149,6 +154,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomesForSaleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SoldHomesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
