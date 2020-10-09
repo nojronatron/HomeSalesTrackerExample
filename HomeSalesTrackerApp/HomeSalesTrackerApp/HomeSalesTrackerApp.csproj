@@ -68,8 +68,10 @@
     <Compile Include="DisplayModels\XSoldHomesView.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Report Models\HomesForSaleReportModel.cs" />
+    <Compile Include="Report Models\RealEstateCoReportModel.cs" />
     <Compile Include="Report Models\SoldHomesReportModel.cs" />
     <Compile Include="ReportsViewModels\HomesForSaleViewModel.cs" />
+    <Compile Include="ReportsViewModels\RealEstateCoReportViewModel.cs" />
     <Compile Include="ReportsViewModels\SoldHomesViewModel.cs" />
     <Compile Include="ReportWindows\BuyersResultsReport.xaml.cs">
       <DependentUpon>BuyersResultsReport.xaml</DependentUpon>
@@ -99,11 +101,17 @@
     <Compile Include="ReportWindows\HomesForSaleReport.xaml.cs">
       <DependentUpon>HomesForSaleReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReportWindows\RealEstateCoReport.xaml.cs">
+      <DependentUpon>RealEstateCoReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
       <DependentUpon>SoldHomesReport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomesForSaleView.xaml.cs">
       <DependentUpon>HomesForSaleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RealEstateCoReportView.xaml.cs">
+      <DependentUpon>RealEstateCoReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoldHomesView.xaml.cs">
       <DependentUpon>SoldHomesView.xaml</DependentUpon>
@@ -149,11 +157,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ReportWindows\RealEstateCoReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ReportWindows\SoldHomesReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomesForSaleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RealEstateCoReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

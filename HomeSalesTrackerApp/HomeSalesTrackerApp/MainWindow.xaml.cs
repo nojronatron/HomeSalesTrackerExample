@@ -1015,7 +1015,8 @@ namespace HomeSalesTrackerApp
 
         private void menuDisplayRECoTotals_Click(object sender, RoutedEventArgs e)
         {
-            //
+            var rectr = new RealEstateCoReport();
+            rectr.Show();
         }
 
         private void menuDisplayHomesForSale_Click(object sender, RoutedEventArgs e)
@@ -1054,7 +1055,6 @@ namespace HomeSalesTrackerApp
             int zero = 0;
             int number = 2 / zero;
         }
-
 
     }
 }
