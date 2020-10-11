@@ -18,9 +18,6 @@
                 <MenuItem Header="Homes" Click="MenuSearchHomes_Click"></MenuItem>
                 <MenuItem Header="Homes For Sale" Click="MenuSearchHomesForSale_Click"></MenuItem>
                 <MenuItem Header="Sold Homes" Click="MenuSearchSoldHomes_Click"></MenuItem>
-                <!--<MenuItem Header="Owners" Click="MenuSearchOwners_Click"></MenuItem>
-                <MenuItem Header="Agents" Click="MenuSearchAgents_Click"></MenuItem>
-                <MenuItem Header="Buyers" Click="MenuSearchBuyers_Click"></MenuItem>-->
                 <MenuItem Header="People" Click="MenuSearchPeople_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10" />
@@ -36,8 +33,6 @@
             <MenuItem Header="Update">
                 <Separator/>
                 <MenuItem Header="Home" Click="MenuUpdateHome_Click"></MenuItem>
-                <!--<MenuItem Header="Home For Sale" Click="MenuUpdateHomeForSale_Click"></MenuItem>-->
-                <!--<MenuItem Header="Sold Home" Click="menuUpdateSoldHome_Click"></MenuItem>-->
                 <MenuItem Header="Home As Sold" Click="MenuUpdateHomeAsSold_Click"></MenuItem>
                 <MenuItem Header="Agent" Click="MenuUpdateAgent_Click"></MenuItem>
                 <MenuItem Header="Buyer" Click="MenuUpdateBuyer_Click"></MenuItem>
@@ -58,8 +53,8 @@
                 <MenuItem Header="Real Estate Co. Totals" Click="menuDisplayRECoTotals_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
-            <MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>
-            <Separator Width="10"/>
+            <!--<MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>
+            <Separator Width="10"/>-->
             <MenuItem Header="_About" Click="MenuAboutAppInfo_Click" ></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">

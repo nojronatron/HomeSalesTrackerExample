@@ -137,7 +137,6 @@ namespace HomeSalesTrackerApp
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            //  TODO: Debug Search for Sold Homes workflow
             var soldHomes = (from hs in homeSalesCollection
                              where hs.SoldDate != null
                              select hs).ToList();
@@ -146,9 +145,8 @@ namespace HomeSalesTrackerApp
             var searchHomesResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            string[] searchTermsArr = searchTermsText.Split(',');
-            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
-            var shvResults = new List<XSoldHomesView>();
+            searchTerms = FormatSearchTerms(searchTermsText);
+            var shvResults = new List<SoldHomesView>();
 
             if (searchTerms.Count > 0)
             {
@@ -162,7 +160,7 @@ namespace HomeSalesTrackerApp
                               && hs.SaleID == shsr.SaleID
                               && h.HomeID == shsr.HomeID
                               && shsr.SoldDate != null
-                              select new XSoldHomesView
+                              select new SoldHomesView
                               {
                                   HomeID = hs.HomeID,
                                   Address = h.Address,
@@ -184,7 +182,7 @@ namespace HomeSalesTrackerApp
                                      && h.HomeID == shr.HomeID
                                      && h.HomeID == hs.HomeID
                                      && hs.SoldDate != null
-                                     select new XSoldHomesView
+                                     select new SoldHomesView
                                      {
                                          HomeID = hs.HomeID,
                                          Address = h.Address,
@@ -235,9 +233,7 @@ namespace HomeSalesTrackerApp
             var searchResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            string[] searchTermsArr = searchTermsText.Split(',');
-            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
-
+            searchTerms = FormatSearchTerms(searchTermsText);
             if (searchTerms.Count > 0)
             {
                 HomeSearchHelper(ref searchResults, ref searchTerms);
@@ -279,8 +275,7 @@ namespace HomeSalesTrackerApp
             var searchResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            string[] searchTermsArr = searchTermsText.Split(',');
-            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
+            searchTerms = FormatSearchTerms(searchTermsText);
             HomeSalesSearchHelper(ref searchResults, ref searchTerms, sold: false);
 
             if (searchResults.Count > 0)
@@ -371,7 +366,6 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage(statusMessage.ToString());
             }
 
-            //  Update collections
             InitializeCollections();
         }
 
@@ -523,7 +517,6 @@ namespace HomeSalesTrackerApp
             ClearSearchResultsViews();
         }
 
-
         /// <summary>
         /// Display a summary of Sold Homes.
         /// </summary>
@@ -531,54 +524,7 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuDisplaySoldHomes_Click(object sender, RoutedEventArgs e)
         {
-            //var soldHomesQuery = (from hs in homeSalesCollection
-            //                      where hs.SoldDate != null
-            //                      select hs).ToList();
-
-            //var shResultsList = new List<XSoldHomesView>();
-            //XSoldHomesView shv = null;
-            //foreach (var soldHome in soldHomesQuery)
-            //{
-            //    var homeInstance = homesCollection.Where(h => h.HomeID == soldHome.HomeID).FirstOrDefault();
-            //    var recoInstance = reCosCollection.Where(reco => reco.CompanyID == soldHome.CompanyID).FirstOrDefault();
-            //    shv = new XSoldHomesView()
-            //    {
-            //        HomeID = soldHome.HomeID,
-            //        Address = homeInstance.Address,
-            //        City = homeInstance.City,
-            //        State = homeInstance.State,
-            //        Zip = homeInstance.Zip,
-            //        RealEstateCompanyName = recoInstance.CompanyName,
-            //        SaleAmount = soldHome.SaleAmount,
-            //        SoldDate = soldHome.SoldDate
-            //    };
-
-            //    if (soldHome.Agent != null)
-            //    {
-            //        var personAgent = peopleCollection.Where(p => p.PersonID == soldHome.AgentID).FirstOrDefault();
-            //        string firstLastName = $"{ personAgent.FirstName } { personAgent.LastName }";
-            //        shv.AgentFirstLastName = firstLastName;
-            //        shv.FirstName = personAgent.FirstName;
-            //        shv.LastName = personAgent.LastName;
-            //        shv.Phone = personAgent.Phone;
-            //        shv.Email = personAgent.Email ?? null;
-            //    }
-
-            //    if (soldHome.Buyer != null)
-            //    {
-            //        var personBuyer = peopleCollection.Where(p => p.PersonID == soldHome.BuyerID).FirstOrDefault();
-            //        string firstLastName = $"{ personBuyer.FirstName } { personBuyer.LastName }";
-            //        shv.BuyerFirstLastName = firstLastName;
-            //        shv.FirstName = personBuyer.FirstName;
-            //        shv.LastName = personBuyer.LastName;
-            //        shv.Phone = personBuyer.Phone;
-            //        shv.Email = personBuyer.Email ?? null;
-            //    }
-            //    shResultsList.Add(shv);
-            //}
-
             SoldHomesReport shr = new SoldHomesReport();
-            //shr.iFoundSoldHomes = shResultsList;
             shr.Show();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
@@ -671,9 +617,6 @@ namespace HomeSalesTrackerApp
 
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
         {
-            //  TODO: Complete Upate Home workflow.
-            //  Home must already exist
-            //  Menu -> Search -> Home, highlight Home in results, then Menu -> Update -> Home
             try
             {
                 HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
@@ -726,78 +669,6 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage("Select a Home that is not already for Sale then click Menu Add Home For Sale.");
                 logger.Data("MenuAddHomesForSale Exception", ex.Message);
                 logger.Flush();
-            }
-        }
-
-        /// <summary>
-        /// Update selected HomeForSale. Requires: HomeForSale instance as a Collection of a Home, a RE Company, and of an Agent, at a minimum.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuUpdateHomeForSale_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var statusMessage = new StringBuilder("Ok. ");
-                HomeForSaleView selectedHomesaleView = null;
-                selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
-                FoundHomesForSaleView.SelectedIndex = -1;
-                var homeid = selectedHomesaleView.HomeID;
-                HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
-                                                                   .FirstOrDefault();
-
-                var hfsHome = new Home();
-                hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
-                if (hfsHome != null)
-                {
-                    var hfsBuyer = new Person();
-                    hfsBuyer = peopleCollection.Where(p => p.PersonID == hfsHomesale.BuyerID).FirstOrDefault();
-                    var hfsAgent = new Person();
-                    hfsAgent = peopleCollection.Where(p => p.Agent.AgentID == hfsHomesale.AgentID).FirstOrDefault();
-                    if (hfsAgent != null)
-                    {
-                        var hfsReco = new RealEstateCompany();
-                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
-                        if (hfsReco != null)
-                        {
-                            var huw = new HomeUpdaterWindow();
-                            huw.UpdateType = "HomeSale";
-                            huw.UpdateHomeSale = hfsHomesale;
-                            huw.UpdateAgent = hfsAgent.Agent;
-                            huw.UpdateBuyer = hfsBuyer.Buyer;
-                            huw.UpdateHome = hfsHome;
-                            huw.UpdateReco = hfsReco;
-                            huw.Title = "Update Home: For Sale";
-                            DisplayStatusMessage("Loading update window");
-                            huw.Show();
-                        }
-                        else
-                        {
-                            statusMessage.Append("RE Company not associated with this Home For Sale record. ");
-                        }
-
-                    }
-                    else
-                    {
-                        statusMessage.Append($"Agent not associated with this Home For Sale record. ");
-                    }
-
-                }
-                else
-                {
-                    statusMessage.Append($"DB Data problem: No Home found for this Home For Sale record. ");
-                }
-
-                if (statusMessage.Length > 4)
-                {
-                    DisplayStatusMessage(statusMessage.ToString());
-                }
-            }
-            catch
-            {
-                logger.Data("Main Window MenuUpdateHomeForSale", "You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
-                logger.Flush();
-                DisplayStatusMessage("You must select a Home For Sale in order to Update it. Did you mean to Add a Home For Sale instead?");
             }
         }
 
@@ -909,9 +780,7 @@ namespace HomeSalesTrackerApp
             var searchResults = new List<Person>();
             var searchTerms = new List<string>();
             string searchTermsText = searchTermsTextbox.Text;
-            string[] searchTermsArr = searchTermsText.Split(',');
-            searchTerms = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrWhiteSpace(st) == false).ToList();
-
+            searchTerms = FormatSearchTerms(searchTermsText);
             if (searchTerms.Count > 0)
             {
                 PersonSearchHelper(ref searchResults, ref searchTerms);
@@ -995,11 +864,6 @@ namespace HomeSalesTrackerApp
 
         }
 
-        private void menuUpdateSoldHome_Click(object sender, RoutedEventArgs e)
-        {
-            //
-        }
-
         private void menuDisplayRECoTotals_Click(object sender, RoutedEventArgs e)
         {
             var rectr = new RealEstateCoReport();
@@ -1010,20 +874,6 @@ namespace HomeSalesTrackerApp
         {
             HomesForSaleReport hfsr = new HomesForSaleReport();
             hfsr.Show();
-        }
-
-        private void RemoveHomeSaleAndUpdateCollection(HomeSale homesale)
-        {
-            if (LogicBroker.RemoveEntity<HomeSale>(homesale))
-            {
-                InitHomesCollection();
-                InitHomeSalesCollection();
-                InitRealEstateCompaniesCollection();
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to update database with this home.");
-            }
         }
 
         private void MenuSearchPeople_Click(object sender, RoutedEventArgs e)

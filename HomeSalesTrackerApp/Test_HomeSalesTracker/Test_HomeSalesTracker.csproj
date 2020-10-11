@@ -65,7 +65,6 @@
     <Compile Include="Extensions\PersonTests.cs" />
     <Compile Include="Extensions\RealEstateCompanyTests.cs" />
     <Compile Include="Helpers\BackUpDataFilesTests.cs" />
-    <Compile Include="Collections\CollectionsManagerTests.cs" />
     <Compile Include="Helpers\EntityListsTests.cs" />
     <Compile Include="Helpers\FilesHelperTests.cs" />
     <Compile Include="Helpers\LoggerTests.cs" />

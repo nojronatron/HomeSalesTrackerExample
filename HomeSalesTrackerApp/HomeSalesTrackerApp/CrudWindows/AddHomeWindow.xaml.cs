@@ -15,12 +15,12 @@ namespace HomeSalesTrackerApp
     public partial class AddHomeWindow : Window
     {
         private bool IsButtonClose = false;
-        public bool UpdateInsteadOfAdd = false; //  Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
+        //  Note: Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
+        public bool UpdateInsteadOfAdd = false; 
         public Home NewHome { get; set; }
         public Owner AnOwner { get; set; }
         public Person APerson { get; set; }
         public string AddType { get; set; }
-        //public static Person NewPersonAddedToCollection { get; set; }
 
         public AddHomeWindow()
         {
@@ -42,18 +42,8 @@ namespace HomeSalesTrackerApp
                 statusBarText.Text = $"Add a new { this.AddType } to the database.";
             }
 
-            //MainWindow.peopleCollection.listOfHandlers += AlertPersonAddedToCollection;
             RefreshOwnersComboBox();
-            //PotentialOwnerPeopleCombobox.SelectedIndex = -1;
         }
-
-        //public void AlertPersonAddedToCollection(Person p)
-        //{
-        //    NewPersonAddedToCollection = p;
-        //    //  TODO: After Golden Paths completed look at attempting to implement this notification regime.
-        //    //LogicBroker.SaveEntity<Person>(p);
-        //    RefreshOwnersComboBox();
-        //}
 
         private void AddNewHomeButton_Click(object sender, RoutedEventArgs e)
         {

@@ -84,122 +84,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private bool RehydrateAgent()
-        {
-            Person tempAgent = null;
-            if (UpdateAgent == null && UpdatePerson != null)
-            {
-                tempAgent = MainWindow.peopleCollection.Where(p => p.PersonID == UpdatePerson.PersonID).FirstOrDefault();
-            }
-            else if (UpdateAgent != null)
-            {
-                tempAgent = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateAgent.AgentID).FirstOrDefault();
-            }
-
-            if (tempAgent != null)
-            {
-                UpdateAgent = tempAgent.Agent;
-                RealEstateCompany tempReco = MainWindow.reCosCollection.Where(re => re.CompanyID == tempAgent.Agent.CompanyID).FirstOrDefault();
-                if (tempReco != null)
-                {
-                    UpdateAgent.RealEstateCompany = tempReco;
-                    UpdateAgent.CompanyID = tempReco.CompanyID;
-                }
-
-                List<HomeSale> tempHomesalesList = MainWindow.homeSalesCollection.Where(hs => hs.AgentID == tempAgent.Agent.AgentID).ToList();
-                if (tempHomesalesList != null)
-                {
-                    UpdateAgent.HomeSales = tempHomesalesList;
-                }
-                return true;
-
-            }
-
-            return false;
-        }
-
-        private bool RehydrateBuyer()
-        {
-            if (UpdateBuyer != null)
-            {
-                Person tempBuyer = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
-                if (tempBuyer != null)
-                {
-                    UpdateBuyer = tempBuyer.Buyer;
-                    List<HomeSale> tempHomesalesList = MainWindow.homeSalesCollection.Where(hs => hs.BuyerID == tempBuyer.Buyer.BuyerID).ToList();
-                    if (tempHomesalesList.Count > 0)
-                    {
-                        UpdateBuyer.HomeSales = tempHomesalesList;
-                    }
-                    return true;
-
-                }
-            }
-
-            return false;
-        }
-
-        private bool RehydrateOwner()
-        {
-            //  TODO: Wire up RehydrateOwner for the appropriate code path
-            if (UpdateOwner != null)
-            {
-                Person tempOwner = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateOwner.OwnerID).FirstOrDefault();
-                if (tempOwner != null)
-                {
-                    UpdateOwner = tempOwner.Owner;
-                    List<Home> tempHomesList = MainWindow.homesCollection.Where(h => h.OwnerID == UpdateOwner.OwnerID).ToList();
-                    if (tempHomesList.Count > 0)
-                    {
-                        UpdateOwner.Homes = tempHomesList;
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool RehydrateHome()
-        {
-            //  TODO: Wire up RehydrateHome for an appropriate code path
-            if (UpdateHome != null)
-            {
-                Home tempHome = MainWindow.homesCollection.Where(h => h.HomeID == UpdateHome.HomeID).FirstOrDefault();
-                if (tempHome != null)
-                {
-                    UpdateHome = tempHome;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool RehydrateHomeSale()
-        {
-            //  TODO: Wire up RehydrateHomeSale for an appropriate code path
-            if (UpdateHomeSale != null)
-            {
-                HomeSale tempHomeSale = MainWindow.homeSalesCollection.Where(hs => hs.HomeID == UpdateHomeSale.HomeID).FirstOrDefault();
-                if (tempHomeSale != null)
-                {
-                    UpdateHomeSale = tempHomeSale;
-                    UpdateHomeSale.Agent = tempHomeSale.Agent;
-                    UpdateHomeSale.Buyer = tempHomeSale.Buyer;
-                    RealEstateCompany tempReco = MainWindow.reCosCollection.Where(re => re.CompanyID == UpdateHomeSale.AgentID).FirstOrDefault();
-                    if (tempReco != null)
-                    {
-                        UpdateHomeSale.RealEstateCompany = tempReco;
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private bool RehydrateRealEstateCompany()
         {
             if (UpdateReco != null)
@@ -715,7 +599,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                         {
                             if (BuyerUpdated && HomesaleUpdated)
                             {
-                                //UpdateBuyer.HomeSales.Add(UpdateHomeSale);
                                 var b = new Buyer()
                                 {
                                     BuyerID = UpdateBuyer.BuyerID,

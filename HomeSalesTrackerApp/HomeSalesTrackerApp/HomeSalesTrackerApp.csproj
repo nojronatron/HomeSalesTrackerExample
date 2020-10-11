@@ -65,7 +65,7 @@
     <Compile Include="DisplayModels\HomeView.cs" />
     <Compile Include="DisplayModels\OwnerView.cs" />
     <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
-    <Compile Include="DisplayModels\XSoldHomesView.cs" />
+    <Compile Include="DisplayModels\SoldHomesView.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Report Models\AgentsReportModel.cs" />
     <Compile Include="Report Models\BuyersReportModel.cs" />
@@ -96,7 +96,6 @@
     <Compile Include="DisplayModels\HomeForSaleView.cs" />
     <Compile Include="DisplayModels\HomeSearchView.cs" />
     <Compile Include="DisplayModels\PersonView.cs" />
-    <Compile Include="Collections\CollectionsManager.cs" />
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
     </Compile>

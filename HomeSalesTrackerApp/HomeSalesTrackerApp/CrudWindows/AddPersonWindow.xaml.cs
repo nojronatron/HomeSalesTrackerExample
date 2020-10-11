@@ -107,22 +107,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         }
 
         /// <summary>
-        /// Takes a Person instance and saves it to the DB then synchronizes the People Collection with the DB to ensure each instance has an ID.
-        /// </summary>
-        /// <param name="p"></param>
-        //private void SavePersonAndRefreshCollection(Person p)
-        //{
-        //    if (SaveToEntities())
-        //    {
-        //        MainWindow.InitPeopleCollection();
-        //    }
-        //    else
-        //    {
-        //        DisplayStatusMessage("Unable to add Owner to the database.");
-        //    }
-        //}
-
-        /// <summary>
         /// Updates this.newPerson field with a Person Object containing fields from user input and returns an empty string.
         /// If user input(s) do not pass validation then a null Person is stored in this.newPerson and the validation error(s) are returns as a string.
         /// </summary>
@@ -226,24 +210,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Closing.");
             this.Close();
         }
-
-        /// <summary>
-        /// Automates saving a newly created Agent, Buyer, or Owner instance without updating any of the four Collections.
-        /// </summary>
-        //private bool SaveToEntities()
-        //{
-        //    bool result = false;
-        //    int count = 0;
-        //    if (LogicBroker.SaveEntity<Person>(NewPerson))
-        //    {
-        //        count++;
-        //    }
-        //    if (count > 0)
-        //    {
-        //        result = true;
-        //    }
-        //    return result;
-        //}
 
         private void LoadAgentPanel()
         {
