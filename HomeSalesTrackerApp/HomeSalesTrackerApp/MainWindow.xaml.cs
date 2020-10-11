@@ -586,29 +586,16 @@ namespace HomeSalesTrackerApp
 
         private void MenuDisplayBuyers_Click(object sender, RoutedEventArgs e)
         {
-            var foundBuyers = (from p in peopleCollection
-                               where p.Buyer != null
-                               select new BuyerView
-                               {
-                                   PersonID = p.PersonID,
-                                   FirstName = p.FirstName,
-                                   LastName = p.LastName,
-                                   Phone = p.Phone,
-                                   Email = p.Email ?? null,
-                                   CreditRating = p.Buyer.CreditRating ?? 0
-                               });
-            var brr = new BuyersResultsReport();
-            brr.iFoundBuyers = foundBuyers;
-            brr.Show();
-            foundBuyers = null;
+            var buyersResultsReport = new BuyersResultsReport();
+            buyersResultsReport.Show();
             ClearSearchResultsViews();
-            DisplayStatusMessage("Ready");
+            DisplayStatusMessage("Ready");        
         }
 
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)
         {
-            var arr = new AgentsResultsReport();
-            arr.Show();
+            var agentsResultsReport = new AgentsResultsReport();
+            agentsResultsReport.Show();
         }
 
         private void MenuAboutAppInfo_Click(object sender, RoutedEventArgs e)

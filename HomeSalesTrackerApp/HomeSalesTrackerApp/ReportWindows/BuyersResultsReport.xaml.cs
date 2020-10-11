@@ -1,7 +1,4 @@
-﻿using HomeSalesTrackerApp.DisplayModels;
-
-using System.Collections.Generic;
-using System.Linq;
+﻿using HomeSalesTrackerApp.ReportsViewModels;
 using System.Windows;
 
 namespace HomeSalesTrackerApp
@@ -11,34 +8,11 @@ namespace HomeSalesTrackerApp
     /// </summary>
     public partial class BuyersResultsReport : Window
     {
-        public IEnumerable<BuyerView> iFoundBuyers { get; set; }
-        public List<BuyerView> FoundBuyers { get; set; }
-
         public BuyersResultsReport()
         {
             InitializeComponent();
-        }
-
-        private void MenuExit_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            RefreshReportView();
-        }
-
-        private void MenuRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshReportView();
-        }
-
-        private void RefreshReportView()
-        {
-            //  use a view model to display the results!
-            FoundBuyers = iFoundBuyers.ToList();
-            buyersResultsListView.ItemsSource = FoundBuyers;
+            var buyersReportViewModel = new BuyersReportViewModel();
+            DataContext = buyersReportViewModel;
         }
 
     }
