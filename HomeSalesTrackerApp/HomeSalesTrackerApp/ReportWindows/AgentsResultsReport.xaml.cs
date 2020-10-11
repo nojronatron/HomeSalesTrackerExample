@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using HomeSalesTrackerApp.ReportsViewModels;
+using System.Windows;
 
 namespace HomeSalesTrackerApp
 {
@@ -10,17 +11,8 @@ namespace HomeSalesTrackerApp
         public AgentsResultsReport()
         {
             InitializeComponent();
-        }
-
-
-        private void menuExit_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void DisplayStatusMessage(string message)
-        {
-            statusBarText.Text = message.Trim().ToString();
+            var agentsReportViewModel = new AgentsReportViewModel();
+            DataContext = agentsReportViewModel;
         }
 
     }
