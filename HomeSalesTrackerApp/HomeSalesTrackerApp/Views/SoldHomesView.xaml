@@ -3,18 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HomeSalesTrackerApp.Views"
              xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
 
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type data:SoldHomesReportModel}"></DataTemplate>
+        <DataTemplate DataType="{x:Type data:SoldHomesReportModel}" />
     </UserControl.Resources>
 
-    <Grid Background="Azure">
-        <DataGrid ItemsSource="{Binding SoldHomes}" AlternatingRowBackground="LightGray" 
-                  CanUserAddRows="False" Margin="10"></DataGrid>
+    <Grid>
+        <DataGrid ItemsSource="{Binding SoldHomes, Mode=OneWay}" CanUserAddRows="False" 
+                  Background="Azure" Margin="10" AutoGenerateColumns="False" TextBlock.TextAlignment="Center" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Path=HomeID}" ></DataGridTextColumn>
+                <DataGridTextColumn Header="Address" Binding="{Binding Path=Address}"></DataGridTextColumn>
+                <DataGridTextColumn Header="City" Binding="{Binding Path=City}"></DataGridTextColumn>
+                <DataGridTextColumn Header="State" Binding="{Binding Path=State}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Zip Code" Binding="{Binding Path=Zip}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Buyer's Name" Binding="{Binding Path=BuyerFullName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Agent's Name" Binding="{Binding Path=AgentFullName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Real Estate Company" Binding="{Binding Path=CompanyName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Sale Amount" Binding="{Binding Path=SaleAmount, StringFormat=C0}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Sale Date" Binding="{Binding Path=SoldDate, StringFormat=D}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
     
 </UserControl>

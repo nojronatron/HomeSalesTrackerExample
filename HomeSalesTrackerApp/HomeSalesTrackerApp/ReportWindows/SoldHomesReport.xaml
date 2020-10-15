@@ -1,12 +1,11 @@
-﻿<Window x:Class="HomeSalesTrackerApp.SoldHomesReport"
+﻿<Window x:Class="HomeSalesTrackerApp.ReportWindows.SoldHomesReport"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HomeSalesTrackerApp"
         xmlns:views="clr-namespace:HomeSalesTrackerApp.Views"
         mc:Ignorable="d"
-        Title="Sold Homes Report" Height="300" Width="1000" >
+        Title="Sold Homes Report" Height="250" Width="900" >
 
     <Grid>
         <views:SoldHomesView x:Name="SoldHomesViewControl" />

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
     public class SoldHomesReportModel :
-        INotifyPropertyChanged, IEquatable<SoldHomesReportModel>, IEqualityComparer<SoldHomesReportModel>
+        IEquatable<SoldHomesReportModel>, IEqualityComparer<SoldHomesReportModel>
     {
         private int _homeID;
 
@@ -18,7 +16,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._homeID != value)
                 {
                     _homeID = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -33,7 +30,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._address != value)
                 {
                     _address = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -48,7 +44,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._city != value)
                 {
                     _city = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -63,7 +58,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._state != value)
                 {
                     _state = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -72,13 +66,15 @@ namespace HomeSalesTrackerApp.Report_Models
 
         public string Zip
         {
-            get { return _zip; }
+            get
+            {
+                return $"{ _zip.Substring(0, 5)}-{ _zip.Substring(5, 4) }";
+            }
             set
             {
                 if (this._zip != value)
                 {
                     _zip = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -94,8 +90,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._buyerFirstName != value)
                 {
                     _buyerFirstName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(BuyerFullName));
                 }
             }
         }
@@ -110,8 +104,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._buyerLastName != value)
                 {
                     _buyerLastName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(BuyerFullName));
                 }
             }
         }
@@ -126,8 +118,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._agentFirstName != value)
                 {
                     _agentFirstName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(AgentFullName));
                 }
             }
         }
@@ -142,8 +132,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._agentLastName != value)
                 {
                     _agentLastName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(AgentFullName));
                 }
             }
         }
@@ -158,7 +146,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._companyName != value)
                 {
                     _companyName = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -173,7 +160,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._saleAmount != value)
                 {
                     this._saleAmount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -188,7 +174,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._soldDate != value)
                 {
                     this._soldDate = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -207,13 +192,6 @@ namespace HomeSalesTrackerApp.Report_Models
             {
                 return $"{ this._agentFirstName } { this._agentLastName }";
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public bool Equals(SoldHomesReportModel other)

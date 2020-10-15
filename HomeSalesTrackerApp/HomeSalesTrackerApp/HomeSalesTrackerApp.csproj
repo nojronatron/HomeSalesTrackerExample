@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\CurrencyDisplayConverter.cs" />
     <Compile Include="DisplayModels\AgentView.cs" />
     <Compile Include="DisplayModels\HomeView.cs" />
     <Compile Include="DisplayModels\OwnerView.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Report Models\AgentsReportModel.cs" />
     <Compile Include="Report Models\BuyersReportModel.cs" />
     <Compile Include="Report Models\HomesForSaleReportModel.cs" />
+    <Compile Include="Report Models\PersonBaseModel.cs" />
     <Compile Include="Report Models\RealEstateCoReportModel.cs" />
     <Compile Include="Report Models\SoldHomesReportModel.cs" />
     <Compile Include="ReportsViewModels\AgentsReportViewModel.cs" />

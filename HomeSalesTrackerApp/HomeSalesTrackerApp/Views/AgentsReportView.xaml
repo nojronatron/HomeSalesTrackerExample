@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="1000">
+             >
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:AgentsReportModel}" />
@@ -13,6 +13,19 @@
     
     <Grid>
         <DataGrid ItemsSource="{Binding AgentsList, Mode=OneWay}" CanUserAddRows="False" Background="Azure" 
-                  Margin="10" />
+                  Margin="10" AutoGenerateColumns="False" TextBlock.TextAlignment="Center" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding AgentID}" />
+                <DataGridTextColumn Header="Agent Name" Binding="{Binding FullName}" />
+                <DataGridTextColumn Header="RE Company" Binding="{Binding RealEstateCompany}" />
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" />
+                <DataGridTextColumn Header="Email" Binding="{Binding EMail}" />
+                <DataGridTextColumn Header="Commission" Binding="{Binding Commission, StringFormat=P0}" />
+                <DataGridTextColumn Header="Sold Homes" Binding="{Binding TotalHomesSold}" />
+                <DataGridTextColumn Header="Homes On Market" Binding="{Binding HomesOnMarket}" />
+                <DataGridTextColumn Header="Commissions Paid" Binding="{Binding TotalCommissionsPaid, StringFormat=C}" />
+                <DataGridTextColumn Header="Total Sales" Binding="{Binding TotalSales, StringFormat=C0}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

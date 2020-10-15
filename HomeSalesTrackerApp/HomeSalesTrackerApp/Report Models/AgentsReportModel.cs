@@ -1,33 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
 	public class AgentsReportModel :
+		PersonBaseModel,
 		IEqualityComparer<AgentsReportModel>, IEquatable<AgentsReportModel>
 	{
+		
 		private int _agentID;
 
 		public int AgentID
 		{
 			get { return _agentID; }
-			set { _agentID = value; }
-		}
-
-		private string _firstName;
-
-		public string FirstName
-		{
-			get { return _firstName; }
-			set { _firstName = value; }
-		}
-
-		private string _lastName;
-
-		public string LastName
-		{
-			get { return _lastName; }
-			set { _lastName = value; }
+			set
+			{
+				if (_agentID != value)
+				{
+					_agentID = value;
+				}
+			}
 		}
 
 		private string _realEstateCompany = "Agent no longer active";
@@ -35,23 +29,13 @@ namespace HomeSalesTrackerApp.Report_Models
 		public string RealEstateCompany
 		{
 			get { return _realEstateCompany; }
-			set { _realEstateCompany = value; }
-		}
-
-		private string _phone;
-
-		public string Phone
-		{
-			get { return _phone; }
-			set { _phone = value; }
-		}
-
-		private string _eMail;
-
-		public string EMail
-		{
-			get { return _eMail; }
-			set { _eMail = value; }
+			set
+			{
+				if (_realEstateCompany != value)
+				{
+					_realEstateCompany = value;
+				}
+			}
 		}
 
 		private decimal _commission;
@@ -59,7 +43,13 @@ namespace HomeSalesTrackerApp.Report_Models
 		public decimal Commission
 		{
 			get { return _commission; }
-			set { _commission = value; }
+			set
+			{
+				if (_commission != value)
+				{
+					_commission = value;
+				}
+			}
 		}
 
 		private int _totalHomesSold;
@@ -67,7 +57,27 @@ namespace HomeSalesTrackerApp.Report_Models
 		public int TotalHomesSold
 		{
 			get { return _totalHomesSold; }
-			set { _totalHomesSold = value; }
+			set
+			{
+				if (_totalHomesSold != value)
+				{
+					_totalHomesSold = value;
+				}
+			}
+		}
+
+		private int _homesOnMarket;
+
+		public int HomesOnMarket
+		{
+			get { return _homesOnMarket; }
+			set
+			{
+				if (_homesOnMarket != value)
+				{
+					_homesOnMarket = value;
+				}
+			}
 		}
 
 		private decimal _ttlCommissionsPaid;
@@ -75,7 +85,13 @@ namespace HomeSalesTrackerApp.Report_Models
 		public decimal TotalCommissionsPaid
 		{
 			get { return _ttlCommissionsPaid; }
-			set { _ttlCommissionsPaid = value; }
+			set
+			{
+				if (_ttlCommissionsPaid != value)
+				{
+					_ttlCommissionsPaid = value;
+				}
+			}
 		}
 
 		private decimal _ttlSalesOfSoldHomes;
@@ -83,10 +99,14 @@ namespace HomeSalesTrackerApp.Report_Models
 		public decimal TotalSales
 		{
 			get { return _ttlSalesOfSoldHomes; }
-			set { _ttlSalesOfSoldHomes = value; }
+			set
+			{
+				if (_ttlSalesOfSoldHomes != value)
+				{
+					_ttlSalesOfSoldHomes = value;
+				}
+			}
 		}
-
-		public string FullName() => $"{ FirstName } { LastName }";
 
 		public bool Equals(AgentsReportModel x, AgentsReportModel y)
 		{
@@ -124,11 +144,6 @@ namespace HomeSalesTrackerApp.Report_Models
 		public override int GetHashCode()
 		{
 			return -2088337453 + AgentID.GetHashCode();
-		}
-
-		public override string ToString()
-		{
-			return base.ToString();
 		}
 
 		public override bool Equals(object obj)

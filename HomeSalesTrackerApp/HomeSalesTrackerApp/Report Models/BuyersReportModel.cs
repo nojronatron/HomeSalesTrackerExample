@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace HomeSalesTrackerApp.Report_Models
 {
     public class BuyersReportModel :
+		PersonBaseModel,
 		IEquatable<BuyersReportModel>, IEqualityComparer<BuyersReportModel>
     {
 		private int _buyerID;
@@ -12,38 +13,6 @@ namespace HomeSalesTrackerApp.Report_Models
 		{
 			get { return _buyerID; }
 			set { _buyerID = value; }
-		}
-
-		private string _firstName;
-
-		public string FirstName
-		{
-			get { return _firstName; }
-			set { _firstName = value; }
-		}
-
-		private string _lastName;
-
-		public string LastName
-		{
-			get { return _lastName; }
-			set { _lastName = value; }
-		}
-
-		private string _phone;
-
-		public string Phone
-		{
-			get { return _phone; }
-			set { _phone = value; }
-		}
-
-		private string _eMail;
-
-		public string EMail
-		{
-			get { return _eMail; }
-			set { _eMail = value; }
 		}
 
 		private int? _creditRating;
@@ -58,7 +27,7 @@ namespace HomeSalesTrackerApp.Report_Models
 
 		public DateTime SaleDate
 		{
-			get { return _saleDate; }
+			get { return _saleDate.Date; }
 			set { _saleDate = value; }
 		}
 
@@ -98,24 +67,25 @@ namespace HomeSalesTrackerApp.Report_Models
 
 		public string Zip
 		{
-			get { return _zip; }
+			get
+			{
+				return $"{ _zip.Substring(0, 5) }-{ _zip.Substring(5, 4) }";
+			}
 			set { _zip = value; }
 		}
-
-		public string FullName => $"{ this.FirstName } { this.LastName }";
 
 		public override bool Equals(object obj)
 		{
 			return obj is BuyersReportModel model &&
-				   Address == model.Address &&
-				   Zip == model.Zip;
+				   base.Equals(obj) &&
+				   BuyerID == model.BuyerID;
 		}
 
 		public override int GetHashCode()
 		{
-			var hashCode = -1748418241;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Zip);
+			var hashCode = -62914997;
+			hashCode = hashCode * -1521134295 + base.GetHashCode();
+			hashCode = hashCode * -1521134295 + BuyerID.GetHashCode();
 			return hashCode;
 		}
 
@@ -129,7 +99,7 @@ namespace HomeSalesTrackerApp.Report_Models
 			{
 				return true;
 			}
-			return this.Address.Equals(other.Address) && this.Zip.Equals(other.Zip);
+			return BuyerID.Equals(other.BuyerID);
 		}
 
 		public bool Equals(BuyersReportModel x, BuyersReportModel y)
@@ -142,12 +112,12 @@ namespace HomeSalesTrackerApp.Report_Models
 			{
 				return false;
 			}
-			return x.Address == y.Address && x.Address == y.Address;
+			return x.BuyerID == y.BuyerID;
 		}
 
 		public int GetHashCode(BuyersReportModel obj)
 		{
-			return (this.Address + this.Zip).GetHashCode();
+			return obj.BuyerID.GetHashCode();
 		}
 
 		public static bool operator ==(BuyersReportModel left, BuyersReportModel right)
@@ -159,5 +129,6 @@ namespace HomeSalesTrackerApp.Report_Models
 		{
 			return !(left == right);
 		}
+
 	}
 }

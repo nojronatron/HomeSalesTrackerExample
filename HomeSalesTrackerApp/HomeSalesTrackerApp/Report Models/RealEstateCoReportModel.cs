@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
     public class RealEstateCoReportModel : 
-        IEquatable<RealEstateCoReportModel>, IEqualityComparer<RealEstateCoReportModel>, INotifyPropertyChanged
+        IEquatable<RealEstateCoReportModel>, IEqualityComparer<RealEstateCoReportModel>
     {
         /*  Display data of ID, RECo Name, Ttl Num homes sold, Ttl Sales, 
          *  Ttl Homes currently For Sale, Ttl amount for sale.
@@ -21,7 +19,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._companyID != value)
                 {
                     _companyID = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -36,7 +33,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._rECoName != value)
                 {
                     _rECoName = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -51,7 +47,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._totalSoldHomesCount != value)
                 {
                     _totalSoldHomesCount = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -66,7 +61,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._totalSales != value)
                 {
                     _totalSales = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -82,7 +76,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._totalHomesForSale != value)
                 {
                     _totalHomesForSale = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -97,16 +90,8 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._totalAmountForSale != value)
                 {
                     _totalAmountForSale = value;
-                    NotifyPropertyChanged();
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public bool Equals(RealEstateCoReportModel other)

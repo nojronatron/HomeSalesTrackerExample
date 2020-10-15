@@ -6,18 +6,15 @@
              xmlns:local="clr-namespace:HomeSalesTrackerApp.Views"
              xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
     
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:HomesForSaleReportModel}"></DataTemplate>
     </UserControl.Resources>
     
     <Grid Background="Azure">
-        <DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" 
-                  CanUserAddRows="False" Margin="10"></DataGrid>
-    </Grid>
-
-<!--<DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" CanUserAddRows="False" Margin="20" Background="Azure">
+        <DataGrid ItemsSource="{Binding HomesForSale}" CanUserAddRows="False" AutoGenerateColumns="False" 
+                  Margin="10" TextBlock.TextAlignment="Center" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=HomeID}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Address" Binding="{Binding Path=Address}"></DataGridTextColumn>
@@ -26,15 +23,19 @@
                 <DataGridTextColumn Header="Zip" Binding="{Binding Path=Zip}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Owner" Binding="{Binding Path=OwnerFullName}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Owner Phone" Binding="{Binding Path=OwnerPhone}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Owner Email" Binding="{Binding Path=OwnerEmail}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Owner Email" Binding="{Binding Path=OwnerEMail}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Preferred Lender" Binding="{Binding Path=PreferredLender}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Agent Name" Binding="{Binding Path=AgentFullName}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Agent Phone" Binding="{Binding Path=AgentPhone}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Agent Email" Binding="{Binding Path=AgentEmail}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Agent Email" Binding="{Binding Path=AgentEMail}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Company" Binding="{Binding Path=CompanyName}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Market Date" Binding="{Binding Path=MarketDate}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Sale Amount" Binding="{Binding Path=SaleAmount}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Market Date" Binding="{Binding Path=MarketDate, StringFormat=D}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Sale Amount" Binding="{Binding Path=SaleAmount, StringFormat=C0}"></DataGridTextColumn>
             </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
+<!--<DataGrid ItemsSource="{Binding HomesForSale}" AlternatingRowBackground="LightGray" CanUserAddRows="False" Margin="20" Background="Azure">
         </DataGrid>-->
 
 </UserControl>

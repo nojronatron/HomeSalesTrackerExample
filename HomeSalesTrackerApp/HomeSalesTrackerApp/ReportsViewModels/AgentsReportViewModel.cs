@@ -17,7 +17,6 @@ namespace HomeSalesTrackerApp.ReportsViewModels
         {
             var agentsList = new ObservableCollection<AgentsReportModel>();
 
-            //  TODO: write queries to collect the required data
             var agentRecords = (from hs in MainWindow.homeSalesCollection
                             where hs.AgentID >= 0
                             select hs.Agent).Distinct();
@@ -33,11 +32,16 @@ namespace HomeSalesTrackerApp.ReportsViewModels
                                     hs.SaleAmount > 0
                                     select hs);
 
+            var homesOnMarket = (from a in agentRecords
+                                 from hs in MainWindow.homeSalesCollection
+                                 where hs.AgentID == a.AgentID &&
+                                 hs.Buyer == null
+                                 select hs);
+
             var recos = (from re in MainWindow.reCosCollection
                          where re.CompanyID >= 0
                          select re).Distinct();
 
-            //  TODO: set the collected data's properties into the viewmodel and add instances to the collection
             AgentsReportModel agent = null;
             foreach (var item in agentRecords)
             {
@@ -56,7 +60,7 @@ namespace HomeSalesTrackerApp.ReportsViewModels
                 agent.TotalCommissionsPaid = homeSalesRecords.Where(hs => hs.AgentID == item.AgentID).Sum(hs => hs.SaleAmount) * item.CommissionPercent;
                 agent.TotalHomesSold = item.HomeSales.Count;
                 agent.TotalSales = item.HomeSales.Sum(hs => hs.SaleAmount);
-
+                agent.HomesOnMarket = homesOnMarket.Count(hs => hs.AgentID == item.AgentID);
                 agentsList.Add(agent);
             }
 

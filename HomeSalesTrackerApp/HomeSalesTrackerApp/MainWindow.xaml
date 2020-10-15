@@ -46,11 +46,11 @@
             <Separator Width="10"/>
             <MenuItem Header="Reports">
                 <Separator/>
-                <MenuItem Header="Sold Homes" Click="MenuDisplaySoldHomes_Click"></MenuItem>
                 <MenuItem Header="Agents" Click="menuDisplayAgents_Click"></MenuItem>
                 <MenuItem Header="Buyers" Click="MenuDisplayBuyers_Click"></MenuItem>
                 <MenuItem Header="Homes for Sale" Click="menuDisplayHomesForSale_Click"></MenuItem>
                 <MenuItem Header="Real Estate Co. Totals" Click="menuDisplayRECoTotals_Click"></MenuItem>
+                <MenuItem Header="Sold Homes" Click="MenuDisplaySoldHomes_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
             <!--<MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>

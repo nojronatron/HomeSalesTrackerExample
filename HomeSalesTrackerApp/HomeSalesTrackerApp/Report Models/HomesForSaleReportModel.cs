@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
     /// <summary>
     /// Model Class arranges instances from multiple classes into a single consolidated class for display and UI-interaction.
-    /// https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netcore-3.1
     /// https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iequalitycomparer-1?view=netcore-3.1
     /// </summary>
     public class HomesForSaleReportModel : 
-        INotifyPropertyChanged, IEquatable<HomesForSaleReportModel>, IEqualityComparer<HomesForSaleReportModel>
+        IEquatable<HomesForSaleReportModel>, IEqualityComparer<HomesForSaleReportModel>
     {
         private int _homeID;
 
@@ -23,7 +20,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (value != this._homeID)
                 {
                     this._homeID = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -38,7 +34,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (value != this._address)
                 {
                     this._address = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -52,7 +47,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (value != this._city)
                 {
                     this._city = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -67,7 +61,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (value != this._state)
                 {
                     this._state = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -76,79 +69,71 @@ namespace HomeSalesTrackerApp.Report_Models
     
         public string Zip
         {
-            get { return _zip; }
+            get
+            {
+                return $"{ _zip.Substring(0, 5) }-{ _zip.Substring(5, 4) }";
+            }
             set
             {
                 if (value != this._zip)
                 {
                     this._zip = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
-  
-        private string _ownerFirstName;
-    
-        public string OwnerFirstName
+
+        private string _ownerFullName;
+
+        public string OwnerFullName
         {
-            get { return _ownerFirstName; }
-            set
-            {
-                if (value != this._ownerFirstName)
-                {
-                    this._ownerFirstName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(OwnerFullName));
-                }
-            }
+            get { return _ownerFullName; }
+            set { _ownerFullName = value; }
         }
-     
-        private string _ownerLastName;
-    
-        public string OwnerLastName
-        {
-            get { return _ownerLastName; }
-            set
-            {
-                if (this._ownerLastName != value)
-                {
-                    this._ownerLastName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(OwnerFullName));
-                }
-            }
-        }
-     
+
         private string _ownerPhone;
-    
+
         public string OwnerPhone
         {
-            get { return _ownerPhone; }
-            set
-            {
-                if (this._ownerPhone != value)
-                {
-                    this._ownerPhone = value;
-                    NotifyPropertyChanged();
-                }
+            get { 
+                return $"({ _ownerPhone.Substring(0,3) }) { _ownerPhone.Substring(3,3) }-{ _ownerPhone.Substring(6,4) }"; 
             }
+            set { _ownerPhone = value; }
         }
-     
-        private string _ownerEmail;
-    
-        public string OwnerEmail
+
+        private string _ownerEMail;
+
+        public string OwnerEMail
         {
-            get { return _ownerEmail; }
-            set
-            {
-                if (this._ownerEmail != value)
-                {
-                    this._ownerEmail = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            get { return _ownerEMail; }
+            set { _ownerEMail = value; }
         }
-      
+        
+        private string _agentFullName;
+
+        public string AgentFullName
+        {
+            get { return _agentFullName; }
+            set { _agentFullName = value; }
+        }
+
+        private string _agentPhone;
+
+        public string AgentPhone
+        {
+            get {
+                return $"({ _agentPhone.Substring(0, 3) }) { _agentPhone.Substring(3, 3) }-{ _agentPhone.Substring(6, 4) }";
+            }
+            set { _agentPhone = value; }
+        }
+
+        private string _agentEMail;
+
+        public string AgentEMail
+        {
+            get { return _agentEMail; }
+            set { _agentEMail = value; }
+        }
+
         private string _preferredLender;
      
         public string PreferredLender
@@ -159,69 +144,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._preferredLender != value)
                 {
                     this._preferredLender = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-     
-        private string _agentFirstName;
-    
-        public string AgentFirstName
-        {
-            get { return _agentFirstName; }
-            set
-            {
-                if (this._agentFirstName != value)
-                {
-                    this._agentFirstName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(AgentFullName));
-                }
-            }
-        }
-    
-        private string _agentLastName;
-    
-        public string AgentLastName
-        {
-            get { return _agentLastName; }
-            set
-            {
-                if (this._agentLastName != value)
-                {
-                    _agentLastName = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(AgentFullName));
-                }
-            }
-        }
-     
-        private string _agentPhone;
-    
-        public string AgentPhone
-        {
-            get { return _agentPhone; }
-            set
-            {
-                if (this._agentPhone != value)
-                {
-                    _agentPhone = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-    
-        private string _agentEmail;
-     
-        public string AgentEmail
-        {
-            get { return _agentEmail; }
-            set
-            {
-                if (this._agentEmail != value)
-                {
-                    _agentEmail = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -236,7 +158,6 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._companyName != value)
                 {
                     _companyName = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -245,13 +166,12 @@ namespace HomeSalesTrackerApp.Report_Models
 
         public DateTime MarketDate
         {
-            get { return _marketDate; }
+            get { return _marketDate.Date; }
             set
             {
                 if (this._marketDate != value)
                 {
                     this._marketDate = value;
-                    NotifyPropertyChanged();
                 }
             }
         }
@@ -266,20 +186,8 @@ namespace HomeSalesTrackerApp.Report_Models
                 if (this._saleAmount != value)
                 {
                     this._saleAmount = value;
-                    NotifyPropertyChanged();
                 }
             }
-        }
-
-        public string AgentFullName => $"{ AgentFirstName } { AgentLastName }";
-
-        public string OwnerFullName => $"{ OwnerFirstName } { OwnerLastName }";
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName ="")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public bool Equals(HomesForSaleReportModel other)

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:HomeSalesTrackerApp.Views"
              xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="1000">
+             >
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:BuyersReportModel}" />
@@ -14,6 +14,21 @@
 
     <Grid>
         <DataGrid ItemsSource="{Binding BuyersList, Mode=OneWay}" Margin="10" Background="Azure" 
-                  CanUserAddRows="False" />
+                  CanUserAddRows="False" AutoGenerateColumns="False" TextBlock.TextAlignment="Center">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding BuyerID}" />
+                <DataGridTextColumn Header="Buyer Name" Binding="{Binding FullName}" />
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" />
+                <DataGridTextColumn Header="Email" Binding="{Binding EMail}" />
+                <DataGridTextColumn Header="Credit Rating" Binding="{Binding CreditRating}" />
+                <DataGridTextColumn Header="Sale Date" Binding="{Binding SaleDate, StringFormat=D}" />
+                <DataGridTextColumn Header="Sale Amount" Binding="{Binding SaleAmount, StringFormat=C0}" />
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="City" Binding="{Binding City}" />
+                <DataGridTextColumn Header="State" Binding="{Binding State}" />
+                <DataGridTextColumn Header="Zip Code" Binding="{Binding Zip}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
+

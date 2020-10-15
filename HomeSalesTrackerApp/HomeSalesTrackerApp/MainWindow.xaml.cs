@@ -524,8 +524,8 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuDisplaySoldHomes_Click(object sender, RoutedEventArgs e)
         {
-            SoldHomesReport shr = new SoldHomesReport();
-            shr.Show();
+            var soldHomesReport = new SoldHomesReport();
+            soldHomesReport.Show();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
         }
@@ -542,6 +542,24 @@ namespace HomeSalesTrackerApp
         {
             var agentsResultsReport = new AgentsResultsReport();
             agentsResultsReport.Show();
+            ClearSearchResultsViews();
+            DisplayStatusMessage("Ready");
+        }
+
+        private void menuDisplayRECoTotals_Click(object sender, RoutedEventArgs e)
+        {
+            var realEstateCoReport = new RealEstateCoReport();
+            realEstateCoReport.Show();
+            ClearSearchResultsViews();
+            DisplayStatusMessage("Ready");
+        }
+
+        private void menuDisplayHomesForSale_Click(object sender, RoutedEventArgs e)
+        {
+            var homesForSaleReport = new HomesForSaleReport();
+            homesForSaleReport.Show();
+            ClearSearchResultsViews();
+            DisplayStatusMessage("Ready");
         }
 
         private void MenuAboutAppInfo_Click(object sender, RoutedEventArgs e)
@@ -862,18 +880,6 @@ namespace HomeSalesTrackerApp
                 ClearSearchResultsViews();
             }
 
-        }
-
-        private void menuDisplayRECoTotals_Click(object sender, RoutedEventArgs e)
-        {
-            var rectr = new RealEstateCoReport();
-            rectr.Show();
-        }
-
-        private void menuDisplayHomesForSale_Click(object sender, RoutedEventArgs e)
-        {
-            HomesForSaleReport hfsr = new HomesForSaleReport();
-            hfsr.Show();
         }
 
         private void MenuSearchPeople_Click(object sender, RoutedEventArgs e)

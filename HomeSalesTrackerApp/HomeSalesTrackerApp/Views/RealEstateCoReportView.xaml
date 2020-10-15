@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:data="clr-namespace:HomeSalesTrackerApp.Report_Models"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:RealEstateCoReportModel}"></DataTemplate>
@@ -13,7 +13,16 @@
 
     <Grid Background="Azure">
         <DataGrid ItemsSource="{Binding RealEstateCoTotals}" AlternatingRowBackground="LightGray"
-                  CanUserAddRows="False" Margin="10"></DataGrid>
+                  CanUserAddRows="False" Margin="10" AutoGenerateColumns="False" TextBlock.TextAlignment="Center" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Path=CompanyID}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Company Name" Binding="{Binding Path=RECoName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Homes Sold" Binding="{Binding Path=TotalSoldHomesCount}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Total Sales" Binding="{Binding Path=TotalSales, StringFormat=C0}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Homes For Sale" Binding="{Binding Path=TotalHomesForSale}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Amount For Sale" Binding="{Binding Path=TotalAmountForSale, StringFormat=C0}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
     
 </UserControl>
