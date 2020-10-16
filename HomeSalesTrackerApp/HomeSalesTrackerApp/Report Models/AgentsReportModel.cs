@@ -137,8 +137,9 @@ namespace HomeSalesTrackerApp.Report_Models
 			{
 				return true;
 			}
-			return FirstName.Equals(other.FirstName) && this.LastName.Equals(other.LastName) &&
-							this.AgentID.Equals(other.AgentID);
+			return FirstName.Equals(other.FirstName) && 
+				this.LastName.Equals(other.LastName) &&
+				this.AgentID.Equals(other.AgentID);
 		}
 
 		public override int GetHashCode()
