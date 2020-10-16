@@ -540,8 +540,13 @@ namespace HomeSalesTrackerApp
 
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)
         {
-            var agentsResultsReport = new AgentsResultsReport();
-            agentsResultsReport.Show();
+            //  testing forced disposal/GC
+            using (AgentsResultsReport agentsResultsReport = new AgentsResultsReport())
+            {
+                agentsResultsReport.Show();
+            };
+            //var agentsResultsReport = new AgentsResultsReport();
+            //agentsResultsReport.Show();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
         }
