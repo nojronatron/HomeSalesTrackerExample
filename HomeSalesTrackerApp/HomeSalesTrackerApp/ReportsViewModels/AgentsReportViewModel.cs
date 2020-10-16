@@ -1,4 +1,5 @@
 ﻿using HomeSalesTrackerApp.Report_Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace HomeSalesTrackerApp.ReportsViewModels
 {
     public class AgentsReportViewModel
     {
-        public ObservableCollection<AgentsReportModel> AgentsList { get; set; }
+        public List<AgentsReportModel> AgentsList { get; set; }
 
         public AgentsReportViewModel()
         {
@@ -15,54 +16,36 @@ namespace HomeSalesTrackerApp.ReportsViewModels
 
         private void Load()
         {
-            var agentsList = new ObservableCollection<AgentsReportModel>();
+            var agentsList = new List<AgentsReportModel>();
 
             var agentRecords = (from hs in MainWindow.homeSalesCollection
                             where hs.AgentID >= 0
                             select hs.Agent).Distinct();
 
-            var agentPeople = (from a in agentRecords
-                               from p in MainWindow.peopleCollection
-                               where p.PersonID == a.AgentID
-                               select p);
-
             var homeSalesRecords = (from a in agentRecords
                                     from hs in MainWindow.homeSalesCollection
-                                    where hs.AgentID == a.AgentID &&
-                                    hs.SaleAmount > 0
+                                    where hs.SaleAmount > 0
                                     select hs);
 
-            var homesOnMarket = (from a in agentRecords
-                                 from hs in MainWindow.homeSalesCollection
-                                 where hs.AgentID == a.AgentID &&
-                                 hs.Buyer == null
-                                 select hs);
-
-            var recos = (from re in MainWindow.reCosCollection
-                         where re.CompanyID >= 0
-                         select re).Distinct();
-
-            AgentsReportModel agent = null;
-            foreach (var item in agentRecords)
-            {
-                var recoName = recos.Where(x => x.CompanyID == item.CompanyID).FirstOrDefault();
-                agent = new AgentsReportModel();
-                agent.AgentID = item.AgentID;
-                agent.Commission = item.CommissionPercent;
-                agent.EMail = agentPeople.Where(p => p.PersonID == item.AgentID).FirstOrDefault().Email ?? string.Empty;
-                agent.FirstName = agentPeople.Where(p => p.PersonID == item.AgentID).FirstOrDefault().FirstName;
-                agent.LastName = agentPeople.Where(p => p.PersonID == item.AgentID).FirstOrDefault().LastName;
-                agent.Phone = agentPeople.Where(p => p.PersonID == item.AgentID).FirstOrDefault().Phone;
-                if (recoName != null)
-                {
-                    agent.RealEstateCompany = recos.Where(x => x.CompanyID == item.CompanyID).FirstOrDefault().CompanyName ?? "Agent no longer active";
-                }
-                agent.TotalCommissionsPaid = homeSalesRecords.Where(hs => hs.AgentID == item.AgentID).Sum(hs => hs.SaleAmount) * item.CommissionPercent;
-                agent.TotalHomesSold = item.HomeSales.Count;
-                agent.TotalSales = item.HomeSales.Sum(hs => hs.SaleAmount);
-                agent.HomesOnMarket = homesOnMarket.Count(hs => hs.AgentID == item.AgentID);
-                agentsList.Add(agent);
-            }
+            agentsList = (from agentRecord in agentRecords
+                         join agentPerson in (from a in agentRecords from p in MainWindow.peopleCollection where p.PersonID == a.AgentID select p)
+                         on agentRecord.AgentID equals agentPerson.PersonID
+                         select new AgentsReportModel
+                         {
+                             AgentID = agentRecord.AgentID,
+                             Commission = agentRecord.CommissionPercent,
+                             EMail = agentPerson.Email ?? string.Empty,
+                             FirstName = agentPerson.FirstName,
+                             LastName = agentPerson.LastName,
+                             Phone = agentPerson.Phone,
+                             HomesOnMarket = MainWindow.homeSalesCollection.Where(hs => hs.Buyer == null && hs.AgentID == agentRecord.AgentID).Count(),
+                             RealEstateCompany = agentRecord.CompanyID != null ?
+                                MainWindow.reCosCollection.Where(re => re.CompanyID == agentRecord.CompanyID).FirstOrDefault().CompanyName :
+                                "Agent no longer active",
+                             TotalCommissionsPaid = homeSalesRecords.Where(a => a.AgentID == agentRecord.AgentID).Sum(hs => hs.SaleAmount) * agentRecord.CommissionPercent,
+                             TotalHomesSold = homeSalesRecords.Where(a => a.AgentID == agentRecord.AgentID).Count(),
+                             TotalSales = homeSalesRecords.Where(a => a.AgentID == agentRecord.AgentID).Sum(hs => hs.SaleAmount)
+                         }).ToList();
 
             AgentsList = agentsList;
         }

@@ -24,7 +24,7 @@ namespace HomeSalesTrackerApp.Report_Models
 			}
 		}
 
-		private string _realEstateCompany = "Agent no longer active";
+		private string _realEstateCompany;
 
 		public string RealEstateCompany
 		{
