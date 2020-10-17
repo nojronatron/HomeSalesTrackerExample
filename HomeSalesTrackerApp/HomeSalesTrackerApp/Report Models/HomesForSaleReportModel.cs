@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace HomeSalesTrackerApp.Report_Models
 {
     /// <summary>
-    /// Model Class arranges instances from multiple classes into a single consolidated class for display and UI-interaction.
+    /// Model Class arranges properties from multiple classes into a single consolidated class for display and UI-interaction.
     /// https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iequalitycomparer-1?view=netcore-3.1
     /// </summary>
-    public class HomesForSaleReportModel : 
+    public class HomesForSaleReportModel :
         IEquatable<HomesForSaleReportModel>, IEqualityComparer<HomesForSaleReportModel>
     {
         private int _homeID;
@@ -25,7 +25,7 @@ namespace HomeSalesTrackerApp.Report_Models
         }
 
         private string _address;
-   
+
         public string Address
         {
             get { return _address; }
@@ -37,22 +37,23 @@ namespace HomeSalesTrackerApp.Report_Models
                 }
             }
         }
-  
+
         private string _city;
-   
+
         public string City
         {
             get { return _city; }
-            set {
+            set
+            {
                 if (value != this._city)
                 {
                     this._city = value;
                 }
             }
         }
-   
+
         private string _state;
-   
+
         public string State
         {
             get { return _state; }
@@ -64,9 +65,9 @@ namespace HomeSalesTrackerApp.Report_Models
                 }
             }
         }
-   
+
         private string _zip;
-    
+
         public string Zip
         {
             get
@@ -82,20 +83,31 @@ namespace HomeSalesTrackerApp.Report_Models
             }
         }
 
-        private string _ownerFullName;
+        private string _ownerFirstName;
 
-        public string OwnerFullName
+        public string OwnerFirstName
         {
-            get { return _ownerFullName; }
-            set { _ownerFullName = value; }
+            get { return _ownerFirstName; }
+            set { _ownerFirstName = value; }
         }
+
+        private string _ownerLastName;
+
+        public string OwnerLastName
+        {
+            get { return _ownerLastName; }
+            set { _ownerLastName = value; }
+        }
+
+        public string OwnerFullName => $"{ this.OwnerFirstName } { this.OwnerLastName }";
 
         private string _ownerPhone;
 
         public string OwnerPhone
         {
-            get { 
-                return $"({ _ownerPhone.Substring(0,3) }) { _ownerPhone.Substring(3,3) }-{ _ownerPhone.Substring(6,4) }"; 
+            get
+            {
+                return $"({ _ownerPhone.Substring(0, 3) }) { _ownerPhone.Substring(3, 3) }-{ _ownerPhone.Substring(6, 4) }";
             }
             set { _ownerPhone = value; }
         }
@@ -107,20 +119,31 @@ namespace HomeSalesTrackerApp.Report_Models
             get { return _ownerEMail; }
             set { _ownerEMail = value; }
         }
-        
-        private string _agentFullName;
 
-        public string AgentFullName
+        private string _agentFirstName;
+
+        public string AgentFirstName
         {
-            get { return _agentFullName; }
-            set { _agentFullName = value; }
+            get { return _agentFirstName; }
+            set { _agentFirstName = value; }
         }
+
+        private string _agentLastName;
+
+        public string AgentLastName
+        {
+            get { return _agentLastName; }
+            set { _agentLastName = value; }
+        }
+
+        public string AgentFullName => $"{ this.AgentFirstName } { this.AgentLastName }";
 
         private string _agentPhone;
 
         public string AgentPhone
         {
-            get {
+            get
+            {
                 return $"({ _agentPhone.Substring(0, 3) }) { _agentPhone.Substring(3, 3) }-{ _agentPhone.Substring(6, 4) }";
             }
             set { _agentPhone = value; }
@@ -135,7 +158,7 @@ namespace HomeSalesTrackerApp.Report_Models
         }
 
         private string _preferredLender;
-     
+
         public string PreferredLender
         {
             get { return _preferredLender; }
@@ -166,7 +189,7 @@ namespace HomeSalesTrackerApp.Report_Models
 
         public DateTime MarketDate
         {
-            get { return _marketDate.Date; }
+            get { return _marketDate; }
             set
             {
                 if (this._marketDate != value)
@@ -200,7 +223,7 @@ namespace HomeSalesTrackerApp.Report_Models
             {
                 return true;
             }
-            return Address.Equals(other.Address) && Zip.Equals(other.Zip) && 
+            return Address.Equals(other.Address) && Zip.Equals(other.Zip) &&
                 SaleAmount.Equals(other.SaleAmount) && MarketDate.Equals(other.MarketDate);
         }
 
@@ -214,8 +237,8 @@ namespace HomeSalesTrackerApp.Report_Models
             {
                 return false;
             }
-            return x.Address == y.Address && x.Zip == y.Zip && 
-                x.SaleAmount == y.SaleAmount && x.MarketDate == y.MarketDate; 
+            return x.Address == y.Address && x.Zip == y.Zip &&
+                x.SaleAmount == y.SaleAmount && x.MarketDate == y.MarketDate;
         }
 
         public int GetHashCode(HomesForSaleReportModel obj)
