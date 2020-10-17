@@ -61,7 +61,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\CurrencyDisplayConverter.cs" />
     <Compile Include="DisplayModels\AgentView.cs" />
     <Compile Include="DisplayModels\HomeView.cs" />
     <Compile Include="DisplayModels\OwnerView.cs" />
