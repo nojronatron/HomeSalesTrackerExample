@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace HomeSalesTrackerApp.Report_Models
@@ -6,10 +7,10 @@ namespace HomeSalesTrackerApp.Report_Models
     public class BuyersReportModel :
 		PersonBaseModel,
 		IEquatable<BuyersReportModel>, IEqualityComparer<BuyersReportModel>
-    {
-		private int _buyerID;
+	{
+		private int? _buyerID;
 
-		public int BuyerID
+		public int? BuyerID
 		{
 			get { return _buyerID; }
 			set { _buyerID = value; }
@@ -23,11 +24,11 @@ namespace HomeSalesTrackerApp.Report_Models
 			set { _creditRating = value; }
 		}
 
-		private DateTime _saleDate;
+		private DateTime? _saleDate;
 
-		public DateTime SaleDate
+		public DateTime? SaleDate
 		{
-			get { return _saleDate.Date; }
+			get { return _saleDate; }
 			set { _saleDate = value; }
 		}
 
