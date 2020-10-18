@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HSTDataLayer;
+
 using System;
 using System.Text;
 
@@ -43,7 +43,7 @@ namespace HSTDataLayer.Tests
 
             Assert.IsNotNull(actualResult, "See additional output.");
         }
-        
+
         [TestMethod()]
         public void EqualityTest()
         {
@@ -59,7 +59,7 @@ namespace HSTDataLayer.Tests
             bool actualResult = everettHome.Equals(everettHomeCopy);
             Assert.AreEqual(expectedResult, actualResult);
         }
-        
+
         [TestMethod()]
         public void InequalityTest()
         {
@@ -67,7 +67,7 @@ namespace HSTDataLayer.Tests
             bool actualResult = everettHome.Equals(tacomaHome);
             Assert.AreEqual(expectedResult, actualResult);
         }
- 
+
         [TestMethod()]
         public void EqualityLeftRightTest()
         {
@@ -80,7 +80,7 @@ namespace HSTDataLayer.Tests
                 Zip = "982071111",
                 OwnerID = -1
             };
-            bool actualResult = ( everettHome == everettHomeCopy);
+            bool actualResult = (everettHome == everettHomeCopy);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -88,7 +88,7 @@ namespace HSTDataLayer.Tests
         public void InequalityLeftRightTest()
         {
             bool expectedResult = true;
-            bool actualResult = ( everettHome != tacomaHome);
+            bool actualResult = (everettHome != tacomaHome);
             Assert.AreEqual(expectedResult, actualResult);
         }
     }

@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HomeSalesTrackerApp.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp.Helpers.Tests
 {
@@ -15,7 +9,7 @@ namespace HomeSalesTrackerApp.Helpers.Tests
         public void SingleEntry()
         {
             var log = new Helpers.Logger();
-            
+
             log.Data("Test Entry", "lkj wer asdf oiu zxcv ,mnb lkj asdf wer");
             log.Flush();
 

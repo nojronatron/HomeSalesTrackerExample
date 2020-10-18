@@ -1,4 +1,5 @@
 ﻿using HomeSalesTrackerApp.ReportsViewModels;
+
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -12,7 +13,7 @@ namespace HomeSalesTrackerApp
     {
         //  Other managed resource this class uses
         private Component component = new Component();
-        
+
         public AgentsResultsReport()
         {
             InitializeComponent();

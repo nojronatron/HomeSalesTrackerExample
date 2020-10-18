@@ -218,7 +218,7 @@ namespace HomeSalesTrackerApp.Report_Models
             {
                 return false;
             }
-            return x.Address == y.Address && x.Zip == y.Zip && 
+            return x.Address == y.Address && x.Zip == y.Zip &&
                 x.SaleAmount == y.SaleAmount && x.SoldDate == y.SoldDate;
         }
 

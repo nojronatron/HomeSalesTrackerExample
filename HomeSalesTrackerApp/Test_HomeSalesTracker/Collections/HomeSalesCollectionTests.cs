@@ -1,11 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HomeSalesTrackerApp;
+﻿using HSTDataLayer;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HSTDataLayer;
 
 namespace HomeSalesTrackerApp.Tests
 {
@@ -65,7 +62,7 @@ namespace HomeSalesTrackerApp.Tests
 
             var expectedResult = true;
             var actualResult = (homeSalesCollection != null);
-            
+
             Assert.AreEqual(expectedResult, actualResult);
         }
 

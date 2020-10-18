@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
-    public class RealEstateCoReportModel : 
+    public class RealEstateCoReportModel :
         IEquatable<RealEstateCoReportModel>, IEqualityComparer<RealEstateCoReportModel>
     {
         private int _companyID;

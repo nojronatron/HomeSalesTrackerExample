@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HSTDataLayer;
+
 using System;
 using System.Text;
 
@@ -20,7 +20,7 @@ namespace HSTDataLayer.Tests
             Phone = "6664441111"
         };
 
-        
+
         [TestMethod()]
         public void ToStringTest()
         {

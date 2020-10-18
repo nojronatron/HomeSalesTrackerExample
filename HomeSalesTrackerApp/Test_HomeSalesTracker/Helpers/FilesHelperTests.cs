@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,11 +54,11 @@ namespace HomeSalesTrackerDataLayer.Tests
         public void GetFileInfosTest()
         {
             int expectedResult = 7;
-            
+
             List<FileInfo> fileInfosList = new List<FileInfo>();
             List<string> filenames = FilesHelper.GetFileNames();
             fileInfosList = FilesHelper.GetFileInfos(filenames);
-            
+
             Assert.IsNotNull(fileInfosList);
             int actualResult = fileInfosList.Count;
             Assert.AreEqual(expectedResult, actualResult);
@@ -76,4 +77,3 @@ namespace HomeSalesTrackerDataLayer.Tests
         }
     }
 }
- 

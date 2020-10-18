@@ -2,6 +2,7 @@
 using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
 using HomeSalesTrackerApp.ReportWindows;
+
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 
@@ -535,7 +536,7 @@ namespace HomeSalesTrackerApp
             var buyersResultsReport = new BuyersResultsReport();
             buyersResultsReport.Show();
             ClearSearchResultsViews();
-            DisplayStatusMessage("Ready");        
+            DisplayStatusMessage("Ready");
         }
 
         private void menuDisplayAgents_Click(object sender, RoutedEventArgs e)

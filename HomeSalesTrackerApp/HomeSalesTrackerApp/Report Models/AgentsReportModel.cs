@@ -1,165 +1,163 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace HomeSalesTrackerApp.Report_Models
 {
-	public class AgentsReportModel :
-		PersonBaseModel,
-		IEqualityComparer<AgentsReportModel>, IEquatable<AgentsReportModel>
-	{
-		
-		private int _agentID;
+    public class AgentsReportModel :
+        PersonBaseModel,
+        IEqualityComparer<AgentsReportModel>, IEquatable<AgentsReportModel>
+    {
 
-		public int AgentID
-		{
-			get { return _agentID; }
-			set
-			{
-				if (_agentID != value)
-				{
-					_agentID = value;
-				}
-			}
-		}
+        private int _agentID;
 
-		private string _realEstateCompany;
+        public int AgentID
+        {
+            get { return _agentID; }
+            set
+            {
+                if (_agentID != value)
+                {
+                    _agentID = value;
+                }
+            }
+        }
 
-		public string RealEstateCompany
-		{
-			get { return _realEstateCompany; }
-			set
-			{
-				if (_realEstateCompany != value)
-				{
-					_realEstateCompany = value;
-				}
-			}
-		}
+        private string _realEstateCompany;
 
-		private decimal _commission;
+        public string RealEstateCompany
+        {
+            get { return _realEstateCompany; }
+            set
+            {
+                if (_realEstateCompany != value)
+                {
+                    _realEstateCompany = value;
+                }
+            }
+        }
 
-		public decimal Commission
-		{
-			get { return _commission; }
-			set
-			{
-				if (_commission != value)
-				{
-					_commission = value;
-				}
-			}
-		}
+        private decimal _commission;
 
-		private int _totalHomesSold;
+        public decimal Commission
+        {
+            get { return _commission; }
+            set
+            {
+                if (_commission != value)
+                {
+                    _commission = value;
+                }
+            }
+        }
 
-		public int TotalHomesSold
-		{
-			get { return _totalHomesSold; }
-			set
-			{
-				if (_totalHomesSold != value)
-				{
-					_totalHomesSold = value;
-				}
-			}
-		}
+        private int _totalHomesSold;
 
-		private int _homesOnMarket;
+        public int TotalHomesSold
+        {
+            get { return _totalHomesSold; }
+            set
+            {
+                if (_totalHomesSold != value)
+                {
+                    _totalHomesSold = value;
+                }
+            }
+        }
 
-		public int HomesOnMarket
-		{
-			get { return _homesOnMarket; }
-			set
-			{
-				if (_homesOnMarket != value)
-				{
-					_homesOnMarket = value;
-				}
-			}
-		}
+        private int _homesOnMarket;
 
-		private decimal _ttlCommissionsPaid;
+        public int HomesOnMarket
+        {
+            get { return _homesOnMarket; }
+            set
+            {
+                if (_homesOnMarket != value)
+                {
+                    _homesOnMarket = value;
+                }
+            }
+        }
 
-		public decimal TotalCommissionsPaid
-		{
-			get { return _ttlCommissionsPaid; }
-			set
-			{
-				if (_ttlCommissionsPaid != value)
-				{
-					_ttlCommissionsPaid = value;
-				}
-			}
-		}
+        private decimal _ttlCommissionsPaid;
 
-		private decimal _ttlSalesOfSoldHomes;
+        public decimal TotalCommissionsPaid
+        {
+            get { return _ttlCommissionsPaid; }
+            set
+            {
+                if (_ttlCommissionsPaid != value)
+                {
+                    _ttlCommissionsPaid = value;
+                }
+            }
+        }
 
-		public decimal TotalSales
-		{
-			get { return _ttlSalesOfSoldHomes; }
-			set
-			{
-				if (_ttlSalesOfSoldHomes != value)
-				{
-					_ttlSalesOfSoldHomes = value;
-				}
-			}
-		}
+        private decimal _ttlSalesOfSoldHomes;
 
-		public bool Equals(AgentsReportModel x, AgentsReportModel y)
-		{
-			if (x == null && y == null)
-			{
-				return true;
-			}
-			if (x == null || y == null)
-			{
-				return false;
-			}
-			return x.FirstName == y.FirstName && x.LastName == y.LastName &&
-				x.AgentID == y.AgentID;
-		}
+        public decimal TotalSales
+        {
+            get { return _ttlSalesOfSoldHomes; }
+            set
+            {
+                if (_ttlSalesOfSoldHomes != value)
+                {
+                    _ttlSalesOfSoldHomes = value;
+                }
+            }
+        }
 
-		public int GetHashCode(AgentsReportModel obj)
-		{
-			return (this.FirstName + this.LastName + this.AgentID).GetHashCode();
-		}
+        public bool Equals(AgentsReportModel x, AgentsReportModel y)
+        {
+            if (x == null && y == null)
+            {
+                return true;
+            }
+            if (x == null || y == null)
+            {
+                return false;
+            }
+            return x.FirstName == y.FirstName && x.LastName == y.LastName &&
+                x.AgentID == y.AgentID;
+        }
 
-		public bool Equals(AgentsReportModel other)
-		{
-			if (Object.ReferenceEquals(other, null))
-			{
-				return false;
-			}
-			if (Object.ReferenceEquals(this, other))
-			{
-				return true;
-			}
-			return FirstName.Equals(other.FirstName) && 
-				this.LastName.Equals(other.LastName) &&
-				this.AgentID.Equals(other.AgentID);
-		}
+        public int GetHashCode(AgentsReportModel obj)
+        {
+            return (this.FirstName + this.LastName + this.AgentID).GetHashCode();
+        }
 
-		public override int GetHashCode()
-		{
-			return -2088337453 + AgentID.GetHashCode();
-		}
+        public bool Equals(AgentsReportModel other)
+        {
+            if (Object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            return FirstName.Equals(other.FirstName) &&
+                this.LastName.Equals(other.LastName) &&
+                this.AgentID.Equals(other.AgentID);
+        }
 
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
+        public override int GetHashCode()
+        {
+            return -2088337453 + AgentID.GetHashCode();
+        }
 
-		public static bool operator ==(AgentsReportModel left, AgentsReportModel right)
-		{
-			return EqualityComparer<AgentsReportModel>.Default.Equals(left, right);
-		}
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
 
-		public static bool operator !=(AgentsReportModel left, AgentsReportModel right)
-		{
-			return !(left == right);
-		}
-	}
+        public static bool operator ==(AgentsReportModel left, AgentsReportModel right)
+        {
+            return EqualityComparer<AgentsReportModel>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(AgentsReportModel left, AgentsReportModel right)
+        {
+            return !(left == right);
+        }
+    }
 }
