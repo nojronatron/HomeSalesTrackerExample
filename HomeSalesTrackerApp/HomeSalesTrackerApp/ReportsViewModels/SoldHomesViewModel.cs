@@ -1,12 +1,12 @@
 ﻿using HomeSalesTrackerApp.Report_Models;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HomeSalesTrackerApp.ReportsViewModels
 {
     public class SoldHomesViewModel
     {
-        public ObservableCollection<SoldHomesReportModel> SoldHomes { get; set; }
+        public List<SoldHomesReportModel> SoldHomes { get; set; }
         public SoldHomesViewModel()
         {
             LoadSoldHomes();
@@ -14,65 +14,32 @@ namespace HomeSalesTrackerApp.ReportsViewModels
 
         private void LoadSoldHomes()
         {
-            ObservableCollection<SoldHomesReportModel> soldHomes = new ObservableCollection<SoldHomesReportModel>();
+            var query = (from hfs in MainWindow.homeSalesCollection
+                         where hfs.SoldDate != null
+                         join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                         join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
+                         join b in MainWindow.peopleCollection on hfs.BuyerID equals b.PersonID
+                         join re in MainWindow.reCosCollection on hfs.CompanyID equals re.CompanyID
+                         select new SoldHomesReportModel
+                         {
+                             HomeID = hfs.HomeID,
+                             Address = h.Address,
+                             City = h.City,
+                             State = h.State,
+                             Zip = h.Zip,
+                             BuyerFirstName = b.FirstName,
+                             BuyerLastName = b.LastName,
+                             AgentFirstName = a.FirstName,
+                             AgentLastName = a.LastName,
+                             CompanyName = re.CompanyName,
+                             SaleAmount = hfs.SaleAmount,
+                             SoldDate = hfs.SoldDate
+                         });
 
-            var vHfsHomesSold = (from hfs in MainWindow.homeSalesCollection
-                                 where hfs.SoldDate != null
-                                 select hfs).ToList();
+            SoldHomes = query.OrderBy(re => re.CompanyName).ThenBy(a => a.AgentLastName)
+                             .ThenBy(a => a.AgentFirstName).ThenBy(hfs => hfs.SoldDate)
+                             .ToList();
 
-            var vHomes = (from h in MainWindow.homesCollection
-                          from hfs in vHfsHomesSold
-                          where h.HomeID == hfs.HomeID
-                          select h).ToList();
-
-            var vBuyers = (from p in MainWindow.peopleCollection
-                           from hfs in vHfsHomesSold
-                           where p.PersonID == hfs.BuyerID
-                           select p).ToList();
-
-            var vAgents = (from p in MainWindow.peopleCollection
-                           from hfs in vHfsHomesSold
-                           where p.PersonID == hfs.AgentID
-                           select p).ToList();
-
-            var vRECos = (from re in MainWindow.reCosCollection
-                          from hfs in vHfsHomesSold
-                          where re.CompanyID == hfs.CompanyID
-                          select re).ToList();
-
-            var vSoldHomes = (from hfs in vHfsHomesSold
-                              from h in vHomes
-                              from b in vBuyers
-                              from a in vAgents
-                              from re in vRECos
-                              where h.HomeID == hfs.HomeID &&
-                              b.Buyer.BuyerID == hfs.BuyerID &&
-                              a.Agent.AgentID == hfs.AgentID &&
-                              re.CompanyID == hfs.CompanyID
-                              select new SoldHomesReportModel
-                              {
-                                  HomeID = hfs.HomeID,
-                                  Address = h.Address,
-                                  City = h.City,
-                                  State = h.State,
-                                  Zip = h.Zip,
-                                  BuyerFirstName = b.FirstName,
-                                  BuyerLastName = b.LastName,
-                                  AgentFirstName = a.FirstName,
-                                  AgentLastName = a.LastName,
-                                  CompanyName = re.CompanyName,
-                                  SaleAmount = hfs.SaleAmount,
-                                  SoldDate = hfs.SoldDate
-                              }).ToList();
-
-            vSoldHomes = vSoldHomes.Distinct().ToList();
-
-            foreach (SoldHomesReportModel home in vSoldHomes)
-            {
-                soldHomes.Add(home);
-            }
-
-            SoldHomes = soldHomes;
         }
     }
 }
