@@ -17,10 +17,10 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Path=CompanyID}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Company Name" Binding="{Binding Path=RECoName}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Homes Sold" Binding="{Binding Path=TotalSoldHomesCount}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Total Number of Homes Sold" Binding="{Binding Path=TotalNumberOfHomesSold}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Total Sales" Binding="{Binding Path=TotalSales, StringFormat=C0}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Homes For Sale" Binding="{Binding Path=TotalHomesForSale}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Amount For Sale" Binding="{Binding Path=TotalAmountForSale, StringFormat=C0}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Total Homes For Sale" Binding="{Binding Path=TotalHomesCurrentlyForSale}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Total Amount For Sale" Binding="{Binding Path=TotalAmountForSale, StringFormat=C0}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

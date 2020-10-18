@@ -1,12 +1,12 @@
 ﻿using HomeSalesTrackerApp.Report_Models;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HomeSalesTrackerApp.ReportsViewModels
 {
     public class RealEstateCoReportViewModel
     {
-        public ObservableCollection<RealEstateCoReportModel> RealEstateCoTotals  { get; set;}
+        public List<RealEstateCoReportModel> RealEstateCoTotals { get; set; }
 
         public RealEstateCoReportViewModel()
         {
@@ -14,37 +14,48 @@ namespace HomeSalesTrackerApp.ReportsViewModels
         }
         public void LoadRealEstateCoTotals()
         {
-            ObservableCollection<RealEstateCoReportModel> realEstateCoTotals = new ObservableCollection<RealEstateCoReportModel>();
 
-            var vRealEstateCompanies = (from re in MainWindow.reCosCollection
-                                        select re).ToList();
+            var realEstateCoTotals = (from hs in MainWindow.homeSalesCollection
+                                      join re in MainWindow.reCosCollection on hs.CompanyID equals re.CompanyID
+                                      select new RealEstateCoReportModel
+                                      {
+                                          CompanyID = re.CompanyID,
+                                          RECoName = re.CompanyName,
+                                          TotalAmountForSale = re.HomeSales.Where(hfs => hfs.SoldDate == null).Sum(hfs => hfs.SaleAmount),
+                                          TotalHomesCurrentlyForSale = re.HomeSales.Where(hfs => hfs.SoldDate == null).Count(),
+                                          TotalSales = re.HomeSales.Where(hfs => hfs.SoldDate != null).Sum(x => x.SaleAmount),
+                                          TotalNumberOfHomesSold = re.HomeSales.Where(sh => sh.SoldDate != null).Count()
+                                      });
 
-            foreach (var item in vRealEstateCompanies)
-            {
-                var vRECoSalesAmounts = (from hfs in MainWindow.homeSalesCollection
-                                         where item.CompanyID == hfs.CompanyID &&
-                                         hfs.BuyerID != null
-                                         select hfs.SaleAmount).ToList();
+            //var vRealEstateCompanies = (from re in MainWindow.reCosCollection
+            //                            select re).ToList();
 
-                var vRECoHomesForSale = (from hfs in MainWindow.homeSalesCollection
-                                         where hfs.CompanyID == item.CompanyID &&
-                                         hfs.BuyerID == null
-                                         select hfs.SaleAmount).ToList();
+            //foreach (var item in vRealEstateCompanies)
+            //{
+            //    var vRECoSalesAmounts = (from hfs in MainWindow.homeSalesCollection
+            //                             where item.CompanyID == hfs.CompanyID &&
+            //                             hfs.BuyerID != null
+            //                             select hfs.SaleAmount).ToList();
 
-                var record = new RealEstateCoReportModel()
-                {
-                    CompanyID = item.CompanyID,
-                    RECoName = item.CompanyName,
-                    TotalAmountForSale = vRECoHomesForSale.Sum(),
-                    TotalHomesForSale = vRECoHomesForSale.Count(),
-                    TotalSales = vRECoSalesAmounts.Sum(),
-                    TotalSoldHomesCount = vRECoSalesAmounts.Count
-                };
+            //    var vRECoHomesForSale = (from hfs in MainWindow.homeSalesCollection
+            //                             where hfs.CompanyID == item.CompanyID &&
+            //                             hfs.BuyerID == null
+            //                             select hfs.SaleAmount).ToList();
 
-                realEstateCoTotals.Add(record);
-            }
+            //    var record = new RealEstateCoReportModel()
+            //    {
+            //        CompanyID = item.CompanyID,
+            //        RECoName = item.CompanyName,
+            //        TotalAmountForSale = vRECoHomesForSale.Sum(),
+            //        TotalHomesForSale = vRECoHomesForSale.Count(),
+            //        TotalSales = vRECoSalesAmounts.Sum(),
+            //        TotalSoldHomesCount = vRECoSalesAmounts.Count
+            //    };
 
-            RealEstateCoTotals = realEstateCoTotals;
+            //    realEstateCoTotals.Add(record);
+            //}
+
+            RealEstateCoTotals = realEstateCoTotals.OrderBy(re => re.RECoName).Distinct().ToList();
         }
     }
 }

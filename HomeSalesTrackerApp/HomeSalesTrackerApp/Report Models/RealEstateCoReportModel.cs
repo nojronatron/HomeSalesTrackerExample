@@ -6,9 +6,6 @@ namespace HomeSalesTrackerApp.Report_Models
     public class RealEstateCoReportModel : 
         IEquatable<RealEstateCoReportModel>, IEqualityComparer<RealEstateCoReportModel>
     {
-        /*  Display data of ID, RECo Name, Ttl Num homes sold, Ttl Sales, 
-         *  Ttl Homes currently For Sale, Ttl amount for sale.
-        */
         private int _companyID;
 
         public int CompanyID
@@ -37,16 +34,16 @@ namespace HomeSalesTrackerApp.Report_Models
             }
         }
 
-        private int _totalSoldHomesCount;
+        private int _totalNumberOfHomesSold;
 
-        public int TotalSoldHomesCount
+        public int TotalNumberOfHomesSold
         {
-            get { return _totalSoldHomesCount; }
+            get { return _totalNumberOfHomesSold; }
             set
             {
-                if (this._totalSoldHomesCount != value)
+                if (this._totalNumberOfHomesSold != value)
                 {
-                    _totalSoldHomesCount = value;
+                    _totalNumberOfHomesSold = value;
                 }
             }
         }
@@ -66,16 +63,16 @@ namespace HomeSalesTrackerApp.Report_Models
         }
 
 
-        private int _totalHomesForSale;
+        private int _totalHomesCurrentlyForSale;
 
-        public int TotalHomesForSale
+        public int TotalHomesCurrentlyForSale
         {
-            get { return _totalHomesForSale; }
+            get { return _totalHomesCurrentlyForSale; }
             set
             {
-                if (this._totalHomesForSale != value)
+                if (this._totalHomesCurrentlyForSale != value)
                 {
-                    _totalHomesForSale = value;
+                    _totalHomesCurrentlyForSale = value;
                 }
             }
         }
