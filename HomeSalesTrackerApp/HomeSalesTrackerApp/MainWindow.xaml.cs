@@ -604,11 +604,6 @@ namespace HomeSalesTrackerApp
             DisplayStatusMessage("Get Item Details button clicked. Not yet implemented.");
         }
 
-        private void ModifyItemButton_Click(object sender, RoutedEventArgs e)
-        {
-            DisplayStatusMessage("Modify Item Details button clicked. Not yet implemented.");
-        }
-
         private static void HomeSearchHelper(ref List<Home> searchResults, ref List<string> searchTerms)
         {
             foreach (var searchTerm in searchTerms)
