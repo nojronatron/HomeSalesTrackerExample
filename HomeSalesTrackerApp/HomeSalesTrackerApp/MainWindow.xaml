@@ -53,8 +53,6 @@
                 <MenuItem Header="Sold Homes" Click="MenuDisplaySoldHomes_Click"></MenuItem>
             </MenuItem>
             <Separator Width="10"/>
-            <!--<MenuItem Header="_Throw Error" Click="MenuThrowError_Click" ></MenuItem>
-            <Separator Width="10"/>-->
             <MenuItem Header="_About" Click="MenuAboutAppInfo_Click" ></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
@@ -302,7 +300,7 @@
 
             </Grid>
             <StackPanel Grid.Column="7" VerticalAlignment="Stretch">
-                <Button x:Name="GetItemDetailsButton" Content="Get Item Details" Margin="10, 7" Height="25" Click="GetItemDetailsButton_Click"  ToolTip="Select an item then click here to get more information." />
+                <Button x:Name="GetItemDetailsButton" Content="Get Item Details" Margin="10, 7" Height="25" Click="GetItemDetailsButton_Click"  ToolTip="Select an item then click here to get more information about the selected item." />
                 <Button x:Name="clearButton" Content="Clear Screen" Margin="10, 7" Height="25" Click="ClearFieldsButton_Click" ToolTip="Clear search results." />
                 <Button x:Name="closeButton" Content="Exit" Margin="10, 7" Height="25" VerticalAlignment="Bottom" Click="CloseButton_Click" ToolTip="Exit Home Sales Tracker." />
             </StackPanel>

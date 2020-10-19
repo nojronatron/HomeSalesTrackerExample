@@ -40,6 +40,7 @@ namespace HomeSalesTrackerApp
                 InitializeCollections();
                 logger.Data("MainWindow Loaded", "Database data loaded.");
                 DisplayStatusMessage("Database data loaded.");
+                GetItemDetailsButton.IsEnabled = false;
             }
             else
             {
@@ -105,12 +106,14 @@ namespace HomeSalesTrackerApp
         {
             ClearSearchTermsTextbox();
             ClearSearchResultsViews();
+            GetItemDetailsButton.IsEnabled = false;
             DisplayStatusMessage("Ready.");
         }
 
         private void ClearSearchTermsTextbox()
         {
             searchTermsTextbox.Text = string.Empty;
+            GetItemDetailsButton.IsEnabled = false;
         }
 
         private void ClearSearchResultsViews()
@@ -123,6 +126,7 @@ namespace HomeSalesTrackerApp
             FoundSoldHomesView.Visibility = Visibility.Hidden;
             FoundPeopleView.ItemsSource = null;
             FoundPeopleView.Visibility = Visibility.Hidden;
+            GetItemDetailsButton.IsEnabled = false;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -200,6 +204,7 @@ namespace HomeSalesTrackerApp
             {
                 FoundSoldHomesView.Visibility = Visibility.Visible;
                 FoundSoldHomesView.ItemsSource = shvResults;
+                GetItemDetailsButton.IsEnabled = true;
                 DisplayStatusMessage($"Found { searchHomesalesResults.Count } Sold Homes. Select a result and use Update or Remove menus to make changes.");
             }
 
@@ -256,13 +261,15 @@ namespace HomeSalesTrackerApp
                 var listResults = results.ToList();
                 FoundHomesView.ItemsSource = listResults;
                 FoundHomesView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Found { listResults.Count } Homes. Select a result and use Update or Remove menus to make changes.");
+                GetItemDetailsButton.IsEnabled = true;
+                DisplayStatusMessage($"Found { listResults.Count } Homes. Select an entry and click Get Item Details button for more information.");
             }
 
             if (searchTerms.Count < 1 || searchResults.Count < 1)
             {
                 DisplayZeroResultsMessage();
             }
+
         }
 
         /// <summary>
@@ -284,7 +291,7 @@ namespace HomeSalesTrackerApp
                 var results = (from h in searchResults
                                from hs in homeSalesCollection
                                where (h.HomeID == hs.HomeID && hs.SoldDate == null)
-                               select new HomeForSaleView
+                               select new HomeForSaleModel
                                {
                                    HomeID = h.HomeID,
                                    Address = h.Address,
@@ -298,7 +305,8 @@ namespace HomeSalesTrackerApp
                 var listResults = results.ToList();
                 FoundHomesForSaleView.ItemsSource = listResults;
                 FoundHomesForSaleView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Found { listResults.Count } Homes For Sale. Select a result and use Update or Remove menus to make changes.");
+                GetItemDetailsButton.IsEnabled = true;
+                DisplayStatusMessage($"Found { listResults.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
             }
 
             if (searchTerms.Count < 1 || searchResults.Count < 1)
@@ -316,8 +324,8 @@ namespace HomeSalesTrackerApp
         {
             StringBuilder statusMessage = new StringBuilder("Ok. ");
 
-            HomeForSaleView selectedHomesaleView = null;
-            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleView;
+            HomeForSaleModel selectedHomesaleView = null;
+            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
             FoundHomesForSaleView.SelectedIndex = -1;
 
             var homeid = selectedHomesaleView.HomeID;
@@ -377,7 +385,7 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuRemoveHomeFromMarket_Click(object sender, RoutedEventArgs e)
         {
-            HomeForSaleView selectedHomeForSale = (HomeForSaleView)this.FoundHomesForSaleView.SelectedItem;
+            HomeForSaleModel selectedHomeForSale = (HomeForSaleModel)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
                 int homeID = selectedHomeForSale.HomeID;
@@ -546,8 +554,6 @@ namespace HomeSalesTrackerApp
             {
                 agentsResultsReport.Show();
             };
-            //var agentsResultsReport = new AgentsResultsReport();
-            //agentsResultsReport.Show();
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
         }
@@ -571,15 +577,10 @@ namespace HomeSalesTrackerApp
         private void MenuAboutAppInfo_Click(object sender, RoutedEventArgs e)
         {
             string messageBoxCaption = "About: Home Sales Tracker App";
-            string messageBoxText = $"App: Home Sales Tracker\nAuthor: Jon Rumsey\nDeadline: 20-Aug-2020";
+            string messageBoxText = $"App: Home Sales Tracker\nAuthor: Jon Rumsey\nSummer, Fall 2020";
             MessageBoxButton button = MessageBoxButton.OK;
             MessageBoxImage icon = MessageBoxImage.Information;
             MessageBox.Show(messageBoxText, messageBoxCaption, button, icon);
-        }
-
-        private void getItemDetailsButton_Click(object sender, RoutedEventArgs e)
-        {
-            DisplayStatusMessage("Detail button not yet implemented");
         }
 
         private void DisplayStatusMessage(string message)
@@ -601,7 +602,100 @@ namespace HomeSalesTrackerApp
 
         private void GetItemDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            DisplayStatusMessage("Get Item Details button clicked. Not yet implemented.");
+            if (FoundHomesView.Visibility == Visibility.Visible)
+            {
+                HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                if (selectedHome.Equals(null))
+                {
+                    DisplayStatusMessage("Select an item in the results before clicking the button.");
+                    return;
+                }
+
+                var onMarketCount = (from hfs in homeSalesCollection
+                                     where hfs.HomeID == selectedHome.HomeID &&
+                                     hfs.SoldDate == null
+                                     select hfs).ToList();
+
+                if (onMarketCount.Count > 0)
+                {
+                    selectedHome.MarketDate = onMarketCount[0].MarketDate;
+                }
+                MessageBox.Show($"{ selectedHome.ToStackedString() }");
+            }
+
+            if (FoundHomesForSaleView.Visibility == Visibility.Visible)
+            {
+                HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+                if (selectedHfs.Equals(null))
+                {
+                    DisplayStatusMessage("Select an item in the results before clicking the button.");
+                    return;
+                }
+
+                var homeForSaleDetails = new HomeForSaleDetailModel();
+                homeForSaleDetails = (from hfs in homeSalesCollection
+                                      where hfs.SaleID == selectedHfs.HomeID
+                                      join h in homesCollection on hfs.HomeID equals h.HomeID
+                                      join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
+                                      join o in peopleCollection on h.OwnerID equals o.PersonID
+                                      join a in peopleCollection on hfs.AgentID equals a.PersonID
+                                      select new HomeForSaleDetailModel
+                                      {
+                                          HomeID = h.HomeID,
+                                          Address = h.Address,
+                                          City = h.City,
+                                          State = h.State,
+                                          Zip = h.Zip,
+                                          SaleAmount = hfs.SaleAmount,
+                                          MarketDate = hfs.MarketDate,
+                                          OwnerFirstName = o.FirstName,
+                                          OwnerLastName = o.LastName,
+                                          PreferredLender = h.Owner.PreferredLender,
+                                          AgentFirstName = a.FirstName,
+                                          AgentLastName = a.LastName,
+                                          CommissionPercent = hfs.Agent.CommissionPercent,
+                                          RecoName = reco.CompanyName,
+                                          RecoPhone = reco.Phone,
+                                      }).FirstOrDefault();
+
+                MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
+            }
+
+            if (FoundSoldHomesView.Visibility == Visibility.Visible)
+            {
+                SoldHomesView selectedSh = FoundSoldHomesView.SelectedItem as SoldHomesView;
+                if (selectedSh.Equals(null))
+                {
+                    DisplayStatusMessage("Select an item in the results before clicking the button.");
+                    return;
+                }
+
+                var recos = (from reco in reCosCollection
+                             select reco);
+
+                var homeSale = (from hs in homeSalesCollection
+                                where hs.Buyer != null
+                                select hs);
+
+                var hsDetails = (from r in recos
+                                 join hs in homeSale on r.CompanyID equals hs.CompanyID
+                                 where hs.HomeID == selectedSh.HomeID
+                                 select hs).FirstOrDefault();
+
+                selectedSh.HomeID = hsDetails.HomeID;
+                selectedSh.RECo.CompanyID = hsDetails.RealEstateCompany.CompanyID;
+                selectedSh.RECo.CompanyName = hsDetails.RealEstateCompany.CompanyName;
+                MessageBox.Show($"{ selectedSh.ToStackedString() }");
+
+            }
+
+            if (FoundPeopleView.Visibility == Visibility.Visible)
+            {
+                PersonView foundPerson = FoundPeopleView.SelectedItem as PersonView;
+            }
+
+            DisplayStatusMessage("Ready.");
+
         }
 
         private static void HomeSearchHelper(ref List<Home> searchResults, ref List<string> searchTerms)
