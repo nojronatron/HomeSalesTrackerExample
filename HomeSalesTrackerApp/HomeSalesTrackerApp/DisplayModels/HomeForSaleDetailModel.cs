@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    class HomeForSaleDetailModel: HomeForSaleModel
+    public class HomeForSaleDetailModel: HomeForSaleModel
     {
 		public string OwnerFirstName { get; set; }
 		public string OwnerLastName { get; set; }

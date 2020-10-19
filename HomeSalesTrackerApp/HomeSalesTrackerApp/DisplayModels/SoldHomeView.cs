@@ -2,13 +2,13 @@
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    public class SoldHomesView : HomeDisplayModel
+    public class SoldHomeView : HomeDisplayModel
     {
         public string BuyerFirstLastName { get; set; }
         public string AgentFirstLastName { get; set; }
 
-        //  TODO: Determine if removing this prop causes bugs
-        //  public string RealEstateCompanyName { get; set; }
+        ////  TODO: Fix this class and Menu > Search > SoldHomes so that Real Estate Co details are not included (they are not needed)
+        public string RealEstateCompanyName { get; set; }
         private RealEstateCompanyView _reco = new RealEstateCompanyView();
         public RealEstateCompanyView RECo
         {
@@ -27,6 +27,32 @@ namespace HomeSalesTrackerApp.DisplayModels
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        //public int RecoID { get; set; }
+        //public string RecoName { get; set; }
+        //public string RecoPhone { get; set; }
+        //private string RecoPhoneFormatted
+        //{
+        //    get
+        //    {
+        //        return $"({ RecoPhone.Substring(0,3) }) { RecoPhone.Substring(3,3) }-{ RecoPhone.Substring(6,4) }";
+        //    }
+        //}
+
+        //public override string ToString()
+        //{
+        //    return $"{ base.ToString()} { BuyerFirstLastName } { AgentFirstLastName }" +
+        //        $" { RecoID } { RecoName } { RecoPhoneFormatted }" +
+        //        $" { SaleAmount:C2} { SoldDate:MM/dd/yyyy}";
+        //}
+
+        //public override string ToStackedString()
+        //{
+        //    return $"{ base.ToStackedString() }\n" +
+        //        $"Real Estate Co ID: { RecoID }\n" + 
+        //        $"Real Estate Co Name: { RecoName }\n" +
+        //        $"Real Estate Co Phone: { RecoPhoneFormatted }";
+        //}
+
 
         public override string ToString()
         {

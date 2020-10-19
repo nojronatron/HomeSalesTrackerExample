@@ -61,12 +61,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DisplayModels\AgentView.cs" />
+    <Compile Include="DisplayModels\AgentModel.cs" />
     <Compile Include="DisplayModels\HomeForSaleDetailModel.cs" />
     <Compile Include="DisplayModels\HomeDisplayModel.cs" />
     <Compile Include="DisplayModels\OwnerView.cs" />
     <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
-    <Compile Include="DisplayModels\SoldHomesView.cs" />
+    <Compile Include="DisplayModels\SoldHomeDetailModel.cs" />
+    <Compile Include="DisplayModels\SoldHomeView.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Report Models\AgentsReportModel.cs" />
     <Compile Include="Report Models\BuyersReportModel.cs" />
