@@ -7,9 +7,17 @@ namespace HomeSalesTrackerApp.DisplayModels
         public int HomeForSaleID { get; set; }
         public Decimal SaleAmount { get; set; }
         public DateTime MarketDate { get; set; }
-        private RealEstateCompanyView _reco = new RealEstateCompanyView();
 
         public HomeForSaleModel() { }
+
+        private string FormatZip()
+        {
+            if (base.Zip.Length > 0)
+            {
+                return $"{ base.Zip.Substring(0, 5) }-{ base.Zip.Substring(5, 4) }";
+            }
+            return $"! { base.Zip } !";
+        }
 
         public override string ToString()
         {
@@ -18,10 +26,14 @@ namespace HomeSalesTrackerApp.DisplayModels
 
         public override string ToStackedString()
         {
-            return $"{ base.ToStackedString() }\n" +
-                $"Sale Amount: { this.SaleAmount:C0}\n" +
-                $"Market Date: { this.MarketDate:D}";
+            return $"HomeID: { base.HomeID }\n" +
+                $"Address: { base.Address }\n" +
+                $"City: { base.City }\n" +
+                $"State: { base.State }\n" +
+                $"Zip: { FormatZip() }\n" +
+                $"Market Date: { this.MarketDate:D}\n" +
+                $"Sale Amount: { this.SaleAmount:C0}";
         }
-    }
 
+    }
 }

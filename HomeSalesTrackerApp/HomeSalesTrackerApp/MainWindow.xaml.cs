@@ -151,7 +151,7 @@ namespace HomeSalesTrackerApp
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
             searchTerms = FormatSearchTerms(searchTermsText);
-            var shvResults = new List<SoldHomeView>();
+            var shvResults = new List<SoldHomeModel>();
 
             if (searchTerms.Count > 0)
             {
@@ -165,7 +165,7 @@ namespace HomeSalesTrackerApp
                               && hs.SaleID == shsr.SaleID
                               && h.HomeID == shsr.HomeID
                               && shsr.SoldDate != null
-                              select new SoldHomeView
+                              select new SoldHomeModel
                               {
                                   HomeID = hs.HomeID,
                                   Address = h.Address,
@@ -187,7 +187,7 @@ namespace HomeSalesTrackerApp
                                      && h.HomeID == shr.HomeID
                                      && h.HomeID == hs.HomeID
                                      && hs.SoldDate != null
-                                     select new SoldHomeView
+                                     select new SoldHomeModel
                                      {
                                          HomeID = hs.HomeID,
                                          Address = h.Address,
@@ -249,7 +249,7 @@ namespace HomeSalesTrackerApp
             {
                 var results = (from h in searchResults
                                where h != null
-                               select new HomeSearchView
+                               select new HomeSearchModel
                                {
                                    HomeID = h.HomeID,
                                    Address = h.Address,
@@ -606,7 +606,7 @@ namespace HomeSalesTrackerApp
             {
                 if (FoundHomesView.Visibility == Visibility.Visible)
                 {
-                    HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                    HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
                     if (selectedHome == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -626,6 +626,7 @@ namespace HomeSalesTrackerApp
                     }
 
                     MessageBox.Show($"{ selectedHome.ToStackedString() }");
+                    FoundHomesView.SelectedIndex = -1;
                 }
 
                 if (FoundHomesForSaleView.Visibility == Visibility.Visible)
@@ -666,11 +667,12 @@ namespace HomeSalesTrackerApp
                                           }).FirstOrDefault();
 
                     MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
+                    FoundHomesForSaleView.SelectedIndex = -1;
                 }
 
                 if (FoundSoldHomesView.Visibility == Visibility.Visible)
                 {
-                    SoldHomeView selectedSh = FoundSoldHomesView.SelectedItem as SoldHomeView;
+                    SoldHomeModel selectedSh = FoundSoldHomesView.SelectedItem as SoldHomeModel;
                     if (selectedSh == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -707,12 +709,12 @@ namespace HomeSalesTrackerApp
                                        }).FirstOrDefault();
 
                     MessageBox.Show($"{ soldHomeDetails.ToStackedString() }");
-
+                    FoundSoldHomesView.SelectedIndex = -1;
                 }
 
                 if (FoundPeopleView.Visibility == Visibility.Visible)
                 {
-                    PersonView foundPerson = FoundPeopleView.SelectedItem as PersonView;
+                    PersonModel foundPerson = FoundPeopleView.SelectedItem as PersonModel;
                     if (foundPerson == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -720,6 +722,135 @@ namespace HomeSalesTrackerApp
                         logger.Flush();
                         return;
                     }
+
+                    if (foundPerson.PersonType == new BuyerModel().PersonType)
+                    {
+                        List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
+                        purchasedHomes = (from hfs in homeSalesCollection
+                                          where hfs.BuyerID == foundPerson.PersonID
+                                          join h in homesCollection on hfs.HomeID equals h.HomeID
+                                          select new SoldHomeModel
+                                          {
+                                              HomeID = h.HomeID,
+                                              Address = h.Address,
+                                              City = h.City,
+                                              State = h.State,
+                                              Zip = h.Zip,
+                                              SaleAmount = hfs.SaleAmount,
+                                              SoldDate = hfs.SoldDate
+                                          }).ToList();
+
+                        var buyerPerson = (from hfs in homeSalesCollection
+                                           where hfs.BuyerID == foundPerson.PersonID
+                                           select new BuyerModel
+                                           {
+                                               PersonID = foundPerson.PersonID,
+                                               FirstName = foundPerson.FirstName,
+                                               LastName = foundPerson.LastName,
+                                               Phone = foundPerson.Phone,
+                                               Email = foundPerson.Email,
+                                               PersonType = foundPerson.PersonType,
+                                               CreditRating = hfs.Buyer.CreditRating,
+                                               PurchasedHomes = purchasedHomes
+                                           }).FirstOrDefault();
+
+
+                        MessageBox.Show(buyerPerson.ToStackedString());
+                    }
+
+                    if (foundPerson.PersonType == new OwnerModel().PersonType)
+                    {
+                        List<HomeDisplayModel> ownedHomes = new List<HomeDisplayModel>();
+                        ownedHomes = (from h in homesCollection
+                                      where h.OwnerID == foundPerson.PersonID
+                                      select new HomeDisplayModel
+                                      {
+                                          HomeID = h.HomeID,
+                                          Address = h.Address,
+                                          City = h.City,
+                                          State = h.State,
+                                          Zip = h.Zip
+                                      }).ToList();
+
+                        var ownerPerson = (from h in homesCollection
+                                           where h.OwnerID == foundPerson.PersonID
+                                           select new OwnerModel
+                                           {
+                                               PreferredLender = h.Owner.PreferredLender,
+                                               PersonID = foundPerson.PersonID,
+                                               FirstName = foundPerson.FirstName,
+                                               LastName = foundPerson.LastName,
+                                               Phone = foundPerson.Phone,
+                                               Email = foundPerson.Email,
+                                               PersonType = foundPerson.PersonType,
+                                               OwnedHomes = ownedHomes
+                                           }).FirstOrDefault();
+
+                        MessageBox.Show(ownerPerson.ToStackedString());
+                    }
+
+                    if (foundPerson.PersonType == new AgentModel().PersonType)
+                    {
+                        List<SoldHomeModel> soldHomes = new List<SoldHomeModel>();
+                        soldHomes = (from hfs in homeSalesCollection
+                                     where hfs.AgentID == foundPerson.PersonID &&
+                                     hfs.SoldDate != null
+                                     join p in peopleCollection on hfs.AgentID equals p.PersonID
+                                     join re in reCosCollection on hfs.CompanyID equals re.CompanyID
+                                     join h in homesCollection on hfs.HomeID equals h.HomeID
+                                     select new SoldHomeModel
+                                     {
+                                         HomeID = h.HomeID,
+                                         Address = h.Address,
+                                         City = h.City,
+                                         State = h.State,
+                                         Zip = h.Zip,
+                                         SaleAmount = hfs.SaleAmount,
+                                         SoldDate = hfs.SoldDate
+                                     }).ToList();
+
+                        List<HomeForSaleModel> homesForSale = new List<HomeForSaleModel>();
+                        homesForSale = (from hfs in homeSalesCollection
+                                        where hfs.AgentID == foundPerson.PersonID &&
+                                        hfs.SoldDate == null
+                                        join p in peopleCollection on hfs.AgentID equals p.PersonID
+                                        join re in reCosCollection on hfs.CompanyID equals re.CompanyID
+                                        join h in homesCollection on hfs.HomeID equals h.HomeID
+                                        select new HomeForSaleModel
+                                        {
+                                            HomeID = hfs.HomeID,
+                                            Address = h.Address,
+                                            City = h.City,
+                                            State = h.State,
+                                            Zip = h.Zip,
+                                            MarketDate = hfs.MarketDate,
+                                            SaleAmount = hfs.SaleAmount
+                                        }).ToList();
+
+                        var agentPerson = (from hfs in homeSalesCollection
+                                           join re in reCosCollection on hfs.CompanyID equals re.CompanyID
+                                           select new AgentModel
+                                           {
+                                               PersonID = foundPerson.PersonID,
+                                               FirstName = foundPerson.FirstName,
+                                               LastName = foundPerson.LastName,
+                                               Phone = foundPerson.Phone,
+                                               Email = foundPerson.Email,
+                                               PersonType = foundPerson.PersonType,
+                                               CommissionRate = hfs.Agent.CommissionPercent,
+                                               HomesOnMarket = homesForSale,
+                                               SoldHomes = soldHomes,
+                                               RECoID = re.CompanyID,
+                                               RECompanyName = re.CompanyName,
+                                               RECoPhone = re.Phone
+                                           }).FirstOrDefault();
+
+                        MessageBox.Show($"{ agentPerson.ToStackedString() }");
+
+                    }
+
+
+                    FoundPeopleView.SelectedIndex = -1;
                 }
             }
             catch
@@ -766,7 +897,7 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                HomeSearchView selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
                 Home home = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
                 home.HomeSales = homeSalesCollection.Where(hs => hs.HomeID == home.HomeID).ToList();
                 home.Owner = peopleCollection.Where(o => o.PersonID == home.OwnerID).FirstOrDefault().Owner;
@@ -796,7 +927,7 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                var selectedHome = FoundHomesView.SelectedItem as HomeSearchView;
+                var selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
                 Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
                 List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
                 hfsHome.HomeSales = hfsHomesales;
@@ -828,7 +959,7 @@ namespace HomeSalesTrackerApp
         {
             var updatePerson = new Person();
             var updateAgent = new Agent();
-            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
@@ -857,7 +988,7 @@ namespace HomeSalesTrackerApp
         {
             var updatePerson = new Person();
             var updateBuyer = new Buyer();
-            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
@@ -893,7 +1024,7 @@ namespace HomeSalesTrackerApp
             var updateOwner = new Owner();
             var updateAgent = new Agent();
             var updateBuyer = new Buyer();
-            PersonView selectedPerson = FoundPeopleView.SelectedItem as PersonView;
+            PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
@@ -935,15 +1066,15 @@ namespace HomeSalesTrackerApp
 
             if (searchResults.Count > 0)
             {
-                var viewResults = new List<PersonView>();
+                var viewResults = new List<PersonModel>();
                 searchResults = searchResults.Distinct<Person>().ToList();
 
-                PersonView newPersonView = null;
+                PersonModel newPersonView = null;
                 foreach (var person in searchResults)
                 {
                     if (person.Agent == null && person.Buyer == null && person.Owner == null)
                     {
-                        newPersonView = new PersonView()
+                        newPersonView = new PersonModel()
                         {
                             PersonID = person.PersonID,
                             FirstName = person.FirstName,
@@ -958,7 +1089,7 @@ namespace HomeSalesTrackerApp
                     {
                         if (person.Agent != null)
                         {
-                            newPersonView = new PersonView()
+                            newPersonView = new PersonModel()
                             {
                                 PersonID = person.PersonID,
                                 FirstName = person.FirstName,
@@ -971,7 +1102,7 @@ namespace HomeSalesTrackerApp
                         }
                         if (person.Buyer != null)
                         {
-                            newPersonView = new PersonView()
+                            newPersonView = new PersonModel()
                             {
                                 PersonID = person.PersonID,
                                 FirstName = person.FirstName,
@@ -984,7 +1115,7 @@ namespace HomeSalesTrackerApp
                         }
                         if (person.Owner != null)
                         {
-                            newPersonView = new PersonView()
+                            newPersonView = new PersonModel()
                             {
                                 PersonID = person.PersonID,
                                 FirstName = person.FirstName,
@@ -1001,6 +1132,7 @@ namespace HomeSalesTrackerApp
                 FoundPeopleView.ItemsSource = viewResults;
                 FoundPeopleView.Visibility = Visibility.Visible;
                 DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and use Details or Modify to make changes.");
+                GetItemDetailsButton.IsEnabled = true;
             }
 
             if (searchTerms.Count < 1 || searchResults.Count < 1)

@@ -2,7 +2,7 @@
 
 namespace HomeSalesTrackerApp.DisplayModels
 {
-    public class HomeSearchView : HomeDisplayModel
+    public class HomeSearchModel : HomeDisplayModel
     {
         public DateTime? MarketDate { get; set; }
 

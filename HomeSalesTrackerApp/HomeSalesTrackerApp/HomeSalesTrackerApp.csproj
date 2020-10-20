@@ -64,10 +64,10 @@
     <Compile Include="DisplayModels\AgentModel.cs" />
     <Compile Include="DisplayModels\HomeForSaleDetailModel.cs" />
     <Compile Include="DisplayModels\HomeDisplayModel.cs" />
-    <Compile Include="DisplayModels\OwnerView.cs" />
-    <Compile Include="DisplayModels\RealEstateCompanyView.cs" />
+    <Compile Include="DisplayModels\OwnerModel.cs" />
+    <Compile Include="DisplayModels\RealEstateCoModel.cs" />
     <Compile Include="DisplayModels\SoldHomeDetailModel.cs" />
-    <Compile Include="DisplayModels\SoldHomeView.cs" />
+    <Compile Include="DisplayModels\SoldHomeModel.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Report Models\AgentsReportModel.cs" />
     <Compile Include="Report Models\BuyersReportModel.cs" />
@@ -95,10 +95,10 @@
     <Compile Include="CrudWindows\HomeUpdaterWindow.xaml.cs">
       <DependentUpon>HomeUpdaterWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DisplayModels\BuyerView.cs" />
+    <Compile Include="DisplayModels\BuyerModel.cs" />
     <Compile Include="DisplayModels\HomeForSaleModel.cs" />
-    <Compile Include="DisplayModels\HomeSearchView.cs" />
-    <Compile Include="DisplayModels\PersonView.cs" />
+    <Compile Include="DisplayModels\HomeSearchModel.cs" />
+    <Compile Include="DisplayModels\PersonModel.cs" />
     <Compile Include="ReportWindows\AgentsResultsReport.xaml.cs">
       <DependentUpon>AgentsResultsReport.xaml</DependentUpon>
     </Compile>
