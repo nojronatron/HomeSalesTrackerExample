@@ -10,9 +10,6 @@ namespace HomeSalesTrackerApp
     public class PeopleCollection<T> : ICollection<T>, IEnumerable<T>, IObservable<T>
                             where T : Person
     {
-        public delegate void CollectionChangedHandler(Person person);
-        public CollectionChangedHandler listOfHandlers;
-
 
         private static List<T> _peopleList = null;
         private static int position = 0;
@@ -32,7 +29,6 @@ namespace HomeSalesTrackerApp
         }
 
         public T Current => _peopleList[position];
-        //object IEnumerator.Current => _peopleList[position];
 
         public bool IsReadOnly => ((ICollection<T>)_peopleList).IsReadOnly;
 
@@ -42,13 +38,20 @@ namespace HomeSalesTrackerApp
         /// <param name="person"></param>
         public bool Add(T person)
         {
+            int count = this.Count;
             bool result = false;
-            var people = _peopleList.SingleOrDefault(p => p.PersonID == person.PersonID);
-            if (people == null)
+            var collectionPerson = _peopleList.SingleOrDefault(p => p.PersonID == person.PersonID);
+            if (collectionPerson == null)
             {
-                _peopleList.Add(person);
-                //listOfHandlers(person); //  sends Person object via Delegate to subscriber(s)
-                result = true;
+                if (LogicBroker.SaveEntity<Person>(person))
+                {
+                    _peopleList.Add(person);
+                    if (this.Count > count)
+                    {
+                        //  TODO: send a Person object via Delegate to subscriber(s)
+                        result = true;
+                    }
+                }
             }
             return result;
         }
@@ -63,29 +66,6 @@ namespace HomeSalesTrackerApp
         {
             position = -1;
         }
-
-        ///// <summary>
-        ///// IEnumerator T GetEnumerator() implementation by Carl.
-        ///// </summary>
-        ///// <returns></returns>
-        //public IEnumerator<T> GetEnumerator()
-        //{
-        //    return ((IEnumerable<T>)_peopleList).GetEnumerator();
-        //}
-        ////public IEnumerator<T> GetEnumerator()
-        ////{
-        ////    return (IEnumerator<T>)this;
-        ////}
-
-
-        ///// <summary>
-        ///// IEnumerator IEnumerable.GetEnumerator() implementation by Carl.
-        ///// </summary>
-        ///// <returns></returns>
-        //IEnumerator IEnumerable.GetEnumerator()
-        //{
-        //    return (IEnumerator)this;
-        //}
 
         public bool MoveNext()
         {
@@ -112,7 +92,6 @@ namespace HomeSalesTrackerApp
             set
             {
                 _peopleList[index] = value;
-                _peopleList.Sort();
             }
         }
 
@@ -135,16 +114,55 @@ namespace HomeSalesTrackerApp
             return personID;
         }
 
-        public Decimal TotalCommissionsPaid()
+        public int UpdatePerson(Person person)
         {
+            int result = 0;
+            if (person == null)
+            {
+                return 0;
+            }
 
-            return 0.00m;
+            int personIDX = _peopleList.FindIndex(p => p.PersonID == person.PersonID);
+            Person collectionPerson = _peopleList[personIDX];
+            if (person.Equals(collectionPerson))
+            {
+                if (LogicBroker.UpdateEntity<Person>(person))
+                {
+                    Person dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
+                    this[personIDX] = (T)dbPerson;
+                    result = 1;
+                }
+            }
+            else
+            {
+                if (LogicBroker.SaveEntity<Person>(person))
+                {
+                    Person dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
+                    T newDbPerson = (T)dbPerson;
+                    _peopleList.Add(newDbPerson);
+                    result = 1;
+                }
+            }
+
+            return result;
         }
 
-        public Decimal TotalAmountOfSalesOfHomesSold()
+        public int UpdateAgent(Agent agent)
         {
 
-            return 0.00m;
+            return 0;
+        }
+
+        public int UpdateBuyer(Buyer buyer)
+        {
+
+            return 0;
+        }
+
+        public int UpdateOwner(Owner owner)
+        {
+
+            return 0;
         }
 
         IDisposable IObservable<T>.Subscribe(IObserver<T> observer)

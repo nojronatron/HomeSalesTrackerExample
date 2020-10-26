@@ -26,7 +26,6 @@ namespace HomeSalesTrackerApp
         public HomeSalesCollection(List<HomeSale> homeSales)
         {
             _homeSalesList = homeSales;
-            //_homeSalesList.Sort();
         }
 
         public int Count { get { return _homeSalesList.Count; } }
@@ -55,18 +54,25 @@ namespace HomeSalesTrackerApp
         /// Add a HomeSale instance to this collection. Will only accept object that has SoldDate member that is not null.
         /// </summary>
         /// <param name="homeSale"></param>
-        public void Add(HomeSale homeSale)
+        public bool Add(HomeSale homeSale)
         {
-            if (homeSale != null)
+            if (homeSale == null)
             {
-                var hsInList = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID
+                return false;
+            }
+
+            var inCollection = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID
                                                               && hs.SaleAmount == homeSale.SaleAmount);
-                if (hsInList == null)
+            if (inCollection == null)
+            {
+                if(LogicBroker.SaveEntity<HomeSale>(homeSale))
                 {
-                    _homeSalesList.Add(homeSale);
-                    //_homeSalesList.Sort();
+                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.HomeID);
+                    _homeSalesList.Add(dbHomeSale);
+                    return true;
                 }
             }
+            return false;
         }
 
         /// <summary>
@@ -88,18 +94,32 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public int Update(HomeSale homeSale)
         {
-            int itemUpdated = 0;
-            if (homeSale != null)
+            if (homeSale == null)
             {
-                int hsIndex = _homeSalesList.FindIndex(hs => hs.SaleID == homeSale.SaleID);
-                if (hsIndex >= 0)
+                return 0;
+            }
+
+            int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == homeSale.SaleID);
+            HomeSale collectionHomeSale = _homeSalesList[homeSaleIDX];
+            if (homeSale.Equals(collectionHomeSale))
+            {
+                if (LogicBroker.UpdateEntity<HomeSale>(homeSale)) 
                 {
-                    _homeSalesList[hsIndex] = homeSale;
-                    itemUpdated++;
-                    //_homeSalesList.Sort();
+                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSaleIDX);
+                    _homeSalesList[homeSaleIDX] = dbHomeSale;
+                    return 1;
+                }
+
+            }
+            else
+            {
+                if (this.Add(homeSale))
+                {
+                    return 1;
                 }
             }
-            return itemUpdated;
+
+            return 0;
         }
 
         /// <summary>
@@ -132,12 +152,6 @@ namespace HomeSalesTrackerApp
                 result = true;
             }
             return result;
-        }
-
-        public int TotalHomesCurrentlyForSale()
-        {
-            throw new NotImplementedException("TotalHomesCurrentlyForSale() has not been implemented");
-            //  return 0;
         }
 
         IEnumerator IEnumerable.GetEnumerator()

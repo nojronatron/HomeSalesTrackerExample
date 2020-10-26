@@ -11,6 +11,96 @@ namespace HSTDataLayer
     public class LogicBroker
     {
         /// <summary>
+        /// Takes a Caller's Person type arg and returns the found Person Entity from DB, otherise returns null Person Type.
+        /// </summary>
+        /// <typeparam name="Person"></typeparam>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        public static Person GetPerson(int id)
+        {
+            Person result = null;
+            if (0 < id)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                Person dbPerson = context.People.Find(id);
+                if (dbPerson != null)
+                {
+                    result = dbPerson as Person;
+                }
+
+            }
+
+            return result;
+        }
+
+        public static Home GetHome(int id)
+        {
+            Home result = null;
+            if (0 < id)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                Home dbHome = context.Homes.Find(id);
+                if (dbHome != null)
+                {
+                    result = dbHome as Home;
+                }
+
+            }
+
+            return result;
+        }
+
+        public static HomeSale GetHomeSale(int id)
+        {
+            HomeSale result = null;
+            if (0 < id)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                HomeSale dbHomesale = context.HomeSales.Find(id);
+                if (dbHomesale != null)
+                {
+                    result = dbHomesale as HomeSale;
+                }
+
+            }
+
+            return result;
+        }
+
+        public static RealEstateCompany GetReCompany(int id)
+        {
+            RealEstateCompany result = null;
+            if (0 < id)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                RealEstateCompany dbReCommpany = context.RealEstateCompanies.Find(id);
+                if (dbReCommpany != null)
+                {
+                    result = dbReCommpany as RealEstateCompany;
+                }
+
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Inits a new DB and calls to load the db with XML file data
         /// </summary>
         /// <returns></returns>

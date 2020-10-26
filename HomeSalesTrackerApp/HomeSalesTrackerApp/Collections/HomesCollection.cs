@@ -30,7 +30,6 @@ namespace HomeSalesTrackerApp
         public HomesCollection(List<Home> homes)
         {
             _homesList = homes;
-            //_homesList.Sort();
         }
 
         public int Count { get { return _homesList.Count; } }
@@ -59,13 +58,19 @@ namespace HomeSalesTrackerApp
         /// Adds an instance to this item list.
         /// </summary>
         /// <param name="home"></param>
-        public void Add(Home home)
+        public bool Add(Home home)
         {
             if (home != null)
             {
-                _homesList.Add(home);
+                if (LogicBroker.SaveEntity<Home>(home))
+                {
+                    Home dbHome = LogicBroker.GetHome(home.HomeID);
+                    _homesList.Add(dbHome);
+                    return true;
+                }
             }
-            _homesList.Sort();
+
+            return false;
         }
 
         /// <summary>
@@ -87,40 +92,32 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public int Update(Home home)
         {
-            int elementsUpdated = 0;
-            if (home != null)
+            if (home == null)   //  null check
             {
-                int homeIdToUpdate = home.HomeID;
-                int idx = _homesList.FindIndex(x => x.HomeID == homeIdToUpdate);
-                Home selectedHome = _homesList[idx];
-                if (selectedHome.Address != home.Address.Trim())
-                {
-                    _homesList[idx].Address = home.Address;
-                    elementsUpdated++;
-                }
-                if (selectedHome.City != home.City.Trim())
-                {
-                    _homesList[idx].City = home.City;
-                    elementsUpdated++;
-                }
-                if (selectedHome.State != home.State.Trim())
-                {
-                    _homesList[idx].State = home.State;
-                    elementsUpdated++;
-                }
-                if (selectedHome.Zip != home.Zip.Trim())
-                {
-                    _homesList[idx].State = home.State;
-                    elementsUpdated++;
-                }
-                if (selectedHome.OwnerID != home.OwnerID)
-                {
-                    _homesList[idx].OwnerID = home.OwnerID;
-                    elementsUpdated++;
-                }
-                _homesList.Sort();
+                return 0;
             }
-            return elementsUpdated;
+
+            //  check if arg exists in collection
+            int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
+            Home collectionHome = _homesList[homeIDX];
+            if (home.Equals(collectionHome))
+            { 
+                if (LogicBroker.UpdateEntity<Home>(home))
+                {
+                    Home dbHome = LogicBroker.GetHome(homeIDX);
+                    _homesList[homeIDX] = dbHome;
+                    return 1;
+                }
+            }
+            else
+            {
+                if (this.Add(home))
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -133,7 +130,6 @@ namespace HomeSalesTrackerApp
             {
                 int homeIdx = _homesList.FindIndex(x => x.HomeID == homeID);
                 _homesList.RemoveAt(homeIdx);
-                _homesList.Sort();
             }
         }
 

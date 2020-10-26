@@ -26,7 +26,6 @@ namespace HomeSalesTrackerApp
         public RealEstateCosCollection(List<RealEstateCompany> reCompanies)
         {
             _recoList = reCompanies;
-            //_recoList.Sort();
         }
 
         /// <summary>
@@ -77,28 +76,32 @@ namespace HomeSalesTrackerApp
 
         public int Update(RealEstateCompany realEstateCompany)
         {
-            int elementsUpdated = 0;
-            if (realEstateCompany != null)
+            int result = 0;
+            if (realEstateCompany == null)
             {
-                int recoToUpdate = realEstateCompany.CompanyID;
-                int idx = _recoList.FindIndex(r => r.CompanyID == recoToUpdate);
-                RealEstateCompany selectedReco = _recoList[idx];
-                if (selectedReco.CompanyName != realEstateCompany.CompanyName)
+                return result;
+            }
+            
+            int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
+            RealEstateCompany selectedReco = _recoList[realEstateCompanyIDX];
+            if (selectedReco.Equals(realEstateCompany))
+            {
+                if (LogicBroker.UpdateEntity<RealEstateCompany>(realEstateCompany))
                 {
-                    _recoList[idx].CompanyName = realEstateCompany.CompanyName;
-                    elementsUpdated++;
-                }
-                if (selectedReco.Phone != realEstateCompany.Phone)
-                {
-                    _recoList[idx].Phone = realEstateCompany.Phone;
-                    elementsUpdated++;
-                }
-                if (elementsUpdated > 0)
-                {
-                    _recoList.Sort();
+                    RealEstateCompany dbRECo = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+                    _recoList[realEstateCompanyIDX] = dbRECo;
+                    result++;
                 }
             }
-            return elementsUpdated;
+            else
+            {
+                if (this.Add(realEstateCompany))
+                {
+                    result++;
+                }
+            }
+
+            return 0;
         }
 
         public void Remove(int companyID)
