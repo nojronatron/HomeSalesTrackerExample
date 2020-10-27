@@ -157,13 +157,17 @@ namespace HomeSalesTrackerApp.CrudWindows
                 NewPerson.Phone = phone;
                 NewPerson.Email = email;
 
-                if (LogicBroker.SaveEntity<Person>(NewPerson))
+                //if (LogicBroker.SaveEntity<Person>(NewPerson))
+                //{
+                //    MainWindow.InitializeCollections();
+                //    NewPersonID = MainWindow.peopleCollection.Where(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName).FirstOrDefault().PersonID;
+                //}
+
+                if (MainWindow.peopleCollection.Add(NewPerson))
                 {
-                    MainWindow.InitializeCollections();
-                    NewPersonID = MainWindow.peopleCollection.Where(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName).FirstOrDefault().PersonID;
+                    DisplayStatusMessage("Person created!");
+                    result = true;
                 }
-                DisplayStatusMessage("Person created!");
-                result = true;
             }
             else
             {
@@ -299,7 +303,23 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             if (CreateNewPerson())
             {
-                if (NewAgent != null && NewPersonID > -1)
+                NewPerson.PersonID = MainWindow.peopleCollection
+                                               .FirstOrDefault(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName)
+                                               .PersonID;
+
+                if (NewPerson.PersonID < 0)
+                {
+                    DisplayStatusMessage($"Unable to Save. Close Window and try again.");
+                    this.NewPerson = null;
+                    this.NewAgent = null;
+                    this.NewBuyer = null;
+                    this.NewOwner = null;
+                    return;
+                }
+
+                this.NewPersonID = NewPerson.PersonID;
+
+                if (NewAgent != null)
                 {
                     NewAgent.AgentID = NewPersonID;
                     if (LogicBroker.SaveEntity<Agent>(NewAgent))
@@ -307,7 +327,8 @@ namespace HomeSalesTrackerApp.CrudWindows
                         itemsCount++;
                     }
                 }
-                if (NewBuyer != null && NewPersonID > -1)
+
+                if (NewBuyer != null)
                 {
                     NewBuyer.BuyerID = NewPersonID;
                     if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
@@ -315,7 +336,8 @@ namespace HomeSalesTrackerApp.CrudWindows
                         itemsCount++;
                     }
                 }
-                if (NewOwner != null && NewPersonID > -1)
+
+                if (NewOwner != null)
                 {
                     NewOwner.OwnerID = NewPersonID;
                     if (LogicBroker.SaveEntity<Owner>(NewOwner))
@@ -323,6 +345,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                         itemsCount++;
                     }
                 }
+
                 if (itemsCount > 0)
                 {
                     DisplayStatusMessage($"{ AddType } saved! Click Close button to exit this window.");

@@ -64,42 +64,30 @@ namespace HomeSalesTrackerApp
 
         public static void InitRealEstateCompaniesCollection()
         {
-            reCosCollection = new RealEstateCosCollection();
             List<RealEstateCompany> recos = EntityLists.GetTreeListOfRECompanies();
-            foreach (var reco in recos)
-            {
-                reCosCollection.Add(reco);
-            }
+            reCosCollection = new RealEstateCosCollection(recos);
+
         }
 
         public static void InitHomesCollection()
         {
-            homesCollection = new HomesCollection();
             List<Home> homes = EntityLists.GetTreeListOfHomes();
-            foreach (var home in homes)
-            {
-                homesCollection.Add(home);
-            }
+            homesCollection = new HomesCollection(homes);
+
         }
 
         public static void InitPeopleCollection()
         {
-            peopleCollection = new PeopleCollection<Person>();
             List<Person> people = EntityLists.GetListOfPeople();
-            foreach (var person in people)
-            {
-                peopleCollection.Add(person);
-            }
+            peopleCollection = new PeopleCollection<Person>(people);
+
         }
 
         public static void InitHomeSalesCollection()
         {
-            homeSalesCollection = new HomeSalesCollection();
             List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
-            foreach (var homeSale in homeSales)
-            {
-                homeSalesCollection.Add(homeSale);
-            }
+            homeSalesCollection = new HomeSalesCollection(homeSales);
+
         }
 
         private void ClearFieldsButton_Click(object sender, RoutedEventArgs e)
@@ -602,6 +590,9 @@ namespace HomeSalesTrackerApp
 
         private void GetItemDetailsButton_Click(object sender, RoutedEventArgs e)
         {
+            var objectType = new StringBuilder();
+            var objectContents = new StringBuilder();
+
             try
             {
                 if (FoundHomesView.Visibility == Visibility.Visible)
@@ -614,6 +605,9 @@ namespace HomeSalesTrackerApp
                         logger.Flush();
                         return;
                     }
+
+                    objectType.Append(selectedHome.GetType().ToString());
+                    objectContents.Append(selectedHome.ToString());
 
                     var homeMarketDate = (from hfs in homeSalesCollection
                                           where hfs.HomeID == selectedHome.HomeID &&
@@ -639,6 +633,9 @@ namespace HomeSalesTrackerApp
                         logger.Flush();
                         return;
                     }
+
+                    objectType.Append(selectedHfs.GetType().ToString());
+                    objectContents.Append(selectedHfs.ToString());
 
                     var homeForSaleDetails = new HomeForSaleDetailModel();
                     homeForSaleDetails = (from hfs in homeSalesCollection
@@ -680,6 +677,9 @@ namespace HomeSalesTrackerApp
                         logger.Flush();
                         return;
                     }
+
+                    objectType.Append(selectedSh.GetType().ToString());
+                    objectContents.Append(selectedSh.ToString());
 
                     var soldHomeDetails = new SoldHomeDetailModel();
                     soldHomeDetails = (from hfs in homeSalesCollection
@@ -723,6 +723,9 @@ namespace HomeSalesTrackerApp
                         return;
                     }
 
+                    objectType.Append(foundPerson.GetType().ToString());
+                    objectContents.Append(foundPerson.ToString());
+
                     if (foundPerson.PersonType == new BuyerModel().PersonType)
                     {
                         List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
@@ -753,7 +756,6 @@ namespace HomeSalesTrackerApp
                                                CreditRating = hfs.Buyer.CreditRating,
                                                PurchasedHomes = purchasedHomes
                                            }).FirstOrDefault();
-
 
                         MessageBox.Show(buyerPerson.ToStackedString());
                     }
@@ -849,16 +851,16 @@ namespace HomeSalesTrackerApp
 
                     }
 
-
                     FoundPeopleView.SelectedIndex = -1;
                 }
             }
             catch
             {
-                DisplayStatusMessage("Something didn't quite go right. Try again.");
-                logger.Data("Search Results", "Something went wrong.");
+                DisplayStatusMessage($"Selected item did not have details to show.");
+                logger.Data($"GetItemDetails", "Problem with selected object (next entry will have details)...");
+                logger.Data(objectType.ToString(), objectContents.ToString());
                 logger.Flush();
-                throw;
+                //throw;
             }
 
         }

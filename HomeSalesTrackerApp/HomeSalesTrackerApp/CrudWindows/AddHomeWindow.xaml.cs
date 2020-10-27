@@ -61,7 +61,7 @@ namespace HomeSalesTrackerApp
             }
             else
             {
-                bool saveSucceeded = false;
+                int itemsProcessed = 0;
                 if (APerson != null)
                 {
                     if (UpdateInsteadOfAdd)
@@ -71,11 +71,13 @@ namespace HomeSalesTrackerApp
                         NewHome.State = state;
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
-                        saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
+                        //saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
+                        itemsProcessed = MainWindow.homesCollection.Update(NewHome);
                     }
                     else
                     {
-                        LogicBroker.SaveEntity<Owner>(AnOwner);
+                        //LogicBroker.SaveEntity<Owner>(AnOwner);
+                        itemsProcessed = MainWindow.peopleCollection.UpdatePerson(APerson);
                         NewHome = new Home()
                         {
                             Address = address,
@@ -85,10 +87,14 @@ namespace HomeSalesTrackerApp
                             OwnerID = APerson.PersonID
                         };
 
-                        saveSucceeded = LogicBroker.SaveEntity<Home>(NewHome);
+                        //if (LogicBroker.SaveEntity<Home>(NewHome))
+                        if (MainWindow.homesCollection.Add(NewHome))
+                        {
+                            itemsProcessed++;
+                        }
                     }
 
-                    if (saveSucceeded)
+                    if (itemsProcessed > 0)
                     {
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
@@ -99,7 +105,7 @@ namespace HomeSalesTrackerApp
                     }
                     else
                     {
-                        DisplayStatusMessage("Unable to save Home.");
+                        DisplayStatusMessage("Unable to save Home. Close this window and try again.");
                         IsButtonClose = false;
                     }
 
@@ -120,6 +126,7 @@ namespace HomeSalesTrackerApp
             Apw.AddType = "Owner";
             Apw.Title = "Add new Owner to the Database";
             Apw.Show();
+
         }
 
         private void MenuExit_Click(object sender, RoutedEventArgs e)
