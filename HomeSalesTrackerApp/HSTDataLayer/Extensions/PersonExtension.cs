@@ -26,13 +26,17 @@ namespace HSTDataLayer
         /// <returns></returns>
         int IComparable<Person>.CompareTo(Person other)
         {
-            if (other == null) return 1;
-            //  sort() items in a list by LastName then FirstName
+            if (other == null)
+            {
+                return 1;
+            }
+
             int result = this.LastName.CompareTo(other.LastName);
             if (result == 0)
             {
                 result = this.FirstName.CompareTo(other.FirstName);
             }
+
             return result;
         }
 
@@ -43,6 +47,11 @@ namespace HSTDataLayer
         /// <returns></returns>
         bool IEquatable<Person>.Equals(Person other)
         {
+            if (other == null)
+            {
+                return false;
+            }
+
             if (this.FirstName == other.FirstName &&
                 this.LastName == other.LastName &&
                 this.Email == other.Email &&
@@ -50,6 +59,7 @@ namespace HSTDataLayer
             {
                 return true;
             }
+
             return false;
         }
         /// <summary>

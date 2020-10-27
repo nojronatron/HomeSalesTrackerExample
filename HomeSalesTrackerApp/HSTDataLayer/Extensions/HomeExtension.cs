@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HSTDataLayer
 {
-    public partial class Home : IEquatable<Home>, IComparable<Home>, IEqualityComparer<Home>
+    public partial class Home : IEquatable<Home>
     {
         /// <summary>
         /// Override ToString() to control a basic string-output of a Home instance
@@ -14,23 +14,7 @@ namespace HSTDataLayer
             string zipcode = this.Zip.Substring(0, 5);
             string plusFour = this.Zip.Substring(5, 4);
             return $"{ this.Address }\n{ this.City }, { this.State }\t{ zipcode }-{ plusFour }";
-        }
 
-        /// <summary>
-        /// Required IComparable method implementation. Reference for multi-field sorting: https://stackoverflow.com/questions/4501501/custom-sorting-icomparer-on-three-fields
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        int IComparable<Home>.CompareTo(Home other)
-        {
-            if (other == null) return 1;
-            //  sort() items in a list by LastName then FirstName
-            int result = this.Zip.CompareTo(other.Zip);
-            if (result == 0)
-            {
-                result = this.Address.CompareTo(other.Address);
-            }
-            return result;
         }
 
         /// <summary>
@@ -45,6 +29,7 @@ namespace HSTDataLayer
             {
                 return true;
             }
+
             return false;
         }
 
@@ -58,6 +43,7 @@ namespace HSTDataLayer
             return obj is Home home &&
                    Zip == home.Zip &&
                    Address == home.Address;
+
         }
 
         /// <summary>
@@ -70,24 +56,7 @@ namespace HSTDataLayer
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Zip);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
             return hashCode;
-        }
 
-        bool IEqualityComparer<Home>.Equals(Home x, Home y)
-        {
-            if (x == null && y == null)
-            {
-                return true;
-            }
-            if (x == null || y == null)
-            {
-                return false;
-            }
-            return x.Address == y.Address && x.Zip == y.Zip;
-        }
-
-        int IEqualityComparer<Home>.GetHashCode(Home obj)
-        {
-            return (obj.Address + obj.Zip).GetHashCode();
         }
 
         /// <summary>

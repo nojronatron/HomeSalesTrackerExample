@@ -28,6 +28,7 @@ namespace HSTDataLayer
             {
                 return 1;
             }
+
             int result = this.MarketDate.Date.CompareTo(other.MarketDate.Date);
             if (result == 0)
             {
@@ -42,6 +43,7 @@ namespace HSTDataLayer
                     }
                 }
             }
+
             return result;
         }
 
@@ -52,15 +54,18 @@ namespace HSTDataLayer
         /// <returns></returns>
         bool IEquatable<HomeSale>.Equals(HomeSale other)
         {
-            if (other != null)
+            if (other == null)
             {
-                if (this.SoldDate == other.SoldDate &&
-                    this.SaleAmount == other.SaleAmount &&
-                    this.MarketDate == other.MarketDate)
-                {
-                    return true;
-                }
+                return false;
             }
+
+            if (this.SoldDate == other.SoldDate &&
+                this.SaleAmount == other.SaleAmount &&
+                this.MarketDate == other.MarketDate)
+            {
+                return true;
+            }
+
             return false;
         }
 

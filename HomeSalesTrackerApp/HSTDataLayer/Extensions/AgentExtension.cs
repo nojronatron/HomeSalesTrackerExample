@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HSTDataLayer
 {
-    public partial class Agent : IEquatable<Agent>, IComparable<Agent>, IEqualityComparer<Agent>
+    public partial class Agent : IEquatable<Agent>
     {
         public override bool Equals(object obj)
         {
@@ -22,28 +22,6 @@ namespace HSTDataLayer
             return hashCode;
         }
 
-        bool IEqualityComparer<Agent>.Equals(Agent x, Agent y)
-        {
-            if (x == null && y == null)
-            {
-                return true;
-            }
-
-            if (x == null || y == null)
-            {
-                return false;
-            }
-
-            return (x.AgentID == y.AgentID &&
-                x.CompanyID == y.CompanyID &&
-                x.CommissionPercent == y.CommissionPercent);
-        }
-
-        int IEqualityComparer<Agent>.GetHashCode(Agent obj)
-        {
-            return (obj.AgentID + obj.CommissionPercent + obj.CompanyID).GetHashCode();
-        }
-
         public static bool operator ==(Agent left, Agent right)
         {
             return EqualityComparer<Agent>.Default.Equals(left, right);
@@ -52,20 +30,6 @@ namespace HSTDataLayer
         public static bool operator !=(Agent left, Agent right)
         {
             return !(left == right);
-        }
-
-        int IComparable<Agent>.CompareTo(Agent other)
-        {
-            int result = 0;
-            if (this.AgentID < other.AgentID)
-            {
-                result = -1;
-            }
-            if (this.AgentID > other.AgentID)
-            {
-                result = 1;
-            }
-            return result;
         }
 
         bool IEquatable<Agent>.Equals(Agent other)

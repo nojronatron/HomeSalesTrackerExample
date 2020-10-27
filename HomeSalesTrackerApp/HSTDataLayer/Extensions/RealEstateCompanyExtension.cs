@@ -17,16 +17,23 @@ namespace HSTDataLayer
             {
                 return 1;
             }
+
             return this.CompanyName.CompareTo(other.CompanyName);
         }
 
         bool IEquatable<RealEstateCompany>.Equals(RealEstateCompany other)
         {
+            if (other == null)
+            {
+                return false;
+            }
+
             if (this.CompanyName == other.CompanyName &&
                 this.Phone == other.Phone)
             {
                 return true;
             }
+
             return false;
         }
 
@@ -42,8 +49,6 @@ namespace HSTDataLayer
             int hashCode = 1109774783;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CompanyName);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Phone);
-            hashCode = hashCode * -1521134295 + EqualityComparer<ICollection<Agent>>.Default.GetHashCode(Agents);
-            hashCode = hashCode * -1521134295 + EqualityComparer<ICollection<HomeSale>>.Default.GetHashCode(HomeSales);
             return hashCode;
         }
 
