@@ -116,19 +116,21 @@ namespace HomeSalesTrackerApp
 
         public int UpdatePerson(Person person)
         {
-            int result = 0;
             if (person == null)
             {
                 return 0;
             }
 
+            int result = 0;
+            Person dbPerson = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == person.PersonID);
             Person collectionPerson = _peopleList[personIDX];
+
             if (person.Equals(collectionPerson))
             {
                 if (LogicBroker.UpdateEntity<Person>(person))
                 {
-                    Person dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
+                    dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
                     this[personIDX] = (T)dbPerson;
                     result = 1;
                 }
@@ -137,9 +139,48 @@ namespace HomeSalesTrackerApp
             {
                 if (LogicBroker.SaveEntity<Person>(person))
                 {
-                    Person dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
+                    dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
                     T newDbPerson = (T)dbPerson;
                     _peopleList.Add(newDbPerson);
+                    result = 1;
+                }
+            }
+
+            if (dbPerson == null)
+            {
+                result = 0;
+            }
+
+            result += UpdateAgent(person.Agent);
+            result += UpdateBuyer(person.Buyer);
+            result += UpdateOwner(person.Owner);
+
+            return result;
+        }
+
+        private int UpdateAgent(Agent agent)
+        {
+            if (agent == null || agent.AgentID < 0)
+            {
+                return 0;
+            }
+
+            int result = 0;
+            Agent dbAgent = null;
+            int personIDX = _peopleList.FindIndex(p => p.PersonID == agent.AgentID);
+            Person collectionPerson = _peopleList[personIDX];
+
+            if (collectionPerson.Agent != agent)
+            {
+                //collectionPerson.Agent = agent;
+                if (LogicBroker.UpdateEntity<Agent>(agent))
+                {
+                    dbAgent = LogicBroker.GetPerson(collectionPerson.PersonID).Agent;
+                }
+
+                if (dbAgent != null)
+                {
+                    this[personIDX].Agent = dbAgent;
                     result = 1;
                 }
             }
@@ -147,22 +188,63 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
-        public int UpdateAgent(Agent agent)
+        private int UpdateBuyer(Buyer buyer)
         {
+            if (buyer == null || buyer.BuyerID < 0)
+            {
+                return 0;
+            }
 
-            return 0;
+            int result = 0;
+            Buyer dbBuyer = null;
+            int personIDX = _peopleList.FindIndex(p => p.PersonID == buyer.BuyerID);
+            Person collectionPerson = _peopleList[personIDX];
+
+            if (collectionPerson.Buyer != buyer)
+            {
+                //collectionPerson.Buyer = Buyer;
+                if (LogicBroker.UpdateEntity<Buyer>(buyer))
+                {
+                    dbBuyer = LogicBroker.GetPerson(collectionPerson.PersonID).Buyer;
+                }
+
+                if (dbBuyer != null)
+                {
+                    this[personIDX].Buyer = dbBuyer;
+                    result = 1;
+                }
+            }
+
+            return result;
         }
 
-        public int UpdateBuyer(Buyer buyer)
+        private int UpdateOwner(Owner owner)
         {
+            if (owner == null || owner.OwnerID < 0)
+            {
+                return 0;
+            }
 
-            return 0;
-        }
+            int result = 0;
+            Owner dbOwner = null;
+            int personIDX = _peopleList.FindIndex(p => p.PersonID == owner.OwnerID);
+            Person collectionPerson = _peopleList[personIDX];
 
-        public int UpdateOwner(Owner owner)
-        {
+            if (collectionPerson.Owner != owner)
+            {
+                if (LogicBroker.UpdateEntity<Owner>(owner))
+                {
+                    dbOwner = LogicBroker.GetPerson(collectionPerson.PersonID).Owner;
+                }
 
-            return 0;
+                if (dbOwner != null)
+                {
+                    this[personIDX].Owner = dbOwner;
+                    result = 1;
+                }
+            }
+
+            return result;
         }
 
         IDisposable IObservable<T>.Subscribe(IObserver<T> observer)
