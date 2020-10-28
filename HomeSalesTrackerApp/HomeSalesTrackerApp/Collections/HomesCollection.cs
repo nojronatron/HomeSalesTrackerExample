@@ -86,10 +86,10 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// Updates an existing ID via fully-fledged object instance.
+        /// Updates an existing home instance in database and Collection using Home arg. Returns 1 if change(s) applied, 0 if no changes made.
         /// </summary>
         /// <param name="home"></param>
-        /// <returns></returns>
+        /// <returns name="int"></returns>
         public int Update(Home home)
         {
             if (home == null)   //  null check
