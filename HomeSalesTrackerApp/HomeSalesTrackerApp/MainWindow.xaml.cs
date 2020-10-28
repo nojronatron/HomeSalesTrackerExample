@@ -967,9 +967,9 @@ namespace HomeSalesTrackerApp
             var updatePerson = new Person();
             var updateAgent = new Agent();
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
-            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (selectedPerson != null)
                 {
                     if (updatePerson != null)
@@ -997,9 +997,9 @@ namespace HomeSalesTrackerApp
             var updatePerson = new Person();
             var updateBuyer = new Buyer();
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
-            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (updatePerson.Buyer != null)
                 {
                     updateBuyer = updatePerson.Buyer;
@@ -1035,9 +1035,9 @@ namespace HomeSalesTrackerApp
             var updateAgent = new Agent();
             var updateBuyer = new Buyer();
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
-            updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
             try
             {
+                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (updatePerson.Owner != null)
                 {
                     updateOwner = updatePerson.Owner;

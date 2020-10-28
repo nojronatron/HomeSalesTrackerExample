@@ -36,10 +36,10 @@ namespace HomeSalesTrackerApp
         /// Allows caller to add a Person to the Collection based on PersonID
         /// </summary>
         /// <param name="person"></param>
-        public bool Add(T person)
+        public int Add(T person)
         {
             int count = this.Count;
-            bool result = false;
+            int result = 0;
             var collectionPerson = _peopleList.SingleOrDefault(p => p.PersonID == person.PersonID);
             if (collectionPerson == null)
             {
@@ -49,10 +49,11 @@ namespace HomeSalesTrackerApp
                     if (this.Count > count)
                     {
                         //  TODO: send a Person object via Delegate to subscriber(s)
-                        result = true;
+                        result++; ;
                     }
                 }
             }
+
             return result;
         }
 
@@ -148,7 +149,7 @@ namespace HomeSalesTrackerApp
 
             if (dbPerson == null)
             {
-                result = 0;
+                return 0;
             }
 
             result += UpdateAgent(person.Agent);
@@ -158,7 +159,7 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
-        private int UpdateAgent(Agent agent)
+        internal int UpdateAgent(Agent agent)
         {
             if (agent == null || agent.AgentID < 0)
             {
@@ -172,10 +173,9 @@ namespace HomeSalesTrackerApp
 
             if (collectionPerson.Agent != agent)
             {
-                //collectionPerson.Agent = agent;
                 if (LogicBroker.UpdateEntity<Agent>(agent))
                 {
-                    dbAgent = LogicBroker.GetPerson(collectionPerson.PersonID).Agent;
+                    dbAgent = LogicBroker.GetAgent(collectionPerson.PersonID);
                 }
 
                 if (dbAgent != null)
@@ -183,12 +183,13 @@ namespace HomeSalesTrackerApp
                     this[personIDX].Agent = dbAgent;
                     result = 1;
                 }
+
             }
 
             return result;
         }
 
-        private int UpdateBuyer(Buyer buyer)
+        internal int UpdateBuyer(Buyer buyer)
         {
             if (buyer == null || buyer.BuyerID < 0)
             {
@@ -202,10 +203,9 @@ namespace HomeSalesTrackerApp
 
             if (collectionPerson.Buyer != buyer)
             {
-                //collectionPerson.Buyer = Buyer;
                 if (LogicBroker.UpdateEntity<Buyer>(buyer))
                 {
-                    dbBuyer = LogicBroker.GetPerson(collectionPerson.PersonID).Buyer;
+                    dbBuyer = LogicBroker.GetBuyer(collectionPerson.PersonID);
                 }
 
                 if (dbBuyer != null)
@@ -218,7 +218,7 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
-        private int UpdateOwner(Owner owner)
+        internal int UpdateOwner(Owner owner)
         {
             if (owner == null || owner.OwnerID < 0)
             {
@@ -234,7 +234,7 @@ namespace HomeSalesTrackerApp
             {
                 if (LogicBroker.UpdateEntity<Owner>(owner))
                 {
-                    dbOwner = LogicBroker.GetPerson(collectionPerson.PersonID).Owner;
+                    dbOwner = LogicBroker.GetOwner(collectionPerson.PersonID);
                 }
 
                 if (dbOwner != null)

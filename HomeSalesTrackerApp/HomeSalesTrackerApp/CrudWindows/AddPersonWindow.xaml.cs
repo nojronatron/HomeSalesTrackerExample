@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 
 using System;
 using System.Linq;
@@ -20,12 +21,14 @@ namespace HomeSalesTrackerApp.CrudWindows
         private Owner NewOwner = null;
         private Person NewPerson = null;
         private RealEstateCompany ExistingRECo = null;
+        private Logger logger = null;
 
         public string AddType { get; set; }
 
         public AddPersonWindow()
         {
             InitializeComponent();
+            logger = new Logger();
             //Title = $"Add { AddType }";
         }
 
@@ -163,7 +166,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 //    NewPersonID = MainWindow.peopleCollection.Where(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName).FirstOrDefault().PersonID;
                 //}
 
-                if (MainWindow.peopleCollection.Add(NewPerson))
+                if (MainWindow.peopleCollection.Add(NewPerson) > 0)
                 {
                     DisplayStatusMessage("Person created!");
                     result = true;
@@ -310,10 +313,15 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (NewPerson.PersonID < 0)
                 {
                     DisplayStatusMessage($"Unable to Save. Close Window and try again.");
+                    logger.Data("CreateThisPersonButton <Person> Warning: ", $"{ this.NewPerson?.ToString() }");
                     this.NewPerson = null;
+                    logger.Data("CreateThisPersonButton <Agent> Warning: ", $"{ this.NewAgent?.ToString() }");
                     this.NewAgent = null;
+                    logger.Data("CreateThisPersonButton <Buyer> Warning: ", $"{ this.NewBuyer?.ToString() }");
                     this.NewBuyer = null;
+                    logger.Data("CreateThisPersonButton <Owner> Warning: ", $"{ this.NewOwner?.ToString() }");
                     this.NewOwner = null;
+                    logger.Flush();
                     return;
                 }
 
@@ -322,34 +330,38 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (NewAgent != null)
                 {
                     NewAgent.AgentID = NewPersonID;
-                    if (LogicBroker.SaveEntity<Agent>(NewAgent))
-                    {
-                        itemsCount++;
-                    }
+                    itemsCount += MainWindow.peopleCollection.UpdateAgent(NewAgent);
+                    //if (LogicBroker.SaveEntity<Agent>(NewAgent))
+                    //{
+                    //itemsCount++;
+                    //}
                 }
 
                 if (NewBuyer != null)
                 {
                     NewBuyer.BuyerID = NewPersonID;
-                    if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
-                    {
-                        itemsCount++;
-                    }
+                    itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewPerson.Buyer);
+                    //if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
+                    //{
+                    //    itemsCount++;
+                    //}
                 }
 
                 if (NewOwner != null)
                 {
                     NewOwner.OwnerID = NewPersonID;
-                    if (LogicBroker.SaveEntity<Owner>(NewOwner))
-                    {
-                        itemsCount++;
-                    }
+                    itemsCount += MainWindow.peopleCollection.UpdateOwner(NewPerson.Owner);
+                    //if (LogicBroker.SaveEntity<Owner>(NewOwner))
+                    //{
+                    //    itemsCount++;
+                    //}
                 }
 
                 if (itemsCount > 0)
                 {
                     DisplayStatusMessage($"{ AddType } saved! Click Close button to exit this window.");
                 }
+
             }
             else
             {

@@ -16,17 +16,17 @@ namespace HSTDataLayer
         /// <typeparam name="Person"></typeparam>
         /// <param name="person"></param>
         /// <returns></returns>
-        public static Person GetPerson(int id)
+        public static Person GetPerson(int personID)
         {
             Person result = null;
-            if (id < 0)
+            if (personID < 0)
             {
                 return result;
             }
 
             using (var context = new HSTDataModel())
             {
-                Person dbPerson = context.People.Find(id);
+                Person dbPerson = context.People.Find(personID);
                 if (dbPerson != null)
                 {
                     result = dbPerson as Person;
@@ -37,17 +37,17 @@ namespace HSTDataLayer
             return result;
         }
 
-        public static Home GetHome(int id)
+        public static Home GetHome(int homeID)
         {
             Home result = null;
-            if (id < 0)
+            if (homeID < 0)
             {
                 return result;
             }
 
             using (var context = new HSTDataModel())
             {
-                Home dbHome = context.Homes.Find(id);
+                Home dbHome = context.Homes.Find(homeID);
                 if (dbHome != null)
                 {
                     result = dbHome as Home;
@@ -58,17 +58,17 @@ namespace HSTDataLayer
             return result;
         }
 
-        public static HomeSale GetHomeSale(int id)
+        public static HomeSale GetHomeSale(int homesaleID)
         {
             HomeSale result = null;
-            if (id < 0)
+            if (homesaleID < 0)
             {
                 return result;
             }
 
             using (var context = new HSTDataModel())
             {
-                HomeSale dbHomesale = context.HomeSales.Find(id);
+                HomeSale dbHomesale = context.HomeSales.Find(homesaleID);
                 if (dbHomesale != null)
                 {
                     result = dbHomesale as HomeSale;
@@ -79,20 +79,84 @@ namespace HSTDataLayer
             return result;
         }
 
-        public static RealEstateCompany GetReCompany(int id)
+        public static RealEstateCompany GetReCompany(int companyID)
         {
             RealEstateCompany result = null;
-            if (id < 0)
+            if (companyID < 0)
             {
                 return result;
             }
 
             using (var context = new HSTDataModel())
             {
-                RealEstateCompany dbReCommpany = context.RealEstateCompanies.Find(id);
+                RealEstateCompany dbReCommpany = context.RealEstateCompanies.Find(companyID);
                 if (dbReCommpany != null)
                 {
                     result = dbReCommpany as RealEstateCompany;
+                }
+
+            }
+
+            return result;
+        }
+
+        public static Agent GetAgent(int agentID)
+        {
+            Agent result = null;
+            if (agentID < 0)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                Agent dbAgent = context.Agents.Find(agentID);
+                if (dbAgent != null)
+                {
+                    result = dbAgent as Agent;
+                }
+
+            }
+
+            return result;
+        }
+
+
+        public static Buyer GetBuyer(int buyerID)
+        {
+            Buyer result = null;
+            if (buyerID < 0)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                Buyer dbBuyer = context.Buyers.Find(buyerID);
+                if(dbBuyer != null)
+                {
+                    result = dbBuyer as Buyer;
+                }
+
+            }
+
+            return result;
+        }
+
+        public static Owner GetOwner(int ownerID)
+        {
+            Owner result = null;
+            if (ownerID < 0)
+            {
+                return result;
+            }
+
+            using (var context = new HSTDataModel())
+            {
+                Owner dbOwner = context.Owners.Find(ownerID);
+                if (dbOwner != null)
+                {
+                    result = dbOwner as Owner;
                 }
 
             }
@@ -387,7 +451,7 @@ namespace HSTDataLayer
                                 {
                                     CompanyID = agent.CompanyID,
                                     CommissionPercent = agent.CommissionPercent,
-                                    AgentID = agent.Person.PersonID
+                                    AgentID = agent.AgentID
                                 };
                                 context.Agents.Add(agentToUpdate);
                             }
