@@ -19,7 +19,7 @@ namespace HSTDataLayer
         public static Person GetPerson(int id)
         {
             Person result = null;
-            if (0 < id)
+            if (id < 0)
             {
                 return result;
             }
@@ -40,7 +40,7 @@ namespace HSTDataLayer
         public static Home GetHome(int id)
         {
             Home result = null;
-            if (0 < id)
+            if (id < 0)
             {
                 return result;
             }
@@ -61,7 +61,7 @@ namespace HSTDataLayer
         public static HomeSale GetHomeSale(int id)
         {
             HomeSale result = null;
-            if (0 < id)
+            if (id < 0)
             {
                 return result;
             }
@@ -82,7 +82,7 @@ namespace HSTDataLayer
         public static RealEstateCompany GetReCompany(int id)
         {
             RealEstateCompany result = null;
-            if (0 < id)
+            if (id < 0)
             {
                 return result;
             }

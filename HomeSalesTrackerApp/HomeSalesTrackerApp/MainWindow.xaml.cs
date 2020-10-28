@@ -334,7 +334,7 @@ namespace HomeSalesTrackerApp
                     if (hfsReco != null)
                     {
                         var homeUpdaterWindow = new HomeUpdaterWindow();
-                        homeUpdaterWindow.UpdateType = "HomeSold";
+                        homeUpdaterWindow.UpdateType = "HOMESOLD";
                         homeUpdaterWindow.UpdatePerson = hfsAgent;
                         homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
                         homeUpdaterWindow.UpdateHome = hfsHome;
@@ -342,22 +342,25 @@ namespace HomeSalesTrackerApp
                         homeUpdaterWindow.UpdateReco = hfsReco;
                         DisplayStatusMessage("Loading update window");
                         homeUpdaterWindow.Show();
-
+                        ClearSearchResultsViews();
                     }
                     else
                     {
                         statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
                     }
+
                 }
                 else
                 {
                     statusMessage.Append($"Agent not associated with a Real Estate Co. ");
                 }
+
             }
             else
             {
                 statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
             }
+
             if (statusMessage.Length > 4)
             {
                 DisplayStatusMessage(statusMessage.ToString());
@@ -916,6 +919,7 @@ namespace HomeSalesTrackerApp
                 logger.Data("MenuUpdateHome Exception", ex.Message);
                 logger.Flush();
             }
+
             DisplayStatusMessage("!!TESTING!! Menu -> Update Home !!TESTING!!");
             ClearSearchResultsViews();
         }
@@ -935,7 +939,7 @@ namespace HomeSalesTrackerApp
                 hfsHome.HomeSales = hfsHomesales;
 
                 var huw = new HomeUpdaterWindow();
-                huw.UpdateType = "HomeSale";
+                huw.UpdateType = "PUTONMARKET";
                 huw.UpdateAgent = new Agent();
                 huw.UpdatePerson = new Person();
                 huw.UpdateHome = hfsHome;
@@ -943,6 +947,7 @@ namespace HomeSalesTrackerApp
                 huw.UpdateReco = new RealEstateCompany();
                 huw.Title = "Add Home: For Sale";
                 huw.Show();
+                ClearSearchResultsViews();
             }
             catch (Exception ex)
             {
@@ -977,6 +982,7 @@ namespace HomeSalesTrackerApp
                         puw.ReceivedAgent = updateAgent;
                         puw.Title = "Update Person's Agent Info";
                         puw.Show();
+                        ClearSearchResultsViews();
                     }
                 }
             }
@@ -1010,7 +1016,9 @@ namespace HomeSalesTrackerApp
                         puw.ReceivedBuyer = updateBuyer;
                         puw.Title = "Update Person's Buyer Info";
                         puw.Show();
+                        ClearSearchResultsViews();
                     }
+
                 }
             }
             catch
@@ -1046,9 +1054,12 @@ namespace HomeSalesTrackerApp
                         puw.ReceivedOwner = updateOwner;
                         puw.Title = "Update Person's Owner Info";
                         puw.Show();
+                        ClearSearchResultsViews();
                     }
+
                 }
             }
+
             catch
             {
                 DisplayStatusMessage("Unable to load Owner Update Window. Refresh, search again, and then select a Person in the results.");

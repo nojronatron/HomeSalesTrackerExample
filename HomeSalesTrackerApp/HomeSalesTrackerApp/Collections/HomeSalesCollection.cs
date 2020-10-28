@@ -51,28 +51,36 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// Add a HomeSale instance to this collection. Will only accept object that has SoldDate member that is not null.
+        /// Add a HomeSale instance to this collection. Will only accept object whose MarketDate and SaleAmount members are not null 
+        /// and the homesale instance is not already in the collection.
         /// </summary>
         /// <param name="homeSale"></param>
-        public bool Add(HomeSale homeSale)
+        public int Add(HomeSale homeSale)
         {
             if (homeSale == null)
             {
-                return false;
+                return 0;
             }
 
-            var inCollection = _homeSalesList.SingleOrDefault(hs => hs.HomeID == homeSale.HomeID
-                                                              && hs.SaleAmount == homeSale.SaleAmount);
+            var inCollection = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
+                                                              hs.SaleAmount == homeSale.SaleAmount);
+            int preCount = this.Count;
             if (inCollection == null)
             {
                 if(LogicBroker.SaveEntity<HomeSale>(homeSale))
                 {
-                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.HomeID);
+                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
                     _homeSalesList.Add(dbHomeSale);
-                    return true;
+                    
                 }
+                if (this.Count - preCount == 1)  // exactly one record was added to this collection
+                {
+                    return 1;
+                }
+
             }
-            return false;
+
+            return 0;
         }
 
         /// <summary>
@@ -94,31 +102,31 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public int Update(HomeSale homeSale)
         {
-            if (homeSale == null)
+            if (homeSale == null || homeSale.HomeID < 0)
             {
                 return 0;
             }
 
-            int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == homeSale.SaleID);
-            HomeSale collectionHomeSale = _homeSalesList[homeSaleIDX];
-            if (homeSale.Equals(collectionHomeSale))
+            HomeSale collectionHomeSale = _homeSalesList.Find(hs => hs.HomeID == homeSale.HomeID);
+            if (collectionHomeSale == null)
+            {
+                return this.Add(homeSale);
+
+            }
+
+            int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == collectionHomeSale.SaleID);
+
+            if (!homeSale.Equals(collectionHomeSale))   //  homesale has not already been updated with same info
             {
                 if (LogicBroker.UpdateEntity<HomeSale>(homeSale)) 
                 {
-                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSaleIDX);
+                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
                     _homeSalesList[homeSaleIDX] = dbHomeSale;
                     return 1;
                 }
 
             }
-            else
-            {
-                if (this.Add(homeSale))
-                {
-                    return 1;
-                }
-            }
-
+            
             return 0;
         }
 
