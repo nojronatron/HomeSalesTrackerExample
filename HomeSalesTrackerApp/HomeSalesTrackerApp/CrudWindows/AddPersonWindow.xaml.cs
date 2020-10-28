@@ -306,9 +306,9 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             if (CreateNewPerson())
             {
-                NewPerson.PersonID = MainWindow.peopleCollection
-                                               .FirstOrDefault(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName)
-                                               .PersonID;
+                //NewPerson.PersonID = MainWindow.peopleCollection
+                //                               .FirstOrDefault(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName)
+                //                               .PersonID;
 
                 if (NewPerson.PersonID < 0)
                 {
@@ -340,7 +340,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (NewBuyer != null)
                 {
                     NewBuyer.BuyerID = NewPersonID;
-                    itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewPerson.Buyer);
+                    itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewBuyer);
                     //if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
                     //{
                     //    itemsCount++;
@@ -350,7 +350,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (NewOwner != null)
                 {
                     NewOwner.OwnerID = NewPersonID;
-                    itemsCount += MainWindow.peopleCollection.UpdateOwner(NewPerson.Owner);
+                    itemsCount += MainWindow.peopleCollection.UpdateOwner(NewOwner);
                     //if (LogicBroker.SaveEntity<Owner>(NewOwner))
                     //{
                     //    itemsCount++;

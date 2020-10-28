@@ -295,6 +295,9 @@ namespace HSTDataLayer
                     case "Owner":
                         {
                             Owner owner = item as Owner;
+                            //var dbOwner = context.Owners.SingleOrDefault(o => o.OwnerID == owner.OwnerID) ?? new Owner();
+                            //dbOwner.PreferredLender = owner.PreferredLender;
+                            //dbOwner.OwnerID = owner.OwnerID;
                             context.Owners.AddOrUpdate(o => new { o.OwnerID }, owner);
                             break;
                         }
@@ -330,7 +333,7 @@ namespace HSTDataLayer
                     result = true;
                 }
 
-                if (itemsAffected < 0)
+                if (itemsAffected < 1)
                 {
                     result = false;
                 }
