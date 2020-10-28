@@ -768,6 +768,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //  TODO: Fix Bug when a person that is an Agent but not a Buyer is selected.
             Person selectedBuyer = (sender as ComboBox).SelectedItem as Person;
             if (selectedBuyer != null)
             {
