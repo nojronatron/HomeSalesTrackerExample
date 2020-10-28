@@ -83,7 +83,7 @@ namespace HSTDataLayer.Tests
                 };
 
                 //actualResult = LogicBroker.SaveEntity(buyer); //  throws a foreign key exception
-                actualResult = LogicBroker.UpdateEntity(buyer); //  returns false but doesn't throw exception
+                actualResult = LogicBroker.StoreItem(buyer); //  returns false but doesn't throw exception
             }
 
             Assert.AreEqual(expectedResult, actualResult);
@@ -108,7 +108,7 @@ namespace HSTDataLayer.Tests
                 Person = newPerson
             };
 
-            actualResult = LogicBroker.UpdateEntity<Buyer>(buyer);
+            actualResult = LogicBroker.StoreItem<Buyer>(buyer);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -126,7 +126,7 @@ namespace HSTDataLayer.Tests
                 Phone = "7074336107"
             };
 
-            actualResult = LogicBroker.UpdateEntity<Person>(newPerson);
+            actualResult = LogicBroker.StoreItem<Person>(newPerson);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -144,7 +144,7 @@ namespace HSTDataLayer.Tests
             if (updatedPerson != null)
             {
                 updatedPerson.Email = "YouNeedLove@Zep.info";
-                actualResult = LogicBroker.UpdateEntity<Person>(updatedPerson);
+                actualResult = LogicBroker.StoreItem<Person>(updatedPerson);
             }
 
             Assert.AreEqual(expectedresult, actualResult);
