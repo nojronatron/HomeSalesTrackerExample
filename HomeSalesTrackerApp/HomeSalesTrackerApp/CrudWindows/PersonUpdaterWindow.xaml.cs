@@ -537,57 +537,78 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void SaveAndCloseWindowButton_Click(object sender, RoutedEventArgs e)
         {
+            var resultMessage = new StringBuilder();
             IsButtonClose = true;
-            int aboSaveCount = 0;
-            bool personSaved = false;
+            int personUpdateCount = MainWindow.peopleCollection.UpdatePerson(ReceivedPerson);
+            
+            if (personUpdateCount == 1)
+            {
+                resultMessage.Append("Person information updated. ");
+                this.IsButtonClose = true;
+            }
+            else
+            {
+                resultMessage.Append("No update to Person information. ");
+                this.IsButtonClose = false;
+            }
 
+            int aboUpdated = 0;
             if (CalledByUpdateMenuType == "Agent")
             {
                 ReceivedPerson.Agent = ReceivedAgent;
-                personSaved = LogicBroker.UpdateEntity<Person>(ReceivedPerson);
-                ReceivedAgent.Person = ReceivedPerson;
                 ReceivedAgent.AgentID = ReceivedPerson.PersonID;
-                if (LogicBroker.UpdateEntity<Agent>(ReceivedAgent))
+                aboUpdated = MainWindow.peopleCollection.UpdateAgent(ReceivedAgent);
+                if (aboUpdated == 1)
                 {
-                    aboSaveCount++;
+                    resultMessage.Append("Agent information updated. ");
+                    this.IsButtonClose = true;
                 }
+                else
+                {
+                    resultMessage.Append("Agent info NOT updated. ");
+                    this.IsButtonClose = false;
+                }
+
             }
 
             if (CalledByUpdateMenuType == "Buyer")
             {
                 ReceivedPerson.Buyer = ReceivedBuyer;
-                personSaved = LogicBroker.UpdateEntity<Person>(ReceivedPerson);
-                ReceivedBuyer.Person = ReceivedPerson;
                 ReceivedBuyer.BuyerID = ReceivedPerson.PersonID;
-                if (LogicBroker.UpdateEntity<Buyer>(ReceivedBuyer))
+                aboUpdated = MainWindow.peopleCollection.UpdateBuyer(ReceivedBuyer);
+                if (aboUpdated == 1)
                 {
-                    aboSaveCount++;
+                    resultMessage.Append("Buyer information updated. ");
+                    this.IsButtonClose = true;
                 }
+                else
+                {
+                    resultMessage.Append("Buyer info NOT updated. ");
+                    this.IsButtonClose = false;
+                }
+
             }
 
             if (CalledByUpdateMenuType == "Owner")
             {
                 ReceivedPerson.Owner = ReceivedOwner;
-                personSaved = LogicBroker.UpdateEntity<Person>(ReceivedPerson);
-                ReceivedOwner.Person = ReceivedPerson;
                 ReceivedOwner.OwnerID = ReceivedPerson.PersonID;
-                if (LogicBroker.UpdateEntity<Owner>(ReceivedOwner))
+                aboUpdated = MainWindow.peopleCollection.UpdateOwner(ReceivedOwner);
+                if (aboUpdated == 1)
                 {
-                    aboSaveCount++;
+                    resultMessage.Append("Owner information updated. ");
+                    this.IsButtonClose = true;
                 }
+                else
+                {
+                    resultMessage.Append("Owner info NOT updated. ");
+                    this.IsButtonClose = false;
+                }
+
             }
 
-            if (personSaved || aboSaveCount > 0)
-            {
-                DisplayStatusMessage("Saved!");
-                MainWindow.InitializeCollections();
-                IsButtonClose = true;
-            }
-            else
-            {
-                DisplayStatusMessage("Unable to save.");
-                IsButtonClose = false;
-            }
+            DisplayStatusMessage( resultMessage.ToString() );
+
             this.Close();
         }
 
