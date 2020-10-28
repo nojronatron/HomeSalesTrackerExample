@@ -65,17 +65,20 @@ namespace HomeSalesTrackerApp
             {
                 int preCount = this.Count;
                 Home collectionHome = _homesList.SingleOrDefault(h => h.Address == home.Address &&
-                                                                 h.Zip == home.Zip);
+                                                                      h.Zip == home.Zip);
 
                 if (collectionHome == null)
                 {
                     if (LogicBroker.StoreItem<Home>(home))
                     {
-                        Home dbHome = LogicBroker.GetHome(home.HomeID);
-                        this._homesList.Add(dbHome);
-                        if (this.Count > preCount)
+                        Home dbHome = LogicBroker.GetHome(home.Address, home.Zip);
+                        if (dbHome != null)
                         {
-                            return 1;
+                            this._homesList.Add(dbHome);
+                            if (this.Count > preCount)
+                            {
+                                return 1;
+                            }
                         }
                     }
                 }
@@ -115,7 +118,7 @@ namespace HomeSalesTrackerApp
                     if (LogicBroker.StoreItem<Home>(home))
                     {
                         //  Need to get the HomeID of the just-saved object in order to get the object back from EF
-                        dbHome = LogicBroker.GetHome(home.HomeID);
+                        dbHome = LogicBroker.GetHome(collectionHome.HomeID);
 
                         if (dbHome != null)
                         {

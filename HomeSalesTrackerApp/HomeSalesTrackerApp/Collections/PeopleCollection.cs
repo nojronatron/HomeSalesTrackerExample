@@ -42,15 +42,19 @@ namespace HomeSalesTrackerApp
             {
                 int preCount = this.Count;
                 var collectionPerson = _peopleList.SingleOrDefault(p => p.FirstName == person.FirstName &&
-                                                                   p.LastName == person.LastName);
+                                                                        p.LastName == person.LastName);
                 if (collectionPerson == null)
                 {
                     if (LogicBroker.StoreItem<Person>(person))
                     {
-                        _peopleList.Add(person);
-                        if (this.Count > preCount)
+                        Person dbPerson = LogicBroker.GetPerson(person.FirstName, person.LastName);
+                        if (dbPerson != null)
                         {
-                            return 1;
+                            _peopleList.Add(person);
+                            if (this.Count > preCount)
+                            {
+                                return 1;
+                            }
                         }
                     }
                 }

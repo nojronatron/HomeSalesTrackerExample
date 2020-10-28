@@ -60,11 +60,12 @@ namespace HomeSalesTrackerApp
                 {
                     if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                     {
-                        //  TODO: Get a reference to the just-stored RECo
-                        RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+                        RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
+
                         if (dbReco != null)
                         {
                             this._recoList.Add(dbReco);
+
                             if (this.Count > preCount)
                             {
                                 return 1;
@@ -94,6 +95,7 @@ namespace HomeSalesTrackerApp
             {
                 int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
                 RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
+
                 if (collectionRECo != null)
                 {
                     RealEstateCompany dbRECo = null;
@@ -101,7 +103,8 @@ namespace HomeSalesTrackerApp
                     if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                     {
                         //  TODO: Get a reference to the stored item in EF
-                        dbRECo = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+                        dbRECo = LogicBroker.GetReCompany(collectionRECo.CompanyName);
+
                         if (dbRECo != null)
                         {
                             this._recoList[realEstateCompanyIDX] = dbRECo;

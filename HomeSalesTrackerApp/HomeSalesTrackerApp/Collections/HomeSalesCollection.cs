@@ -60,20 +60,21 @@ namespace HomeSalesTrackerApp
             if (homeSale != null)
             {
                 var collectionHomeSale = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
-                                                                        hs.SaleAmount == homeSale.SaleAmount);
+                                                                              hs.SaleAmount == homeSale.SaleAmount);
                 int preCount = this.Count;
                 if (collectionHomeSale == null)
                 {
                     if (LogicBroker.StoreItem<HomeSale>(homeSale))
                     {
-                        //  TODO: get a reference to the just-stored HomeSale
-                        HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
-                        _homeSalesList.Add(dbHomeSale);
-                        if (this.Count > preCount)
+                        HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.MarketDate, homeSale.SaleAmount);
+                        if (dbHomeSale != null)
                         {
-                            return 1;
+                            _homeSalesList.Add(dbHomeSale);
+                            if (this.Count > preCount)
+                            {
+                                return 1;
+                            }
                         }
-
                     }
                 }
             }
