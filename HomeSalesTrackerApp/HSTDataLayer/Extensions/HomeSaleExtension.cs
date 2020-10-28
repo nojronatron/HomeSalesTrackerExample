@@ -59,14 +59,16 @@ namespace HSTDataLayer
                 return false;
             }
 
-            if (this.SoldDate == other.SoldDate &&
-                this.SaleAmount == other.SaleAmount &&
-                this.MarketDate == other.MarketDate)
-            {
-                return true;
-            }
+            return (this.SaleAmount == other.SaleAmount &&
+                    this.MarketDate == other.MarketDate);
+            //if (this.SoldDate == other.SoldDate &&
+            //    this.SaleAmount == other.SaleAmount &&
+            //    this.MarketDate == other.MarketDate)
+            //{
+            //    return true;
+            //}
 
-            return false;
+            //return false;
         }
 
         /// <summary>
@@ -77,9 +79,12 @@ namespace HSTDataLayer
         public override bool Equals(object obj)
         {
             return obj is HomeSale sale &&
-                   SoldDate == sale.SoldDate &&
                    SaleAmount == sale.SaleAmount &&
                    MarketDate == sale.MarketDate;
+            //return obj is HomeSale sale &&
+            //       SoldDate == sale.SoldDate &&
+            //       SaleAmount == sale.SaleAmount &&
+            //       MarketDate == sale.MarketDate;
         }
 
         /// <summary>
@@ -89,7 +94,7 @@ namespace HSTDataLayer
         public override int GetHashCode()
         {
             int hashCode = 1752065002;
-            hashCode = hashCode * -1521134295 + SoldDate.GetHashCode();
+            //hashCode = hashCode * -1521134295 + SoldDate.GetHashCode();
             hashCode = hashCode * -1521134295 + SaleAmount.GetHashCode();
             hashCode = hashCode * -1521134295 + MarketDate.GetHashCode();
             return hashCode;
