@@ -72,12 +72,12 @@ namespace HomeSalesTrackerApp
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
                         //saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
-                        itemsProcessed = MainWindow.homesCollection.Update(NewHome);
+                        itemsProcessed += MainWindow.homesCollection.Update(NewHome);
                     }
                     else
                     {
                         //LogicBroker.SaveEntity<Owner>(AnOwner);
-                        itemsProcessed = MainWindow.peopleCollection.UpdatePerson(APerson);
+                        itemsProcessed += MainWindow.peopleCollection.UpdatePerson(APerson);
                         NewHome = new Home()
                         {
                             Address = address,
@@ -88,10 +88,7 @@ namespace HomeSalesTrackerApp
                         };
 
                         //if (LogicBroker.SaveEntity<Home>(NewHome))
-                        if (MainWindow.homesCollection.Add(NewHome))
-                        {
-                            itemsProcessed++;
-                        }
+                        itemsProcessed += MainWindow.homesCollection.Add(NewHome);
                     }
 
                     if (itemsProcessed > 0)
