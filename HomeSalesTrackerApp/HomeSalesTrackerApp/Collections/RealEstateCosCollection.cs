@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HomeSalesTrackerApp
 {
@@ -48,20 +49,33 @@ namespace HomeSalesTrackerApp
             }
         }
 
-        public bool Add(RealEstateCompany realEstateCompany)
+        public int Add(RealEstateCompany realEstateCompany)
         {
-            bool result = false;
             if (realEstateCompany != null)
             {
-                int recoIdx = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
-                if (recoIdx < 0)
+                var collectionReco = _recoList.SingleOrDefault(re => re.CompanyName == realEstateCompany.CompanyName);
+                int preCount = this.Count;
+                
+                if (collectionReco == null)
                 {
-                    _recoList.Add(realEstateCompany);
-                    result = true;
-                    _recoList.Sort();
+                    if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                    {
+                        //  TODO: Get a reference to the just-stored RECo
+                        RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+                        if (dbReco != null)
+                        {
+                            this._recoList.Add(dbReco);
+                            if (this.Count > preCount)
+                            {
+                                return 1;
+                            }
+
+                        }
+                    }
                 }
             }
-            return result;
+
+            return 0;
         }
 
         public RealEstateCompany Retrieve(int companyID)
@@ -76,28 +90,28 @@ namespace HomeSalesTrackerApp
 
         public int Update(RealEstateCompany realEstateCompany)
         {
-            int result = 0;
-            if (realEstateCompany == null)
+            if (realEstateCompany != null)
             {
-                return result;
-            }
-            
-            int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
-            RealEstateCompany selectedReco = _recoList[realEstateCompanyIDX];
-            if (selectedReco.Equals(realEstateCompany))
-            {
-                if (LogicBroker.UpdateEntity<RealEstateCompany>(realEstateCompany))
+                int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
+                RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
+                if (collectionRECo != null)
                 {
-                    RealEstateCompany dbRECo = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
-                    _recoList[realEstateCompanyIDX] = dbRECo;
-                    result++;
+                    RealEstateCompany dbRECo = null;
+
+                    if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                    {
+                        //  TODO: Get a reference to the stored item in EF
+                        dbRECo = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+                        if (dbRECo != null)
+                        {
+                            this._recoList[realEstateCompanyIDX] = dbRECo;
+                            return 1;
+                        }
+                    }
                 }
-            }
-            else
-            {
-                if (this.Add(realEstateCompany))
+                else
                 {
-                    result++;
+                    return this.Add(realEstateCompany);
                 }
             }
 

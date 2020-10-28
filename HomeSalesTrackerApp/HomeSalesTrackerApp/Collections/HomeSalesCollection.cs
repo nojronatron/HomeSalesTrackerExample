@@ -57,27 +57,25 @@ namespace HomeSalesTrackerApp
         /// <param name="homeSale"></param>
         public int Add(HomeSale homeSale)
         {
-            if (homeSale == null)
+            if (homeSale != null)
             {
-                return 0;
-            }
-
-            var inCollection = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
-                                                              hs.SaleAmount == homeSale.SaleAmount);
-            int preCount = this.Count;
-            if (inCollection == null)
-            {
-                if(LogicBroker.SaveEntity<HomeSale>(homeSale))
+                var collectionHomeSale = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
+                                                                        hs.SaleAmount == homeSale.SaleAmount);
+                int preCount = this.Count;
+                if (collectionHomeSale == null)
                 {
-                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
-                    _homeSalesList.Add(dbHomeSale);
-                    
-                }
-                if (this.Count - preCount == 1)  // exactly one record was added to this collection
-                {
-                    return 1;
-                }
+                    if (LogicBroker.StoreItem<HomeSale>(homeSale))
+                    {
+                        //  TODO: get a reference to the just-stored HomeSale
+                        HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
+                        _homeSalesList.Add(dbHomeSale);
+                        if (this.Count > preCount)
+                        {
+                            return 1;
+                        }
 
+                    }
+                }
             }
 
             return 0;
@@ -97,32 +95,34 @@ namespace HomeSalesTrackerApp
 
         /// <summary>
         /// Find an existing entry and update it to the members in the input parameter. Return 1 if updated, 0 if not.
+        /// Equals and IEquatable overloaded: MarketDate and SaleAmount are the inspected Properties.
         /// </summary>
         /// <param name="homeSale"></param>
         /// <returns></returns>
         public int Update(HomeSale homeSale)
         {
-            if (homeSale == null || homeSale.HomeID < 0)
+            if (homeSale != null)
             {
-                return 0;
-            }
+                int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == homeSale.SaleID);
+                HomeSale collectionHomeSale = _homeSalesList[homeSaleIDX];
 
-            HomeSale collectionHomeSale = _homeSalesList.Find(hs => hs.HomeID == homeSale.HomeID);
-            if (collectionHomeSale == null)
-            {
-                return this.Add(homeSale);
-
-            }
-
-            int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == collectionHomeSale.SaleID);
-
-            if (!homeSale.Equals(collectionHomeSale))   //  homesale has not already been updated with same info
-            {
-                if (LogicBroker.UpdateEntity<HomeSale>(homeSale)) 
+                if (collectionHomeSale != null)
                 {
-                    HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
-                    _homeSalesList[homeSaleIDX] = dbHomeSale;
-                    return 1;
+                    HomeSale dbHomeSale = null;
+
+                    if (LogicBroker.StoreItem<HomeSale>(homeSale))
+                    {
+                        dbHomeSale = LogicBroker.GetHomeSale(collectionHomeSale.SaleID);
+                        if (dbHomeSale != null)
+                        {
+                            this._homeSalesList[homeSaleIDX] = dbHomeSale;
+                            return 1;
+                        }
+                    }
+                }
+                else
+                {
+                    return this.Add(homeSale);
                 }
 
             }

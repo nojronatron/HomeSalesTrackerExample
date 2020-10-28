@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HomeSalesTrackerApp
 {
@@ -58,19 +59,29 @@ namespace HomeSalesTrackerApp
         /// Adds an instance to this item list.
         /// </summary>
         /// <param name="home"></param>
-        public bool Add(Home home)
+        public int Add(Home home)
         {
             if (home != null)
             {
-                if (LogicBroker.SaveEntity<Home>(home))
+                int preCount = this.Count;
+                Home collectionHome = _homesList.SingleOrDefault(h => h.Address == home.Address &&
+                                                                 h.Zip == home.Zip);
+
+                if (collectionHome == null)
                 {
-                    Home dbHome = LogicBroker.GetHome(home.HomeID);
-                    _homesList.Add(dbHome);
-                    return true;
+                    if (LogicBroker.StoreItem<Home>(home))
+                    {
+                        Home dbHome = LogicBroker.GetHome(home.HomeID);
+                        this._homesList.Add(dbHome);
+                        if (this.Count > preCount)
+                        {
+                            return 1;
+                        }
+                    }
                 }
             }
 
-            return false;
+            return 0;
         }
 
         /// <summary>
@@ -92,28 +103,30 @@ namespace HomeSalesTrackerApp
         /// <returns name="int"></returns>
         public int Update(Home home)
         {
-            if (home == null)   //  null check
+            if (home != null)
             {
-                return 0;
-            }
+                int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
+                Home collectionHome = _homesList[homeIDX];
 
-            //  check if arg exists in collection
-            int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
-            Home collectionHome = _homesList[homeIDX];
-            if (home.Equals(collectionHome))
-            { 
-                if (LogicBroker.UpdateEntity<Home>(home))
+                if (collectionHome != null)
                 {
-                    Home dbHome = LogicBroker.GetHome(homeIDX);
-                    _homesList[homeIDX] = dbHome;
-                    return 1;
+                    Home dbHome = null;
+
+                    if (LogicBroker.StoreItem<Home>(home))
+                    {
+                        //  Need to get the HomeID of the just-saved object in order to get the object back from EF
+                        dbHome = LogicBroker.GetHome(home.HomeID);
+
+                        if (dbHome != null)
+                        {
+                            this._homesList[homeIDX] = dbHome;
+                            return 1;
+                        }
+                    }
                 }
-            }
-            else
-            {
-                if (this.Add(home))
+                else
                 {
-                    return 1;
+                    return this.Add(home);
                 }
             }
 
