@@ -344,21 +344,15 @@ namespace HomeSalesTrackerApp.CrudWindows
                         LoadHomeInfoFields();
                         break;
                     }
-                case "REALESTATECOMPANY":
-                    {
-                        this.Title = "Update Real Estate Company";
-                        LoadRECoInfoFields();
-                        break;
-                    }
                 case "PUTONMARKET":
                     {
-                        this.Title = "Update Home Sale Information";
+                        this.Title = "Update Home: Put on the Market";
                         Case_AddHfsWithAgent();
                         break;
                     }
                 case "HOMESOLD":
                     {
-                        this.Title = "Update Home Sale as SOLD!";
+                        this.Title = "Update Home Sale as SOLD";
                         Case_HomeSold();
                         break;
                     }
@@ -386,12 +380,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                         break;
                     }
             }
-
-        }
-
-        private void LoadRECoInfoFields()
-        {
-            //  TODO: code this function: called by LoadPanelsAndFields()
 
         }
 
@@ -640,23 +628,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                             break;
                         }
-
-                    //case "OWNER":
-                    //    {
-                    //        savedCount = -1;
-                    //        break;
-                    //    }
-                    //case "BUYER":
-                    //    {
-                    //        savedCount = -1;
-                    //        break;
-                    //    }
-                    //case "AGENT":
-                    //    {
-                    //        savedCount = -1;
-                    //        break;
-                    //    }
-
                     default:
                         {
                             DisplayStatusMessage("Nothing was saved.");
@@ -715,6 +686,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (selectedAgent != null)
             {
                 UpdatePerson = selectedAgent;
+
                 if (selectedAgent.Agent != null)
                 {
                     UpdateAgent = selectedAgent.Agent;
@@ -735,9 +707,9 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                     UpdateAgentCommissionTextbox.Text = UpdateAgent.CommissionPercent.ToString().Trim();
                 }
+
                 if (selectedAgent.Agent == null)
                 {
-                    //  Enable an Add New button to allow user to create a new Agent for Person SelectedAgent in a PUW window
                     AgentNameTextbox.IsReadOnly = true;
                     AddNewAgentButton.IsEnabled = true;
                     AddNewAgentButton.Visibility = Visibility.Visible;
@@ -767,8 +739,8 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void ExistingBuyersCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //  TODO: Fix Bug when a person that is an Agent but not a Buyer is selected.
             Person selectedBuyer = (sender as ComboBox).SelectedItem as Person;
+
             if (selectedBuyer != null)
             {
                 BuyerCreditRatingTextbox.IsEnabled = true;
@@ -778,6 +750,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                     BuyerID = selectedBuyer.PersonID,
                     CreditRating = selectedBuyer.Buyer.CreditRating ?? null
                 };
+
                 BuyerNameTextbox.Text = $"{ selectedBuyer.FirstName } {selectedBuyer.LastName }";
                 BuyerCreditRatingTextbox.Text = UpdateBuyer.CreditRating?.ToString() ?? string.Empty;
                 UpdateBuyerButton.IsEnabled = true;
@@ -793,8 +766,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void AddNewAgentButton_Click(object sender, RoutedEventArgs e)
         {
-            //  This button only appears when a non-Agent Person is selected in the Existing Agents combobox
-            //      and it allows user to create a new Agent via PersonUpaterWindow
             AddNewAgent();
         }
 
