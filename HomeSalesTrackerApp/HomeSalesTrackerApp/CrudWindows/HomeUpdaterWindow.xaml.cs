@@ -577,13 +577,13 @@ namespace HomeSalesTrackerApp.CrudWindows
                 string updateType = UpdateType.Trim().ToUpper();
                 switch (updateType)
                 {
-                    case "HOME":
-                        {
-                            //  TODO: Test this branch of code
-                            savedCount += MainWindow.homesCollection.Update(UpdateHome);
+                    //case "HOME":
+                    //    {
+                    //        //  TODO: Test this branch of code
+                    //        savedCount += MainWindow.homesCollection.Update(UpdateHome);
 
-                            break;
-                        }
+                    //        break;
+                    //    }
                     //case "REALESTATECOMPANY":
                     //    {
                     //        //  TODO: Test this branch of code
