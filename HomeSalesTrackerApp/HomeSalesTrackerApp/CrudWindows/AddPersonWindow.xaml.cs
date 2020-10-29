@@ -29,7 +29,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             InitializeComponent();
             logger = new Logger();
-            //Title = $"Add { AddType }";
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
@@ -50,7 +49,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (preferredLenderText.Length == 0)
             {
                 DisplayStatusMessage("Preferred Lender will be blank (no preferred lender).");
-                preferredLenderText = string.Empty; //  ensures an empty field rather than a special or control character that could be unsafe
+                preferredLenderText = string.Empty;
             }
 
             if (preferredLenderText.Length > 31)
@@ -159,12 +158,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 NewPerson.LastName = lastName;
                 NewPerson.Phone = phone;
                 NewPerson.Email = email;
-
-                //if (LogicBroker.SaveEntity<Person>(NewPerson))
-                //{
-                //    MainWindow.InitializeCollections();
-                //    NewPersonID = MainWindow.peopleCollection.Where(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName).FirstOrDefault().PersonID;
-                //}
 
                 if (MainWindow.peopleCollection.Add(NewPerson) > 0)
                 {
@@ -306,9 +299,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             int itemsCount = 0;
             if (CreateNewPerson())
             {
-                //NewPerson.PersonID = MainWindow.peopleCollection
-                //                               .FirstOrDefault(p => p.FirstName == NewPerson.FirstName && p.LastName == NewPerson.LastName)
-                //                               .PersonID;
 
                 if (NewPerson.PersonID < 0)
                 {
@@ -331,30 +321,18 @@ namespace HomeSalesTrackerApp.CrudWindows
                 {
                     NewAgent.AgentID = NewPersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateAgent(NewAgent);
-                    //if (LogicBroker.SaveEntity<Agent>(NewAgent))
-                    //{
-                    //itemsCount++;
-                    //}
                 }
 
                 if (NewBuyer != null)
                 {
                     NewBuyer.BuyerID = NewPersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewBuyer);
-                    //if (LogicBroker.SaveEntity<Buyer>(NewBuyer))
-                    //{
-                    //    itemsCount++;
-                    //}
                 }
 
                 if (NewOwner != null)
                 {
                     NewOwner.OwnerID = NewPersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateOwner(NewOwner);
-                    //if (LogicBroker.SaveEntity<Owner>(NewOwner))
-                    //{
-                    //    itemsCount++;
-                    //}
                 }
 
                 if (itemsCount > 0)
@@ -365,8 +343,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
             else
             {
-                DisplayStatusMessage($"Unable to save { AddType }");
-                IsButtonClose = false;  //  no person created so no save possible
+                IsButtonClose = false;
             }
 
         }
@@ -383,6 +360,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 AgentRecoTextbox.Text = "Agent no longer active.";
             }
+
             NewAgent.CompanyID = ExistingRECo.CompanyID;
         }
 
