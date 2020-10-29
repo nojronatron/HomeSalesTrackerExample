@@ -102,7 +102,6 @@ namespace HomeSalesTrackerApp
 
                     if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                     {
-                        //  TODO: Get a reference to the stored item in EF
                         dbRECo = LogicBroker.GetReCompany(collectionRECo.CompanyName);
 
                         if (dbRECo != null)

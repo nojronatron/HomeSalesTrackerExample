@@ -101,7 +101,7 @@ namespace HSTDataLayer
         public static HomeSale GetHomeSale(DateTime marketDate, decimal saleAmount)
         {
             HomeSale result = null;
-            if (marketDate != null && saleAmount < 1m)
+            if (marketDate != null && saleAmount > 0m)
             {
                 using (var context = new HSTDataModel())
                 {

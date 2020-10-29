@@ -71,12 +71,10 @@ namespace HomeSalesTrackerApp
                         NewHome.State = state;
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
-                        //saveSucceeded = LogicBroker.UpdateEntity<Home>(NewHome);
                         itemsProcessed += MainWindow.homesCollection.Update(NewHome);
                     }
                     else
                     {
-                        //LogicBroker.SaveEntity<Owner>(AnOwner);
                         itemsProcessed += MainWindow.peopleCollection.UpdatePerson(APerson);
                         NewHome = new Home()
                         {
@@ -87,7 +85,6 @@ namespace HomeSalesTrackerApp
                             OwnerID = APerson.PersonID
                         };
 
-                        //if (LogicBroker.SaveEntity<Home>(NewHome))
                         itemsProcessed += MainWindow.homesCollection.Add(NewHome);
                     }
 
@@ -95,7 +92,6 @@ namespace HomeSalesTrackerApp
                     {
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
-                        MainWindow.InitializeCollections();
                         APerson = null;
                         NewHome = null;
                         AnOwner = null;
