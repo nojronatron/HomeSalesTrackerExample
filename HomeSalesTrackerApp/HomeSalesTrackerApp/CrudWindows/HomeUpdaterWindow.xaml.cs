@@ -610,7 +610,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                         }
                     case "HOMESOLD":
                         {
-                            //  TODO: verify that the following IF statement never fails
                             if (BuyerUpdated && HomesaleUpdated)
                             {
 

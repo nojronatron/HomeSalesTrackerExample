@@ -312,17 +312,30 @@ namespace HomeSalesTrackerApp
         {
             StringBuilder statusMessage = new StringBuilder("Ok. ");
 
-            HomeForSaleModel selectedHomesaleView = null;
-            selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
-            FoundHomesForSaleView.SelectedIndex = -1;
+            int homeID = -1;
 
-            var homeid = selectedHomesaleView.HomeID;
-            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeid && hs.MarketDate == selectedHomesaleView.MarketDate)
-                                                                  .FirstOrDefault();
+            if (FoundHomesForSaleView.IsVisible)
+            {
+                HomeForSaleModel selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+                homeID = selectedHomesaleView.HomeID;
+            }
+            else if (FoundHomesView.IsVisible)
+            {
+                HomeSearchModel selectedHomeSearchModel = FoundHomesView.SelectedItem as HomeSearchModel;
+                homeID = selectedHomeSearchModel.HomeID;
+            }
+            else
+            {
+                DisplayStatusMessage("Select an item from the results and try again.");
+                return;
+            }
 
-            Home hfsHome = new Home();
-            hfsHome = homesCollection.Where(h => h.HomeID == hfsHomesale.HomeID).FirstOrDefault();
-            if (hfsHome != null)
+            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeID &&
+                                                                   hs.MarketDate != null).FirstOrDefault();
+
+            Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+
+            if (hfsHome != null && hfsHomesale != null)
             {
                 Person hfsAgent = new Person();
                 hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
@@ -938,15 +951,15 @@ namespace HomeSalesTrackerApp
                 List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
                 hfsHome.HomeSales = hfsHomesales;
 
-                var huw = new HomeUpdaterWindow();
-                huw.UpdateType = "PUTONMARKET";
-                huw.UpdateAgent = new Agent();
-                huw.UpdatePerson = new Person();
-                huw.UpdateHome = hfsHome;
-                huw.UpdateHomeSale = new HomeSale();
-                huw.UpdateReco = new RealEstateCompany();
-                huw.Title = "Add Home: For Sale";
-                huw.Show();
+                var homeUpdaterWindow = new HomeUpdaterWindow();
+                homeUpdaterWindow.UpdateType = "PUTONMARKET";
+                homeUpdaterWindow.UpdateAgent = new Agent();
+                homeUpdaterWindow.UpdatePerson = new Person();
+                homeUpdaterWindow.UpdateHome = hfsHome;
+                homeUpdaterWindow.UpdateHomeSale = new HomeSale();
+                homeUpdaterWindow.UpdateReco = new RealEstateCompany();
+                homeUpdaterWindow.Title = "Add Home: For Sale";
+                homeUpdaterWindow.Show();
                 ClearSearchResultsViews();
             }
             catch (Exception ex)
