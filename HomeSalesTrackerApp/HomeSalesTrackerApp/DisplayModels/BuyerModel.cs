@@ -38,16 +38,16 @@ namespace HomeSalesTrackerApp.DisplayModels
             }
 
             var result = new StringBuilder();
-            result.Append($"{ base.ToStackedString() }\n" +
-                $"\n*** { base.PersonType } Info ***\n" +
-                $"Credit Rating: { creditRating }\n");
+            result.Append($"{ base.ToStackedString() }\n");
+            result.AppendLine($"*** { PersonType } Info ***");
+            result.AppendLine($"Credit Rating: { creditRating }");
 
             if (PurchasedHomes.Count > 0)
             {
                 foreach (var purchasedHome in PurchasedHomes)
                 {
-                    result.Append("\n*** Purchased Homes ***\n");
-                    result.Append($"{ purchasedHome.ToStackedString() }\n");
+                    result.AppendLine("*** Purchased Home ***\n");
+                    result.AppendLine($"{ purchasedHome.ToStackedString() }\n");
                 }
             }
 

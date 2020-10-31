@@ -8,6 +8,7 @@
         public string Phone { get; set; } = "- not provided -";
         public string Email { get; set; }
         public virtual string PersonType { get; set; } = string.Empty;
+        public virtual string PersonDetails { get; set; } = string.Empty;
 
         public string FullName => $"{ this.FirstName } { this.LastName }";
         public string PhoneNumber
@@ -36,8 +37,7 @@
             return $"ID: { this.PersonID }\n" +
                 $"Name: { this.FullName }\n" +
                 $"Phone: { this.PhoneNumber }\n" +
-                $"EMail: { this.Email }\n";// +
-                //$"Type: { this.PersonType }";
+                $"EMail: { this.Email }";
         }
 
     }

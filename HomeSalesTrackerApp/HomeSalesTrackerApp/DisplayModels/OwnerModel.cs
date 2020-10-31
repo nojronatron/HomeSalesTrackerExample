@@ -23,13 +23,15 @@ namespace HomeSalesTrackerApp.DisplayModels
             StringBuilder result = new StringBuilder();
 
             result.Append($"{ base.ToStackedString() }\n");
-            result.Append($"Preferred Lender: { this.PreferredLender }\n");
-            result.Append("\n*** Owned Homes ***\n");
+            result.AppendLine($"*** { PersonType } Info ***");
+            result.AppendLine($"Preferred Lender: { this.PreferredLender }");
 
             foreach (HomeDisplayModel ownedHome in OwnedHomes)
             {
-                result.Append($"{ ownedHome.ToStackedString() }");
+                result.AppendLine("*** Owned Home ***");
+                result.AppendLine($"{ ownedHome.ToStackedString() }");
             }
+
             return result.ToString();
         }
 

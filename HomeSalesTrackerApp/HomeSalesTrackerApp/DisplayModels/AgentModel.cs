@@ -7,7 +7,7 @@ namespace HomeSalesTrackerApp.DisplayModels
     {
         private string _personType = "Agent";
         public decimal CommissionRate { get; set; }
-        public decimal RECoID { get; set; }
+        public int? RECoID { get; set; }
         public string RECompanyName { get; set; } = "Agent no longer active.";
         public string RECoPhone { get; set; }
 
@@ -40,12 +40,12 @@ namespace HomeSalesTrackerApp.DisplayModels
         public override string ToStackedString()
         {
             var result = new StringBuilder();
-            result.Append($"{ base.ToStackedString() }\n" +
-                $"\n*** { base.PersonType } Info ***\n" +
-                $"Commission Rate: { FancyCommissionRate().ToString() }\n" +
-                $"RE Company ID: { RECoID }\n" +
-                $"RE Company: { RECompanyName }\n" +
-                $"RE Co Phone: { FormattedPhone() }\n");
+            result.Append($"{ base.ToStackedString() }\n");
+            result.AppendLine($"*** { PersonType } Info ***");
+            result.AppendLine($"Commission Rate: { FancyCommissionRate().ToString() }");
+            result.AppendLine($"RE Company ID: { RECoID }");
+            result.AppendLine($"RE Company: { RECompanyName }");
+            result.AppendLine($"RE Co Phone: { FormattedPhone() }");
             
             if (HomesOnMarket.Count > 0)
             {
@@ -53,8 +53,8 @@ namespace HomeSalesTrackerApp.DisplayModels
                 {
                     if (homeForSale.MarketDate != null)
                     {
-                        result.Append("\n*** Home On Market ***\n");
-                        result.Append($"{ homeForSale.ToStackedString() }\n");
+                        result.AppendLine("*** Home On Market ***");
+                        result.AppendLine($"{ homeForSale.ToStackedString() }");
                     }
                 }
             }
@@ -65,14 +65,13 @@ namespace HomeSalesTrackerApp.DisplayModels
                 {
                     if (soldHome.SoldDate != null)
                     {
-                        result.Append("\n*** Home Sale ***\n");
-                        result.Append($"{ soldHome.ToStackedString() }\n");
+                        result.AppendLine("*** Home Sale ***");
+                        result.AppendLine($"{ soldHome.ToStackedString() }");
                     }
                 }
             }
 
             return result.ToString();
-
         }
 
     }
