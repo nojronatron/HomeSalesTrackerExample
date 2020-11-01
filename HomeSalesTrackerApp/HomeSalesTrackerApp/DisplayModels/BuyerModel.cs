@@ -46,8 +46,8 @@ namespace HomeSalesTrackerApp.DisplayModels
             {
                 foreach (var purchasedHome in PurchasedHomes)
                 {
-                    result.AppendLine("*** Purchased Home ***\n");
-                    result.AppendLine($"{ purchasedHome.ToStackedString() }\n");
+                    result.AppendLine("*** Purchased Home ***");
+                    result.AppendLine($"{ purchasedHome.ToStackedString() }");
                 }
             }
 
