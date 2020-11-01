@@ -27,6 +27,7 @@ namespace HomeSalesTrackerApp.Helpers
             }
 
             var searchResults = new List<Home>();
+
             foreach (var searchTerm in SearchTerms)
             {
                 string capSearchTerm = searchTerm.ToUpper().Trim();

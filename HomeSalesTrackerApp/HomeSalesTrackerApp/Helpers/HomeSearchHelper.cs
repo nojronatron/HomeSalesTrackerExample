@@ -16,15 +16,10 @@ namespace HomeSalesTrackerApp.Helpers
                 string capSearchTerm = searchTerm.ToUpper().Trim();
                 searchResults.AddRange(MainWindow.homesCollection.OfType<Home>().Where(
                     hc =>
-
                         hc.HomeID.ToString().Contains(capSearchTerm) ||
-
                         hc.Address.ToUpper().Contains(capSearchTerm) ||
-
                         hc.City.ToUpper().Contains(capSearchTerm) ||
-
                         hc.State.ToUpper().Contains(capSearchTerm) ||
-
                         hc.Zip.Contains(searchTerm)));
             }
 
