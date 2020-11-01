@@ -138,7 +138,7 @@ namespace HomeSalesTrackerApp
             var searchHomesResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms(searchTermsText);
+            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
             var shvResults = new List<SoldHomeModel>();
 
             if (searchTerms.Count > 0)
@@ -227,7 +227,7 @@ namespace HomeSalesTrackerApp
             var searchResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms(searchTermsText);
+            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
             if (searchTerms.Count > 0)
             {
                 HomeSearchHelper(ref searchResults, ref searchTerms);
@@ -271,7 +271,7 @@ namespace HomeSalesTrackerApp
             var searchResults = new List<Home>();
             var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms(searchTermsText);
+            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
             HomeSalesSearchHelper(ref searchResults, ref searchTerms, sold: false);
 
             if (searchResults.Count > 0)
@@ -420,19 +420,6 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
 
-        }
-
-        /// <summary>
-        /// Private helper method that cleans-up user-input prior to executing a search.
-        /// </summary>
-        /// <param name="searchTermsText"></param>
-        /// <returns></returns>
-        private List<string> FormatSearchTerms(string searchTermsText)
-        {
-            string[] searchTermsArr = searchTermsText.Split(',');
-            var searchTermsList = new List<string>();
-            searchTermsList = searchTermsArr.Where(st => st.Length > 0 && string.IsNullOrEmpty(st) == false).ToList();
-            return searchTermsList;
         }
 
         /// <summary>
@@ -896,21 +883,6 @@ namespace HomeSalesTrackerApp
             searchResults = searchResults.Distinct().ToList();
         }
 
-        private static void PersonSearchHelper(ref List<Person> searchResults, ref List<string> searchTerms)
-        {
-            foreach (var searchTerm in searchTerms)
-            {
-                string capSearchTerm = searchTerm.ToUpper().Trim();
-                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.PersonID.ToString().Contains(capSearchTerm)));
-                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.FirstName.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.LastName.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => p.Phone.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(peopleCollection.OfType<Person>().Where(p => !string.IsNullOrEmpty(p.Email) && p.Email.ToUpper().Contains(capSearchTerm)));
-            }
-
-            searchResults.Distinct();
-        }
-
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -1081,91 +1053,13 @@ namespace HomeSalesTrackerApp
 
         private void DisplayPeopleSearchResults()
         {
-            var searchResults = new List<Person>();
-            var searchTerms = new List<string>();
-            string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms(searchTermsText);
-            if (searchTerms.Count > 0)
-            {
-                PersonSearchHelper(ref searchResults, ref searchTerms);
-            }
-
-            if (searchResults.Count > 0)
-            {
-                var viewResults = new List<PersonModel>();
-                searchResults = searchResults.Distinct<Person>().ToList();
-
-                PersonModel newPersonView = null;
-                foreach (var person in searchResults)
-                {
-                    if (person.Agent == null && person.Buyer == null && person.Owner == null)
-                    {
-                        newPersonView = new PersonModel()
-                        {
-                            PersonID = person.PersonID,
-                            FirstName = person.FirstName,
-                            LastName = person.LastName,
-                            Phone = person.Phone,
-                            Email = person.Email ?? null,
-                            PersonType = string.Empty
-                        };
-                        viewResults.Add(newPersonView);
-                    }
-                    else
-                    {
-                        if (person.Agent != null)
-                        {
-                            newPersonView = new PersonModel()
-                            {
-                                PersonID = person.PersonID,
-                                FirstName = person.FirstName,
-                                LastName = person.LastName,
-                                Phone = person.Phone,
-                                Email = person.Email ?? null,
-                                PersonType = person.Agent.GetType().Name
-                            };
-                            viewResults.Add(newPersonView);
-                        }
-                        if (person.Buyer != null)
-                        {
-                            newPersonView = new PersonModel()
-                            {
-                                PersonID = person.PersonID,
-                                FirstName = person.FirstName,
-                                LastName = person.LastName,
-                                Phone = person.Phone,
-                                Email = person.Email ?? null,
-                                PersonType = person.Buyer.GetType().Name
-                            };
-                            viewResults.Add(newPersonView);
-                        }
-                        if (person.Owner != null)
-                        {
-                            newPersonView = new PersonModel()
-                            {
-                                PersonID = person.PersonID,
-                                FirstName = person.FirstName,
-                                LastName = person.LastName,
-                                Phone = person.Phone,
-                                Email = person.Email ?? null,
-                                PersonType = person.Owner.GetType().Name
-                            };
-                            viewResults.Add(newPersonView);
-                        }
-                    }
-                }
-
-                FoundPeopleView.ItemsSource = viewResults;
-                FoundPeopleView.Visibility = Visibility.Visible;
-                DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and use Details or Modify to make changes.");
-                GetItemDetailsButton.IsEnabled = true;
-            }
-
-            if (searchTerms.Count < 1 || searchResults.Count < 1)
-            {
-                DisplayZeroResultsMessage();
-                ClearSearchResultsViews();
-            }
+            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            var peopleSearchtool = new PeopleSearchTool(formattedSearchTerms);
+            var viewResults = peopleSearchtool.SearchResults;
+            FoundPeopleView.ItemsSource = viewResults;
+            FoundPeopleView.Visibility = Visibility.Visible;
+            DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and click Details button for more information.");
+            GetItemDetailsButton.IsEnabled = true;
 
         }
 
