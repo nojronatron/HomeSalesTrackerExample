@@ -69,6 +69,8 @@
     <Compile Include="DisplayModels\SoldHomeDetailModel.cs" />
     <Compile Include="DisplayModels\SoldHomeModel.cs" />
     <Compile Include="Helpers\FormatSearchTerms.cs" />
+    <Compile Include="Helpers\HomeSearchHelper.cs" />
+    <Compile Include="Helpers\HomeSearchTool.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\PeopleSearchTool.cs" />
     <Compile Include="Report Models\AgentsReportModel.cs" />

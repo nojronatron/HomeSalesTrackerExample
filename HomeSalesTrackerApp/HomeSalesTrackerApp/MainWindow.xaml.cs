@@ -35,6 +35,7 @@ namespace HomeSalesTrackerApp
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             logger = new Logger();
+
             if (App.DatabaseInitLoaded)
             {
                 InitializeCollections();
@@ -46,6 +47,7 @@ namespace HomeSalesTrackerApp
             {
                 logger.Data("MainWindow Loaded", "Database data NOT loaded.");
             }
+
             logger.Flush();
         }
 
@@ -165,8 +167,9 @@ namespace HomeSalesTrackerApp
                               })
                               .ToList();
 
-                HomeSearchHelper(ref searchHomesResults, ref searchTerms);
+                searchHomesResults = HomeSearchHelper.SearchHomes(searchTerms);
                 searchHomesResults = searchHomesResults.Distinct().ToList();
+
                 shvResults.AddRange((from hs in homeSalesCollection
                                      from shr in searchHomesResults
                                      from h in homesCollection
@@ -223,40 +226,22 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuSearchHomes_Click(object sender, RoutedEventArgs e)
         {
-            ClearSearchResultsViews();
-            var searchResults = new List<Home>();
-            var searchTerms = new List<String>();
             string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
-            if (searchTerms.Count > 0)
-            {
-                HomeSearchHelper(ref searchResults, ref searchTerms);
-            }
+            var searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
 
-            if (searchResults.Count > 0)
-            {
-                var results = (from h in searchResults
-                               where h != null
-                               select new HomeSearchModel
-                               {
-                                   HomeID = h.HomeID,
-                                   Address = h.Address,
-                                   City = h.City,
-                                   State = h.State,
-                                   Zip = h.Zip,
-                               });
-
-                var listResults = results.ToList();
-                FoundHomesView.ItemsSource = listResults;
-                FoundHomesView.Visibility = Visibility.Visible;
-                GetItemDetailsButton.IsEnabled = true;
-                DisplayStatusMessage($"Found { listResults.Count } Homes. Select an entry and click Get Item Details button for more information.");
-            }
-
-            if (searchTerms.Count < 1 || searchResults.Count < 1)
+            if (searchTerms.Count < 1)
             {
                 DisplayZeroResultsMessage();
+                return;
             }
+
+            var homeSearchTool = new HomeSearchTool(searchTerms);
+            var listResults = homeSearchTool.SearchResults;
+
+            FoundHomesView.ItemsSource = listResults;
+            FoundHomesView.Visibility = Visibility.Visible;
+            GetItemDetailsButton.IsEnabled = true;
+            DisplayStatusMessage($"Found { listResults.Count } Homes. Select an entry and click Get Item Details button for more information.");
 
         }
 
@@ -450,7 +435,7 @@ namespace HomeSalesTrackerApp
                                          select h).ToList();
                 }
 
-                HomeSearchHelper(ref homeSearchResults, ref searchTerms);
+                homeSearchResults = HomeSearchHelper.SearchHomes(searchTerms);
 
                 searchResults = (from sr in homeSearchResults
                                  from sh in soldOrUnsoldHomes
@@ -866,21 +851,6 @@ namespace HomeSalesTrackerApp
                 //throw;
             }
 
-        }
-
-        private static void HomeSearchHelper(ref List<Home> searchResults, ref List<string> searchTerms)
-        {
-            foreach (var searchTerm in searchTerms)
-            {
-                string capSearchTerm = searchTerm.ToUpper().Trim();
-                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.HomeID.ToString().Contains(capSearchTerm)));
-                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.Address.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.City.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.State.ToUpper().Contains(capSearchTerm)));
-                searchResults.AddRange(homesCollection.OfType<Home>().Where(hc => hc.Zip.Contains(searchTerm)));
-            }
-
-            searchResults = searchResults.Distinct().ToList();
         }
 
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
