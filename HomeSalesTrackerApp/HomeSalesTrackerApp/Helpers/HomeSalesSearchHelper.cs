@@ -11,6 +11,7 @@ namespace HomeSalesTrackerApp.Helpers
         {
             var homeSearchResults = new List<Home>();
             var soldOrUnsoldHomes = new List<Home>();
+
             if (searchTerms.Count > 0)
             {
                 if (sold == false)

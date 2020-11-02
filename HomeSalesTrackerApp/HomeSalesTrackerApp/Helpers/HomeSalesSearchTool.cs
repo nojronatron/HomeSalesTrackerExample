@@ -78,8 +78,7 @@ namespace HomeSalesTrackerApp.Helpers
                                SaleAmount = hs.SaleAmount,
                                SoldDate = hs.SoldDate
                            });
-
-
+            
             return results.ToList();
         }
 

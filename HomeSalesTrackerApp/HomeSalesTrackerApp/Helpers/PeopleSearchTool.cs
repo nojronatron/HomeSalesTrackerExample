@@ -39,8 +39,7 @@ namespace HomeSalesTrackerApp.Helpers
                         p.Phone.ToUpper().Contains(capSearchTerm)  ||
                         (!string.IsNullOrEmpty(p.Email) && p.Email.ToUpper().Contains(capSearchTerm))
                         ));
-                //searchResults.AddRange(MainWindow.peopleCollection.OfType<Person>().Where(
-                //   p => !string.IsNullOrEmpty(p.Email) && p.Email.ToUpper().Contains(capSearchTerm)));
+
             }
 
             searchResults.Distinct();
