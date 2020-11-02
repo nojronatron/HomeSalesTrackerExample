@@ -119,9 +119,6 @@
     <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
       <DependentUpon>SoldHomesReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SearchResultDetails\SearchResultDetailWindow.xaml.cs">
-      <DependentUpon>SearchResultDetailWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\AgentsReportView.xaml.cs">
       <DependentUpon>AgentsReportView.xaml</DependentUpon>
     </Compile>
@@ -183,10 +180,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ReportWindows\SoldHomesReport.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SearchResultDetails\SearchResultDetailWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

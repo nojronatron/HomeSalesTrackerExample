@@ -132,7 +132,6 @@ namespace HomeSalesTrackerApp
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-
             var foundSoldHomes = HomeSalesSearchTool.GetSoldHomes(searchTermsTextbox.Text);
 
             if (foundSoldHomes.Count < 1)
@@ -154,6 +153,7 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuSearchHomes_Click(object sender, RoutedEventArgs e)
         {
+            ClearSearchResultsViews();
             string searchTermsText = searchTermsTextbox.Text;
             var searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
 
@@ -455,6 +455,7 @@ namespace HomeSalesTrackerApp
                 if (FoundHomesView.Visibility == Visibility.Visible)
                 {
                     HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
+
                     if (selectedHome == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -897,6 +898,7 @@ namespace HomeSalesTrackerApp
 
         private void DisplayPeopleSearchResults()
         {
+            ClearSearchResultsViews();
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
             var peopleSearchtool = new PeopleSearchTool(formattedSearchTerms);
             var viewResults = peopleSearchtool.SearchResults;
