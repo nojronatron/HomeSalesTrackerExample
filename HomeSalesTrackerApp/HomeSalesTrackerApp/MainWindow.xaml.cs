@@ -483,6 +483,7 @@ namespace HomeSalesTrackerApp
                 if (FoundHomesForSaleView.Visibility == Visibility.Visible)
                 {
                     HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+
                     if (selectedHfs == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -527,6 +528,7 @@ namespace HomeSalesTrackerApp
                 if (FoundSoldHomesView.Visibility == Visibility.Visible)
                 {
                     SoldHomeModel selectedSh = FoundSoldHomesView.SelectedItem as SoldHomeModel;
+
                     if (selectedSh == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -572,6 +574,7 @@ namespace HomeSalesTrackerApp
                 if (FoundPeopleView.Visibility == Visibility.Visible)
                 {
                     PersonModel foundPerson = FoundPeopleView.SelectedItem as PersonModel;
+
                     if (foundPerson == null)
                     {
                         DisplayStatusMessage("Select an item in the results before clicking the button.");
@@ -744,7 +747,7 @@ namespace HomeSalesTrackerApp
                 logger.Flush();
             }
 
-            DisplayStatusMessage("!!TESTING!! Menu -> Update Home !!TESTING!!");
+            DisplayStatusMessage("Update Home Menu.");
             ClearSearchResultsViews();
         }
 
@@ -796,6 +799,7 @@ namespace HomeSalesTrackerApp
                 updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (selectedPerson != null)
                 {
+
                     if (updatePerson != null)
                     {
                         updateAgent = updatePerson.Agent;
@@ -869,6 +873,7 @@ namespace HomeSalesTrackerApp
 
                 if (selectedPerson != null)
                 {
+
                     if (updatePerson != null)
                     {
                         var puw = new PersonUpdaterWindow();
