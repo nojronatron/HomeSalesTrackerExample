@@ -132,90 +132,18 @@ namespace HomeSalesTrackerApp
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            var soldHomes = (from hs in homeSalesCollection
-                             where hs.SoldDate != null
-                             select hs).ToList();
 
-            var searchHomesalesResults = new List<HomeSale>();
-            var searchHomesResults = new List<Home>();
-            var searchTerms = new List<String>();
-            string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
-            var shvResults = new List<SoldHomeModel>();
+            var foundSoldHomes = HomeSalesSearchTool.GetSoldHomes(searchTermsTextbox.Text);
 
-            if (searchTerms.Count > 0)
-            {
-                HomesalesSearchHelper(ref searchHomesalesResults, ref searchTerms);
-                searchHomesalesResults = searchHomesalesResults.Distinct().ToList();
-                shvResults = (from hs in homeSalesCollection
-                              from shsr in searchHomesalesResults
-                              from h in homesCollection
-                              from sh in soldHomes
-                              where hs.SaleID == sh.SaleID
-                              && hs.SaleID == shsr.SaleID
-                              && h.HomeID == shsr.HomeID
-                              && shsr.SoldDate != null
-                              select new SoldHomeModel
-                              {
-                                  HomeID = hs.HomeID,
-                                  Address = h.Address,
-                                  City = h.City,
-                                  State = h.State,
-                                  Zip = h.Zip,
-                                  SaleAmount = hs.SaleAmount,
-                                  SoldDate = hs.SoldDate
-                              })
-                              .ToList();
-
-                searchHomesResults = HomeSearchHelper.SearchHomes(searchTerms);
-                searchHomesResults = searchHomesResults.Distinct().ToList();
-
-                shvResults.AddRange((from hs in homeSalesCollection
-                                     from shr in searchHomesResults
-                                     from h in homesCollection
-                                     from sh in soldHomes
-                                     where h.HomeID == sh.HomeID
-                                     && h.HomeID == shr.HomeID
-                                     && h.HomeID == hs.HomeID
-                                     && hs.SoldDate != null
-                                     select new SoldHomeModel
-                                     {
-                                         HomeID = hs.HomeID,
-                                         Address = h.Address,
-                                         City = h.City,
-                                         State = h.State,
-                                         Zip = h.Zip,
-                                         SaleAmount = hs.SaleAmount,
-                                         SoldDate = hs.SoldDate
-                                     })
-                                     .ToList());
-            }
-
-            if (shvResults.Count > 0)
-            {
-                FoundSoldHomesView.Visibility = Visibility.Visible;
-                FoundSoldHomesView.ItemsSource = shvResults;
-                GetItemDetailsButton.IsEnabled = true;
-                DisplayStatusMessage($"Found { shvResults.Count } Sold Homes. Select an item to Menu > Update or Get Item Details.");
-            }
-
-            if (searchTerms.Count < 1 || shvResults.Count < 1)
+            if (foundSoldHomes.Count < 1)
             {
                 DisplayZeroResultsMessage();
             }
 
-        }
-
-        private void HomesalesSearchHelper(ref List<HomeSale> searchHomesalesResults, ref List<String> searchTerms)
-        {
-            foreach (var searchTerm in searchTerms)
-            {
-                string capSearchTerms = searchTerm.ToUpper().Trim();
-                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SaleID.ToString().Contains(searchTerm)));
-                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.MarketDate.ToString().Contains(searchTerm)));
-                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SaleAmount.ToString().Contains(searchTerm)));
-                searchHomesalesResults.AddRange(homeSalesCollection.OfType<HomeSale>().Where(hs => hs.SoldDate.ToString().Contains(searchTerm)));
-            }
+            FoundSoldHomesView.ItemsSource = foundSoldHomes;
+            FoundSoldHomesView.Visibility = Visibility.Visible;
+            GetItemDetailsButton.IsEnabled = true;
+            DisplayStatusMessage($"Found { foundSoldHomes.Count } Sold Homes. Select an item to Menu > Update or Get Item Details.");
 
         }
 
@@ -253,39 +181,19 @@ namespace HomeSalesTrackerApp
         private void MenuSearchHomesForSale_Click(Object sender, RoutedEventArgs args)
         {
             ClearSearchResultsViews();
-            var searchResults = new List<Home>();
-            var searchTerms = new List<String>();
-            string searchTermsText = searchTermsTextbox.Text;
-            searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
-            HomeSalesSearchHelper(ref searchResults, ref searchTerms, sold: false);
+            var foundHomesForSale = HomeSalesSearchTool.GetHomesOnMarket(searchTermsTextbox.Text);
 
-            if (searchResults.Count > 0)
-            {
-                var results = (from h in searchResults
-                               from hs in homeSalesCollection
-                               where (h.HomeID == hs.HomeID && hs.SoldDate == null)
-                               select new HomeForSaleModel
-                               {
-                                   HomeID = h.HomeID,
-                                   Address = h.Address,
-                                   City = h.City,
-                                   State = h.State,
-                                   Zip = h.Zip,
-                                   SaleAmount = hs.SaleAmount,
-                                   MarketDate = hs.MarketDate
-                               });
-
-                var listResults = results.ToList();
-                FoundHomesForSaleView.ItemsSource = listResults;
-                FoundHomesForSaleView.Visibility = Visibility.Visible;
-                GetItemDetailsButton.IsEnabled = true;
-                DisplayStatusMessage($"Found { listResults.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
-            }
-
-            if (searchTerms.Count < 1 || searchResults.Count < 1)
+            if (foundHomesForSale.Count < 1)
             {
                 DisplayZeroResultsMessage();
+                return;
             }
+
+            FoundHomesForSaleView.ItemsSource = foundHomesForSale;
+            FoundHomesForSaleView.Visibility = Visibility.Visible;
+            GetItemDetailsButton.IsEnabled = true;
+            DisplayStatusMessage($"Found { foundHomesForSale.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
+
         }
 
         /// <summary>
@@ -405,45 +313,6 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage("Select an item in the search results before choosing to remove it from the Market.");
             }
 
-        }
-
-        /// <summary>
-        /// private helper method to search HomeSalesCollection for items in Search Terms Textbox.
-        /// REF's SearchResults (Home), SearchTerms (string). Can return sold and unsold HomeSales.
-        /// </summary>
-        /// <param name="searchResults"></param>
-        /// <param name="searchTerms"></param>
-        /// <param name="sold"></param>
-        private static void HomeSalesSearchHelper(ref List<Home> searchResults, ref List<string> searchTerms, bool sold)
-        {
-            var homeSearchResults = new List<Home>();
-            var soldOrUnsoldHomes = new List<Home>();
-            if (searchTerms.Count > 0)
-            {
-                if (sold == false)
-                {
-                    soldOrUnsoldHomes = (from hs in homeSalesCollection
-                                         from h in homesCollection
-                                         where hs.SoldDate == null && hs.HomeID == h.HomeID
-                                         select h).ToList();
-                }
-                else
-                {
-                    soldOrUnsoldHomes = (from sh in homeSalesCollection
-                                         from h in homesCollection
-                                         where sh.SoldDate != null && sh.HomeID == h.HomeID
-                                         select h).ToList();
-                }
-
-                homeSearchResults = HomeSearchHelper.SearchHomes(searchTerms);
-
-                searchResults = (from sr in homeSearchResults
-                                 from sh in soldOrUnsoldHomes
-                                 where sr.HomeID == sh.HomeID
-                                 select sr).ToList();
-
-                searchResults = searchResults.Distinct().ToList();
-            }
         }
 
         /// <summary>
