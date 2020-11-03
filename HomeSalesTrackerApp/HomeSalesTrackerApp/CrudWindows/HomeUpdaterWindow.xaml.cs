@@ -35,16 +35,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             InitializeComponent();
         }
 
-        private void SetDatePickerDefaults()
-        {
-            DateTime date1 = new DateTime(2020, 1, 1, 0, 0, 0);
-            DateTime date2 = new DateTime(2020, 1, 11, 0, 0, 0);
-            TimeSpan fortnight = date2.Subtract(date1);
-            CalendarDateRange calendarDateRange = new CalendarDateRange(DateTime.Now, DateTime.Now.Subtract(fortnight));
-            hfsSoldDatePicker.BlackoutDates.Add(calendarDateRange);
-            hfsMarketDatePicker.BlackoutDates.Add(calendarDateRange);
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (IsButtonClose)
@@ -267,11 +257,12 @@ namespace HomeSalesTrackerApp.CrudWindows
             //LoadRECosCombobox();
 
             //  HOMESALE INFO
-            SetDatePickerDefaults();
             HomesaleUpdated = false;
             forSaleHomeIdTextbox.IsReadOnly = true;
             forSaleHomeIdTextbox.Text = UpdateHomeSale.HomeID.ToString();
-            hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
+            hfsSoldDatePicker.IsEnabled = true;
+            hfsSoldDatePicker.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Today.AddDays(-5)));
+            hfsSoldDatePicker.SelectedDate = DateTime.Today;
             hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
             hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
             hfsMarketDatePicker.IsEnabled = false;
@@ -301,15 +292,14 @@ namespace HomeSalesTrackerApp.CrudWindows
             //UpdateChangedHomeFields_Button.IsEnabled = false;
 
             //  HOMESALE INFO
-            SetDatePickerDefaults();
             HomesaleUpdated = false;
             forSaleHomeIdTextbox.IsReadOnly = true;
             forSaleHomeIdTextbox.Text = UpdateHome.HomeID.ToString();
             hfsSoldDatePicker.SelectedDate = UpdateHomeSale.SoldDate;
             hfsSoldDatePicker.IsEnabled = false;
             hfsSaleAmountTextbox.Text = UpdateHomeSale.SaleAmount.ToString();
-            hfsMarketDatePicker.SelectedDate = UpdateHomeSale.MarketDate;
-            hfsMarketDatePicker.IsEnabled = true;
+            hfsMarketDatePicker.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Today.AddDays(-5)));
+            hfsMarketDatePicker.SelectedDate = DateTime.Today;
 
             //  AGENT INFO
             AgentNameTextbox.IsReadOnly = true;

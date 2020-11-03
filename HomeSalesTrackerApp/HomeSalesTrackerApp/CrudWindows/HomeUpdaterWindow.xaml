@@ -84,11 +84,11 @@
                 <Label Content="For Sale Home ID" Height="27"    />
                 <TextBox x:Name="forSaleHomeIdTextbox" Text="" IsReadOnly="True" Height="27"   />
                 <Label Content="Sold Date" Height="27"   />
-                <DatePicker SelectedDate="2020-08-08" x:Name="hfsSoldDatePicker" Height="27"   Margin="0,5"></DatePicker>
+                <DatePicker x:Name="hfsSoldDatePicker" Height="27" Margin="0,5"></DatePicker>
                 <Label Content="Sale Amount" Height="27"    />
                 <TextBox x:Name="hfsSaleAmountTextbox" Text="" Height="27"    />
                 <Label Content="Market Date" Height="27"    />
-                <DatePicker SelectedDate="2020-08-08" x:Name="hfsMarketDatePicker" Height="27"   Margin="0,5" IsEnabled="False" ></DatePicker>
+                <DatePicker x:Name="hfsMarketDatePicker" Height="27" Margin="0,5"></DatePicker>
                 <Button x:Name="hfsUpdateHomeSaleButton" Content="Update Home Sale Info" Height="27" Margin="5,5"
                         Click="UpdateHomeForSaleFieldsButton_Click" />
                 <Separator Height="5" Margin="5,5" />
