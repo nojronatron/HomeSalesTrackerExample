@@ -224,7 +224,8 @@ namespace HomeSalesTrackerApp
             }
 
             HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeID &&
-                                                                   hs.MarketDate != null).FirstOrDefault();
+                                                                   hs.MarketDate != null &&
+                                                                   hs.SoldDate == null).FirstOrDefault();
 
             Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
 
