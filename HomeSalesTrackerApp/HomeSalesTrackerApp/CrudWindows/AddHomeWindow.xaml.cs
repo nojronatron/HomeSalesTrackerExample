@@ -1,7 +1,5 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
-
 using HSTDataLayer;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -233,10 +231,11 @@ namespace HomeSalesTrackerApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+
             if (IsButtonClose)
             {
                 e.Cancel = false;
-                MainWindow.InitializeCollections();
+                //MainWindow.InitializeCollections();
             }
             else
             {
@@ -249,7 +248,9 @@ namespace HomeSalesTrackerApp
                 {
                     e.Cancel = false;
                 }
+
             }
+
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -267,5 +268,6 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage("Preferred Lender added.");
             }
         }
+
     }
 }

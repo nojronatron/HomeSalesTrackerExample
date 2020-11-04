@@ -121,7 +121,7 @@ namespace HomeSalesTrackerApp
             return personID;
         }
 
-        public int UpdatePerson(Person person)
+        public int UpdatePerson(T person)
         {
             if (person == null)
             {

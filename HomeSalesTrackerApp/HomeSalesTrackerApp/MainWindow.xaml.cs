@@ -166,6 +166,12 @@ namespace HomeSalesTrackerApp
             var homeSearchTool = new HomeSearchTool(searchTerms);
             var listResults = homeSearchTool.SearchResults;
 
+            if (listResults == null)
+            {
+                DisplayZeroResultsMessage();
+                return;
+            }
+
             FoundHomesView.ItemsSource = listResults;
             FoundHomesView.Visibility = Visibility.Visible;
             GetItemDetailsButton.IsEnabled = true;
@@ -903,6 +909,13 @@ namespace HomeSalesTrackerApp
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
             var peopleSearchtool = new PeopleSearchTool(formattedSearchTerms);
             var viewResults = peopleSearchtool.SearchResults;
+
+            if (viewResults.Count < 1)
+            {
+                DisplayZeroResultsMessage();
+                return;
+            }
+
             FoundPeopleView.ItemsSource = viewResults;
             FoundPeopleView.Visibility = Visibility.Visible;
             DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and click Details button for more information.");
