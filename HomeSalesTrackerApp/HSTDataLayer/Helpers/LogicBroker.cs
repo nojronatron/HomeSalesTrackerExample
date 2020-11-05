@@ -343,96 +343,172 @@ namespace HSTDataLayer
             return result;
         }
 
-        ///// <summary>
-        ///// Take a generic item and enable storing to the DB via EF if different than existing item.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="item"></param>
-        ///// <returns></returns>
-        //public static bool SaveEntity<T>(T item)
-        //{
-        //    bool result = false;
-        //    int itemsAffected = 0;
-        //    string name = item.GetType().Name;
-        //    using (var context = new HSTDataModel())
-        //    {
-        //        switch (name)
-        //        {
-        //            case "Person":
-        //                {
-        //                    Person person = item as Person;
-        //                    bool updateAlreadyWaiting = context.ChangeTracker.HasChanges();
-        //                    context.People.AddOrUpdate(x => new { x.FirstName, x.LastName }, person);
-        //                    bool updateNowWaiting = context.ChangeTracker.HasChanges();
-        //                    break;
-        //                }
-        //            case "Owner":
-        //                {
-        //                    Owner owner = item as Owner;
-        //                    context.Owners.AddOrUpdate(o => new { o.OwnerID }, owner);
-        //                    break;
-        //                }
-        //            case "Home":
-        //                {
-        //                    Home home = item as Home;
-        //                    context.Homes.AddOrUpdate(h => new { h.Address, h.Zip }, home);
-        //                    break;
-        //                }
-        //            case "RealEstateCompany":
-        //                {
-        //                    RealEstateCompany reco = item as RealEstateCompany;
-        //                    context.RealEstateCompanies.AddOrUpdate(re => new { re.CompanyID }, reco);
-        //                    break;
-        //                }
-        //            case "Agent":
-        //                {
-        //                    Agent agent = item as Agent;
-        //                    bool updateAlreadyWaiting = context.ChangeTracker.HasChanges();
-        //                    context.Agents.AddOrUpdate(a => new { a.AgentID }, agent);
-        //                    bool updateNowWaiting = context.ChangeTracker.HasChanges();
-        //                    break;
-        //                }
-        //            case "Buyer":
-        //                {
-        //                    Buyer buyer = item as Buyer;
-        //                    context.Buyers.AddOrUpdate(b => new { b.BuyerID }, buyer);
-        //                    break;
-        //                }
-        //            case "HomeSale":
-        //                {
-        //                    HomeSale homesale = item as HomeSale;
-        //                    context.HomeSales.AddOrUpdate(hs => new { hs.HomeID, hs.SaleAmount, hs.MarketDate }, homesale);
-        //                    break;
-        //                }
-        //            default:
-        //                {
-        //                    itemsAffected = -1;
-        //                    break;
-        //                }
-        //        }
+        /// <summary>
+        /// Take a generic item (EXCEPT HomeSale) and enable updating the existing item in the store with properties of the item passed-in.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool UpdateExistingItem<T>(T item)
+        {
+            bool result = false;
+            int itemsAffected = 0;
+            string name = item.GetType().Name;
+            using (var context = new HSTDataModel())
+            {
+                switch (name)
+                {
+                    case "Person":
+                        {
+                            Person person = item as Person;
+                            Person dbPerson = context.People.Find(person.PersonID);
+                            
+                            if (dbPerson == null)
+                            {
+                                break;
+                            }
+                            
+                            if (dbPerson.Equals(person))
+                            {
+                                dbPerson.Email = person.Email;
+                                dbPerson.Phone = person.Phone;
+                            }
+                            
+                            break;
+                        }
+                    case "Owner":
+                        {
+                            Owner owner = item as Owner;
+                            Owner dbOwner = context.Owners.Find(owner.OwnerID);
+                            
+                            if (dbOwner == null)
+                            {
+                                break;
+                            }
 
-        //        try
-        //        {
-        //            itemsAffected = context.SaveChanges();
-        //        }
-        //        catch
-        //        {
-        //            _ = 0;
-        //        }
+                            if (dbOwner.Homes.Count != owner.Homes.Count && owner.Homes.Count > 0)
+                            {
+                                dbOwner.Homes = owner.Homes;
+                            }
 
-        //        if (itemsAffected > 0)
-        //        {
-        //            result = true;
-        //        }
+                            dbOwner.PreferredLender = owner.PreferredLender;
+                            break;
+                        }
+                    case "Home":
+                        {
+                            Home home = item as Home;
+                            Home dbHome = context.Homes.Find(home.HomeID);
 
-        //        if (itemsAffected < 0)
-        //        {
-        //            result = false;
-        //        }
+                            if (dbHome == null)
+                            {
+                                break;
+                            }
 
-        //    }
-        //    return result;
-        //}
+                            if (dbHome.HomeSales.Count != home.HomeSales.Count && home.HomeSales.Count > 0)
+                            {
+                                dbHome.HomeSales = home.HomeSales;
+                            }
+
+                            if (dbHome.Owner != null && dbHome.Owner != home.Owner)
+                            {
+                                dbHome.Owner = home.Owner;
+                            }
+
+                            break;
+                        }
+                    case "RealEstateCompany":
+                        {
+                            RealEstateCompany reco = item as RealEstateCompany;
+                            RealEstateCompany dbReco = context.RealEstateCompanies.Find(reco.CompanyID);
+
+                            if (dbReco == null)
+                            {
+                                break;
+                            }
+
+                            if (dbReco.Phone != reco.Phone)
+                            {
+                                dbReco.Phone = reco.Phone;
+                            }
+                            
+                            if (dbReco.HomeSales.Count != reco.HomeSales.Count && reco.HomeSales.Count > 0)
+                            {
+                                dbReco.HomeSales = reco.HomeSales;
+                            }
+
+                            if (dbReco.Agents.Count != reco.Agents.Count)
+                            {
+                                dbReco.Agents = reco.Agents;
+                            }
+
+                            break;
+                        }
+                    case "Agent":
+                        {
+                            Agent agent = item as Agent;
+                            Agent dbAgent = context.Agents.Find(agent.AgentID);
+
+                            if (dbAgent == null)
+                            {
+                                break;
+                            }
+
+                            if (dbAgent.HomeSales.Count != agent.HomeSales.Count && agent.HomeSales.Count > 0)
+                            {
+                                dbAgent.HomeSales = agent.HomeSales;
+                            }
+
+                            dbAgent.CommissionPercent = agent.CommissionPercent;
+                            dbAgent.CompanyID = agent.CompanyID;
+
+                            break;
+                        }
+                    case "Buyer":
+                        {
+                            Buyer buyer = item as Buyer;
+                            Buyer dbBuyer = context.Buyers.Find(buyer.BuyerID);
+
+                            if (dbBuyer == null)
+                            {
+                                break;
+                            }
+
+                            if (dbBuyer.HomeSales.Count != buyer.HomeSales.Count && buyer.HomeSales.Count > 0)
+                            {
+                                dbBuyer.HomeSales = buyer.HomeSales;
+                            }
+
+                            dbBuyer.CreditRating = buyer.CreditRating;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                try
+                {
+                    itemsAffected = context.SaveChanges();
+                }
+                catch
+                {
+                    _ = 0;
+                }
+
+                if (itemsAffected > 0)
+                {
+                    result = true;
+                }
+
+                if (itemsAffected < 0)
+                {
+                    result = false;
+                }
+
+            }
+            return result;
+        }
 
         /// <summary>
         /// Take a generic item and enable removing from the DB via EF.
@@ -529,231 +605,6 @@ namespace HSTDataLayer
 
             return result;
         }
-
-        ///// <summary>
-        ///// Take a generic item and enable updating a field in an existing entry via EF. If no existing Entities match, new Entity is created.
-        ///// People Typed Entities must contain a new or existing Person Type.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="item"></param>
-        ///// <returns></returns>
-        //public static bool UpdateEntity<T>(T item)
-        //{
-        //    bool result = false;
-        //    int itemsAffected = 0;
-        //    string name = item.GetType().Name;
-        //    using (var context = new HSTDataModel())
-        //    {
-        //        var agent = new Agent();
-        //        var buyer = new Buyer();
-        //        var owner = new Owner();
-        //        var home = new Home();
-        //        var homeSale = new HomeSale();
-        //        var person = new Person();
-        //        var realEstateCompany = new RealEstateCompany();
-
-        //        switch (name)
-        //        {
-        //            case "Agent":
-        //                {
-        //                    agent = item as Agent;
-        //                    Agent agentToUpdate = context.Agents.Find(agent.AgentID);
-        //                    bool updateAlreadyWaiting = context.ChangeTracker.HasChanges();
-        //                    if (agentToUpdate != null)
-        //                    {
-        //                        agentToUpdate.CompanyID = agent.CompanyID;
-        //                        agentToUpdate.CommissionPercent = agent.CommissionPercent;
-        //                        bool updateNowWaiting = context.ChangeTracker.HasChanges();
-        //                    }
-        //                    else
-        //                    {
-        //                        agentToUpdate = new Agent()
-        //                        {
-        //                            CompanyID = agent.CompanyID,
-        //                            CommissionPercent = agent.CommissionPercent,
-        //                            AgentID = agent.AgentID
-        //                        };
-        //                        context.Agents.Add(agentToUpdate);
-        //                        bool updateNowWaiting = context.ChangeTracker.HasChanges();
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "Buyer":
-        //                {
-        //                    buyer = item as Buyer;
-        //                    Buyer buyerToUpdate = context.Buyers.Find(buyer.BuyerID);
-        //                    if (buyerToUpdate != null)
-        //                    {
-        //                        buyerToUpdate.CreditRating = buyer.CreditRating;
-        //                    }
-        //                    else
-        //                    {
-        //                        person = context.People.Find(buyer.BuyerID);
-        //                        if (person != null)
-        //                        {
-        //                            buyer.Person = person;
-        //                            person.Buyer = buyer;
-        //                        }
-        //                        else
-        //                        {
-        //                            context.Buyers.Add(buyer);
-        //                        }
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "Owner":
-        //                {
-        //                    owner = item as Owner;
-        //                    Owner ownerToUpdate = context.Owners.Find(owner.OwnerID);
-        //                    if (ownerToUpdate != null)
-        //                    {
-        //                        ownerToUpdate.PreferredLender = owner.PreferredLender;
-        //                    }
-        //                    else
-        //                    {
-        //                        person = context.People.Find(owner.OwnerID);
-        //                        if (person != null)
-        //                        {
-        //                            owner.Person = person;
-        //                            person.Owner = owner;
-        //                        }
-        //                        else
-        //                        {
-        //                            context.Owners.Add(owner);
-        //                        }
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "Person":
-        //                {
-        //                    person = item as Person;
-        //                    Person personToUpdate = (from p in context.People
-        //                                             where p.FirstName == person.FirstName &&
-        //                                             p.LastName == person.LastName
-        //                                             select p).FirstOrDefault();
-
-        //                    if (personToUpdate == null)
-        //                    {
-        //                        context.People.Add(person);
-        //                    }
-        //                    else
-        //                    {
-        //                        personToUpdate.Phone = person.Phone;
-        //                        personToUpdate.Email = person.Email ?? null;
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "Home":
-        //                {
-        //                    home = item as Home;
-
-        //                    Home homeToUpdate = (from h in context.Homes
-        //                                         where h.Address == home.Address &&
-        //                                         h.Zip == home.Zip
-        //                                         select h).FirstOrDefault();
-
-        //                    /*  If home not found by Address and Zip
-        //                     *  search for home by home.HomeID and if found then update with
-        //                     *  Address, City, State, and Zip and update Owner if different
-        //                     */
-        //                    if (homeToUpdate == null)
-        //                    {
-        //                        var existingHome = context.Homes.Find(home.HomeID);
-        //                        if (existingHome == null)
-        //                        {
-        //                            //  Add a new entry
-        //                            context.Homes.Add(home);
-        //                        }
-        //                        if (existingHome != home)
-        //                        {
-        //                            if (existingHome.HomeID == home.HomeID)
-        //                            {
-        //                                existingHome.Address = home.Address;
-        //                                existingHome.City = home.City;
-        //                                existingHome.State = home.State;
-        //                                existingHome.Zip = home.Zip;
-        //                            }
-        //                            if (existingHome.OwnerID != home.OwnerID)
-        //                            {
-        //                                existingHome.OwnerID = home.OwnerID;
-        //                            }
-        //                        }
-
-        //                    }
-        //                    else
-        //                    {
-        //                        if (homeToUpdate.OwnerID != home.OwnerID)
-        //                        {
-        //                            homeToUpdate.City = home.City;
-        //                            homeToUpdate.State = home.State;
-        //                            homeToUpdate.OwnerID = home.OwnerID;
-        //                        }
-
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "HomeSale":
-        //                {
-        //                    homeSale = item as HomeSale;
-        //                    HomeSale homesaleToUpdate = context.HomeSales.Find(homeSale.SaleID);
-        //                    if (homesaleToUpdate != null)
-        //                    {
-        //                        homesaleToUpdate.HomeID = homeSale.HomeID;
-        //                        homesaleToUpdate.SoldDate = homeSale.SoldDate ?? null;
-        //                        homesaleToUpdate.AgentID = homeSale.AgentID;
-        //                        homesaleToUpdate.SaleAmount = homeSale.SaleAmount;
-        //                        homesaleToUpdate.BuyerID = homeSale.BuyerID ?? null;
-        //                        homesaleToUpdate.MarketDate = homeSale.MarketDate;
-        //                        homesaleToUpdate.CompanyID = homeSale.CompanyID;
-        //                    }
-
-        //                    break;
-        //                }
-        //            case "RealEstateCompany":
-        //                {
-        //                    realEstateCompany = item as RealEstateCompany;
-        //                    RealEstateCompany recoToUpdate = context.RealEstateCompanies.Find(realEstateCompany.CompanyID);
-        //                    if (recoToUpdate != null)
-        //                    {
-        //                        recoToUpdate.CompanyName = realEstateCompany.CompanyName;
-        //                        recoToUpdate.Phone = realEstateCompany.Phone;
-        //                    }
-
-        //                    break;
-        //                }
-        //            default:
-        //                {
-        //                    break;
-        //                }
-        //        }
-
-        //        try
-        //        {
-        //            itemsAffected = context.SaveChanges();
-        //        }
-        //        catch
-        //        {
-        //            _ = 0;
-        //        }
-
-        //        if (itemsAffected > 0)
-        //        {
-        //            result = true;
-        //        }
-
-        //        if (itemsAffected < 0)
-        //        {
-        //            result = false;
-        //        }
-        //    }
-
-        //    return result;
-        //}
 
     }
 }
