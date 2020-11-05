@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 
 using System;
 using System.Collections;
@@ -7,13 +8,15 @@ using System.Linq;
 
 namespace HomeSalesTrackerApp
 {
-    public class PeopleCollection<T> : ICollection<T>, IEnumerable<T>, IObservable<T>
+    public class PeopleCollection<T> : ICollection<T>, IEnumerable<T>
                             where T : Person
     {
 
         private static List<T> _peopleList = null;
         private static int position = 0;
         public int Count => _peopleList.Count;
+
+        public CollectionMonitor collectionMonitor = null;
 
         /// <summary>
         /// Constructor. Initializes an empty Collection.
@@ -26,6 +29,7 @@ namespace HomeSalesTrackerApp
         public PeopleCollection(List<T> peopleList)
         {
             _peopleList = peopleList;
+            collectionMonitor = new CollectionMonitor();
         }
 
         public T Current => _peopleList[position];
@@ -48,11 +52,14 @@ namespace HomeSalesTrackerApp
                     if (LogicBroker.StoreItem<Person>(person))
                     {
                         Person dbPerson = LogicBroker.GetPerson(person.FirstName, person.LastName);
+
                         if (dbPerson != null)
                         {
                             _peopleList.Add(person);
+
                             if (this.Count > preCount)
                             {
+                                collectionMonitor.SendNotifications(1, "Person");
                                 return 1;
                             }
                         }
@@ -159,6 +166,11 @@ namespace HomeSalesTrackerApp
             result += UpdateBuyer(person.Buyer);
             result += UpdateOwner(person.Owner);
 
+            if (result > 0)
+            {
+                collectionMonitor.SendNotifications(1, "Person");
+            }
+
             return result;
         }
 
@@ -169,24 +181,34 @@ namespace HomeSalesTrackerApp
                 return 0;
             }
 
-            int result = 0;
             Agent dbAgent = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == agent.AgentID);
             Person collectionPerson = _peopleList[personIDX];
 
-            if (collectionPerson.Agent != agent)
+            if (collectionPerson.Agent == agent)
             {
-                if (LogicBroker.StoreItem<Agent>(agent))
-                {
-                    dbAgent = LogicBroker.GetAgent(collectionPerson.PersonID);
-                }
+                return 0;
+            }
 
-                if (dbAgent != null)
-                {
-                    this[personIDX].Agent = dbAgent;
-                    result = 1;
-                }
+            int result = 0;
+            bool agentStored = false;
+            dbAgent = LogicBroker.GetAgent(collectionPerson.PersonID);
 
+            if (dbAgent == null)
+            {
+                agentStored = LogicBroker.StoreItem<Agent>(agent);
+            }
+            else
+            {
+                agentStored = LogicBroker.UpdateExistingItem<Agent>(agent);
+            }
+
+            if (agentStored)
+            {
+                dbAgent = LogicBroker.GetAgent(collectionPerson.PersonID);
+                this[personIDX].Agent = dbAgent;
+                result = 1;
+                collectionMonitor.SendNotifications(1, "Person");
             }
 
             return result;
@@ -199,23 +221,34 @@ namespace HomeSalesTrackerApp
                 return 0;
             }
 
-            int result = 0;
             Buyer dbBuyer = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == buyer.BuyerID);
             Person collectionPerson = _peopleList[personIDX];
 
-            if (collectionPerson.Buyer != buyer)
+            if (collectionPerson.Buyer == buyer)
             {
-                if (LogicBroker.StoreItem<Buyer>(buyer))
-                {
-                    dbBuyer = LogicBroker.GetBuyer(collectionPerson.PersonID);
-                }
+                return 0;
+            }
 
-                if (dbBuyer != null)
-                {
-                    this[personIDX].Buyer = dbBuyer;
-                    result = 1;
-                }
+            int result = 0;
+            bool buyerStored = false;
+            dbBuyer = LogicBroker.GetBuyer(collectionPerson.PersonID);
+
+            if (dbBuyer == null)
+            {
+                buyerStored = LogicBroker.StoreItem<Buyer>(buyer);
+            }
+            else
+            {
+                buyerStored = LogicBroker.UpdateExistingItem<Buyer>(buyer);
+            }
+
+            if (buyerStored)
+            {
+                dbBuyer = LogicBroker.GetBuyer(collectionPerson.PersonID);
+                this[personIDX].Buyer = dbBuyer;
+                result = 1;
+                collectionMonitor.SendNotifications(1, "Person");
             }
 
             return result;
@@ -228,36 +261,43 @@ namespace HomeSalesTrackerApp
                 return 0;
             }
 
-            int result = 0;
             Owner dbOwner = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == owner.OwnerID);
             Person collectionPerson = _peopleList[personIDX];
 
-            if (collectionPerson.Owner != owner)
+            if (collectionPerson.Owner == owner)
             {
-                if (LogicBroker.StoreItem<Owner>(owner))
-                {
-                    dbOwner = LogicBroker.GetOwner(collectionPerson.PersonID);
-                }
+                return 0;
+            }
 
-                if (dbOwner != null)
-                {
-                    this[personIDX].Owner = dbOwner;
-                    result = 1;
-                }
+            int result = 0;
+            bool ownerStored = false;
+            dbOwner = LogicBroker.GetOwner(collectionPerson.PersonID);
+
+            if (dbOwner == null)
+            {
+                ownerStored = LogicBroker.StoreItem<Owner>(owner);
+            }
+            else
+            {
+                ownerStored = LogicBroker.UpdateExistingItem<Owner>(owner);
+            }
+
+            if (ownerStored)
+            {
+                dbOwner = LogicBroker.GetOwner(collectionPerson.PersonID);
+                this[personIDX].Owner = dbOwner;
+                result = 1;
+                collectionMonitor.SendNotifications(1, "Person");
             }
 
             return result;
         }
 
-        IDisposable IObservable<T>.Subscribe(IObserver<T> observer)
-        {
-            throw new NotImplementedException();
-        }
-
         void ICollection<T>.Add(T item)
         {
             ((ICollection<T>)_peopleList).Add(item);
+            collectionMonitor.SendNotifications(1, "Person");
         }
 
         public void Clear()
