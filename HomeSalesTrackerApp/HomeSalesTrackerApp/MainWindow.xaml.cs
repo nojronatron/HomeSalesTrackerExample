@@ -56,7 +56,7 @@ namespace HomeSalesTrackerApp
             NewPersonAddedToCollection = p;
         }
 
-        public static void InitializeCollections()
+        private static void InitializeCollections()
         {
             InitHomeSalesCollection();
             InitPeopleCollection();
@@ -64,28 +64,28 @@ namespace HomeSalesTrackerApp
             InitRealEstateCompaniesCollection();
         }
 
-        public static void InitRealEstateCompaniesCollection()
+        private static void InitRealEstateCompaniesCollection()
         {
             List<RealEstateCompany> recos = EntityLists.GetTreeListOfRECompanies();
             reCosCollection = new RealEstateCosCollection(recos);
 
         }
 
-        public static void InitHomesCollection()
+        private static void InitHomesCollection()
         {
             List<Home> homes = EntityLists.GetTreeListOfHomes();
             homesCollection = new HomesCollection(homes);
 
         }
 
-        public static void InitPeopleCollection()
+        private static void InitPeopleCollection()
         {
             List<Person> people = EntityLists.GetListOfPeople();
             peopleCollection = new PeopleCollection<Person>(people);
 
         }
 
-        public static void InitHomeSalesCollection()
+        private static void InitHomeSalesCollection()
         {
             List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
             homeSalesCollection = new HomeSalesCollection(homeSales);
@@ -279,7 +279,7 @@ namespace HomeSalesTrackerApp
                 DisplayStatusMessage(statusMessage.ToString());
             }
 
-            InitializeCollections();
+            //InitializeCollections();
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace HomeSalesTrackerApp
                 if (homeSaleToRemove != null)
                 {
                     LogicBroker.RemoveEntity<HomeSale>(homeSaleToRemove);
-                    InitializeCollections();
+                    //InitializeCollections();
 
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
                     ClearSearchResultsViews();
@@ -582,6 +582,7 @@ namespace HomeSalesTrackerApp
                 if (FoundPeopleView.Visibility == Visibility.Visible)
                 {
                     PersonModel foundPerson = FoundPeopleView.SelectedItem as PersonModel;
+                    Person foundPersonFull = peopleCollection.FirstOrDefault(p => p.PersonID == foundPerson.PersonID);
 
                     if (foundPerson == null)
                     {
@@ -615,11 +616,11 @@ namespace HomeSalesTrackerApp
                                            where hfs.BuyerID == foundPerson.PersonID
                                            select new BuyerModel
                                            {
-                                               PersonID = foundPerson.PersonID,
-                                               FirstName = foundPerson.FirstName,
-                                               LastName = foundPerson.LastName,
-                                               Phone = foundPerson.Phone,
-                                               Email = foundPerson.Email,
+                                               PersonID = foundPersonFull.PersonID,
+                                               FirstName = foundPersonFull.FirstName,
+                                               LastName = foundPersonFull.LastName,
+                                               Phone = foundPersonFull.Phone,
+                                               Email = foundPersonFull.Email ?? "- not supplied -",
                                                PersonType = foundPerson.PersonType,
                                                CreditRating = hfs.Buyer.CreditRating,
                                                PurchasedHomes = purchasedHomes
@@ -642,17 +643,20 @@ namespace HomeSalesTrackerApp
                                           Zip = h.Zip
                                       }).ToList();
 
-                        var ownerPerson = (from h in homesCollection
-                                           where h.OwnerID == foundPerson.PersonID
+                        //  TODO: resolve the bug where null reference is thrown when a new user is GetItemDetail'd
+                        OwnerModel ownerPerson = (from p in peopleCollection
+                                           join h in homesCollection on p.PersonID equals h.OwnerID
+                                           where p.PersonID == foundPerson.PersonID
                                            select new OwnerModel
                                            {
-                                               PreferredLender = h.Owner.PreferredLender,
-                                               PersonID = foundPerson.PersonID,
-                                               FirstName = foundPerson.FirstName,
-                                               LastName = foundPerson.LastName,
-                                               Phone = foundPerson.Phone,
-                                               Email = foundPerson.Email,
+                                               PreferredLender = p.Owner.PreferredLender,
+                                               PersonID = foundPersonFull.PersonID,
+                                               FirstName = foundPersonFull.FirstName,
+                                               LastName = foundPersonFull.LastName,
+                                               Phone = foundPersonFull.Phone,
+                                               Email = foundPersonFull.Email ?? "- not supplied -",
                                                PersonType = foundPerson.PersonType,
+                                               OwnerID = foundPersonFull.PersonID,
                                                OwnedHomes = ownedHomes
                                            }).FirstOrDefault();
 
@@ -665,8 +669,6 @@ namespace HomeSalesTrackerApp
                         soldHomes = (from hfs in homeSalesCollection
                                      where hfs.AgentID == foundPerson.PersonID &&
                                      hfs.SoldDate != null
-                                     join p in peopleCollection on hfs.AgentID equals p.PersonID
-                                     join re in reCosCollection on hfs.CompanyID equals re.CompanyID
                                      join h in homesCollection on hfs.HomeID equals h.HomeID
                                      select new SoldHomeModel
                                      {
@@ -681,10 +683,8 @@ namespace HomeSalesTrackerApp
 
                         List<HomeForSaleModel> homesForSale = new List<HomeForSaleModel>();
                         homesForSale = (from hfs in homeSalesCollection
-                                        where hfs.AgentID == foundPerson.PersonID &&
+                                        where hfs.AgentID == foundPersonFull.PersonID &&
                                         hfs.SoldDate == null
-                                        join p in peopleCollection on hfs.AgentID equals p.PersonID
-                                        join re in reCosCollection on hfs.CompanyID equals re.CompanyID
                                         join h in homesCollection on hfs.HomeID equals h.HomeID
                                         select new HomeForSaleModel
                                         {
@@ -701,11 +701,11 @@ namespace HomeSalesTrackerApp
                                            join re in reCosCollection on hfs.CompanyID equals re.CompanyID
                                            select new AgentModel
                                            {
-                                               PersonID = foundPerson.PersonID,
-                                               FirstName = foundPerson.FirstName,
-                                               LastName = foundPerson.LastName,
-                                               Phone = foundPerson.Phone,
-                                               Email = foundPerson.Email,
+                                               PersonID = foundPersonFull.PersonID,
+                                               FirstName = foundPersonFull.FirstName,
+                                               LastName = foundPersonFull.LastName,
+                                               Phone = foundPersonFull.Phone,
+                                               Email = foundPersonFull.Email ?? "- not supplied -",
                                                PersonType = foundPerson.PersonType,
                                                CommissionRate = hfs.Agent.CommissionPercent,
                                                HomesOnMarket = homesForSale,
@@ -908,9 +908,9 @@ namespace HomeSalesTrackerApp
             ClearSearchResultsViews();
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
             var peopleSearchtool = new PeopleSearchTool(formattedSearchTerms);
-            var viewResults = peopleSearchtool.SearchResults;
+            List<PersonModel> viewResults = peopleSearchtool.SearchResults;
 
-            if (viewResults.Count < 1)
+            if (viewResults == null)
             {
                 DisplayZeroResultsMessage();
                 return;
