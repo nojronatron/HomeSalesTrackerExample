@@ -190,7 +190,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (IsButtonClose)
             {
                 e.Cancel = false;
-                MainWindow.InitializeCollections();
+                //MainWindow.InitializeCollections();
             }
             else
             {

@@ -41,16 +41,16 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 e.Cancel = false;
 
-                try
-                {
-                    MainWindow.InitPeopleCollection();
-                    MainWindow.InitHomesCollection();
-                    MainWindow.InitRealEstateCompaniesCollection();
-                    MainWindow.InitHomeSalesCollection();
-                }
-                catch
-                {
-                    logger.Data("HUW Window_Closing Exception", "Save changes failed. Close anyway?");
+                //try
+                //{
+                //    MainWindow.InitPeopleCollection();
+                //    MainWindow.InitHomesCollection();
+                //    MainWindow.InitRealEstateCompaniesCollection();
+                //    MainWindow.InitHomeSalesCollection();
+                //}
+                //catch
+                //{
+                //    logger.Data("HUW Window_Closing Exception", "Save changes failed. Close anyway?");
                     var userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
                     if (userResponse == MessageBoxResult.No)
                     {
@@ -63,7 +63,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                         logger.Data("HUW Window_Closing User response", "Close anyway? Yes");
                     }
                     logger.Flush();
-                }
+                //}
             }
             else
             {
