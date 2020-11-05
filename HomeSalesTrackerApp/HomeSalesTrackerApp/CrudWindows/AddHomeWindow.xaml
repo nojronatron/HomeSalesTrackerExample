@@ -46,8 +46,8 @@
             <DockPanel>
                 <Label Content="Preferred Lender:" Height="27" Margin="5,0" />
                 <TextBox x:Name="PreferredLenderTextbox" Height="27" Width="180" Margin="5,0" IsReadOnly="True" />
-                <Button x:Name="AddPreferredLenderButton" Content="Add" Width="35" HorizontalAlignment="Right"
-                         Click="AddPreferredLenderButton_Click" IsEnabled="False" />
+                <!--<Button x:Name="AddPreferredLenderButton" Content="Add" Width="35" HorizontalAlignment="Right"
+                         Click="AddPreferredLenderButton_Click" IsEnabled="False" />-->
             </DockPanel>
             <Separator Margin="0,10"/>
             <Button x:Name="AddNewHomeButton" Content="Add New Home" Height="25" Margin="5,10" 

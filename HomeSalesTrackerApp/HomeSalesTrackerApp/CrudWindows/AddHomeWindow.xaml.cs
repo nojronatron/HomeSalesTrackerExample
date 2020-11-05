@@ -1,5 +1,7 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
+using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -10,10 +12,11 @@ namespace HomeSalesTrackerApp
     /// <summary>
     /// Interaction logic for AddHomeWindow.xaml
     /// </summary>
-    public partial class AddHomeWindow : Window
+    public partial class AddHomeWindow : Window, IObserver<NotificationData>
     {
         private bool IsButtonClose = false;
         //  Note: Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
+        private CollectionMonitor collectionMonitor = null;
         public bool UpdateInsteadOfAdd = false;
         public Home NewHome { get; set; }
         public Owner AnOwner { get; set; }
@@ -40,6 +43,8 @@ namespace HomeSalesTrackerApp
                 statusBarText.Text = $"Add a new { this.AddType } to the database.";
             }
 
+            collectionMonitor = MainWindow.peopleCollection.collectionMonitor;
+            collectionMonitor.Subscribe(this);
             RefreshOwnersComboBox();
         }
 
@@ -52,10 +57,12 @@ namespace HomeSalesTrackerApp
 
             if (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(city) || string.IsNullOrEmpty(state) || string.IsNullOrEmpty(zip))
             {
-                if (address.Length > 50 || city.Length > 30 || state.Length > 2 || zip.Length > 9)
+                if (1 > address.Length || address.Length > 50 || 1> city.Length || city.Length > 30 ||
+                    1 > state.Length || state.Length > 2 || 1 > zip.Length || zip.Length > 9)
                 {
                     DisplayStatusMessage("Home not created. Ensure required fields are completed.");
                 }
+
             }
             else
             {
@@ -73,7 +80,7 @@ namespace HomeSalesTrackerApp
                     }
                     else
                     {
-                        itemsProcessed += MainWindow.peopleCollection.UpdatePerson(APerson);
+                        //itemsProcessed += MainWindow.peopleCollection.UpdatePerson(APerson);
                         NewHome = new Home()
                         {
                             Address = address,
@@ -90,9 +97,18 @@ namespace HomeSalesTrackerApp
                     {
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
-                        APerson = null;
-                        NewHome = null;
-                        AnOwner = null;
+                        //  update the Owner's collection of Homes
+                        AnOwner.Homes.Add(NewHome);
+                        MainWindow.peopleCollection.UpdateOwner(AnOwner);
+                        //int homesCollectionUpdated = MainWindow.homesCollection.Update(NewHome);
+
+                        //if (homesCollectionUpdated > 0)
+                        //{
+                        //    APerson = null;
+                        //    NewHome = null;
+                        //    AnOwner = null;
+                        //}
+
                     }
                     else
                     {
@@ -148,7 +164,7 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            MainWindow.InitializeCollections();
+            //MainWindow.InitializeCollections();
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       select p).ToList();
 
@@ -183,49 +199,62 @@ namespace HomeSalesTrackerApp
         private void PotentialOwnerPeopleCombobox_SelectionChange(object sender, SelectionChangedEventArgs e)
         {
             var tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
-            PreferredLenderTextbox.IsReadOnly = false;
-            addOwnerButton.IsEnabled = false;
-            AddPreferredLenderButton.IsEnabled = false;
-            int personID = tempOwnerPerson.PersonID;
-            APerson = MainWindow.peopleCollection.Where(p => p.PersonID == personID).FirstOrDefault();
 
-            if (APerson.Owner != null)
+            if (tempOwnerPerson == null)
             {
-                List<Home> homesOwnedByPerson = (from h in MainWindow.homesCollection
-                                                 where h.OwnerID == personID
-                                                 select h).ToList();
-
-                if (homesOwnedByPerson.Count > 0)
-                {
-                    AnOwner = (from o in MainWindow.homesCollection
-                               where o.OwnerID == personID
-                               select o.Owner).FirstOrDefault();
-
-                }
-                else
-                {
-                    AnOwner = (from o in MainWindow.peopleCollection
-                               where o.PersonID == personID
-                               select o.Owner).FirstOrDefault();
-                }
-
-                var preferredLender = AnOwner.PreferredLender.Trim();
-                PreferredLenderTextbox.Text = preferredLender;
-                PreferredLenderTextbox.IsReadOnly = true;
-                addOwnerButton.IsEnabled = true;
-                DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
+                DisplayStatusMessage("An error occurred. Unable to display selected person.");
+                PreferredLenderTextbox.Text = string.Empty;
+                return;
             }
-            else
-            {
-                PreferredLenderTextbox.IsReadOnly = false;
-                PreferredLenderTextbox.Text = "Enter Preferred Lender here.";
-                AnOwner = new Owner()
-                {
-                    OwnerID = personID
-                };
-                DisplayStatusMessage("Enter new Preferred Lender and then click Add button.");
-                AddPreferredLenderButton.IsEnabled = true;
-            }
+
+            APerson = MainWindow.peopleCollection.Where(p => p.PersonID == tempOwnerPerson.PersonID).FirstOrDefault();
+            AnOwner = APerson.Owner;
+            PreferredLenderTextbox.Text = AnOwner.PreferredLender ?? "Lender info not found";
+            
+            //var tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
+            //PreferredLenderTextbox.IsReadOnly = false;
+            //addOwnerButton.IsEnabled = false;
+            ////AddPreferredLenderButton.IsEnabled = false;
+            //int personID = tempOwnerPerson.PersonID;
+            //APerson = MainWindow.peopleCollection.Where(p => p.PersonID == personID).FirstOrDefault();
+
+            //if (APerson.Owner != null)
+            //{
+            //    List<Home> homesOwnedByPerson = (from h in MainWindow.homesCollection
+            //                                     where h.OwnerID == personID
+            //                                     select h).ToList();
+
+            //    if (homesOwnedByPerson.Count > 0)
+            //    {
+            //        AnOwner = (from o in MainWindow.homesCollection
+            //                   where o.OwnerID == personID
+            //                   select o.Owner).FirstOrDefault();
+
+            //    }
+            //    else
+            //    {
+            //        AnOwner = (from o in MainWindow.peopleCollection
+            //                   where o.PersonID == personID
+            //                   select o.Owner).FirstOrDefault();
+            //    }
+
+            //    var preferredLender = AnOwner.PreferredLender.Trim();
+            //    PreferredLenderTextbox.Text = preferredLender;
+            //    PreferredLenderTextbox.IsReadOnly = true;
+            //    addOwnerButton.IsEnabled = true;
+            //    DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
+            //}
+            //else
+            //{
+            //    PreferredLenderTextbox.IsReadOnly = false;
+            //    PreferredLenderTextbox.Text = "Enter Preferred Lender here.";
+            //    AnOwner = new Owner()
+            //    {
+            //        OwnerID = personID
+            //    };
+            //    DisplayStatusMessage("Enter new Preferred Lender and then click Add button.");
+            //    //AddPreferredLenderButton.IsEnabled = true;
+            //}
 
         }
 
@@ -259,15 +288,60 @@ namespace HomeSalesTrackerApp
             this.Close();
         }
 
-        private void AddPreferredLenderButton_Click(object sender, RoutedEventArgs e)
+        //private void AddPreferredLenderButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    string tempPreferredLender = PreferredLenderTextbox.Text.Trim();
+        //    if (tempPreferredLender.Length > 2)
+        //    {
+        //        AnOwner.PreferredLender = tempPreferredLender;
+        //        DisplayStatusMessage("Preferred Lender added.");
+        //    }
+        //}
+
+        #region IObserver implementation
+
+        private IDisposable unsubscriber;
+        //private bool first = true;
+        private string notificationMessage;
+
+        public virtual void Subscribe(IObservable<NotificationData> provider)
         {
-            string tempPreferredLender = PreferredLenderTextbox.Text.Trim();
-            if (tempPreferredLender.Length > 2)
-            {
-                AnOwner.PreferredLender = tempPreferredLender;
-                DisplayStatusMessage("Preferred Lender added.");
-            }
+            unsubscriber = provider.Subscribe(this);
         }
+
+        public virtual void Unsubscribe()
+        {
+            unsubscriber.Dispose();
+        }
+
+        public void OnNext(NotificationData value)
+        {
+            if (value.ChangeCount > 0 && value.DataType.Contains("Person"))
+            {
+                RefreshOwnersComboBox();
+                notificationMessage = "Received an update to the Owners Combo Box.";
+            }
+
+            else
+            {
+                notificationMessage = "Received a message with no applicable changes.";
+            }
+
+        }
+
+        public void OnError(Exception error)
+        {
+            //  do nothing
+            ;
+        }
+
+        public void OnCompleted()
+        {
+            DisplayStatusMessage(notificationMessage);
+            notificationMessage = "No new Notifications";
+        }
+
+        #endregion
 
     }
 }
