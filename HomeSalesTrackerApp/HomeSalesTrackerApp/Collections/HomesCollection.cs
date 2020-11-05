@@ -61,27 +61,33 @@ namespace HomeSalesTrackerApp
         /// <param name="home"></param>
         public int Add(Home home)
         {
-            if (home != null)
+            if (home == null)
             {
-                int preCount = this.Count;
-                Home collectionHome = _homesList.SingleOrDefault(h => h.Address == home.Address &&
-                                                                      h.Zip == home.Zip);
+                return 0;
+            }
+            
+            int preCount = this.Count;
+            Home collectionHome = _homesList.SingleOrDefault(h => h.Address == home.Address &&
+                                                                  h.Zip == home.Zip);
 
-                if (collectionHome == null)
+            Home dbHome = LogicBroker.GetHome(home.Address, home.Zip);
+
+            if (collectionHome == null && dbHome == null)
+            {
+                if (LogicBroker.StoreItem<Home>(home))
                 {
-                    if (LogicBroker.StoreItem<Home>(home))
+                    dbHome = LogicBroker.GetHome(home.Address, home.Zip);
+
+                    if (dbHome != null)
                     {
-                        Home dbHome = LogicBroker.GetHome(home.Address, home.Zip);
-                        if (dbHome != null)
+                        this._homesList.Add(dbHome);
+                        if (this.Count > preCount)
                         {
-                            this._homesList.Add(dbHome);
-                            if (this.Count > preCount)
-                            {
-                                return 1;
-                            }
+                            return 1;
                         }
                     }
                 }
+
             }
 
             return 0;
@@ -106,31 +112,31 @@ namespace HomeSalesTrackerApp
         /// <returns name="int"></returns>
         public int Update(Home home)
         {
-            if (home != null)
+            if (home == null)
             {
-                int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
-                Home collectionHome = _homesList[homeIDX];
+                return 0;
+            }
 
-                if (collectionHome != null)
+            int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
+            Home collectionHome = _homesList[homeIDX];
+            Home dbHome = LogicBroker.GetHome(home.HomeID);
+
+            if (collectionHome != null && dbHome != null)
+            {
+                if (LogicBroker.UpdateExistingItem<Home>(home))
                 {
-                    Home dbHome = null;
 
-                    if (LogicBroker.StoreItem<Home>(home))
+                    dbHome = LogicBroker.GetHome(collectionHome.HomeID);
+                    if (dbHome != null)
                     {
-                        //  Need to get the HomeID of the just-saved object in order to get the object back from EF
-                        dbHome = LogicBroker.GetHome(collectionHome.HomeID);
-
-                        if (dbHome != null)
-                        {
-                            this._homesList[homeIDX] = dbHome;
-                            return 1;
-                        }
+                        this._homesList[homeIDX] = dbHome;
+                        return 1;
                     }
                 }
-                else
-                {
-                    return this.Add(home);
-                }
+            }
+            else
+            {
+                return this.Add(home);
             }
 
             return 0;
