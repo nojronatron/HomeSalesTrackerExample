@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 
 using System;
 using System.Collections;
@@ -11,6 +12,7 @@ namespace HomeSalesTrackerApp
     {
         private List<RealEstateCompany> _recoList = null;
         public int Count { get { return _recoList.Count; } }
+        public CollectionMonitor collectionMonitor = null;
 
         /// <summary>
         /// Constructor
@@ -27,6 +29,7 @@ namespace HomeSalesTrackerApp
         public RealEstateCosCollection(List<RealEstateCompany> reCompanies)
         {
             _recoList = reCompanies;
+            collectionMonitor = new CollectionMonitor();
         }
 
         /// <summary>
@@ -51,26 +54,27 @@ namespace HomeSalesTrackerApp
 
         public int Add(RealEstateCompany realEstateCompany)
         {
-            if (realEstateCompany != null)
+            if (realEstateCompany == null)
             {
-                var collectionReco = _recoList.SingleOrDefault(re => re.CompanyName == realEstateCompany.CompanyName);
-                int preCount = this.Count;
-                
-                if (collectionReco == null)
+                return 0;
+            }
+            int preCount = this.Count;
+            var collectionReco = _recoList.SingleOrDefault(re => re.CompanyName == realEstateCompany.CompanyName);
+
+            if (collectionReco == null)
+            {
+                if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                 {
-                    if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                    RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
+
+                    if (dbReco != null)
                     {
-                        RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
+                        this._recoList.Add(dbReco);
 
-                        if (dbReco != null)
+                        if (this.Count > preCount)
                         {
-                            this._recoList.Add(dbReco);
-
-                            if (this.Count > preCount)
-                            {
-                                return 1;
-                            }
-
+                            collectionMonitor.SendNotifications(1, "RECo");
+                            return 1;
                         }
                     }
                 }
@@ -82,39 +86,49 @@ namespace HomeSalesTrackerApp
         public RealEstateCompany Retrieve(int companyID)
         {
             var reco = new RealEstateCompany();
+
             if (companyID > -1)
             {
                 reco = _recoList.Find(r => r.CompanyID == companyID);
             }
+
             return reco;
         }
 
         public int Update(RealEstateCompany realEstateCompany)
         {
-            if (realEstateCompany != null)
+            if (realEstateCompany == null)
             {
-                int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
-                RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
+                return 0;
+            }
 
-                if (collectionRECo != null)
+            RealEstateCompany dbReco = null;
+            int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
+            RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
+
+            if (collectionRECo != null)
+            {
+
+                if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                 {
-                    RealEstateCompany dbRECo = null;
+                    dbReco = LogicBroker.GetReCompany(collectionRECo.CompanyID);
 
-                    if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                    if (dbReco != null)
                     {
-                        dbRECo = LogicBroker.GetReCompany(collectionRECo.CompanyName);
 
-                        if (dbRECo != null)
+                        if (realEstateCompany.Equals(collectionRECo))
                         {
-                            this._recoList[realEstateCompanyIDX] = dbRECo;
+                            this._recoList[realEstateCompanyIDX] = dbReco;
+                            collectionMonitor.SendNotifications(1, "RECo");
                             return 1;
+                        }
+                        else
+                        {
+                            return this.Add(realEstateCompany);
                         }
                     }
                 }
-                else
-                {
-                    return this.Add(realEstateCompany);
-                }
+
             }
 
             return 0;
@@ -122,12 +136,19 @@ namespace HomeSalesTrackerApp
 
         public void Remove(int companyID)
         {
+            int preCount = this.Count;
+
             if (companyID > -1)
             {
                 int recoIdx = _recoList.FindIndex(r => r.CompanyID == companyID);
                 _recoList.RemoveAt(recoIdx);
-                _recoList.Sort();
             }
+
+            if (preCount > this.Count)
+            {
+                collectionMonitor.SendNotifications(1, "RECo");
+            }
+
         }
 
         public IEnumerator<RealEstateCompany> GetEnumerator()

@@ -14,12 +14,13 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// <summary>
     /// Interaction logic for UpdaterWindow.xaml
     /// </summary>
-    public partial class HomeUpdaterWindow : Window
+    public partial class HomeUpdaterWindow : Window, IObserver<NotificationData>
     {
         private bool IsButtonClose { get; set; }
         private bool BuyerUpdated { get; set; }
         private bool HomesaleUpdated { get; set; }
         private Logger logger = null;
+        private CollectionMonitor collectionMonitor = null;
 
         public string UpdateType { get; set; }
         public Person UpdatePerson { get; set; }
@@ -40,71 +41,28 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (IsButtonClose)
             {
                 e.Cancel = false;
-
-                //try
-                //{
-                //    MainWindow.InitPeopleCollection();
-                //    MainWindow.InitHomesCollection();
-                //    MainWindow.InitRealEstateCompaniesCollection();
-                //    MainWindow.InitHomeSalesCollection();
-                //}
-                //catch
-                //{
-                //    logger.Data("HUW Window_Closing Exception", "Save changes failed. Close anyway?");
-                    var userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
-                    if (userResponse == MessageBoxResult.No)
-                    {
-                        logger.Data("HUW Window_Closing User response", "Close anyway? No");
-                        IsButtonClose = false;
-                        e.Cancel = true;
-                    }
-                    else
-                    {
-                        logger.Data("HUW Window_Closing User response", "Close anyway? Yes");
-                    }
-                    logger.Flush();
-                //}
             }
             else
             {
-                MessageBox.Show("Use the Close button or File -> Exit menut item. You will be prompted to save or discard changes before exiting.", "Warning!", MessageBoxButton.OK);
-                IsButtonClose = false;
+                var userResponse = MessageBox.Show("Save changes failed. Close anyway?", "Something went wrong!", MessageBoxButton.YesNo);
+
+                if (userResponse == MessageBoxResult.No)
+                {
+                    logger.Data("HUW Window_Closing User response", "Close anyway? No");
+                    IsButtonClose = false;
+                    e.Cancel = true;
+                }
+                else
+                {
+                    logger.Data("HUW Window_Closing User response", "Close anyway? Yes");
+                }
+
+                logger.Flush();
+                //MessageBox.Show("Use the Close button or File -> Exit menut item. You will be prompted to save or discard changes before exiting.", "Warning!", MessageBoxButton.OK);
+                //IsButtonClose = false;
                 e.Cancel = true;
             }
 
-        }
-
-        private bool RehydrateRealEstateCompany()
-        {
-            if (UpdateReco != null)
-            {
-                RealEstateCompany tempRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == UpdateReco.CompanyID).FirstOrDefault();
-                
-                if (tempRECo != null)
-                {
-                    UpdateReco = tempRECo;
-                    List<HomeSale> tempHomeSalesList = MainWindow.homeSalesCollection.Where(hs => hs.CompanyID == UpdateReco.CompanyID).ToList();
-                    
-                    if (tempHomeSalesList.Count > 0)
-                    {
-                        UpdateReco.HomeSales = tempHomeSalesList;
-                    }
-                    
-                    List<Agent> tempAgentList = (from p in MainWindow.peopleCollection
-                                                 from hs in MainWindow.homeSalesCollection
-                                                 where p.PersonID == hs.AgentID &&
-                                                 hs.Agent.CompanyID == UpdateReco.CompanyID
-                                                 select hs.Agent).ToList();
-                    if (tempAgentList.Count > 0)
-                    {
-                        UpdateReco.Agents = tempAgentList;
-                    }
-
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private void LoadAgentsCombobox(bool includeAllPeople)
@@ -134,13 +92,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             ExistingBuyersCombobox.ItemsSource = existingBuyersList;
         }
 
-        //private void LoadRECosCombobox()
-        //{
-        //    var existingRECosList = (from re in MainWindow.reCosCollection
-        //                             select re).ToList();
-        //    ExistingRecosCombobox.ItemsSource = existingRECosList;
-        //}
-
         /// <summary>
         /// Validate that minimal inputs are received when this Window Opens, otherwise turn off all editing options and only allow user to Close it.
         /// </summary>
@@ -148,11 +99,12 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            collectionMonitor = MainWindow.peopleCollection.collectionMonitor;
+            collectionMonitor.Subscribe(this);
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
             AddNewBuyerButton.Visibility = Visibility.Hidden;
             AddNewBuyerButton.IsEnabled = false;
-            //LoadRECosCombobox();
             LoadBuyersCombobox();
             LoadAgentsCombobox(true);
 
@@ -163,6 +115,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             logger = new Logger();
             int count = 0;
+
             if (UpdateHome != null)
             {
                 count++;
@@ -237,7 +190,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             //  HOME INFO
             LoadHomeInfoFields();
-            //UpdateChangedHomeFields_Button.IsEnabled = false;
 
             //  BUYER INFO
             BuyerUpdated = false;
@@ -247,14 +199,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             AddNewBuyerButton.Visibility = Visibility.Visible;
             AddNewBuyerButton.IsEnabled = true;
             LoadBuyersCombobox();
-
-            ////  RECO INFO
-            //companyNameTextbox.Text = UpdateReco.CompanyName.ToString();
-            //companyNameTextbox.IsReadOnly = true;
-            //companyPhoneTextbox.Text = UpdateReco.Phone.ToString();
-            //companyPhoneTextbox.IsReadOnly = true;
-            //UpdateRECoFieldsButton.IsEnabled = false;
-            //LoadRECosCombobox();
 
             //  HOMESALE INFO
             HomesaleUpdated = false;
@@ -289,7 +233,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             //  HOME INFO
             LoadHomeInfoFields();
-            //UpdateChangedHomeFields_Button.IsEnabled = false;
 
             //  HOMESALE INFO
             HomesaleUpdated = false;
@@ -448,64 +391,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        ///// <summary>
-        ///// In-memory objects are updated if Address, City, State, and Zip fields are valid otherwise no update happens and user is prompted to try again.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void UpdateChangedHomeFieldsButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int countChanges = 0;
-        //    string address = homeAddressTextbox.Text.Trim();
-        //    string city = homeCityTextbox.Text.Trim();
-        //    string state = homeStateTextbox.Text.Trim();
-        //    string zip = homeZipTextbox.Text.Trim();
-
-        //    if (string.IsNullOrWhiteSpace(address) || string.IsNullOrWhiteSpace(city) || string.IsNullOrWhiteSpace(state) || string.IsNullOrWhiteSpace(zip))
-        //    {
-        //        DisplayStatusMessage("Unable to update. Address, City, State, and Zip are required.");
-        //    }
-
-        //    if (address.Length < 50 || city.Length > 30 || state.Length > 2 || zip.Length > 9)
-        //    {
-        //        DisplayStatusMessage("Maximum characters exceeded: Address 50; City 30; State 2; Zip 9");
-        //    }
-        //    else
-        //    {
-        //        if (address.Length > 0)
-        //        {
-        //            countChanges++;
-        //        }
-        //        if (city.Length > 0)
-        //        {
-        //            countChanges++;
-        //        }
-        //        if (state.Length > 0)
-        //        {
-        //            countChanges++;
-        //        }
-        //        if (zip.Length > 4)
-        //        {
-        //            countChanges++;
-        //        }
-
-        //    }
-
-        //    if (countChanges == 4)
-        //    {
-        //        UpdateHome.Address = address;
-        //        UpdateHome.City = city;
-        //        UpdateHome.State = state;
-        //        UpdateHome.Zip = zip;
-        //        DisplayStatusMessage("Home Information Updated!");
-        //    }
-        //    else
-        //    {
-        //        DisplayStatusMessage("Unable to make updates. Check entries and try again.");
-        //    }
-
-        //}
-
         private void UpdateBuyerButton_Click(object sender, RoutedEventArgs e)
         {
             if (UpdateBuyer != null)
@@ -546,12 +431,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         }
 
-        private void UpdateChangedRecoFieldsButton_Click(object sender, RoutedEventArgs e)
-        {
-            UpdateHomeSale.CompanyID = UpdateReco.CompanyID;
-            DisplayStatusMessage("Real Estate Company updated.");
-        }
-
         private void UpdateChangedAgentFieldsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateHomeSale.AgentID = UpdateAgent.AgentID;
@@ -567,20 +446,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 string updateType = UpdateType.Trim().ToUpper();
                 switch (updateType)
                 {
-                    //case "HOME":
-                    //    {
-                    //        //  TODO: Test this branch of code
-                    //        savedCount += MainWindow.homesCollection.Update(UpdateHome);
-
-                    //        break;
-                    //    }
-                    //case "REALESTATECOMPANY":
-                    //    {
-                    //        //  TODO: Test this branch of code
-                    //        savedCount += MainWindow.reCosCollection.Update(UpdateReco);
-
-                    //        break;
-                    //    }
                     case "PUTONMARKET":
                         {
                             savedCount += MainWindow.homeSalesCollection.Add(UpdateHomeSale);
@@ -634,6 +499,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (savedCount > 0)
                 {
                     DisplayStatusMessage("Save completed! Click Close to exit.");
+                    IsButtonClose = true;
                 }
 
             }
@@ -655,19 +521,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             }
 
         }
-
-        //private void ListOfExistingRecosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    RealEstateCompany selectedReco = (sender as ComboBox).SelectedItem as RealEstateCompany;
-        //    if (selectedReco != null)
-        //    {
-        //        UpdateReco = selectedReco;
-        //        RehydrateRealEstateCompany();
-        //    }
-        //    companyNameTextbox.Text = UpdateReco.CompanyName;
-        //    companyPhoneTextbox.Text = UpdateReco.CompanyName;
-
-        //}
 
         private void ListOfExistingAgentsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -776,10 +629,63 @@ namespace HomeSalesTrackerApp.CrudWindows
             AddNewBuyer();
         }
 
-        //private void MenuRefreshRecos_Click(object sender, RoutedEventArgs e)
-        //{
-        //    LoadRECosCombobox();
-        //    DisplayStatusMessage("Refreshed List of Real Estate Companies.");
-        //}
+        #region IObserver
+
+        private IDisposable unsubscriber;
+        private string notificationMessage;
+
+        public virtual void Subscribe(IObservable<NotificationData> provider)
+        {
+            unsubscriber = provider.Subscribe(this);
+        }
+
+        public virtual void Unsubscribe()
+        {
+            unsubscriber.Dispose();
+        }
+
+        public void OnNext(NotificationData value)
+        {
+            notificationMessage = "Received an update to the ";
+
+            if (value.ChangeCount > 0)
+            {
+                if (value.DataType.Contains("Buyer"))
+                {
+                    LoadBuyersCombobox();
+                    notificationMessage += " Buyers combobox.";
+                }
+                else if (value.DataType.Contains("Agent"))
+                {
+                    LoadAgentsCombobox(false);
+                    notificationMessage += " Agents combobox.";
+                }
+                else if (value.DataType.Contains("Person"))
+                {
+                    LoadBuyersCombobox();
+                    LoadAgentsCombobox(true);
+                    notificationMessage += " Agents and Buyers comboboxes.";
+                }
+            }
+            else
+            {
+                notificationMessage = "Received a message with no applicable changes.";
+            }
+
+        }
+
+        public void OnError(Exception error)
+        {
+            //  TODO: set a logger to record this info
+            ;
+        }
+
+        public void OnCompleted()
+        {
+            DisplayStatusMessage(notificationMessage);
+            notificationMessage = "No new Notifications.";
+        }
+
+        #endregion
     }
 }

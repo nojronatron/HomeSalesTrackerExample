@@ -55,7 +55,7 @@ namespace HomeSalesTrackerApp
 
                         if (dbPerson != null)
                         {
-                            _peopleList.Add(person);
+                            _peopleList.Add((T)dbPerson);
 
                             if (this.Count > preCount)
                             {
@@ -209,6 +209,7 @@ namespace HomeSalesTrackerApp
                 this[personIDX].Agent = dbAgent;
                 result = 1;
                 collectionMonitor.SendNotifications(1, "Person");
+                collectionMonitor.SendNotifications(1, "Agent");
             }
 
             return result;
@@ -249,6 +250,7 @@ namespace HomeSalesTrackerApp
                 this[personIDX].Buyer = dbBuyer;
                 result = 1;
                 collectionMonitor.SendNotifications(1, "Person");
+                collectionMonitor.SendNotifications(1, "Buyer");
             }
 
             return result;
@@ -289,6 +291,7 @@ namespace HomeSalesTrackerApp
                 this[personIDX].Owner = dbOwner;
                 result = 1;
                 collectionMonitor.SendNotifications(1, "Person");
+                collectionMonitor.SendNotifications(1, "Owner");
             }
 
             return result;

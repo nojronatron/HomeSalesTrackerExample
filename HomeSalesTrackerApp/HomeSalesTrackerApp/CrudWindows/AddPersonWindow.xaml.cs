@@ -12,16 +12,16 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// <summary>
     /// Interaction logic for AddPersonWindow.xaml
     /// </summary>
-    public partial class AddPersonWindow : Window
+    public partial class AddPersonWindow : Window, IObserver<NotificationData>
     {
         private bool IsButtonClose = false;
-        private int NewPersonID = -1;
         private Agent NewAgent = null;
         private Buyer NewBuyer = null;
         private Owner NewOwner = null;
         private Person NewPerson = null;
         private RealEstateCompany ExistingRECo = null;
         private Logger logger = null;
+        private CollectionMonitor collectionMonitor = null;
 
         public string AddType { get; set; }
 
@@ -70,6 +70,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             NewBuyer = new Buyer() { };
             string credRating = this.CreditRatingTextbox.Text.Trim();
+
             if (credRating.Length > 0)
             {
                 if (int.TryParse(credRating, out int creditRating))
@@ -89,17 +90,20 @@ namespace HomeSalesTrackerApp.CrudWindows
         {
             NewAgent = new Agent();
             string commission = this.CommissionTextbox.Text.Trim();
+
             if (commission.Length > 0)
             {
                 if (Decimal.TryParse(commission, out decimal commish))
                 {
                     NewAgent.CommissionPercent = commish;
+
                     if (ExistingRECo != null)
                     {
                         NewAgent.CompanyID = ExistingRECo.CompanyID;
                         DisplayStatusMessage("Agent information updated!");
                     }
                 }
+
             }
             else
             {
@@ -142,7 +146,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 resultMessage.Append("Last Name ");
             }
 
-            if (phone.Length == 10)
+            if (phone.Length <= 10)
             {
                 itemsCount++;
             }
@@ -190,7 +194,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             if (IsButtonClose)
             {
                 e.Cancel = false;
-                //MainWindow.InitializeCollections();
             }
             else
             {
@@ -248,6 +251,10 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            collectionMonitor = MainWindow.reCosCollection.collectionMonitor;
+            collectionMonitor.Subscribe(this);
+            LoadRECoComboBox();
+
             this.IsButtonClose = false;
             NewPerson = new Person();
 
@@ -315,23 +322,21 @@ namespace HomeSalesTrackerApp.CrudWindows
                     return;
                 }
 
-                this.NewPersonID = NewPerson.PersonID;
-
                 if (NewAgent != null)
                 {
-                    NewAgent.AgentID = NewPersonID;
+                    NewAgent.AgentID = NewPerson.PersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateAgent(NewAgent);
                 }
 
                 if (NewBuyer != null)
                 {
-                    NewBuyer.BuyerID = NewPersonID;
+                    NewBuyer.BuyerID = NewPerson.PersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewBuyer);
                 }
 
                 if (NewOwner != null)
                 {
-                    NewOwner.OwnerID = NewPersonID;
+                    NewOwner.OwnerID = NewPerson.PersonID;
                     itemsCount += MainWindow.peopleCollection.UpdateOwner(NewOwner);
                 }
 
@@ -382,6 +387,50 @@ namespace HomeSalesTrackerApp.CrudWindows
             AddOwnerButton.IsEnabled = false;
             PreferredLenderTextbox.IsReadOnly = true;
         }
+
+        #region collectionmonitor
+        
+        private IDisposable unsubscriber;
+        private string notificationMessage;
+
+        public virtual void Subscribe(IObservable<NotificationData> provider)
+        {
+            unsubscriber = provider.Subscribe(this);
+        }
+
+        public virtual void Unsubscribe()
+        {
+            unsubscriber.Dispose();
+        }
+
+        public void OnNext(NotificationData value)
+        {
+            if (value.ChangeCount > 0 && value.DataType.Contains("RECo"))
+            {
+                LoadRECoComboBox();
+                notificationMessage = "Received an update to the Real Estate Companies combobox.";
+            }
+
+            else
+            {
+                notificationMessage = "Received a message with no applicable changes.";
+            }
+
+        }
+
+        public void OnError(Exception error)
+        {
+            //  TODO: Set a logger to record this info
+            ;
+        }
+
+        public void OnCompleted()
+        {
+            DisplayStatusMessage(notificationMessage);
+            notificationMessage = "No new Notifications.";
+        }
+
+        #endregion
 
     }
 }
