@@ -65,18 +65,18 @@ namespace HomeSalesTrackerApp
             {
                 if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                 {
-                    RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
+                    //RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
 
-                    if (dbReco != null)
+                    //if (dbReco != null)
+                    //{
+                    //    this._recoList.Add(dbReco);
+                    this._recoList.Add(realEstateCompany);
+                    if (this.Count > preCount)
                     {
-                        this._recoList.Add(dbReco);
-
-                        if (this.Count > preCount)
-                        {
-                            collectionMonitor.SendNotifications(1, "RECo");
-                            return 1;
-                        }
+                        collectionMonitor.SendNotifications(1, "RECo");
+                        return 1;
                     }
+                    //}
                 }
             }
 
@@ -102,7 +102,7 @@ namespace HomeSalesTrackerApp
                 return 0;
             }
 
-            RealEstateCompany dbReco = null;
+            //RealEstateCompany dbReco = null;
             int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
             RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
 
@@ -111,22 +111,23 @@ namespace HomeSalesTrackerApp
 
                 if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                 {
-                    dbReco = LogicBroker.GetReCompany(collectionRECo.CompanyID);
+                    //dbReco = LogicBroker.GetReCompany(collectionRECo.CompanyID);
 
-                    if (dbReco != null)
+                    //if (dbReco != null)
+                    //{
+
+                    if (realEstateCompany.Equals(collectionRECo))
                     {
-
-                        if (realEstateCompany.Equals(collectionRECo))
-                        {
-                            this._recoList[realEstateCompanyIDX] = dbReco;
-                            collectionMonitor.SendNotifications(1, "RECo");
-                            return 1;
-                        }
-                        else
-                        {
-                            return this.Add(realEstateCompany);
-                        }
+                        //this._recoList[realEstateCompanyIDX] = dbReco;
+                        this._recoList[realEstateCompanyIDX] = realEstateCompany;
+                        collectionMonitor.SendNotifications(1, "RECo");
+                        return 1;
                     }
+                    else
+                    {
+                        return this.Add(realEstateCompany);
+                    }
+                    //}
                 }
 
             }

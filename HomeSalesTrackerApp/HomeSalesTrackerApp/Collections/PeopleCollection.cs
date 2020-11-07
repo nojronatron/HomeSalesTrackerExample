@@ -51,18 +51,14 @@ namespace HomeSalesTrackerApp
                 {
                     if (LogicBroker.StoreItem<Person>(person))
                     {
-                        Person dbPerson = LogicBroker.GetPerson(person.FirstName, person.LastName);
+                        _peopleList.Add((T)person);
 
-                        if (dbPerson != null)
+                        if (this.Count > preCount)
                         {
-                            _peopleList.Add((T)dbPerson);
-
-                            if (this.Count > preCount)
-                            {
-                                collectionMonitor.SendNotifications(1, "Person");
-                                return 1;
-                            }
+                            collectionMonitor.SendNotifications(1, "Person");
+                            return 1;
                         }
+                        //}
                     }
                 }
             }
@@ -136,30 +132,22 @@ namespace HomeSalesTrackerApp
             }
 
             int result = 0;
-            Person dbPerson = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == person.PersonID);
             Person collectionPerson = _peopleList[personIDX];
 
-            if (LogicBroker.StoreItem<Person>(person))
+            if (collectionPerson != null)
             {
-                dbPerson = LogicBroker.GetPerson(collectionPerson.PersonID);
-
-                if (dbPerson == null)
+                if (LogicBroker.UpdateExistingItem<Person>(person))
                 {
-                    return 0;
-                }
-
-                if (person.Equals(collectionPerson))
-                {
-                    this[personIDX] = (T)dbPerson;
+                    this[personIDX] = (T)person;
                     result = 1;
                 }
-                else
-                {
-                    T newDbPerson = (T)dbPerson;
-                    _peopleList.Add(newDbPerson);
-                    result = 1;
-                }
+            
+            }
+            
+            if (collectionPerson == null)
+            {
+                result = this.Add(person);
             }
 
             result += UpdateAgent(person.Agent);

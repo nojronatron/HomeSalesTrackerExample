@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 
 using System;
 using System.Collections;
@@ -7,18 +8,10 @@ using System.Linq;
 
 namespace HomeSalesTrackerApp
 {
-    public class HomesCollection : IEnumerable<Home>    //, INotifyPropertyChanged
+    public class HomesCollection : IEnumerable<Home>
     {
+        private CollectionMonitor collectionMonitor = null;
         private List<Home> _homesList = null;
-
-        //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //  https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
-        //private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
 
         /// <summary>
         /// Constructor.
@@ -31,6 +24,7 @@ namespace HomeSalesTrackerApp
         public HomesCollection(List<Home> homes)
         {
             _homesList = homes;
+            collectionMonitor = new CollectionMonitor();
         }
 
         public int Count { get { return _homesList.Count; } }
@@ -65,26 +59,21 @@ namespace HomeSalesTrackerApp
             {
                 return 0;
             }
-            
+
             int preCount = this.Count;
             Home collectionHome = _homesList.SingleOrDefault(h => h.Address == home.Address &&
                                                                   h.Zip == home.Zip);
 
-            Home dbHome = LogicBroker.GetHome(home.Address, home.Zip);
-
-            if (collectionHome == null && dbHome == null)
+            if (collectionHome == null)
             {
                 if (LogicBroker.StoreItem<Home>(home))
                 {
-                    dbHome = LogicBroker.GetHome(home.Address, home.Zip);
+                    this._homesList.Add(home);
 
-                    if (dbHome != null)
+                    if (this.Count > preCount)
                     {
-                        this._homesList.Add(dbHome);
-                        if (this.Count > preCount)
-                        {
-                            return 1;
-                        }
+                        collectionMonitor.SendNotifications(1, "Home");
+                        return 1;
                     }
                 }
 
@@ -119,19 +108,14 @@ namespace HomeSalesTrackerApp
 
             int homeIDX = _homesList.FindIndex(h => h.HomeID == home.HomeID);
             Home collectionHome = _homesList[homeIDX];
-            Home dbHome = LogicBroker.GetHome(home.HomeID);
 
-            if (collectionHome != null && dbHome != null)
+            if (collectionHome != null)
             {
                 if (LogicBroker.UpdateExistingItem<Home>(home))
                 {
-
-                    dbHome = LogicBroker.GetHome(collectionHome.HomeID);
-                    if (dbHome != null)
-                    {
-                        this._homesList[homeIDX] = dbHome;
-                        return 1;
-                    }
+                    this._homesList[homeIDX] = home;
+                    collectionMonitor.SendNotifications(1, "Home");
+                    return 1;
                 }
             }
             else
@@ -146,13 +130,23 @@ namespace HomeSalesTrackerApp
         /// Removes an item from this collection by its HomeID.
         /// </summary>
         /// <param name="homeID"></param>
-        public void Remove(int homeID)
+        public bool Remove(int homeID)
         {
+            int preCount = this.Count;
+
             if (homeID > 0)
             {
                 int homeIdx = _homesList.FindIndex(x => x.HomeID == homeID);
                 _homesList.RemoveAt(homeIdx);
+
+                if (preCount > this.Count)
+                {
+                    collectionMonitor.SendNotifications(1, "Home");
+                    return true;
+                }
             }
+
+            return false;
         }
 
         IEnumerator<Home> IEnumerable<Home>.GetEnumerator()

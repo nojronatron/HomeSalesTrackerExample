@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.Helpers;
+using HSTDataLayer;
 
 using System;
 using System.Collections;
@@ -9,6 +10,7 @@ namespace HomeSalesTrackerApp
 {
     public class HomeSalesCollection : IEnumerable<HomeSale>
     {
+        private CollectionMonitor collectionMonitor = null;
         private List<HomeSale> _homeSalesList = null;
 
         /// <summary>
@@ -26,6 +28,7 @@ namespace HomeSalesTrackerApp
         public HomeSalesCollection(List<HomeSale> homeSales)
         {
             _homeSalesList = homeSales;
+            collectionMonitor = new CollectionMonitor();
         }
 
         public int Count { get { return _homeSalesList.Count; } }
@@ -62,21 +65,21 @@ namespace HomeSalesTrackerApp
                 var collectionHomeSale = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
                                                                               hs.SaleAmount == homeSale.SaleAmount);
                 int preCount = this.Count;
+
                 if (collectionHomeSale == null)
                 {
                     if (LogicBroker.StoreItem<HomeSale>(homeSale))
                     {
-                        HomeSale dbHomeSale = LogicBroker.GetHomeSale(homeSale.MarketDate, homeSale.SaleAmount);
-                        if (dbHomeSale != null)
+                        _homeSalesList.Add(homeSale);
+
+                        if (this.Count > preCount)
                         {
-                            _homeSalesList.Add(dbHomeSale);
-                            if (this.Count > preCount)
-                            {
-                                return 1;
-                            }
+                            collectionMonitor.SendNotifications(1, "HomeSale");
+                            return 1;
                         }
                     }
                 }
+
             }
 
             return 0;
@@ -109,17 +112,14 @@ namespace HomeSalesTrackerApp
 
                 if (collectionHomeSale != null)
                 {
-                    HomeSale dbHomeSale = null;
 
                     if (LogicBroker.StoreItem<HomeSale>(homeSale))
                     {
-                        dbHomeSale = LogicBroker.GetHomeSale(collectionHomeSale.SaleID);
-                        if (dbHomeSale != null)
-                        {
-                            this._homeSalesList[homeSaleIDX] = dbHomeSale;
-                            return 1;
-                        }
+                        this._homeSalesList[homeSaleIDX] = homeSale;
+                        collectionMonitor.SendNotifications(1, "HomeSale");
+                        return 1;
                     }
+
                 }
                 else
                 {
@@ -138,12 +138,20 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public bool Remove(HomeSale homesale)
         {
-            bool result = false;
+            int preCount = this.Count;
+
             if (homesale != null)
             {
-                result = _homeSalesList.Remove(homesale);
+                _homeSalesList.Remove(homesale);
+
+                if (preCount > this.Count)
+                {
+                    collectionMonitor.SendNotifications(1, "HomeSale");
+                    return true;
+                }
             }
-            return result;
+
+            return false;
         }
 
         /// <summary>
@@ -155,11 +163,13 @@ namespace HomeSalesTrackerApp
         {
             bool result = false;
             HomeSale hsToRemove = _homeSalesList.Where(hs => hs.SaleID == saleid).FirstOrDefault();
+            
             if (hsToRemove != null)
             {
                 _homeSalesList.Remove(hsToRemove);
                 result = true;
             }
+            
             return result;
         }
 
