@@ -209,77 +209,86 @@ namespace HomeSalesTrackerApp
         /// <param name="e"></param>
         private void MenuUpdateHomeAsSold_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder statusMessage = new StringBuilder("Ok. ");
-
-            int homeID = -1;
-
-            if (FoundHomesForSaleView.IsVisible)
+            try
             {
-                HomeForSaleModel selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
-                homeID = selectedHomesaleView.HomeID;
-            }
-            else if (FoundHomesView.IsVisible)
-            {
-                HomeSearchModel selectedHomeSearchModel = FoundHomesView.SelectedItem as HomeSearchModel;
-                homeID = selectedHomeSearchModel.HomeID;
-            }
-            else
-            {
-                DisplayStatusMessage("Select an item from the results and try again.");
-                return;
-            }
+                StringBuilder statusMessage = new StringBuilder("Ok. ");
 
-            HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeID &&
-                                                                   hs.MarketDate != null &&
-                                                                   hs.SoldDate == null).FirstOrDefault();
+                int homeID = -1;
 
-            Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
-
-            if (hfsHome != null && hfsHomesale != null)
-            {
-                Person hfsAgent = new Person();
-                hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
-
-                if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                if (FoundHomesForSaleView.IsVisible)
                 {
-                    RealEstateCompany hfsReco = new RealEstateCompany();
-                    hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
-                    if (hfsReco != null)
+                    HomeForSaleModel selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+                    homeID = selectedHomesaleView.HomeID;
+                }
+                else if (FoundHomesView.IsVisible)
+                {
+                    HomeSearchModel selectedHomeSearchModel = FoundHomesView.SelectedItem as HomeSearchModel;
+                    homeID = selectedHomeSearchModel.HomeID;
+                }
+                else
+                {
+                    DisplayStatusMessage("Select an item from the results and try again.");
+                    return;
+                }
+
+                HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeID &&
+                                                                       hs.MarketDate != null &&
+                                                                       hs.SoldDate == null).FirstOrDefault();
+
+                Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+
+                if (hfsHome != null && hfsHomesale != null)
+                {
+                    Person hfsAgent = new Person();
+                    hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
+
+                    if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
                     {
-                        var homeUpdaterWindow = new HomeUpdaterWindow();
-                        homeUpdaterWindow.UpdateType = "HOMESOLD";
-                        homeUpdaterWindow.UpdatePerson = hfsAgent;
-                        homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
-                        homeUpdaterWindow.UpdateHome = hfsHome;
-                        homeUpdaterWindow.UpdateHomeSale = hfsHomesale;
-                        homeUpdaterWindow.UpdateReco = hfsReco;
-                        DisplayStatusMessage("Loading update window");
-                        homeUpdaterWindow.Show();
-                        ClearSearchResultsViews();
+                        RealEstateCompany hfsReco = new RealEstateCompany();
+                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                        if (hfsReco != null)
+                        {
+                            var homeUpdaterWindow = new HomeUpdaterWindow();
+                            homeUpdaterWindow.UpdateType = "HOMESOLD";
+                            homeUpdaterWindow.UpdatePerson = hfsAgent;
+                            homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
+                            homeUpdaterWindow.UpdateHome = hfsHome;
+                            homeUpdaterWindow.UpdateHomeSale = hfsHomesale;
+                            homeUpdaterWindow.UpdateReco = hfsReco;
+                            DisplayStatusMessage("Loading update window");
+                            homeUpdaterWindow.Show();
+                            ClearSearchResultsViews();
+                        }
+                        else
+                        {
+                            statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
+                        }
+
                     }
                     else
                     {
-                        statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
+                        statusMessage.Append($"Agent not associated with a Real Estate Co. ");
                     }
 
                 }
                 else
                 {
-                    statusMessage.Append($"Agent not associated with a Real Estate Co. ");
+                    statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
+                }
+
+                if (statusMessage.Length > 4)
+                {
+                    DisplayStatusMessage(statusMessage.ToString());
                 }
 
             }
-            else
+            catch (Exception ex)
             {
-                statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
+                DisplayStatusMessage("Select a Home first, then click Menu, Update Home As Sold.");
+                logger.Data("MenuUpdateHome Exception", ex.Message);
+                logger.Flush();
             }
 
-            if (statusMessage.Length > 4)
-            {
-                DisplayStatusMessage(statusMessage.ToString());
-            }
-
-            //InitializeCollections();
         }
 
         /// <summary>
@@ -301,10 +310,8 @@ namespace HomeSalesTrackerApp
                                             && hs.SoldDate == null
                                         select hs).FirstOrDefault();
 
-                if (homeSaleToRemove != null)
+                if (homeSalesCollection.Remove(homeSaleToRemove))
                 {
-                    LogicBroker.RemoveEntity<HomeSale>(homeSaleToRemove);
-                    //InitializeCollections();
 
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
                     ClearSearchResultsViews();
@@ -406,6 +413,7 @@ namespace HomeSalesTrackerApp
             {
                 agentsResultsReport.Show();
             };
+
             ClearSearchResultsViews();
             DisplayStatusMessage("Ready");
         }
@@ -643,7 +651,6 @@ namespace HomeSalesTrackerApp
                                           Zip = h.Zip
                                       }).ToList();
 
-                        //  TODO: resolve the bug where null reference is thrown when a new user is GetItemDetail'd
                         OwnerModel ownerPerson = (from p in peopleCollection
                                            join h in homesCollection on p.PersonID equals h.OwnerID
                                            where p.PersonID == foundPerson.PersonID
@@ -728,7 +735,6 @@ namespace HomeSalesTrackerApp
                 logger.Data($"GetItemDetails", "Problem with selected object (next entry will have details)...");
                 logger.Data(objectType.ToString(), objectContents.ToString());
                 logger.Flush();
-                //throw;
             }
 
         }
@@ -790,6 +796,7 @@ namespace HomeSalesTrackerApp
                 logger.Data("MenuAddHomesForSale Exception", ex.Message);
                 logger.Flush();
             }
+
         }
 
         /// <summary>
@@ -826,6 +833,7 @@ namespace HomeSalesTrackerApp
             {
                 DisplayStatusMessage("Unable to load Buyer Update Window. Refresh, search again, and select a Person in the results.");
             }
+
         }
 
         private void MenuUpdateBuyer_Click(object sender, RoutedEventArgs e)
@@ -854,8 +862,8 @@ namespace HomeSalesTrackerApp
                         puw.Show();
                         ClearSearchResultsViews();
                     }
-
                 }
+
             }
             catch
             {
@@ -893,14 +901,15 @@ namespace HomeSalesTrackerApp
                         puw.Show();
                         ClearSearchResultsViews();
                     }
-
                 }
+
             }
 
             catch
             {
                 DisplayStatusMessage("Unable to load Owner Update Window. Refresh, search again, and then select a Person in the results.");
             }
+
         }
 
         private void DisplayPeopleSearchResults()
