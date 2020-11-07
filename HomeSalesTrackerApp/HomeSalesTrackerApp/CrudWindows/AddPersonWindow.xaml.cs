@@ -36,12 +36,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             this.Close();
         }
 
-        private void menuRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            LoadRECoComboBox();
-            DisplayStatusMessage("Refreshed entries and updates.");
-        }
-
         private void SaveOwnerInfoButton_Click(object sender, RoutedEventArgs e)
         {
             string preferredLenderText = this.PreferredLenderTextbox.Text.Trim();

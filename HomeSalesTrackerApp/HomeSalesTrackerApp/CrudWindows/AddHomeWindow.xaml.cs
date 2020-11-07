@@ -80,7 +80,6 @@ namespace HomeSalesTrackerApp
                     }
                     else
                     {
-                        //itemsProcessed += MainWindow.peopleCollection.UpdatePerson(APerson);
                         NewHome = new Home()
                         {
                             Address = address,
@@ -97,17 +96,8 @@ namespace HomeSalesTrackerApp
                     {
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
-                        //  update the Owner's collection of Homes
                         AnOwner.Homes.Add(NewHome);
                         MainWindow.peopleCollection.UpdateOwner(AnOwner);
-                        //int homesCollectionUpdated = MainWindow.homesCollection.Update(NewHome);
-
-                        //if (homesCollectionUpdated > 0)
-                        //{
-                        //    APerson = null;
-                        //    NewHome = null;
-                        //    AnOwner = null;
-                        //}
 
                     }
                     else
@@ -142,29 +132,9 @@ namespace HomeSalesTrackerApp
             this.Close();
         }
 
-        private void MenuClearInputs_Click(object sender, RoutedEventArgs e)
-        {
-            ClearScreenElements();
-        }
-
-        private void MenuReloadOwners_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshOwnersComboBox();
-        }
-
-        private void ClearScreenElements()
-        {
-            homeAddressTextbox.Text = string.Empty;
-            homeCityTextbox.Text = string.Empty;
-            homeStateTextbox.Text = string.Empty;
-            homeZipTextbox.Text = string.Empty;
-            PotentialOwnerPeopleCombobox.SelectedIndex = -1;
-            statusBarText.Text = "Cleared all entries.";
-        }
 
         public void RefreshOwnersComboBox()
         {
-            //MainWindow.InitializeCollections();
             var existingOwnersList = (from p in MainWindow.peopleCollection
                                       select p).ToList();
 
@@ -211,51 +181,6 @@ namespace HomeSalesTrackerApp
             AnOwner = APerson.Owner;
             PreferredLenderTextbox.Text = AnOwner.PreferredLender ?? "Lender info not found";
             
-            //var tempOwnerPerson = (sender as ComboBox).SelectedItem as Person;
-            //PreferredLenderTextbox.IsReadOnly = false;
-            //addOwnerButton.IsEnabled = false;
-            ////AddPreferredLenderButton.IsEnabled = false;
-            //int personID = tempOwnerPerson.PersonID;
-            //APerson = MainWindow.peopleCollection.Where(p => p.PersonID == personID).FirstOrDefault();
-
-            //if (APerson.Owner != null)
-            //{
-            //    List<Home> homesOwnedByPerson = (from h in MainWindow.homesCollection
-            //                                     where h.OwnerID == personID
-            //                                     select h).ToList();
-
-            //    if (homesOwnedByPerson.Count > 0)
-            //    {
-            //        AnOwner = (from o in MainWindow.homesCollection
-            //                   where o.OwnerID == personID
-            //                   select o.Owner).FirstOrDefault();
-
-            //    }
-            //    else
-            //    {
-            //        AnOwner = (from o in MainWindow.peopleCollection
-            //                   where o.PersonID == personID
-            //                   select o.Owner).FirstOrDefault();
-            //    }
-
-            //    var preferredLender = AnOwner.PreferredLender.Trim();
-            //    PreferredLenderTextbox.Text = preferredLender;
-            //    PreferredLenderTextbox.IsReadOnly = true;
-            //    addOwnerButton.IsEnabled = true;
-            //    DisplayStatusMessage("New Owner and Preferred Lender selected. Click Add New Home to save.");
-            //}
-            //else
-            //{
-            //    PreferredLenderTextbox.IsReadOnly = false;
-            //    PreferredLenderTextbox.Text = "Enter Preferred Lender here.";
-            //    AnOwner = new Owner()
-            //    {
-            //        OwnerID = personID
-            //    };
-            //    DisplayStatusMessage("Enter new Preferred Lender and then click Add button.");
-            //    //AddPreferredLenderButton.IsEnabled = true;
-            //}
-
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -264,7 +189,6 @@ namespace HomeSalesTrackerApp
             if (IsButtonClose)
             {
                 e.Cancel = false;
-                //MainWindow.InitializeCollections();
             }
             else
             {
@@ -288,20 +212,9 @@ namespace HomeSalesTrackerApp
             this.Close();
         }
 
-        //private void AddPreferredLenderButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    string tempPreferredLender = PreferredLenderTextbox.Text.Trim();
-        //    if (tempPreferredLender.Length > 2)
-        //    {
-        //        AnOwner.PreferredLender = tempPreferredLender;
-        //        DisplayStatusMessage("Preferred Lender added.");
-        //    }
-        //}
-
         #region IObserver implementation
 
         private IDisposable unsubscriber;
-        //private bool first = true;
         private string notificationMessage;
 
         public virtual void Subscribe(IObservable<NotificationData> provider)

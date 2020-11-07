@@ -15,10 +15,13 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// <summary>
     /// Interaction logic for PersonAddUpdateWindow.xaml
     /// </summary>
-    public partial class PersonUpdaterWindow : Window
+    public partial class PersonUpdaterWindow : Window, IObserver<NotificationData>
     {
-        private bool IsButtonClose { get; set; }
         private Logger logger = null;
+        private CollectionMonitor personCollectionMonitor;
+        private CollectionMonitor recoCollectionMonitor;
+
+        private bool IsButtonClose { get; set; }
         private RealEstateCompany SelectedReco { get; set; }
 
         public bool CalledByUpdateMenu { get; set; }
@@ -540,7 +543,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             var resultMessage = new StringBuilder();
             IsButtonClose = true;
             int personUpdateCount = MainWindow.peopleCollection.UpdatePerson(ReceivedPerson);
-            
+
             if (personUpdateCount == 1)
             {
                 resultMessage.Append("Person information updated. ");
@@ -607,8 +610,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
             }
 
-            DisplayStatusMessage( resultMessage.ToString() );
-
+            DisplayStatusMessage(resultMessage.ToString());
             this.Close();
         }
 
@@ -640,6 +642,12 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            personCollectionMonitor = MainWindow.peopleCollection.collectionMonitor;
+            personCollectionMonitor.Subscribe(this);
+
+            recoCollectionMonitor = MainWindow.reCosCollection.collectionMonitor;
+            recoCollectionMonitor.Subscribe(this);
+
             var ReceivedRECo = new RealEstateCompany();
             var SelectedRECo = new RealEstateCompany();
             LoadPersonInformation();
@@ -697,17 +705,76 @@ namespace HomeSalesTrackerApp.CrudWindows
             DisplayStatusMessage("Owner information updated!");
         }
 
-        /// <summary>
-        /// Reset all input fields and refresh all comboboxes.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuRefresh_Click(object sender, RoutedEventArgs e)
+        #region IObserver
+
+        private IDisposable unsubscriber;
+        private string notificationMessage;
+
+        public virtual void Subscribe(IObservable<NotificationData> provider)
         {
-            ClearPersonTextboxes();
-            LoadAgentPanel();
-            LoadBuyerPanel();
-            LoadOwnerPanel();
+            unsubscriber = provider.Subscribe(this);
         }
+
+        public virtual void Unsubscribe()
+        {
+            unsubscriber.Dispose();
+        }
+
+        public void OnNext(NotificationData value)
+        {
+            string dataType = value.DataType.ToString();
+            if (value.ChangeCount < 1)
+            {
+                notificationMessage = "Received a message with no applicable changes.";
+                return;
+            }
+
+            notificationMessage = "Received an update to the ";
+
+            switch (dataType)
+            {
+                case "Owner":
+                    {
+                        notificationMessage += " Owners combobox.";
+                        LoadOwnersComboBox();
+                        break;
+                    }
+                case "Buyer":
+                    {
+                        notificationMessage += " Buyers combobox.";
+                        LoadBuyersComboBox();
+                        break;
+                    }
+                case "Agent":
+                    {
+                        notificationMessage += " Agents combobox.";
+                        LoadAgentsComboBox();
+                        break;
+                    }
+                case "RECo":
+                    {
+                        notificationMessage += " RE Companies combobox.";
+                        LoadRealEstateCoCombobox();
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+        }
+
+        public void OnError(Exception error)
+        {
+            //  TODO: set a logger to record this info
+            ;
+        }
+
+        public void OnCompleted()
+        {
+            DisplayStatusMessage(notificationMessage);
+            notificationMessage = "No new Notifications.";
+        }
+
+        #endregion
     }
 }

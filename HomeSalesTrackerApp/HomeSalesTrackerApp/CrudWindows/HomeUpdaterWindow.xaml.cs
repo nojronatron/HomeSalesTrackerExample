@@ -58,8 +58,6 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
 
                 logger.Flush();
-                //MessageBox.Show("Use the Close button or File -> Exit menut item. You will be prompted to save or discard changes before exiting.", "Warning!", MessageBoxButton.OK);
-                //IsButtonClose = false;
                 e.Cancel = true;
             }
 
@@ -410,12 +408,13 @@ namespace HomeSalesTrackerApp.CrudWindows
                         }
                     }
                 }
+
                 UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
                 var buyerPerson = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
+
                 if (buyerPerson != null)
                 {
                     BuyerUpdated = true;
-                    UpdateBuyer.Person = buyerPerson;
                     UpdateBuyer.HomeSales.Add(UpdateHomeSale);
                     DisplayStatusMessage("Buyer information updated!");
                 }
@@ -423,6 +422,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 {
                     DisplayStatusMessage("Selected Person could not be added as a Buyer.");
                 }
+
             }
             else
             {
@@ -455,16 +455,14 @@ namespace HomeSalesTrackerApp.CrudWindows
                         {
                             if (BuyerUpdated && HomesaleUpdated)
                             {
-
                                 Person buyerPerson = MainWindow.peopleCollection.Get(UpdateBuyer.BuyerID);
+
                                 if (buyerPerson == null)
                                 {
                                     break;
                                 }
 
-                                buyerPerson.Buyer.CreditRating = UpdateBuyer.CreditRating;
                                 savedCount += MainWindow.peopleCollection.UpdatePerson(buyerPerson);
-
                                 var homesaleToSave = new HomeSale()
                                 {
                                     SaleID = UpdateHomeSale.SaleID,
@@ -588,6 +586,7 @@ namespace HomeSalesTrackerApp.CrudWindows
             {
                 BuyerCreditRatingTextbox.IsEnabled = true;
                 BuyerCreditRatingTextbox.IsReadOnly = false;
+
                 UpdateBuyer = new Buyer()
                 {
                     BuyerID = selectedBuyer.PersonID,
@@ -610,18 +609,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void AddNewAgentButton_Click(object sender, RoutedEventArgs e)
         {
             AddNewAgent();
-        }
-
-        private void MenuRefreshAgents_Click(object sender, RoutedEventArgs e)
-        {
-            LoadAgentsCombobox(true);
-            DisplayStatusMessage("Refreshed List of Agents.");
-        }
-
-        private void MenuRefreshBuyers_Click(object sender, RoutedEventArgs e)
-        {
-            LoadBuyersCombobox();
-            DisplayStatusMessage("Refreshed List of Buyers.");
         }
 
         private void AddNewBuyerButton_Click(object sender, RoutedEventArgs e)

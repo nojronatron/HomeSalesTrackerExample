@@ -13,10 +13,10 @@
                 <MenuItem Header="_Exit" Click="MenuExit_Click"/>
             </MenuItem>
             <Separator Width="5" />
-            <MenuItem Header="_Edit">
+            <!--<MenuItem Header="_Edit">
                 <MenuItem Header="_Clear Inputs" Click="MenuClearInputs_Click"/>
                 <MenuItem Header="_Reload Owners" Click="MenuReloadOwners_Click" />
-            </MenuItem>
+            </MenuItem>-->
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Beige">
             <StatusBarItem>
