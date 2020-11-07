@@ -295,9 +295,6 @@ namespace HSTDataLayer
                     case "Owner":
                         {
                             Owner owner = item as Owner;
-                            //var dbOwner = context.Owners.SingleOrDefault(o => o.OwnerID == owner.OwnerID) ?? new Owner();
-                            //dbOwner.PreferredLender = owner.PreferredLender;
-                            //dbOwner.OwnerID = owner.OwnerID;
                             context.Owners.AddOrUpdate(o => new { o.OwnerID }, owner);
                             break;
                         }
@@ -527,55 +524,86 @@ namespace HSTDataLayer
                 {
                     case "Person":
                         {
-                            int personID = (item as Person).PersonID;
-                            Person personToDelete = context.People.Find(personID);
-                            context.People.Remove(personToDelete);
+                            Person person = (item as Person);
+                            Person personToDelete = context.People.Find(person.PersonID);
+                            
+                            if (personToDelete != null)
+                            {
+                                context.People.Remove(personToDelete);
+                            }
+
                             break;
                         }
                     case "Owner":
                         {
-                            int ownerID = (item as Owner).OwnerID;
-                            Owner ownerToDelete = context.Owners.Find(ownerID);
-                            context.Owners.Remove(ownerToDelete);
+                            Owner owner = (item as Owner);
+                            Owner ownerToDelete = context.Owners.Find(owner.OwnerID);
+                            
+                            if (ownerToDelete != null)
+                            {
+                                context.Owners.Remove(ownerToDelete);
+                            }
+
                             break;
                         }
                     case "Home":
                         {
-                            int homeID = (item as Home).HomeID;
-                            Home homeToDelete = context.Homes.Find(homeID);
-                            context.Homes.Remove(homeToDelete);
+                            Home home = (item as Home);
+                            Home homeToDelete = context.Homes.Find(home.HomeID);
+
+                            if (homeToDelete != null)
+                            {
+                                context.Homes.Remove(homeToDelete);
+                            }
+
                             break;
                         }
                     case "RealEstateCompany":
                         {
-                            int recoID = (item as RealEstateCompany).CompanyID;
-                            RealEstateCompany recoToDelete = context.RealEstateCompanies.Find(recoID);
-                            context.RealEstateCompanies.Remove(recoToDelete);
+                            RealEstateCompany reco = (item as RealEstateCompany);
+                            RealEstateCompany recoToDelete = context.RealEstateCompanies.Find(reco.CompanyID);
+
+                            if (recoToDelete != null)
+                            {
+                                context.RealEstateCompanies.Remove(recoToDelete);
+                            }
+
                             break;
                         }
                     case "Agent":
                         {
-                            int agentID = (item as Agent).AgentID;
-                            Agent agentToDelete = context.Agents.Find(agentID);
-                            context.Agents.Remove(agentToDelete);
+                            Agent agent = (item as Agent);
+                            Agent agentToDelete = context.Agents.Find(agent.AgentID);
+
+                            if (agentToDelete != null)
+                            {
+                                context.Agents.Remove(agentToDelete);
+                            }
+
                             break;
                         }
                     case "Buyer":
                         {
-                            int buyerID = (item as Buyer).BuyerID;
-                            Buyer buyerToDelete = context.Buyers.Find(buyerID);
-                            context.Buyers.Remove(buyerToDelete);
+                            Buyer buyer = (item as Buyer);
+                            Buyer buyerToDelete = context.Buyers.Find(buyer.BuyerID);
+                            
+                            if (buyerToDelete != null)
+                            {
+                                context.Buyers.Remove(buyerToDelete);
+                            }
+
                             break;
                         }
                     case "HomeSale":
                         {
-                            int saleID = (item as HomeSale).SaleID;
-                            HomeSale homeSaleToDelete = context.HomeSales.Find(saleID);
-                            homeSaleToDelete.Agent = null;
-                            homeSaleToDelete.Buyer = null;
-                            homeSaleToDelete.Home = null;
-                            homeSaleToDelete.RealEstateCompany = null;
-                            context.HomeSales.Remove(homeSaleToDelete);
+                            HomeSale homeSale = (item as HomeSale);
+                            HomeSale homeSaleToDelete = context.HomeSales.Find(homeSale.SaleID);
+
+                            if (homeSaleToDelete != null)
+                            {
+                                context.HomeSales.Remove(homeSaleToDelete);
+                            }
+
                             break;
                         }
                     default:
