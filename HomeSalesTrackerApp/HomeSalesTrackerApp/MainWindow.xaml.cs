@@ -132,11 +132,13 @@ namespace HomeSalesTrackerApp
         private void MenuSearchSoldHomes_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            var foundSoldHomes = HomeSalesSearchTool.GetSoldHomes(searchTermsTextbox.Text);
+            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            List<SoldHomeModel> foundSoldHomes = HomeSalesSearchHelper.GetSoldHomesSearchResults(formattedSearchTerms);
 
             if (foundSoldHomes.Count < 1)
             {
                 DisplayZeroResultsMessage();
+                return;
             }
 
             FoundSoldHomesView.ItemsSource = foundSoldHomes;
@@ -154,19 +156,10 @@ namespace HomeSalesTrackerApp
         private void MenuSearchHomes_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            string searchTermsText = searchTermsTextbox.Text;
-            var searchTerms = FormatSearchTerms.FormatTerms(searchTermsText);
+            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            List<Home> listResults = HomeSearchHelper.SearchHomes(formattedSearchTerms);
 
-            if (searchTerms.Count < 1)
-            {
-                DisplayZeroResultsMessage();
-                return;
-            }
-
-            var homeSearchTool = new HomeSearchTool(searchTerms);
-            var listResults = homeSearchTool.SearchResults;
-
-            if (listResults == null)
+            if (listResults.Count < 1)
             {
                 DisplayZeroResultsMessage();
                 return;
@@ -187,7 +180,8 @@ namespace HomeSalesTrackerApp
         private void MenuSearchHomesForSale_Click(Object sender, RoutedEventArgs args)
         {
             ClearSearchResultsViews();
-            var foundHomesForSale = HomeSalesSearchTool.GetHomesOnMarket(searchTermsTextbox.Text);
+            List<string> formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            List<HomeForSaleModel> foundHomesForSale = HomeSalesSearchHelper.GetHomesForSaleSearchResults(formattedSearchTerms);
 
             if (foundHomesForSale.Count < 1)
             {
@@ -301,14 +295,15 @@ namespace HomeSalesTrackerApp
             HomeForSaleModel selectedHomeForSale = (HomeForSaleModel)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
-                int homeID = selectedHomeForSale.HomeID;
-                var homeSaleToRemove = (from h in homesCollection
-                                        from hs in homeSalesCollection
-                                        where h.HomeID == homeID
-                                            && hs.HomeID == homeID
-                                            && hs.MarketDate != null
-                                            && hs.SoldDate == null
-                                        select hs).FirstOrDefault();
+
+                var homeSaleToRemove = homeSalesCollection
+                    .Where(hs =>
+                        hs.MarketDate == selectedHomeForSale.MarketDate &&
+                        hs.SaleAmount == selectedHomeForSale.SaleAmount &&
+                        hs.SaleID == selectedHomeForSale.HomeForSaleID &&
+                        hs.HomeID == selectedHomeForSale.HomeID
+                        )
+                    .FirstOrDefault();
 
                 if (homeSalesCollection.Remove(homeSaleToRemove))
                 {
