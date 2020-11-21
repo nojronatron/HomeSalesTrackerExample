@@ -583,11 +583,12 @@ namespace HomeSalesTrackerApp
 
                     var soldHomeDetails = new SoldHomeDetailModel();
                     soldHomeDetails = (from hfs in homeSalesCollection
-                                       where hfs.HomeID == selectedSh.HomeID
+                                       where hfs.HomeID == selectedSh.HomeID &&
+                                       hfs.SoldDate == selectedSh.SoldDate
                                        join h in homesCollection on hfs.HomeID equals h.HomeID
-                                       join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
                                        join o in peopleCollection on h.OwnerID equals o.PersonID
                                        join a in peopleCollection on hfs.AgentID equals a.PersonID
+                                       join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
                                        select new SoldHomeDetailModel
                                        {
                                            HomeID = h.HomeID,
