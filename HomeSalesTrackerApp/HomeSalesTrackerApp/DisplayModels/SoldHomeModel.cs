@@ -4,6 +4,7 @@ namespace HomeSalesTrackerApp.DisplayModels
 {
     public class SoldHomeModel : HomeDisplayModel
     {
+        public int HomeSaleID { get; set; }
         public string BuyerFirstLastName { get; set; }
         public string AgentFirstLastName { get; set; }
         public string RealEstateCompanyName { get; set; }

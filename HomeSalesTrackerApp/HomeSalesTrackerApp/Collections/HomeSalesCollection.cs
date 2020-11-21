@@ -138,16 +138,21 @@ namespace HomeSalesTrackerApp
         /// <returns></returns>
         public bool Remove(HomeSale homesale)
         {
-            int preCount = this.Count;
-
             if (homesale != null)
             {
-                _homeSalesList.Remove(homesale);
 
-                if (preCount > this.Count)
+                if (_homeSalesList.Contains(homesale))
                 {
-                    collectionMonitor.SendNotifications(1, "HomeSale");
-                    return true;
+
+                    if (LogicBroker.RemoveEntity<HomeSale>(homesale))
+                    {
+
+                        if (_homeSalesList.Remove(homesale))
+                        {
+                            collectionMonitor.SendNotifications(1, "HomeSale");
+                            return true;
+                        }
+                    }
                 }
             }
 
