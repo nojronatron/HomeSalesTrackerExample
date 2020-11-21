@@ -537,7 +537,8 @@ namespace HomeSalesTrackerApp
 
                     var homeForSaleDetails = new HomeForSaleDetailModel();
                     homeForSaleDetails = (from hfs in homeSalesCollection
-                                          where hfs.HomeID == selectedHfs.HomeID
+                                          where hfs.HomeID == selectedHfs.HomeID &&
+                                          hfs.MarketDate == selectedHfs.MarketDate
                                           join h in homesCollection on hfs.HomeID equals h.HomeID
                                           join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
                                           join o in peopleCollection on h.OwnerID equals o.PersonID
