@@ -464,7 +464,7 @@ namespace HomeSalesTrackerApp
             {
                 if (FoundHomesView.Visibility == Visibility.Visible)
                 {
-                    HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
+                    Home selectedHome = FoundHomesView.SelectedItem as Home;
 
                     if (selectedHome == null)
                     {
@@ -477,17 +477,46 @@ namespace HomeSalesTrackerApp
                     objectType.Append(selectedHome.GetType().ToString());
                     objectContents.Append(selectedHome.ToString());
 
-                    var homeMarketDate = (from hfs in homeSalesCollection
-                                          where hfs.HomeID == selectedHome.HomeID &&
+                    var homeMarketData = (from hfs in selectedHome.HomeSales
+                                          where hfs.MarketDate != null &&
                                           hfs.SoldDate == null
                                           select hfs).FirstOrDefault();
 
-                    if (homeMarketDate != null) //  devnote: skip adding a date if there is not one to avoid setting a null
-                    {
-                        selectedHome.MarketDate = homeMarketDate.MarketDate;
-                    }
+                    PersonModel ownerPerson = (from p in peopleCollection
+                                          where p.PersonID == selectedHome.OwnerID
+                                          select new PersonModel()
+                                          {
+                                              PersonID = p.PersonID,
+                                              FirstName = p.FirstName,
+                                              LastName = p.LastName,
+                                              Phone = p.Phone,
+                                              Email = p.Email
+                                          }).FirstOrDefault();
 
-                    MessageBox.Show($"{ selectedHome.ToStackedString() }");
+                    string preferredLender = selectedHome.Owner.PreferredLender;
+
+                    OwnerModel ownerData = new OwnerModel()
+                    {
+                        OwnerID = selectedHome.OwnerID,
+                        FirstName = ownerPerson.FirstName,
+                        LastName = ownerPerson.LastName,
+                        Phone = ownerPerson.Phone,
+                        Email = ownerPerson.Email,
+                        PreferredLender = preferredLender
+                    };
+
+                    HomeDisplayDetailModel selectedHomeDetails = new HomeDisplayDetailModel()
+                    {
+                        HomeID = selectedHome.HomeID,
+                        Address = selectedHome.Address,
+                        City = selectedHome.City,
+                        State = selectedHome.State,
+                        Zip = selectedHome.Zip,
+                        MarketDate = homeMarketData?.MarketDate,
+                        owner = ownerData
+                    };
+
+                    MessageBox.Show($"{ selectedHomeDetails.ToStackedString() }");
                     FoundHomesView.SelectedIndex = -1;
                 }
 
