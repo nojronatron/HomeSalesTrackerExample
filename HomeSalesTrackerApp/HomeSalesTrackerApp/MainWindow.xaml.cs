@@ -157,7 +157,7 @@ namespace HomeSalesTrackerApp
         {
             ClearSearchResultsViews();
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-            List<Home> listResults = HomeSearchHelper.SearchHomes(formattedSearchTerms);
+            List<Home> listResults = HomeSearchHelper.SearchHomeItems(formattedSearchTerms);
 
             if (listResults.Count < 1)
             {

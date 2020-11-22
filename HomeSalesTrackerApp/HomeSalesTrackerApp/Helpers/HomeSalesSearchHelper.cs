@@ -8,60 +8,78 @@ namespace HomeSalesTrackerApp.Helpers
 {
     public static class HomeSalesSearchHelper
     {
+        /// <summary>
+        /// Return sold home items matching input search terms. Searches properties of both HomeSales and Homes.
+        /// Returns empty List if nothing matches.
+        /// </summary>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
         public static List<SoldHomeModel> GetSoldHomesSearchResults(List<string> searchTerms)
         {
+            var foundHfsItems = new List<HomeSale>();
+            var foundHomeItems = new List<Home>();
             var soldHomesaleSearchResults = new List<SoldHomeModel>();
 
-            if (searchTerms.Count > 0)
-            {
-                var matchingHomesaleItems = HomeSalesSearchHelper.GetMatchingHomesaleItems(searchTerms);
+            foundHfsItems = SearchHomeForSaleItems(searchTerms);
+            foundHomeItems = HomeSearchHelper.SearchHomeItems(searchTerms);
 
-                soldHomesaleSearchResults = (from hs in matchingHomesaleItems
-                                             from h in MainWindow.homesCollection
-                                             where hs.SoldDate != null && hs.HomeID == h.HomeID
-                                             select new SoldHomeModel()
-                                             {
-                                                 HomeID = hs.HomeID,
-                                                 HomeSaleID = hs.SaleID,
-                                                 Address = h.Address,
-                                                 City = h.City,
-                                                 State = h.State,
-                                                 Zip = h.Zip,
-                                                 SaleAmount = hs.SaleAmount,
-                                                 SoldDate = hs.SoldDate
-                                             }).ToList();
+            foreach (var homeItem in foundHomeItems)
+            {
+                foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
             }
+
+            soldHomesaleSearchResults = (from hs in foundHfsItems
+                                         where hs.SoldDate != null
+                                         select new SoldHomeModel()
+                                         {
+                                             HomeID = hs.HomeID,
+                                             HomeSaleID = hs.SaleID,
+                                             Address = hs.Home.Address,
+                                             City = hs.Home.City,
+                                             State = hs.Home.State,
+                                             Zip = hs.Home.Zip,
+                                             SaleAmount = hs.SaleAmount,
+                                             SoldDate = hs.SoldDate
+                                         }).ToList();
 
             return soldHomesaleSearchResults;
         }
 
+        /// <summary>
+        /// Return home for sale items matching input search terms. Searches properties of both HomeSales and Homes.
+        /// Returns empty List if nothing matches.
+        /// </summary>
+        /// <param name="searchTerms"></param>
+        /// <returns></returns>
         public static List<HomeForSaleModel> GetHomesForSaleSearchResults(List<string> searchTerms)
         {
-            //  purpose: return a list of HomeForSaleModel items that match search criteria and are home sales On Market
-            var homesaleSearchResults = new List<HomeForSaleModel>();
-            
-            if (searchTerms.Count > 0)
+            var foundHfsItems = new List<HomeSale>();
+            var foundHomeItems = new List<Home>();
+            var soldHomesaleSearchResults = new List<HomeForSaleModel>();
+
+            foundHfsItems = SearchHomeForSaleItems(searchTerms);
+            foundHomeItems = HomeSearchHelper.SearchHomeItems(searchTerms);
+
+            foreach (var homeItem in foundHomeItems)
             {
-                var matchingHomesaleItems = HomeSalesSearchHelper.GetMatchingHomesaleItems(searchTerms);
-
-                homesaleSearchResults = (from hs in matchingHomesaleItems
-                                       from h in MainWindow.homesCollection
-                                       where hs.SoldDate == null && hs.HomeID == h.HomeID
-                                       select new HomeForSaleModel()
-                                       {
-                                           HomeID = hs.HomeID,
-                                           HomeForSaleID = hs.SaleID,
-                                           Address = h.Address,
-                                           City = h.City,
-                                           State = h.State,
-                                           Zip = h.Zip,
-                                           MarketDate = hs.MarketDate,
-                                           SaleAmount = hs.SaleAmount
-                                       }).ToList();
-
+                foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
             }
 
-            return homesaleSearchResults;
+            soldHomesaleSearchResults = (from hs in foundHfsItems
+                                         where hs.Buyer == null
+                                         select new HomeForSaleModel()
+                                         {
+                                             HomeID = hs.HomeID,
+                                             HomeForSaleID = hs.SaleID,
+                                             Address = hs.Home.Address,
+                                             City = hs.Home.City,
+                                             State = hs.Home.State,
+                                             Zip = hs.Home.Zip,
+                                             SaleAmount = hs.SaleAmount,
+                                             MarketDate = hs.MarketDate
+                                         }).ToList();
+
+            return soldHomesaleSearchResults;
         }
 
         /// <summary>
@@ -69,7 +87,7 @@ namespace HomeSalesTrackerApp.Helpers
         /// </summary>
         /// <param name="searchTerms"></param>
         /// <returns></returns>
-        public static List<HomeSale> GetMatchingHomesaleItems(List<string> searchTerms)
+        public static List<HomeSale> SearchHomeForSaleItems(List<string> searchTerms)
         {
             var searchHomesalesResults = new List<HomeSale>();
 

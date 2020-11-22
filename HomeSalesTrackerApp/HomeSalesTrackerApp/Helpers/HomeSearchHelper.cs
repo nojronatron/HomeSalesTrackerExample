@@ -13,7 +13,7 @@ namespace HomeSalesTrackerApp.Helpers
         /// </summary>
         /// <param name="searchTerms"></param>
         /// <returns></returns>
-        public static List<Home> SearchHomes(List<string> searchTerms)
+        public static List<Home> SearchHomeItems(List<string> searchTerms)
         {
             var searchResults = new List<Home>();
 

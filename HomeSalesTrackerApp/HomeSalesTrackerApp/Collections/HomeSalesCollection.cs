@@ -86,14 +86,28 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
-        /// Returns a single HomeSale instance item, by its SaleID.
+        /// Accepts an integer homesaleID and returns the HomeSale instance that matches.
+        /// Returs null if no instance was found.
         /// </summary>
-        /// <param name="saleID"></param>
+        /// <param name="homesaleID"></param>
         /// <returns></returns>
-        public HomeSale Retreive(int saleID)
+        public HomeSale Retreive(int homesaleID)
         {
             HomeSale result = null;
-            result = _homeSalesList.Find(x => x.SaleID == saleID);
+            result = _homeSalesList.Where(hfs => hfs.SaleID == homesaleID).FirstOrDefault();
+            return result;
+        }
+
+        /// <summary>
+        /// Accepts a Home instance and returns the HomeSale instances related to it.
+        /// Returns a null List if no instances found.
+        /// </summary>
+        /// <param name="home"></param>
+        /// <returns></returns>
+        public List<HomeSale> Retreive(Home home)
+        {
+            List<HomeSale> result = null;
+            result = _homeSalesList.Where(hfs => hfs.HomeID == home.HomeID).ToList();
             return result;
         }
 
