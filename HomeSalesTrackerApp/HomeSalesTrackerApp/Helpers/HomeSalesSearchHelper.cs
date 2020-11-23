@@ -28,6 +28,8 @@ namespace HomeSalesTrackerApp.Helpers
                 foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
             }
 
+            foundHfsItems = foundHfsItems.Distinct().ToList();
+
             soldHomesaleSearchResults = (from hs in foundHfsItems
                                          where hs.SoldDate != null
                                          select new SoldHomeModel()
@@ -64,6 +66,8 @@ namespace HomeSalesTrackerApp.Helpers
             {
                 foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
             }
+
+            foundHfsItems = foundHfsItems.Distinct().ToList();
 
             soldHomesaleSearchResults = (from hs in foundHfsItems
                                          where hs.Buyer == null
