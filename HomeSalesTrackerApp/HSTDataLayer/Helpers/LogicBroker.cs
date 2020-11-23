@@ -1,5 +1,6 @@
 ﻿using HSTDataLayer.Helpers;
 using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 
@@ -26,7 +27,12 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.People.Find(personID);
+                result = context.People
+                    .Where(p => p.PersonID == personID)
+                    .Include(a => a.Agent)
+                    .Include(b => b.Buyer)
+                    .Include(o => o.Owner)
+                    .FirstOrDefault();//Find(personID);
             }
 
             return result;
@@ -42,8 +48,13 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.People.Where(p => p.FirstName == firstName && 
-                                                   p.LastName == lastName).FirstOrDefault();
+                result = context.People
+                    .Where(p =>
+                        p.FirstName == firstName && p.LastName == lastName)
+                    .Include(a => a.Agent)
+                    .Include(b => b.Buyer)
+                    .Include(o => o.Owner)
+                    .FirstOrDefault();
             }
 
             return result;
@@ -59,7 +70,11 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.Homes.Find(homeID);
+                result = context.Homes
+                    .Where(h => h.HomeID == homeID)
+                    .Include(hs => hs.HomeSales)
+                    .Include(o => o.Owner)
+                    .FirstOrDefault();//Find(homeID);
             }
 
             return result;
@@ -75,8 +90,12 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.Homes.Where(h => h.Address == address &&
-                                                  h.Zip == zip).FirstOrDefault();
+                result = context.Homes
+                    .Where(h =>
+                        h.Address == address && h.Zip == zip)
+                    .Include(hs => hs.HomeSales)
+                    .Include(o => o.Owner)
+                    .FirstOrDefault();
             }
 
             return result;
@@ -92,7 +111,14 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.HomeSales.Find(homesaleID);
+                result = context.HomeSales
+                    .Where(hs =>
+                        hs.SaleID == homesaleID)
+                    .Include(hs => hs.Home)
+                    .Include(hs => hs.RealEstateCompany)
+                    .Include(hs => hs.Agent)
+                    .Include(hs => hs.Buyer)
+                    .FirstOrDefault();
             }
 
             return result;
@@ -105,8 +131,14 @@ namespace HSTDataLayer
             {
                 using (var context = new HSTDataModel())
                 {
-                    result = context.HomeSales.Where(hs => hs.MarketDate == marketDate &&
-                                                           hs.SaleAmount == saleAmount).FirstOrDefault();
+                    result = context.HomeSales
+                        .Where(hs =>
+                            hs.MarketDate == marketDate && hs.SaleAmount == saleAmount)
+                        .Include(hs => hs.Home)
+                        .Include(hs => hs.RealEstateCompany)
+                        .Include(hs => hs.Agent)
+                        .Include(hs => hs.Buyer)
+                        .FirstOrDefault();
                 }
             }
 
@@ -123,7 +155,11 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.RealEstateCompanies.Find(companyID);
+                result = context.RealEstateCompanies
+                    .Where(re => re.CompanyID == companyID)
+                    .Include(a => a.Agents)
+                    .Include(hs => hs.HomeSales)
+                    .FirstOrDefault();//Find(companyID);
             }
 
             return result;
@@ -139,7 +175,11 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.RealEstateCompanies.Where(re => re.CompanyName == companyName).FirstOrDefault();
+                result = context.RealEstateCompanies
+                    .Where(re => re.CompanyName == companyName)
+                    .Include(a => a.Agents)
+                    .Include(hs => hs.HomeSales)
+                    .FirstOrDefault();
             }
 
             return result;
@@ -155,7 +195,12 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.Agents.Find(agentID);
+                result = context.Agents
+                    .Where(a => a.AgentID == agentID)
+                    .Include(hs => hs.HomeSales)
+                    .Include(p => p.Person)
+                    .Include(re => re.RealEstateCompany)
+                    .FirstOrDefault();//Find(agentID);
             }
 
             return result;
@@ -171,7 +216,11 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.Buyers.Find(buyerID);
+                result = context.Buyers
+                    .Where(b => b.BuyerID == buyerID)
+                    .Include(hs => hs.HomeSales)
+                    .Include(p => p.Person)
+                    .FirstOrDefault();//Find(buyerID);
             }
 
             return result;
@@ -187,7 +236,11 @@ namespace HSTDataLayer
 
             using (var context = new HSTDataModel())
             {
-                result = context.Owners.Find(ownerID);
+                result = context.Owners
+                    .Where(o => o.OwnerID == ownerID)
+                    .Include(h => h.Homes)
+                    .Include(p => p.Person)
+                    .FirstOrDefault();//Find(ownerID);
             }
 
             return result;

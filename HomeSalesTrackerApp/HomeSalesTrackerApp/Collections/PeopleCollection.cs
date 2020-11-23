@@ -45,22 +45,29 @@ namespace HomeSalesTrackerApp
             if (person != null)
             {
                 int preCount = this.Count;
-                var collectionPerson = _peopleList.SingleOrDefault(p => p.FirstName == person.FirstName &&
-                                                                        p.LastName == person.LastName);
+                Person collectionPerson = _peopleList.SingleOrDefault(p =>
+                    p.FirstName == person.FirstName && p.LastName == person.LastName);
+
                 if (collectionPerson == null)
                 {
+
                     if (LogicBroker.StoreItem<Person>(person))
                     {
-                        _peopleList.Add((T)person);
+                        Person storedPerson = LogicBroker.GetPerson(person.PersonID);
 
-                        if (this.Count > preCount)
+                        if (storedPerson != null)
                         {
-                            collectionMonitor.SendNotifications(1, "Person");
-                            return 1;
+                            _peopleList.Add((T)storedPerson);
+
+                            if (this.Count > preCount)
+                            {
+                                collectionMonitor.SendNotifications(1, "Person");
+                                return 1;
+                            }
                         }
-                        //}
                     }
                 }
+
             }
 
             return 0;
@@ -133,18 +140,28 @@ namespace HomeSalesTrackerApp
 
             int result = 0;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == person.PersonID);
-            Person collectionPerson = _peopleList[personIDX];
+            Person collectionPerson = null;
+
+            if (personIDX > -1)
+            {
+                collectionPerson = _peopleList[personIDX];
+            }
 
             if (collectionPerson != null)
             {
+
                 if (LogicBroker.UpdateExistingItem<Person>(person))
                 {
-                    this[personIDX] = (T)person;
-                    result = 1;
+                    Person storedPerson = LogicBroker.GetPerson(person.PersonID);
+
+                    if (storedPerson != null)
+                    {
+                        this[personIDX] = (T)storedPerson;
+                        result = 1;
+                    }
                 }
-            
             }
-            
+
             if (collectionPerson == null)
             {
                 result = this.Add(person);
