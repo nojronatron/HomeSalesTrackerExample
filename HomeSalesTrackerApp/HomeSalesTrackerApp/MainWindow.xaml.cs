@@ -180,19 +180,31 @@ namespace HomeSalesTrackerApp
         private void MenuSearchHomesForSale_Click(Object sender, RoutedEventArgs args)
         {
             ClearSearchResultsViews();
-            List<string> formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-            List<HomeForSaleModel> foundHomesForSale = HomeSalesSearchHelper.GetHomesForSaleSearchResults(formattedSearchTerms);
-
-            if (foundHomesForSale.Count < 1)
+            List<string> formattedSearchTerms = null;
+            List<HomeForSaleModel> foundHomesForSale = null;
+            try
             {
-                DisplayZeroResultsMessage();
-                return;
-            }
+                formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+                foundHomesForSale = HomeSalesSearchHelper.GetHomesForSaleSearchResults(formattedSearchTerms);
 
-            FoundHomesForSaleView.ItemsSource = foundHomesForSale;
-            FoundHomesForSaleView.Visibility = Visibility.Visible;
-            GetItemDetailsButton.IsEnabled = true;
-            DisplayStatusMessage($"Found { foundHomesForSale.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
+                if (foundHomesForSale.Count < 1)
+                {
+                    DisplayZeroResultsMessage();
+                    return;
+                }
+
+                FoundHomesForSaleView.ItemsSource = foundHomesForSale;
+                FoundHomesForSaleView.Visibility = Visibility.Visible;
+                GetItemDetailsButton.IsEnabled = true;
+                DisplayStatusMessage($"Found { foundHomesForSale.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
+            }
+            catch
+            {
+                logger.Data("Search Homes For Sale Click:", "An Exception was thrown.");
+                logger.Data("Search Homes For Sale Click:", formattedSearchTerms.ToString());
+                logger.Data("Search Homes For Sale Click:", foundHomesForSale.ToString());
+                logger.Flush();
+            }
 
         }
 
@@ -800,10 +812,11 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                var selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
-                Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                //  var selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
+                //  Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                var hfsHome = FoundHomesView.SelectedItem as Home;
                 List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
-                hfsHome.HomeSales = hfsHomesales;
+                //  hfsHome.HomeSales = hfsHomesales;
 
                 var homeUpdaterWindow = new HomeUpdaterWindow();
                 homeUpdaterWindow.UpdateType = "PUTONMARKET";
@@ -812,7 +825,6 @@ namespace HomeSalesTrackerApp
                 homeUpdaterWindow.UpdateHome = hfsHome;
                 homeUpdaterWindow.UpdateHomeSale = new HomeSale();
                 homeUpdaterWindow.UpdateReco = new RealEstateCompany();
-                homeUpdaterWindow.Title = "Add Home: For Sale";
                 homeUpdaterWindow.Show();
                 ClearSearchResultsViews();
             }
