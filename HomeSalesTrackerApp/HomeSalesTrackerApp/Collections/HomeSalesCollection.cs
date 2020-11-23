@@ -62,20 +62,26 @@ namespace HomeSalesTrackerApp
         {
             if (homeSale != null)
             {
-                var collectionHomeSale = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
-                                                                              hs.SaleAmount == homeSale.SaleAmount);
                 int preCount = this.Count;
+                HomeSale collectionHomeSale = _homeSalesList.SingleOrDefault(hs => hs.MarketDate == homeSale.MarketDate &&
+                                                                              hs.SaleAmount == homeSale.SaleAmount);
 
                 if (collectionHomeSale == null)
                 {
+
                     if (LogicBroker.StoreItem<HomeSale>(homeSale))
                     {
-                        _homeSalesList.Add(homeSale);
+                        HomeSale storedHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
 
-                        if (this.Count > preCount)
+                        if (storedHomeSale != null)
                         {
-                            collectionMonitor.SendNotifications(1, "HomeSale");
-                            return 1;
+                            _homeSalesList.Add(storedHomeSale);
+
+                            if (this.Count > preCount)
+                            {
+                                collectionMonitor.SendNotifications(1, "HomeSale");
+                                return 1;
+                            }
                         }
                     }
                 }
@@ -122,16 +128,26 @@ namespace HomeSalesTrackerApp
             if (homeSale != null)
             {
                 int homeSaleIDX = _homeSalesList.FindIndex(hs => hs.SaleID == homeSale.SaleID);
-                HomeSale collectionHomeSale = _homeSalesList[homeSaleIDX];
+                HomeSale collectionHomeSale = null;
+
+                if (homeSaleIDX > -1)
+                {
+                    collectionHomeSale = _homeSalesList[homeSaleIDX];
+                }
 
                 if (collectionHomeSale != null)
                 {
 
-                    if (LogicBroker.StoreItem<HomeSale>(homeSale))
+                    if (LogicBroker.UpdateExistingItem<HomeSale>(homeSale))
                     {
-                        this._homeSalesList[homeSaleIDX] = homeSale;
-                        collectionMonitor.SendNotifications(1, "HomeSale");
-                        return 1;
+                        HomeSale storedHomeSale = LogicBroker.GetHomeSale(homeSale.SaleID);
+
+                        if (storedHomeSale != null)
+                        {
+                            this._homeSalesList[homeSaleIDX] = storedHomeSale;
+                            collectionMonitor.SendNotifications(1, "HomeSale");
+                            return 1;
+                        }
                     }
 
                 }
@@ -141,7 +157,7 @@ namespace HomeSalesTrackerApp
                 }
 
             }
-            
+
             return 0;
         }
 

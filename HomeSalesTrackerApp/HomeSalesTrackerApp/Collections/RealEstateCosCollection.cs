@@ -54,30 +54,33 @@ namespace HomeSalesTrackerApp
 
         public int Add(RealEstateCompany realEstateCompany)
         {
-            if (realEstateCompany == null)
+            if (realEstateCompany != null)
             {
-                return 0;
-            }
-            int preCount = this.Count;
-            var collectionReco = _recoList.SingleOrDefault(re => re.CompanyName == realEstateCompany.CompanyName);
+                int preCount = this.Count;
+                RealEstateCompany collectionReco = _recoList
+                    .SingleOrDefault(re =>
+                        re.CompanyName == realEstateCompany.CompanyName);
 
-            if (collectionReco == null)
-            {
-                if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                if (collectionReco == null)
                 {
-                    //RealEstateCompany dbReco = LogicBroker.GetReCompany(realEstateCompany.CompanyName);
 
-                    //if (dbReco != null)
-                    //{
-                    //    this._recoList.Add(dbReco);
-                    this._recoList.Add(realEstateCompany);
-                    if (this.Count > preCount)
+                    if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
                     {
-                        collectionMonitor.SendNotifications(1, "RECo");
-                        return 1;
+                        RealEstateCompany storedReco = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
+
+                        if (storedReco != null)
+                        {
+                            this._recoList.Add(storedReco);
+
+                            if (this.Count > preCount)
+                            {
+                                collectionMonitor.SendNotifications(1, "RECo");
+                                return 1;
+                            }
+                        }
                     }
-                    //}
                 }
+
             }
 
             return 0;
@@ -97,37 +100,33 @@ namespace HomeSalesTrackerApp
 
         public int Update(RealEstateCompany realEstateCompany)
         {
-            if (realEstateCompany == null)
+            if (realEstateCompany != null)
             {
-                return 0;
-            }
+                int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
+                RealEstateCompany collectionRECo = null;
 
-            //RealEstateCompany dbReco = null;
-            int realEstateCompanyIDX = _recoList.FindIndex(r => r.CompanyID == realEstateCompany.CompanyID);
-            RealEstateCompany collectionRECo = _recoList[realEstateCompanyIDX];
-
-            if (collectionRECo != null)
-            {
-
-                if (LogicBroker.StoreItem<RealEstateCompany>(realEstateCompany))
+                if (realEstateCompanyIDX > -1)
                 {
-                    //dbReco = LogicBroker.GetReCompany(collectionRECo.CompanyID);
+                    collectionRECo = _recoList[realEstateCompanyIDX];
+                }
 
-                    //if (dbReco != null)
-                    //{
+                if (collectionRECo != null)
+                {
+                    if (LogicBroker.UpdateExistingItem<RealEstateCompany>(realEstateCompany))
+                    {
+                        RealEstateCompany storedRECo = LogicBroker.GetReCompany(realEstateCompany.CompanyID);
 
-                    if (realEstateCompany.Equals(collectionRECo))
-                    {
-                        //this._recoList[realEstateCompanyIDX] = dbReco;
-                        this._recoList[realEstateCompanyIDX] = realEstateCompany;
-                        collectionMonitor.SendNotifications(1, "RECo");
-                        return 1;
+                        if (storedRECo != null)
+                        {
+                            this._recoList[realEstateCompanyIDX] = storedRECo;
+                            collectionMonitor.SendNotifications(1, "RECo");
+                            return 1;
+                        }
                     }
-                    else
-                    {
-                        return this.Add(realEstateCompany);
-                    }
-                    //}
+                }
+                else
+                {
+                    return this.Add(realEstateCompany);
                 }
 
             }
