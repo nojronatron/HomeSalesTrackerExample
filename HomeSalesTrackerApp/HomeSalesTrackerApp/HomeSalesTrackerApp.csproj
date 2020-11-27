@@ -120,15 +120,19 @@
     <Compile Include="ReportWindows\SoldHomesReport.xaml.cs">
       <DependentUpon>SoldHomesReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\HomeDisplayViewModel.cs" />
+    <Compile Include="SearchResultViewModels\HomesDisplayViewModel.cs" />
+    <Compile Include="SearchResultViewModels\HomesForSaleDisplayViewModel.cs" />
+    <Compile Include="SearchResultViews\HomesForSaleDisplayView.xaml.cs">
+      <DependentUpon>HomesForSaleDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AgentsReportView.xaml.cs">
       <DependentUpon>AgentsReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\BuyersReportView.xaml.cs">
       <DependentUpon>BuyersReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeDisplayView.xaml.cs">
-      <DependentUpon>HomeDisplayView.xaml</DependentUpon>
+    <Compile Include="SearchResultViews\HomesDisplayView.xaml.cs">
+      <DependentUpon>HomesDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomesForSaleView.xaml.cs">
       <DependentUpon>HomesForSaleView.xaml</DependentUpon>
@@ -188,6 +192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SearchResultViews\HomesForSaleDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AgentsReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -196,7 +204,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeDisplayView.xaml">
+    <Page Include="SearchResultViews\HomesDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

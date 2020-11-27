@@ -47,7 +47,7 @@ namespace HomeSalesTrackerApp.Helpers
                 HomeDisplayDetailModel SelectedHomeDetail = null;
                 SelectedHomeDetail = (from hfs in MainWindow.homeSalesCollection
                                       where hfs.HomeID == selectedHome.HomeID &&
-                                      hfs.MarketDate != null
+                                        hfs.MarketDate != null
                                       join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
                                       join p in MainWindow.peopleCollection on h.OwnerID equals p.PersonID
                                       select new HomeDisplayDetailModel

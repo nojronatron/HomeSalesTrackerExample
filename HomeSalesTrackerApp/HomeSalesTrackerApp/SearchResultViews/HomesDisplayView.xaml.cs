@@ -3,17 +3,16 @@ using HomeSalesTrackerApp.Helpers;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace HomeSalesTrackerApp.Views
+namespace HomeSalesTrackerApp.SearchResultViews
 {
     /// <summary>
     /// Interaction logic for HomeDisplayView.xaml
     /// </summary>
-    public partial class HomeDisplayView : UserControl
+    public partial class HomesDisplayView : UserControl
     {
         private bool DetailsWindowIsOpen { get; set; }
         
-
-        public HomeDisplayView()
+        public HomesDisplayView()
         {
             InitializeComponent();
             DetailsWindowIsOpen = false;

@@ -2,7 +2,7 @@
 using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
 using HomeSalesTrackerApp.ReportWindows;
-using HomeSalesTrackerApp.ViewModels;
+using HomeSalesTrackerApp.SearchResultViewModels;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 
@@ -150,7 +150,7 @@ namespace HomeSalesTrackerApp
         {
             ClearSearchResultsViews();
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-            var homeDisplayViewModel = new HomeDisplayViewModel(formattedSearchTerms);
+            var homeDisplayViewModel = new HomesDisplayViewModel(formattedSearchTerms);
             DataContext = homeDisplayViewModel;
             FoundHomesView.Visibility = Visibility.Visible;
 
@@ -164,32 +164,11 @@ namespace HomeSalesTrackerApp
         private void MenuSearchHomesForSale_Click(Object sender, RoutedEventArgs args)
         {
             ClearSearchResultsViews();
-            List<string> formattedSearchTerms = null;
-            List<HomeForSaleModel> foundHomesForSale = null;
-            try
-            {
-                formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-                foundHomesForSale = HomeSalesSearchHelper.GetHomesForSaleSearchResults(formattedSearchTerms);
-
-                if (foundHomesForSale.Count < 1)
-                {
-                    DisplayZeroResultsMessage();
-                    return;
-                }
-
-                FoundHomesForSaleView.ItemsSource = foundHomesForSale;
-                FoundHomesForSaleView.Visibility = Visibility.Visible;
-                GetItemDetailsButton.IsEnabled = true;
-                DisplayStatusMessage($"Found { foundHomesForSale.Count } Homes For Sale. Select an entry and click Get Item Details button for more information.");
-            }
-            catch
-            {
-                logger.Data("Search Homes For Sale Click:", "An Exception was thrown.");
-                logger.Data("Search Homes For Sale Click:", formattedSearchTerms.ToString());
-                logger.Data("Search Homes For Sale Click:", foundHomesForSale.ToString());
-                logger.Flush();
-            }
-
+            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            var homesForSaleDisplayViewModel = new HomesForSaleDisplayViewModel(formattedSearchTerms);
+            DataContext = homesForSaleDisplayViewModel;
+            FoundHomesForSaleView.Visibility = Visibility.Visible;
+                
         }
 
         /// <summary>
@@ -518,48 +497,48 @@ namespace HomeSalesTrackerApp
 
                 if (FoundHomesForSaleView.Visibility == Visibility.Visible)
                 {
-                    HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+                    //HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
 
-                    if (selectedHfs == null)
-                    {
-                        DisplayStatusMessage("Select an item in the results before clicking the button.");
-                        logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
-                        logger.Flush();
-                        return;
-                    }
+                    //if (selectedHfs == null)
+                    //{
+                    //    DisplayStatusMessage("Select an item in the results before clicking the button.");
+                    //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
+                    //    logger.Flush();
+                    //    return;
+                    //}
 
-                    objectType.Append(selectedHfs.GetType().ToString());
-                    objectContents.Append(selectedHfs.ToString());
+                    //objectType.Append(selectedHfs.GetType().ToString());
+                    //objectContents.Append(selectedHfs.ToString());
 
-                    var homeForSaleDetails = new HomeForSaleDetailModel();
-                    homeForSaleDetails = (from hfs in homeSalesCollection
-                                          where hfs.HomeID == selectedHfs.HomeID &&
-                                          hfs.MarketDate == selectedHfs.MarketDate
-                                          join h in homesCollection on hfs.HomeID equals h.HomeID
-                                          join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
-                                          join o in peopleCollection on h.OwnerID equals o.PersonID
-                                          join a in peopleCollection on hfs.AgentID equals a.PersonID
-                                          select new HomeForSaleDetailModel
-                                          {
-                                              HomeID = h.HomeID,
-                                              Address = h.Address,
-                                              City = h.City,
-                                              State = h.State,
-                                              Zip = h.Zip,
-                                              SaleAmount = hfs.SaleAmount,
-                                              MarketDate = hfs.MarketDate,
-                                              OwnerFirstName = o.FirstName,
-                                              OwnerLastName = o.LastName,
-                                              PreferredLender = h.Owner.PreferredLender,
-                                              AgentFirstName = a.FirstName,
-                                              AgentLastName = a.LastName,
-                                              CommissionPercent = hfs.Agent.CommissionPercent,
-                                              RecoName = reco.CompanyName,
-                                              RecoPhone = reco.Phone,
-                                          }).FirstOrDefault();
+                    //var homeForSaleDetails = new HomeForSaleDetailModel();
+                    //homeForSaleDetails = (from hfs in homeSalesCollection
+                    //                      where hfs.HomeID == selectedHfs.HomeID &&
+                    //                      hfs.MarketDate == selectedHfs.MarketDate
+                    //                      join h in homesCollection on hfs.HomeID equals h.HomeID
+                    //                      join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
+                    //                      join o in peopleCollection on h.OwnerID equals o.PersonID
+                    //                      join a in peopleCollection on hfs.AgentID equals a.PersonID
+                    //                      select new HomeForSaleDetailModel
+                    //                      {
+                    //                          HomeID = h.HomeID,
+                    //                          Address = h.Address,
+                    //                          City = h.City,
+                    //                          State = h.State,
+                    //                          Zip = h.Zip,
+                    //                          SaleAmount = hfs.SaleAmount,
+                    //                          MarketDate = hfs.MarketDate,
+                    //                          OwnerFirstName = o.FirstName,
+                    //                          OwnerLastName = o.LastName,
+                    //                          PreferredLender = h.Owner.PreferredLender,
+                    //                          AgentFirstName = a.FirstName,
+                    //                          AgentLastName = a.LastName,
+                    //                          CommissionPercent = hfs.Agent.CommissionPercent,
+                    //                          RecoName = reco.CompanyName,
+                    //                          RecoPhone = reco.Phone,
+                    //                      }).FirstOrDefault();
 
-                    MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
-                    FoundHomesForSaleView.SelectedIndex = -1;
+                    //MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
+                    //FoundHomesForSaleView.SelectedIndex = -1;
                 }
 
                 if (FoundSoldHomesView.Visibility == Visibility.Visible)

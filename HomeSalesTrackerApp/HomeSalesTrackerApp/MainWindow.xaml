@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp" 
         xmlns:sys="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
-        xmlns:views="clr-namespace:HomeSalesTrackerApp.Views"
+        xmlns:views="clr-namespace:HomeSalesTrackerApp.SearchResultViews"
         mc:Ignorable="d"
         Title="Home Sales Tracker" Height="550" Width="760" Loaded="Window_Loaded" Closing="Window_Closing">
     <DockPanel>
@@ -93,13 +93,17 @@
                 <!-- FOUND HOMES VIEW -->
                 <ListView Name="FoundHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
                     <Grid>
-                        <views:HomeDisplayView x:Name="HomeDisplayViewControl" />
+                        <views:HomesDisplayView x:Name="HomeDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND HOMES FOR SALE VIEW -->
                 <ListView Name="FoundHomesForSaleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
-                    <ListView.View>
+                    <Grid>
+                        <views:HomesForSaleDisplayView x:Name="HomesForSaleDisplayViewControl" />
+                    </Grid>
+                </ListView>
+                <!--<ListView.View>
                         <GridView>
                             <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
                                 <GridViewColumn.HeaderContainerStyle>
@@ -152,7 +156,7 @@
                             </GridViewColumn>
                         </GridView>
                     </ListView.View>
-                </ListView>
+                </ListView>-->
 
                 <!-- FOUND SOLD HOMES VIEW -->
                 <ListView Name="FoundSoldHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
