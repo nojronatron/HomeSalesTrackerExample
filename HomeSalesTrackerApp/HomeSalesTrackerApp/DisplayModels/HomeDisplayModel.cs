@@ -7,6 +7,13 @@
         public string City { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
+        public string ZipCode
+        {
+            get
+            {
+                return $"{Zip.Substring(0, 5)}-{Zip.Substring(5, 4)}";
+            }
+        }
 
         public override string ToString()
         {

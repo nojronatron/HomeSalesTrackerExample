@@ -2,7 +2,7 @@
 using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
 using HomeSalesTrackerApp.ReportWindows;
-
+using HomeSalesTrackerApp.ViewModels;
 using HSTDataLayer;
 using HSTDataLayer.Helpers;
 
@@ -24,8 +24,6 @@ namespace HomeSalesTrackerApp
         public static PeopleCollection<Person> peopleCollection = null;
         public static HomeSalesCollection homeSalesCollection = null;
         public static RealEstateCosCollection reCosCollection = null;
-
-        public static Person NewPersonAddedToCollection { get; set; }
 
         public MainWindow()
         {
@@ -49,11 +47,6 @@ namespace HomeSalesTrackerApp
             }
 
             logger.Flush();
-        }
-
-        public static void AlertPersonAddedToCollection(Person p)
-        {
-            NewPersonAddedToCollection = p;
         }
 
         private static void InitializeCollections()
@@ -157,18 +150,9 @@ namespace HomeSalesTrackerApp
         {
             ClearSearchResultsViews();
             var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-            List<Home> listResults = HomeSearchHelper.SearchHomeItems(formattedSearchTerms);
-
-            if (listResults.Count < 1)
-            {
-                DisplayZeroResultsMessage();
-                return;
-            }
-
-            FoundHomesView.ItemsSource = listResults;
+            var homeDisplayViewModel = new HomeDisplayViewModel(formattedSearchTerms);
+            DataContext = homeDisplayViewModel;
             FoundHomesView.Visibility = Visibility.Visible;
-            GetItemDetailsButton.IsEnabled = true;
-            DisplayStatusMessage($"Found { listResults.Count } Homes. Select an entry and click Get Item Details button for more information.");
 
         }
 
@@ -812,12 +796,8 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                //  var selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
-                //  Home hfsHome = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
                 var hfsHome = FoundHomesView.SelectedItem as Home;
                 List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
-                //  hfsHome.HomeSales = hfsHomesales;
-
                 var homeUpdaterWindow = new HomeUpdaterWindow();
                 homeUpdaterWindow.UpdateType = "PUTONMARKET";
                 homeUpdaterWindow.UpdateAgent = new Agent();
