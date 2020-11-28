@@ -113,57 +113,14 @@
 
                 <!-- FOUND PEOPLE VIEW -->
                 <ListView Name="FoundPeopleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding PersonID}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="First Name" Width="100" DisplayMemberBinding="{Binding FirstName}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Last Name" Width="100" DisplayMemberBinding="{Binding LastName}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Phone" Width="100" DisplayMemberBinding="{Binding Phone}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="EMail" Width="160" DisplayMemberBinding="{Binding Email}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Type" Width="70" DisplayMemberBinding="{Binding PersonType}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+                    <Grid>
+                        <views:PeopleDisplayView x:Name="PeopleDisplayViewControl" />
+                    </Grid>
                 </ListView>
 
             </Grid>
             <StackPanel Grid.Column="7" VerticalAlignment="Stretch">
-                <Button x:Name="GetItemDetailsButton" Content="Get Item Details" Margin="10, 7" Height="25" Click="GetItemDetailsButton_Click"  ToolTip="Select an item then click here to get more information about the selected item." />
+                <!--<Button x:Name="GetItemDetailsButton" Content="Get Item Details" Margin="10, 7" Height="25" Click="GetItemDetailsButton_Click"  ToolTip="Select an item then click here to get more information about the selected item." />-->
                 <Button x:Name="clearButton" Content="Clear Screen" Margin="10, 7" Height="25" Click="ClearFieldsButton_Click" ToolTip="Clear search results." />
                 <Button x:Name="closeButton" Content="Exit" Margin="10, 7" Height="25" VerticalAlignment="Bottom" Click="CloseButton_Click" ToolTip="Exit Home Sales Tracker." />
             </StackPanel>

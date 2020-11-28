@@ -159,7 +159,7 @@ namespace HomeSalesTrackerApp
             var homesForSaleDisplayViewModel = new HomesForSaleDisplayViewModel(formattedSearchTerms);
             DataContext = homesForSaleDisplayViewModel;
             FoundHomesForSaleView.Visibility = Visibility.Visible;
-                
+
         }
 
         /// <summary>
@@ -421,315 +421,315 @@ namespace HomeSalesTrackerApp
             logger.Flush();
         }
 
-        private void GetItemDetailsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var objectType = new StringBuilder();
-            var objectContents = new StringBuilder();
+        //private void GetItemDetailsButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var objectType = new StringBuilder();
+        //    var objectContents = new StringBuilder();
 
-            try
-            {
-                if (FoundHomesView.Visibility == Visibility.Visible)
-                {
-                    //Home selectedHome = FoundHomesView.SelectedItem as Home;
+        //    try
+        //    {
+        //        if (FoundHomesView.Visibility == Visibility.Visible)
+        //        {
+        //            //Home selectedHome = FoundHomesView.SelectedItem as Home;
 
-                    //if (selectedHome == null)
-                    //{
-                    //    DisplayStatusMessage("Select an item in the results before clicking the button.");
-                    //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
-                    //    logger.Flush();
-                    //    return;
-                    //}
+        //            //if (selectedHome == null)
+        //            //{
+        //            //    DisplayStatusMessage("Select an item in the results before clicking the button.");
+        //            //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
+        //            //    logger.Flush();
+        //            //    return;
+        //            //}
 
-                    //objectType.Append(selectedHome.GetType().ToString());
-                    //objectContents.Append(selectedHome.ToString());
+        //            //objectType.Append(selectedHome.GetType().ToString());
+        //            //objectContents.Append(selectedHome.ToString());
 
-                    //var homeMarketData = (from hfs in selectedHome.HomeSales
-                    //                      where hfs.MarketDate != null &&
-                    //                      hfs.SoldDate == null
-                    //                      select hfs).FirstOrDefault();
+        //            //var homeMarketData = (from hfs in selectedHome.HomeSales
+        //            //                      where hfs.MarketDate != null &&
+        //            //                      hfs.SoldDate == null
+        //            //                      select hfs).FirstOrDefault();
 
-                    //PersonModel ownerPerson = (from p in peopleCollection
-                    //                      where p.PersonID == selectedHome.OwnerID
-                    //                      select new PersonModel()
-                    //                      {
-                    //                          PersonID = p.PersonID,
-                    //                          FirstName = p.FirstName,
-                    //                          LastName = p.LastName,
-                    //                          Phone = p.Phone,
-                    //                          Email = p.Email
-                    //                      }).FirstOrDefault();
+        //            //PersonModel ownerPerson = (from p in peopleCollection
+        //            //                      where p.PersonID == selectedHome.OwnerID
+        //            //                      select new PersonModel()
+        //            //                      {
+        //            //                          PersonID = p.PersonID,
+        //            //                          FirstName = p.FirstName,
+        //            //                          LastName = p.LastName,
+        //            //                          Phone = p.Phone,
+        //            //                          Email = p.Email
+        //            //                      }).FirstOrDefault();
 
-                    //string preferredLender = selectedHome.Owner.PreferredLender;
+        //            //string preferredLender = selectedHome.Owner.PreferredLender;
 
-                    //OwnerModel ownerData = new OwnerModel()
-                    //{
-                    //    OwnerID = selectedHome.OwnerID,
-                    //    FirstName = ownerPerson.FirstName,
-                    //    LastName = ownerPerson.LastName,
-                    //    Phone = ownerPerson.Phone,
-                    //    Email = ownerPerson.Email,
-                    //    PreferredLender = preferredLender
-                    //};
+        //            //OwnerModel ownerData = new OwnerModel()
+        //            //{
+        //            //    OwnerID = selectedHome.OwnerID,
+        //            //    FirstName = ownerPerson.FirstName,
+        //            //    LastName = ownerPerson.LastName,
+        //            //    Phone = ownerPerson.Phone,
+        //            //    Email = ownerPerson.Email,
+        //            //    PreferredLender = preferredLender
+        //            //};
 
-                    //HomeDisplayDetailModel selectedHomeDetails = new HomeDisplayDetailModel()
-                    //{
-                    //    HomeID = selectedHome.HomeID,
-                    //    Address = selectedHome.Address,
-                    //    City = selectedHome.City,
-                    //    State = selectedHome.State,
-                    //    Zip = selectedHome.Zip,
-                    //    MarketDate = homeMarketData?.MarketDate,
-                    //    owner = ownerData
-                    //};
+        //            //HomeDisplayDetailModel selectedHomeDetails = new HomeDisplayDetailModel()
+        //            //{
+        //            //    HomeID = selectedHome.HomeID,
+        //            //    Address = selectedHome.Address,
+        //            //    City = selectedHome.City,
+        //            //    State = selectedHome.State,
+        //            //    Zip = selectedHome.Zip,
+        //            //    MarketDate = homeMarketData?.MarketDate,
+        //            //    owner = ownerData
+        //            //};
 
-                    //MessageBox.Show($"{ selectedHomeDetails.ToStackedString() }");
-                    //FoundHomesView.SelectedIndex = -1;
-                }
+        //            //MessageBox.Show($"{ selectedHomeDetails.ToStackedString() }");
+        //            //FoundHomesView.SelectedIndex = -1;
+        //        }
 
-                if (FoundHomesForSaleView.Visibility == Visibility.Visible)
-                {
-                    //HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+        //        if (FoundHomesForSaleView.Visibility == Visibility.Visible)
+        //        {
+        //            //HomeForSaleModel selectedHfs = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
 
-                    //if (selectedHfs == null)
-                    //{
-                    //    DisplayStatusMessage("Select an item in the results before clicking the button.");
-                    //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
-                    //    logger.Flush();
-                    //    return;
-                    //}
+        //            //if (selectedHfs == null)
+        //            //{
+        //            //    DisplayStatusMessage("Select an item in the results before clicking the button.");
+        //            //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
+        //            //    logger.Flush();
+        //            //    return;
+        //            //}
 
-                    //objectType.Append(selectedHfs.GetType().ToString());
-                    //objectContents.Append(selectedHfs.ToString());
+        //            //objectType.Append(selectedHfs.GetType().ToString());
+        //            //objectContents.Append(selectedHfs.ToString());
 
-                    //var homeForSaleDetails = new HomeForSaleDetailModel();
-                    //homeForSaleDetails = (from hfs in homeSalesCollection
-                    //                      where hfs.HomeID == selectedHfs.HomeID &&
-                    //                      hfs.MarketDate == selectedHfs.MarketDate
-                    //                      join h in homesCollection on hfs.HomeID equals h.HomeID
-                    //                      join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
-                    //                      join o in peopleCollection on h.OwnerID equals o.PersonID
-                    //                      join a in peopleCollection on hfs.AgentID equals a.PersonID
-                    //                      select new HomeForSaleDetailModel
-                    //                      {
-                    //                          HomeID = h.HomeID,
-                    //                          Address = h.Address,
-                    //                          City = h.City,
-                    //                          State = h.State,
-                    //                          Zip = h.Zip,
-                    //                          SaleAmount = hfs.SaleAmount,
-                    //                          MarketDate = hfs.MarketDate,
-                    //                          OwnerFirstName = o.FirstName,
-                    //                          OwnerLastName = o.LastName,
-                    //                          PreferredLender = h.Owner.PreferredLender,
-                    //                          AgentFirstName = a.FirstName,
-                    //                          AgentLastName = a.LastName,
-                    //                          CommissionPercent = hfs.Agent.CommissionPercent,
-                    //                          RecoName = reco.CompanyName,
-                    //                          RecoPhone = reco.Phone,
-                    //                      }).FirstOrDefault();
+        //            //var homeForSaleDetails = new HomeForSaleDetailModel();
+        //            //homeForSaleDetails = (from hfs in homeSalesCollection
+        //            //                      where hfs.HomeID == selectedHfs.HomeID &&
+        //            //                      hfs.MarketDate == selectedHfs.MarketDate
+        //            //                      join h in homesCollection on hfs.HomeID equals h.HomeID
+        //            //                      join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
+        //            //                      join o in peopleCollection on h.OwnerID equals o.PersonID
+        //            //                      join a in peopleCollection on hfs.AgentID equals a.PersonID
+        //            //                      select new HomeForSaleDetailModel
+        //            //                      {
+        //            //                          HomeID = h.HomeID,
+        //            //                          Address = h.Address,
+        //            //                          City = h.City,
+        //            //                          State = h.State,
+        //            //                          Zip = h.Zip,
+        //            //                          SaleAmount = hfs.SaleAmount,
+        //            //                          MarketDate = hfs.MarketDate,
+        //            //                          OwnerFirstName = o.FirstName,
+        //            //                          OwnerLastName = o.LastName,
+        //            //                          PreferredLender = h.Owner.PreferredLender,
+        //            //                          AgentFirstName = a.FirstName,
+        //            //                          AgentLastName = a.LastName,
+        //            //                          CommissionPercent = hfs.Agent.CommissionPercent,
+        //            //                          RecoName = reco.CompanyName,
+        //            //                          RecoPhone = reco.Phone,
+        //            //                      }).FirstOrDefault();
 
-                    //MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
-                    //FoundHomesForSaleView.SelectedIndex = -1;
-                }
+        //            //MessageBox.Show($"{ homeForSaleDetails.ToStackedString() }");
+        //            //FoundHomesForSaleView.SelectedIndex = -1;
+        //        }
 
-                if (FoundSoldHomesView.Visibility == Visibility.Visible)
-                {
-                    //SoldHomeModel selectedSh = FoundSoldHomesView.SelectedItem as SoldHomeModel;
+        //        if (FoundSoldHomesView.Visibility == Visibility.Visible)
+        //        {
+        //            //SoldHomeModel selectedSh = FoundSoldHomesView.SelectedItem as SoldHomeModel;
 
-                    //if (selectedSh == null)
-                    //{
-                    //    DisplayStatusMessage("Select an item in the results before clicking the button.");
-                    //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
-                    //    logger.Flush();
-                    //    return;
-                    //}
+        //            //if (selectedSh == null)
+        //            //{
+        //            //    DisplayStatusMessage("Select an item in the results before clicking the button.");
+        //            //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
+        //            //    logger.Flush();
+        //            //    return;
+        //            //}
 
-                    //objectType.Append(selectedSh.GetType().ToString());
-                    //objectContents.Append(selectedSh.ToString());
+        //            //objectType.Append(selectedSh.GetType().ToString());
+        //            //objectContents.Append(selectedSh.ToString());
 
-                    //var soldHomeDetails = new SoldHomeDetailModel();
-                    //soldHomeDetails = (from hfs in homeSalesCollection
-                    //                   where hfs.HomeID == selectedSh.HomeID &&
-                    //                   hfs.SoldDate == selectedSh.SoldDate
-                    //                   join h in homesCollection on hfs.HomeID equals h.HomeID
-                    //                   join o in peopleCollection on h.OwnerID equals o.PersonID
-                    //                   join a in peopleCollection on hfs.AgentID equals a.PersonID
-                    //                   join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
-                    //                   select new SoldHomeDetailModel
-                    //                   {
-                    //                       HomeID = h.HomeID,
-                    //                       Address = h.Address,
-                    //                       City = h.City,
-                    //                       State = h.State,
-                    //                       Zip = h.Zip,
-                    //                       SaleAmount = hfs.SaleAmount,
-                    //                       MarketDate = hfs.MarketDate,
-                    //                       OwnerFirstName = o.FirstName,
-                    //                       OwnerLastName = o.LastName,
-                    //                       PreferredLender = h.Owner.PreferredLender,
-                    //                       AgentFirstName = a.FirstName,
-                    //                       AgentLastName = a.LastName,
-                    //                       CommissionPercent = hfs.Agent.CommissionPercent,
-                    //                       RecoName = reco.CompanyName,
-                    //                       RecoPhone = reco.Phone,
-                    //                       SoldDate = hfs.SoldDate
-                    //                   }).FirstOrDefault();
+        //            //var soldHomeDetails = new SoldHomeDetailModel();
+        //            //soldHomeDetails = (from hfs in homeSalesCollection
+        //            //                   where hfs.HomeID == selectedSh.HomeID &&
+        //            //                   hfs.SoldDate == selectedSh.SoldDate
+        //            //                   join h in homesCollection on hfs.HomeID equals h.HomeID
+        //            //                   join o in peopleCollection on h.OwnerID equals o.PersonID
+        //            //                   join a in peopleCollection on hfs.AgentID equals a.PersonID
+        //            //                   join reco in reCosCollection on hfs.CompanyID equals reco.CompanyID
+        //            //                   select new SoldHomeDetailModel
+        //            //                   {
+        //            //                       HomeID = h.HomeID,
+        //            //                       Address = h.Address,
+        //            //                       City = h.City,
+        //            //                       State = h.State,
+        //            //                       Zip = h.Zip,
+        //            //                       SaleAmount = hfs.SaleAmount,
+        //            //                       MarketDate = hfs.MarketDate,
+        //            //                       OwnerFirstName = o.FirstName,
+        //            //                       OwnerLastName = o.LastName,
+        //            //                       PreferredLender = h.Owner.PreferredLender,
+        //            //                       AgentFirstName = a.FirstName,
+        //            //                       AgentLastName = a.LastName,
+        //            //                       CommissionPercent = hfs.Agent.CommissionPercent,
+        //            //                       RecoName = reco.CompanyName,
+        //            //                       RecoPhone = reco.Phone,
+        //            //                       SoldDate = hfs.SoldDate
+        //            //                   }).FirstOrDefault();
 
-                    //MessageBox.Show($"{ soldHomeDetails.ToStackedString() }");
-                    //FoundSoldHomesView.SelectedIndex = -1;
-                }
+        //            //MessageBox.Show($"{ soldHomeDetails.ToStackedString() }");
+        //            //FoundSoldHomesView.SelectedIndex = -1;
+        //        }
 
-                if (FoundPeopleView.Visibility == Visibility.Visible)
-                {
-                    PersonModel foundPerson = FoundPeopleView.SelectedItem as PersonModel;
-                    Person foundPersonFull = peopleCollection.FirstOrDefault(p => p.PersonID == foundPerson.PersonID);
+        //        if (FoundPeopleView.Visibility == Visibility.Visible)
+        //        {
+        //            //PersonModel foundPerson = FoundPeopleView.SelectedItem as PersonModel;
+        //            //Person foundPersonFull = peopleCollection.FirstOrDefault(p => p.PersonID == foundPerson.PersonID);
 
-                    if (foundPerson == null)
-                    {
-                        DisplayStatusMessage("Select an item in the results before clicking the button.");
-                        logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
-                        logger.Flush();
-                        return;
-                    }
+        //            //if (foundPerson == null)
+        //            //{
+        //            //    DisplayStatusMessage("Select an item in the results before clicking the button.");
+        //            //    logger.Data("Get Item Details button", "No item selected in UI before clicking GID button.");
+        //            //    logger.Flush();
+        //            //    return;
+        //            //}
 
-                    objectType.Append(foundPerson.GetType().ToString());
-                    objectContents.Append(foundPerson.ToString());
+        //            //objectType.Append(foundPerson.GetType().ToString());
+        //            //objectContents.Append(foundPerson.ToString());
 
-                    if (foundPerson.PersonType == new BuyerModel().PersonType)
-                    {
-                        List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
-                        purchasedHomes = (from hfs in homeSalesCollection
-                                          where hfs.BuyerID == foundPerson.PersonID
-                                          join h in homesCollection on hfs.HomeID equals h.HomeID
-                                          select new SoldHomeModel
-                                          {
-                                              HomeID = h.HomeID,
-                                              Address = h.Address,
-                                              City = h.City,
-                                              State = h.State,
-                                              Zip = h.Zip,
-                                              SaleAmount = hfs.SaleAmount,
-                                              SoldDate = hfs.SoldDate
-                                          }).ToList();
+        //            //if (foundPerson.PersonType == new BuyerModel().PersonType)
+        //            //{
+        //            //    List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
+        //            //    purchasedHomes = (from hfs in homeSalesCollection
+        //            //                      where hfs.BuyerID == foundPerson.PersonID
+        //            //                      join h in homesCollection on hfs.HomeID equals h.HomeID
+        //            //                      select new SoldHomeModel
+        //            //                      {
+        //            //                          HomeID = h.HomeID,
+        //            //                          Address = h.Address,
+        //            //                          City = h.City,
+        //            //                          State = h.State,
+        //            //                          Zip = h.Zip,
+        //            //                          SaleAmount = hfs.SaleAmount,
+        //            //                          SoldDate = hfs.SoldDate
+        //            //                      }).ToList();
 
-                        var buyerPerson = (from hfs in homeSalesCollection
-                                           where hfs.BuyerID == foundPerson.PersonID
-                                           select new BuyerModel
-                                           {
-                                               PersonID = foundPersonFull.PersonID,
-                                               FirstName = foundPersonFull.FirstName,
-                                               LastName = foundPersonFull.LastName,
-                                               Phone = foundPersonFull.Phone,
-                                               Email = foundPersonFull.Email ?? "- not supplied -",
-                                               PersonType = foundPerson.PersonType,
-                                               CreditRating = hfs.Buyer.CreditRating,
-                                               PurchasedHomes = purchasedHomes
-                                           }).FirstOrDefault();
+        //            //    var buyerPerson = (from hfs in homeSalesCollection
+        //            //                       where hfs.BuyerID == foundPerson.PersonID
+        //            //                       select new BuyerModel
+        //            //                       {
+        //            //                           PersonID = foundPersonFull.PersonID,
+        //            //                           FirstName = foundPersonFull.FirstName,
+        //            //                           LastName = foundPersonFull.LastName,
+        //            //                           Phone = foundPersonFull.Phone,
+        //            //                           Email = foundPersonFull.Email ?? "- not supplied -",
+        //            //                           PersonType = foundPerson.PersonType,
+        //            //                           CreditRating = hfs.Buyer.CreditRating,
+        //            //                           PurchasedHomes = purchasedHomes
+        //            //                       }).FirstOrDefault();
 
-                        MessageBox.Show(buyerPerson.ToStackedString());
-                    }
+        //            //    MessageBox.Show(buyerPerson.ToStackedString());
+        //            //}
 
-                    if (foundPerson.PersonType == new OwnerModel().PersonType)
-                    {
-                        List<HomeDisplayModel> ownedHomes = new List<HomeDisplayModel>();
-                        ownedHomes = (from h in homesCollection
-                                      where h.OwnerID == foundPerson.PersonID
-                                      select new HomeDisplayModel
-                                      {
-                                          HomeID = h.HomeID,
-                                          Address = h.Address,
-                                          City = h.City,
-                                          State = h.State,
-                                          Zip = h.Zip
-                                      }).ToList();
+        //            //if (foundPerson.PersonType == new OwnerModel().PersonType)
+        //            //{
+        //            //    List<HomeDisplayModel> ownedHomes = new List<HomeDisplayModel>();
+        //            //    ownedHomes = (from h in homesCollection
+        //            //                  where h.OwnerID == foundPerson.PersonID
+        //            //                  select new HomeDisplayModel
+        //            //                  {
+        //            //                      HomeID = h.HomeID,
+        //            //                      Address = h.Address,
+        //            //                      City = h.City,
+        //            //                      State = h.State,
+        //            //                      Zip = h.Zip
+        //            //                  }).ToList();
 
-                        OwnerModel ownerPerson = (from p in peopleCollection
-                                           join h in homesCollection on p.PersonID equals h.OwnerID
-                                           where p.PersonID == foundPerson.PersonID
-                                           select new OwnerModel
-                                           {
-                                               PreferredLender = p.Owner.PreferredLender,
-                                               PersonID = foundPersonFull.PersonID,
-                                               FirstName = foundPersonFull.FirstName,
-                                               LastName = foundPersonFull.LastName,
-                                               Phone = foundPersonFull.Phone,
-                                               Email = foundPersonFull.Email ?? "- not supplied -",
-                                               PersonType = foundPerson.PersonType,
-                                               OwnerID = foundPersonFull.PersonID,
-                                               OwnedHomes = ownedHomes
-                                           }).FirstOrDefault();
+        //            //    OwnerModel ownerPerson = (from p in peopleCollection
+        //            //                       join h in homesCollection on p.PersonID equals h.OwnerID
+        //            //                       where p.PersonID == foundPerson.PersonID
+        //            //                       select new OwnerModel
+        //            //                       {
+        //            //                           PreferredLender = p.Owner.PreferredLender,
+        //            //                           PersonID = foundPersonFull.PersonID,
+        //            //                           FirstName = foundPersonFull.FirstName,
+        //            //                           LastName = foundPersonFull.LastName,
+        //            //                           Phone = foundPersonFull.Phone,
+        //            //                           Email = foundPersonFull.Email ?? "- not supplied -",
+        //            //                           PersonType = foundPerson.PersonType,
+        //            //                           OwnerID = foundPersonFull.PersonID,
+        //            //                           OwnedHomes = ownedHomes
+        //            //                       }).FirstOrDefault();
 
-                        MessageBox.Show(ownerPerson.ToStackedString());
-                    }
+        //            //    MessageBox.Show(ownerPerson.ToStackedString());
+        //            //}
 
-                    if (foundPerson.PersonType == new AgentModel().PersonType)
-                    {
-                        List<SoldHomeModel> soldHomes = new List<SoldHomeModel>();
-                        soldHomes = (from hfs in homeSalesCollection
-                                     where hfs.AgentID == foundPerson.PersonID &&
-                                     hfs.SoldDate != null
-                                     join h in homesCollection on hfs.HomeID equals h.HomeID
-                                     select new SoldHomeModel
-                                     {
-                                         HomeID = h.HomeID,
-                                         Address = h.Address,
-                                         City = h.City,
-                                         State = h.State,
-                                         Zip = h.Zip,
-                                         SaleAmount = hfs.SaleAmount,
-                                         SoldDate = hfs.SoldDate
-                                     }).ToList();
+        //            //if (foundPerson.PersonType == new AgentModel().PersonType)
+        //            //{
+        //            //    List<SoldHomeModel> soldHomes = new List<SoldHomeModel>();
+        //            //    soldHomes = (from hfs in homeSalesCollection
+        //            //                 where hfs.AgentID == foundPerson.PersonID &&
+        //            //                 hfs.SoldDate != null
+        //            //                 join h in homesCollection on hfs.HomeID equals h.HomeID
+        //            //                 select new SoldHomeModel
+        //            //                 {
+        //            //                     HomeID = h.HomeID,
+        //            //                     Address = h.Address,
+        //            //                     City = h.City,
+        //            //                     State = h.State,
+        //            //                     Zip = h.Zip,
+        //            //                     SaleAmount = hfs.SaleAmount,
+        //            //                     SoldDate = hfs.SoldDate
+        //            //                 }).ToList();
 
-                        List<HomeForSaleModel> homesForSale = new List<HomeForSaleModel>();
-                        homesForSale = (from hfs in homeSalesCollection
-                                        where hfs.AgentID == foundPersonFull.PersonID &&
-                                        hfs.SoldDate == null
-                                        join h in homesCollection on hfs.HomeID equals h.HomeID
-                                        select new HomeForSaleModel
-                                        {
-                                            HomeID = hfs.HomeID,
-                                            Address = h.Address,
-                                            City = h.City,
-                                            State = h.State,
-                                            Zip = h.Zip,
-                                            MarketDate = hfs.MarketDate,
-                                            SaleAmount = hfs.SaleAmount
-                                        }).ToList();
+        //            //    List<HomeForSaleModel> homesForSale = new List<HomeForSaleModel>();
+        //            //    homesForSale = (from hfs in homeSalesCollection
+        //            //                    where hfs.AgentID == foundPersonFull.PersonID &&
+        //            //                    hfs.SoldDate == null
+        //            //                    join h in homesCollection on hfs.HomeID equals h.HomeID
+        //            //                    select new HomeForSaleModel
+        //            //                    {
+        //            //                        HomeID = hfs.HomeID,
+        //            //                        Address = h.Address,
+        //            //                        City = h.City,
+        //            //                        State = h.State,
+        //            //                        Zip = h.Zip,
+        //            //                        MarketDate = hfs.MarketDate,
+        //            //                        SaleAmount = hfs.SaleAmount
+        //            //                    }).ToList();
 
-                        var agentPerson = (from hfs in homeSalesCollection
-                                           join re in reCosCollection on hfs.CompanyID equals re.CompanyID
-                                           select new AgentModel
-                                           {
-                                               PersonID = foundPersonFull.PersonID,
-                                               FirstName = foundPersonFull.FirstName,
-                                               LastName = foundPersonFull.LastName,
-                                               Phone = foundPersonFull.Phone,
-                                               Email = foundPersonFull.Email ?? "- not supplied -",
-                                               PersonType = foundPerson.PersonType,
-                                               CommissionRate = hfs.Agent.CommissionPercent,
-                                               HomesOnMarket = homesForSale,
-                                               SoldHomes = soldHomes,
-                                               RECoID = re.CompanyID,
-                                               RECompanyName = re.CompanyName,
-                                               RECoPhone = re.Phone
-                                           }).FirstOrDefault();
+        //            //    var agentPerson = (from hfs in homeSalesCollection
+        //            //                       join re in reCosCollection on hfs.CompanyID equals re.CompanyID
+        //            //                       select new AgentModel
+        //            //                       {
+        //            //                           PersonID = foundPersonFull.PersonID,
+        //            //                           FirstName = foundPersonFull.FirstName,
+        //            //                           LastName = foundPersonFull.LastName,
+        //            //                           Phone = foundPersonFull.Phone,
+        //            //                           Email = foundPersonFull.Email ?? "- not supplied -",
+        //            //                           PersonType = foundPerson.PersonType,
+        //            //                           CommissionRate = hfs.Agent.CommissionPercent,
+        //            //                           HomesOnMarket = homesForSale,
+        //            //                           SoldHomes = soldHomes,
+        //            //                           RECoID = re.CompanyID,
+        //            //                           RECompanyName = re.CompanyName,
+        //            //                           RECoPhone = re.Phone
+        //            //                       }).FirstOrDefault();
 
-                        MessageBox.Show($"{ agentPerson.ToStackedString() }");
+        //            //    MessageBox.Show($"{ agentPerson.ToStackedString() }");
 
-                    }
+        //            //}
 
-                    FoundPeopleView.SelectedIndex = -1;
-                }
-            }
-            catch
-            {
-                DisplayStatusMessage($"Selected item did not have details to show.");
-                logger.Data($"GetItemDetails", "Problem with selected object (next entry will have details)...");
-                logger.Data(objectType.ToString(), objectContents.ToString());
-                logger.Flush();
-            }
+        //            //FoundPeopleView.SelectedIndex = -1;
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        DisplayStatusMessage($"Selected item did not have details to show.");
+        //        logger.Data($"GetItemDetails", "Problem with selected object (next entry will have details)...");
+        //        logger.Data(objectType.ToString(), objectContents.ToString());
+        //        logger.Flush();
+        //    }
 
-        }
+        //}
 
         private void MenuUpdateHome_Click(object sender, RoutedEventArgs e)
         {
@@ -900,32 +900,15 @@ namespace HomeSalesTrackerApp
 
         }
 
-        private void DisplayPeopleSearchResults()
-        {
-            ClearSearchResultsViews();
-            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
-            var peopleSearchtool = new PeopleSearchTool(formattedSearchTerms);
-            List<PersonModel> viewResults = peopleSearchtool.SearchResults;
-
-            if (viewResults == null)
-            {
-                DisplayZeroResultsMessage();
-                return;
-            }
-
-            FoundPeopleView.ItemsSource = viewResults;
-            FoundPeopleView.Visibility = Visibility.Visible;
-            DisplayStatusMessage($"Found { viewResults.Count } People. Select a result and click Details button for more information.");
-            GetItemDetailsButton.IsEnabled = true;
-
-        }
-
         private void MenuSearchPeople_Click(object sender, RoutedEventArgs e)
         {
             ClearSearchResultsViews();
-            DisplayPeopleSearchResults();
-        }
+            var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
+            var peopleDisplayViewModel = new PeopleDisplayViewModel(formattedSearchTerms);
+            DataContext = peopleDisplayViewModel;
+            FoundPeopleView.Visibility = Visibility.Visible;
 
+        }
         /// <summary>
         /// Throws an error for testing Exception handling and logging.
         /// </summary>

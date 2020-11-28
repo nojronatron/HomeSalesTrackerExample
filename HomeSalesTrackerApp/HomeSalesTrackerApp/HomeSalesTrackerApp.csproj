@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -122,9 +122,13 @@
     </Compile>
     <Compile Include="SearchResultViewModels\HomesDisplayViewModel.cs" />
     <Compile Include="SearchResultViewModels\HomesForSaleDisplayViewModel.cs" />
+    <Compile Include="SearchResultViewModels\PeopleDisplayViewModel.cs" />
     <Compile Include="SearchResultViewModels\SoldHomesDisplayViewModel.cs" />
     <Compile Include="SearchResultViews\HomesForSaleDisplayView.xaml.cs">
       <DependentUpon>HomesForSaleDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResultViews\PeopleDisplayView.xaml.cs">
+      <DependentUpon>PeopleDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SearchResultViews\SoldHomesDisplayView.xaml.cs">
       <DependentUpon>SoldHomesDisplayView.xaml</DependentUpon>
@@ -197,6 +201,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SearchResultViews\HomesForSaleDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchResultViews\PeopleDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
