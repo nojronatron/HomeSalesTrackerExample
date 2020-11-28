@@ -122,8 +122,12 @@
     </Compile>
     <Compile Include="SearchResultViewModels\HomesDisplayViewModel.cs" />
     <Compile Include="SearchResultViewModels\HomesForSaleDisplayViewModel.cs" />
+    <Compile Include="SearchResultViewModels\SoldHomesDisplayViewModel.cs" />
     <Compile Include="SearchResultViews\HomesForSaleDisplayView.xaml.cs">
       <DependentUpon>HomesForSaleDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResultViews\SoldHomesDisplayView.xaml.cs">
+      <DependentUpon>SoldHomesDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AgentsReportView.xaml.cs">
       <DependentUpon>AgentsReportView.xaml</DependentUpon>
@@ -193,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SearchResultViews\HomesForSaleDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchResultViews\SoldHomesDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

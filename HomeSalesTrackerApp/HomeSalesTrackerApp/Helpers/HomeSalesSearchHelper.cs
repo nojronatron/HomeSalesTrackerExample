@@ -114,31 +114,32 @@ namespace HomeSalesTrackerApp.Helpers
         {
             if (selectedHomeForSale != null)
             {
-                var homeForSaleDetails = (from hfs in MainWindow.homeSalesCollection
-                                          where hfs.HomeID == selectedHomeForSale.HomeID &&
-                                            hfs.MarketDate == selectedHomeForSale.MarketDate
-                                          join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
-                                          join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
-                                          join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
-                                          join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
-                                          select new HomeForSaleDetailModel
-                                          {
-                                              HomeID = h.HomeID,
-                                              Address = h.Address,
-                                              City = h.City,
-                                              State = h.State,
-                                              Zip = h.Zip,
-                                              SaleAmount = hfs.SaleAmount,
-                                              MarketDate = hfs.MarketDate,
-                                              OwnerFirstName = o.FirstName,
-                                              OwnerLastName = o.LastName,
-                                              PreferredLender = h.Owner.PreferredLender,
-                                              AgentFirstName = a.FirstName,
-                                              AgentLastName = a.LastName,
-                                              CommissionPercent = hfs.Agent.CommissionPercent,
-                                              RecoName = reco.CompanyName,
-                                              RecoPhone = reco.Phone,
-                                          }).FirstOrDefault();
+                var homeForSaleDetails = new HomeForSaleDetailModel();
+                homeForSaleDetails = (from hfs in MainWindow.homeSalesCollection
+                                      where hfs.HomeID == selectedHomeForSale.HomeID &&
+                                        hfs.MarketDate == selectedHomeForSale.MarketDate
+                                      join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                      join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
+                                      join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
+                                      join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
+                                      select new HomeForSaleDetailModel
+                                      {
+                                          HomeID = h.HomeID,
+                                          Address = h.Address,
+                                          City = h.City,
+                                          State = h.State,
+                                          Zip = h.Zip,
+                                          SaleAmount = hfs.SaleAmount,
+                                          MarketDate = hfs.MarketDate,
+                                          OwnerFirstName = o.FirstName,
+                                          OwnerLastName = o.LastName,
+                                          PreferredLender = h.Owner.PreferredLender,
+                                          AgentFirstName = a.FirstName,
+                                          AgentLastName = a.LastName,
+                                          CommissionPercent = hfs.Agent.CommissionPercent,
+                                          RecoName = reco.CompanyName,
+                                          RecoPhone = reco.Phone,
+                                      }).FirstOrDefault();
 
                 if (homeForSaleDetails != null)
                 {
@@ -149,5 +150,48 @@ namespace HomeSalesTrackerApp.Helpers
 
             return string.Empty;
         }
+
+        public static string GetSoldHomeItemDetails(SoldHomeModel selectedSoldHome)
+        {
+            if (selectedSoldHome != null)
+            {
+                var soldHomeDetails = new SoldHomeDetailModel();
+                soldHomeDetails = (from hfs in MainWindow.homeSalesCollection
+                                   where hfs.HomeID == selectedSoldHome.HomeID &&
+                                   hfs.SoldDate == selectedSoldHome.SoldDate
+                                   join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                   join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
+                                   join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
+                                   join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
+                                   select new SoldHomeDetailModel
+                                   {
+                                       HomeID = h.HomeID,
+                                       Address = h.Address,
+                                       City = h.City,
+                                       State = h.State,
+                                       Zip = h.Zip,
+                                       SaleAmount = hfs.SaleAmount,
+                                       MarketDate = hfs.MarketDate,
+                                       OwnerFirstName = o.FirstName,
+                                       OwnerLastName = o.LastName,
+                                       PreferredLender = h.Owner.PreferredLender,
+                                       AgentFirstName = a.FirstName,
+                                       AgentLastName = a.LastName,
+                                       CommissionPercent = hfs.Agent.CommissionPercent,
+                                       RecoName = reco.CompanyName,
+                                       RecoPhone = reco.Phone,
+                                       SoldDate = hfs.SoldDate
+                                   }).FirstOrDefault();
+
+                if (soldHomeDetails != null)
+                {
+                    return soldHomeDetails.ToStackedString();
+                }
+
+            }
+
+            return string.Empty;
+        }
+
     }
 }

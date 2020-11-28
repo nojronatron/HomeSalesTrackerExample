@@ -103,116 +103,12 @@
                         <views:HomesForSaleDisplayView x:Name="HomesForSaleDisplayViewControl" />
                     </Grid>
                 </ListView>
-                <!--<ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Address" Width="200" DisplayMemberBinding="{Binding Address}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="City" Width="100" DisplayMemberBinding="{Binding City}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="State" Width="35" DisplayMemberBinding="{Binding State}" >
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Zip Code" Width="100" DisplayMemberBinding="{Binding Zip}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Sales Amount" Width="50" DisplayMemberBinding="{Binding SaleAmount}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Market Date" Width="50" DisplayMemberBinding="{Binding MarketDate}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>-->
 
                 <!-- FOUND SOLD HOMES VIEW -->
                 <ListView Name="FoundSoldHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="ID" Width="20" DisplayMemberBinding="{Binding HomeID}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Address" Width="170" DisplayMemberBinding="{Binding Address}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="City" Width="100" DisplayMemberBinding="{Binding City}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="State" Width="35" DisplayMemberBinding="{Binding State}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Zip Code" Width="80" DisplayMemberBinding="{Binding Zip}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Sales Amount" Width="80" DisplayMemberBinding="{Binding SaleAmount}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Sold Date" Width="80" DisplayMemberBinding="{Binding SoldDate}">
-                                <GridViewColumn.HeaderContainerStyle>
-                                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    </Style>
-                                </GridViewColumn.HeaderContainerStyle>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+                    <Grid>
+                        <views:SoldHomesDisplayView x:Name="SoldHomesDisplayViewControl" />
+                    </Grid>
                 </ListView>
 
                 <!-- FOUND PEOPLE VIEW -->
