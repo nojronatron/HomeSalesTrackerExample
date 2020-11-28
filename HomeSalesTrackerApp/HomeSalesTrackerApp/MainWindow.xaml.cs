@@ -39,7 +39,6 @@ namespace HomeSalesTrackerApp
                 InitializeCollections();
                 logger.Data("MainWindow Loaded", "Database data loaded.");
                 DisplayStatusMessage("Database data loaded.");
-                GetItemDetailsButton.IsEnabled = false;
             }
             else
             {
@@ -89,14 +88,12 @@ namespace HomeSalesTrackerApp
         {
             ClearSearchTermsTextbox();
             ClearSearchResultsViews();
-            GetItemDetailsButton.IsEnabled = false;
             DisplayStatusMessage("Ready.");
         }
 
         private void ClearSearchTermsTextbox()
         {
             searchTermsTextbox.Text = string.Empty;
-            GetItemDetailsButton.IsEnabled = false;
         }
 
         private void ClearSearchResultsViews()
@@ -109,7 +106,6 @@ namespace HomeSalesTrackerApp
             FoundSoldHomesView.Visibility = Visibility.Hidden;
             FoundPeopleView.ItemsSource = null;
             FoundPeopleView.Visibility = Visibility.Hidden;
-            GetItemDetailsButton.IsEnabled = false;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

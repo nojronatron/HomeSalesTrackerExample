@@ -12,11 +12,12 @@ namespace HomeSalesTrackerApp.SearchResultViews
     public partial class SoldHomesDisplayView : UserControl
     {
         private bool DetailsWindowIsOpen { get; set; } = false;
+        private string DefaultButtonText = "Select a Sold Home then click here to see details.";
         public SoldHomesDisplayView()
         {
             InitializeComponent();
             DetailsWindowIsOpen = false;
-            GetDetailsButton.Content = "Select a Home then click here to see details.";
+            GetDetailsButton.Content = DefaultButtonText;
         }
 
         private void GetDetailsButton_Click(object sender, RoutedEventArgs e)
@@ -25,7 +26,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
             {
                 HomesForSaleDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
-                GetDetailsButton.Content = "Select a Home then click here to see details.";
+                GetDetailsButton.Content = DefaultButtonText;
                 return;
             }
 

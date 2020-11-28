@@ -1,19 +1,8 @@
 ﻿using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HomeSalesTrackerApp.SearchResultViews
 {
@@ -23,11 +12,12 @@ namespace HomeSalesTrackerApp.SearchResultViews
     public partial class HomesForSaleDisplayView : UserControl
     {
         private bool DetailsWindowIsOpen { get; set; } = false;
+        private string DefaultButtonText = "Select a Home For Sale then click here to see details.";
         public HomesForSaleDisplayView()
         {
             InitializeComponent();
             DetailsWindowIsOpen = false;
-            GetDetailsButton.Content = "Select a Home then click here to see details.";
+            GetDetailsButton.Content = DefaultButtonText;
         }
 
         private void GetDetailsButton_Click(object sender, RoutedEventArgs e)
@@ -36,7 +26,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
             {
                 HomesForSaleDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
-                GetDetailsButton.Content = "Select a Home then click here to see details.";
+                GetDetailsButton.Content = DefaultButtonText;
                 return;
             }
 
