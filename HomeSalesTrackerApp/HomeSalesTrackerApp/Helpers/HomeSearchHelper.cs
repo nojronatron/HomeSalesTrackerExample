@@ -1,4 +1,5 @@
-﻿using HSTDataLayer;
+﻿using HomeSalesTrackerApp.DisplayModels;
+using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,5 +39,45 @@ namespace HomeSalesTrackerApp.Helpers
             return searchResults;
         }
 
+        public static String GetHomeItemDetails(HomeDisplayModel selectedHome)
+        {
+            if (selectedHome != null)
+            {
+                DateTime? placeholder = null;
+                HomeDisplayDetailModel SelectedHomeDetail = null;
+                SelectedHomeDetail = (from hfs in MainWindow.homeSalesCollection
+                                      where hfs.HomeID == selectedHome.HomeID &&
+                                        hfs.MarketDate != null
+                                      join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                      join p in MainWindow.peopleCollection on h.OwnerID equals p.PersonID
+                                      select new HomeDisplayDetailModel
+                                      {
+                                          HomeID = h.HomeID,
+                                          Address = h.Address,
+                                          City = h.City,
+                                          State = h.State,
+                                          Zip = h.Zip,
+                                          MarketDate = (hfs.Buyer != null) ? placeholder : hfs.MarketDate,
+                                          owner = new OwnerModel
+                                          {
+                                              OwnerID = p.PersonID,
+                                              FirstName = p.FirstName,
+                                              LastName = p.LastName,
+                                              Phone = p.Phone,
+                                              Email = p.Email,
+                                              PreferredLender = p.Owner.PreferredLender
+                                          }
+                                      }).FirstOrDefault();
+
+                if (SelectedHomeDetail != null)
+                {
+                    return SelectedHomeDetail.ToStackedString();
+                }
+            }
+
+            return string.Empty;
+        }
+
     }
+
 }
