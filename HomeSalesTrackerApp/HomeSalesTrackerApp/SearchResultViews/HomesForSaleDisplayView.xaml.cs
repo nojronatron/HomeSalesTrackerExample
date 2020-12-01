@@ -30,7 +30,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 return;
             }
 
-            var selectedHomeForSale = DataGridItemsList.SelectedItem as HomeForSaleModel;
+            var selectedHomeForSale = FoundHomesForSaleDataGrid.SelectedItem as HomeForSaleModel;
 
             if (selectedHomeForSale != null)
             {

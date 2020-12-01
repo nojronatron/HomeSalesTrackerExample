@@ -30,7 +30,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 return;
             }
 
-            var selectedPerson = DataGridItemsList.SelectedItem as PersonModel;
+            var selectedPerson = FoundPeopleDataGrid.SelectedItem as PersonModel;
 
             if (selectedPerson != null)
             {

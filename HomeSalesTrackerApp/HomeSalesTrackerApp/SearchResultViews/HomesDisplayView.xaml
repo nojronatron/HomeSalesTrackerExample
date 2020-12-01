@@ -16,7 +16,7 @@
 
             <DataGrid ItemsSource="{Binding FoundHomes, Mode=OneWay}" CanUserAddRows="False" 
                   AutoGenerateColumns="False" TextBlock.TextAlignment="Center"
-                      Name="DataGridItemsList">
+                      Name="FoundHomesDataGrid">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home ID" Binding="{Binding HomeID}" />
                     <DataGridTextColumn Header="Address" Binding="{Binding Address}" />

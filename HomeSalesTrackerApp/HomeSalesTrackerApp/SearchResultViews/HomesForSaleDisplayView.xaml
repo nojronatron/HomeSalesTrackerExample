@@ -17,14 +17,14 @@
 
             <DataGrid ItemsSource="{Binding FoundHomesForSale, Mode=OneWay}" CanUserAddRows="False" 
                   AutoGenerateColumns="False" TextBlock.TextAlignment="Center"
-                      Name="DataGridItemsList">
+                      Name="FoundHomesForSaleDataGrid">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home ID" Binding="{Binding HomeID}" />
                     <DataGridTextColumn Header="Address" Binding="{Binding Address}" />
                     <DataGridTextColumn Header="City" Binding="{Binding City}" />
                     <DataGridTextColumn Header="State" Binding="{Binding State}" />
                     <DataGridTextColumn Header="Zip Code" Binding="{Binding ZipCode}" />
-                    <DataGridTextColumn Header="Sales Amount" Binding="{Binding SalesAmount, StringFormat=C}" />
+                    <DataGridTextColumn Header="Sales Amount" Binding="{Binding SaleAmount, StringFormat=C}" />
                     <DataGridTextColumn Header="Market Date" Binding="{Binding MarketDate, StringFormat=D}" />
                 </DataGrid.Columns>
             </DataGrid>

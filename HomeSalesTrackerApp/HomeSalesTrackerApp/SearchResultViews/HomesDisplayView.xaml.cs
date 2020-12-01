@@ -29,7 +29,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 return;
             }
 
-            var selectedHome = DataGridItemsList.SelectedItem as HomeDisplayModel;
+            var selectedHome = FoundHomesDataGrid.SelectedItem as HomeDisplayModel;
 
             if (selectedHome != null)
             {
