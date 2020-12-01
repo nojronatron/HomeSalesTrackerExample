@@ -27,6 +27,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomesForSaleDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
                 GetDetailsButton.Content = DefaultButtonText;
+                HomeForSaleBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -37,6 +38,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomesForSaleDetailsTextbox.Text = HomeSalesSearchHelper.GetHomeForSaleItemDetails(selectedHomeForSale);
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
+                HomeForSaleBorder.Visibility = Visibility.Visible;
             }
 
         }

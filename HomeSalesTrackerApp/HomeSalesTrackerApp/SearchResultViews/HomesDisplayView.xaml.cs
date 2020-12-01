@@ -26,6 +26,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomeDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
                 GetDetailsButton.Content = "Select a Home then click here to see details.";
+                HomeDetailsBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -36,6 +37,7 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomeDetailsTextbox.Text = HomeSearchHelper.GetHomeItemDetails(selectedHome);
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
+                HomeDetailsBorder.Visibility = Visibility.Visible;
             }
 
         }

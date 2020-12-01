@@ -16,7 +16,7 @@
 
             <DataGrid ItemsSource="{Binding FoundHomes, Mode=OneWay}" CanUserAddRows="False" 
                   AutoGenerateColumns="False" TextBlock.TextAlignment="Center"
-                      Name="FoundHomesDataGrid">
+                      Name="FoundHomesDataGrid" Style="{StaticResource BasicControlStyle}" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home ID" Binding="{Binding HomeID}" />
                     <DataGridTextColumn Header="Address" Binding="{Binding Address}" />
@@ -26,10 +26,10 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <Button x:Name="GetDetailsButton" 
+            <Button x:Name="GetDetailsButton" Style="{StaticResource DetailsButtonStyle}"
                     Click="GetDetailsButton_Click"  />
 
-            <Border BorderBrush="Black" BorderThickness="2" Background="LightGray" CornerRadius="20" Padding="4">
+            <Border x:Name="HomeDetailsBorder" Style="{StaticResource DetailsButtonBorderStyle}" >
             <TextBlock x:Name="HomeDetailsTextbox" Margin="10" >
             </TextBlock>
             </Border>
