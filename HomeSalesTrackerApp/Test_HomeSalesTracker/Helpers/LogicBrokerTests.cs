@@ -51,54 +51,156 @@ namespace HSTDataLayer.Tests
         [TestMethod()]
         public void GetPersonIntTest()
         {
-            int personID = 0;
-            LogicBroker.GetPerson(personID);
-            Assert.Fail();
+            var expectedPerson = new Person()
+            {
+                FirstName = "John",
+                LastName = "Smith",
+                Email = "jsmith@j.com",
+                Phone = "1112223333"
+            };
+
+            int personID = 1;
+            Person actualPerson = LogicBroker.GetPerson(personID);
+
+            bool areEqual = expectedPerson.Equals(actualPerson);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetPersonTest()
         {
-            string firstName = "";
-            string lastName = "";
-            LogicBroker.GetPerson(firstName, lastName);
-            Assert.Fail();
+            string firstName = "John";
+            string lastName = "Smith";
+
+            var expectedPerson = new Person()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = "jsmith@j.com",
+                Phone = "1112223333"
+            };
+
+            Person actualPerson = LogicBroker.GetPerson(firstName, lastName);
+
+            bool areEqual = expectedPerson.Equals(actualPerson);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetHomeTest()
         {
-            Assert.Fail();
+            var expectedHome = new Home()
+            {
+                Address = "23 Oak St.",
+                City = "Johnsonville",
+                State = "CA",
+                Zip = "955551111"
+            };
+
+            int homeID = 1;
+            Home actualHome = LogicBroker.GetHome(homeID);
+
+            bool areEqual = expectedHome.Equals(actualHome);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetHomeTest1()
         {
-            Assert.Fail();
+            var address = "23 Oak St.";
+            var zip = "955551111";
+
+            var expectedHome = new Home()
+            {
+                Address = address,
+                City = "Johnsonville",
+                State = "CA",
+                Zip = zip
+            };
+
+            Home actualHome = LogicBroker.GetHome(address, zip);
+
+            bool areEqual = expectedHome.Equals(actualHome);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetHomeSaleTest()
         {
-            Assert.Fail();
+            var expectedHomeSale = new HomeSale()
+            {
+                HomeID = 1,
+                SoldDate = new DateTime(2010, 03, 15, 00, 00, 00),
+                AgentID = 1,
+                SaleAmount = 335000m,
+                BuyerID = 1,
+                MarketDate = new DateTime(2015, 03, 01, 00, 00, 00),
+                CompanyID = 2
+            };
+
+            int homesaleID = 1;
+            var actualHomeSale = LogicBroker.GetHomeSale(homesaleID);
+
+            bool areEqual = expectedHomeSale.Equals(actualHomeSale);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetHomeSaleTest1()
         {
-            Assert.Fail();
+            var marketDate = new DateTime(2015, 03, 01, 00, 00, 00);
+            var saleAmount = 335000m;
+
+            var expectedHomeSale = new HomeSale()
+            {
+                SaleID = 1,
+                HomeID = 1,
+                SoldDate = new DateTime(2010, 03, 15, 00, 00, 00),
+                AgentID = 1,
+                SaleAmount = saleAmount,
+                BuyerID = 1,
+                MarketDate = marketDate,
+                CompanyID = 2
+            };
+
+            var actualHomeSale = LogicBroker.GetHomeSale(marketDate, saleAmount);
+
+            bool areEqual = expectedHomeSale.Equals(actualHomeSale);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetReCompanyTest()
         {
-            Assert.Fail();
+            int companyID = 1;
+            var expectedRECo = new RealEstateCompany()
+            {
+                CompanyID = companyID,
+                CompanyName = "ABC Real Estate"
+            };
+
+            var actualRECo = LogicBroker.GetReCompany(companyID);
+
+            bool areEqual = expectedRECo.Equals(actualRECo);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
         public void GetReCompanyTest1()
         {
-            Assert.Fail();
+            int companyID = 1;
+            string companyName = "ABC Real Estate";
+
+            var expectedRECo = new RealEstateCompany()
+            {
+                CompanyID = companyID,
+                CompanyName = companyName
+            };
+
+            var actualRECo = LogicBroker.GetReCompany(companyName);
+
+            bool areEqual = expectedRECo.Equals(actualRECo);
+            Assert.IsTrue(areEqual);
         }
 
         [TestMethod()]
