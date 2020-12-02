@@ -27,16 +27,18 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 PersonDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
                 GetDetailsButton.Content = DefaultButtonText;
+                PeopleDetailsBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            var selectedPerson = DataGridItemsList.SelectedItem as PersonModel;
+            var selectedPerson = FoundPeopleDataGrid.SelectedItem as PersonModel;
 
             if (selectedPerson != null)
             {
                 PersonDetailsTextbox.Text = PeopleSearchTool.GetPersonDetails(selectedPerson);
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
+                PeopleDetailsBorder.Visibility = Visibility.Visible;
             }
 
         }

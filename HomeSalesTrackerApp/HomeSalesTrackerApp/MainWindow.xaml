@@ -91,28 +91,28 @@
                 </StackPanel>
 
                 <!-- FOUND HOMES VIEW -->
-                <ListView Name="FoundHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
+                <ListView Name="FoundHomesView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
                         <views:HomesDisplayView x:Name="HomeDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND HOMES FOR SALE VIEW -->
-                <ListView Name="FoundHomesForSaleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
+                <ListView Name="FoundHomesForSaleView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
                         <views:HomesForSaleDisplayView x:Name="HomesForSaleDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND SOLD HOMES VIEW -->
-                <ListView Name="FoundSoldHomesView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
+                <ListView Name="FoundSoldHomesView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
                         <views:SoldHomesDisplayView x:Name="SoldHomesDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND PEOPLE VIEW -->
-                <ListView Name="FoundPeopleView" MinWidth="300" Grid.ColumnSpan="4" Grid.Row="1" Visibility="Hidden">
+                <ListView Name="FoundPeopleView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
                         <views:PeopleDisplayView x:Name="PeopleDisplayViewControl" />
                     </Grid>

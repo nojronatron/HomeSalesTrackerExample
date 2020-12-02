@@ -26,16 +26,18 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomeDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
                 GetDetailsButton.Content = "Select a Home then click here to see details.";
+                HomeDetailsBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            var selectedHome = DataGridItemsList.SelectedItem as HomeDisplayModel;
+            var selectedHome = FoundHomesDataGrid.SelectedItem as HomeDisplayModel;
 
             if (selectedHome != null)
             {
                 HomeDetailsTextbox.Text = HomeSearchHelper.GetHomeItemDetails(selectedHome);
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
+                HomeDetailsBorder.Visibility = Visibility.Visible;
             }
 
         }

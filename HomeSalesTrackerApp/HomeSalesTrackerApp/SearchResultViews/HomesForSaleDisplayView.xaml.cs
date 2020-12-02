@@ -27,16 +27,18 @@ namespace HomeSalesTrackerApp.SearchResultViews
                 HomesForSaleDetailsTextbox.Text = string.Empty;
                 DetailsWindowIsOpen = false;
                 GetDetailsButton.Content = DefaultButtonText;
+                HomeForSaleBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            var selectedHomeForSale = DataGridItemsList.SelectedItem as HomeForSaleModel;
+            var selectedHomeForSale = FoundHomesForSaleDataGrid.SelectedItem as HomeForSaleModel;
 
             if (selectedHomeForSale != null)
             {
                 HomesForSaleDetailsTextbox.Text = HomeSalesSearchHelper.GetHomeForSaleItemDetails(selectedHomeForSale);
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
+                HomeForSaleBorder.Visibility = Visibility.Visible;
             }
 
         }
