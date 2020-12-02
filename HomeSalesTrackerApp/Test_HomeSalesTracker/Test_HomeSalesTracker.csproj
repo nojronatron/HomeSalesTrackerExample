@@ -68,10 +68,10 @@
     <Compile Include="Helpers\EntityListsTests.cs" />
     <Compile Include="Helpers\FilesHelperTests.cs" />
     <Compile Include="Helpers\LoggerTests.cs" />
+    <Compile Include="Helpers\LogicBrokerTests.cs" />
     <Compile Include="Helpers\XmlHelperTests.cs" />
     <Compile Include="Collections\HomeSalesCollectionTests.cs" />
     <Compile Include="Collections\HomesCollectionTests.cs" />
-    <Compile Include="LogicBrokerTests.cs" />
     <Compile Include="Collections\PeopleCollectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\RealEstateCosCollectionTests.cs" />
