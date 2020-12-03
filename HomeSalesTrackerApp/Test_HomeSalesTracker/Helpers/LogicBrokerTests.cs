@@ -2,242 +2,397 @@
 using HSTDataLayer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HSTDataLayer.Tests
 {
     [TestClass()]
     public class LogicBrokerTests
     {
-        [TestInitialize]
-        public void TestInitialize()
+        public static void PrintObject<T>(List<T> inputObjects)
         {
+            foreach (var item in inputObjects)
+            {
+                Console.WriteLine(item.ToString());
+            }
+        }
+
+        [TestMethod()]
+        public void InitDatabaseTest()
+        {
+            var result = false;
+
             if (LogicBroker.InitDatabase())
             {
-                Console.WriteLine("InitDatabase method returned \"True\".");
-                if (LogicBroker.LoadData())
-                {
-                    Console.WriteLine("LoadData method returned \"True\".");
-                }
-                else
-                {
-                    Console.WriteLine("LoadData method returned \"False\".");
-                }
-
+                Console.WriteLine("Database initialization completed successfully");
+                result = true;
             }
             else
             {
-                Console.WriteLine("InitDatabase method returned \"False\".");
+                Console.WriteLine("Database initialization failed.");
             }
 
+            Assert.IsTrue(result);
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        [TestMethod()]
+        public void LoadDatabaseDataTest()
         {
-            if (LogicBroker.BackUpDatabase())
+            var result = false;
+
+            if (LogicBroker.LoadData())
             {
-                Console.WriteLine("BackUpDatabase method returned \"True\".\nCheck the XML files to verify.");
+                Console.WriteLine("Database data loaded successfully.");
+                result = true;
             }
             else
             {
-                Console.WriteLine("BackUpDatabase method returned \"False\".");
+                Console.WriteLine("Database data load failed.");
             }
 
+            Assert.IsTrue(result);
         }
 
         [TestMethod()]
-        public void GetPersonIntTest()
+        public void OneBigTest()
         {
-            var expectedPerson = new Person()
             {
-                FirstName = "John",
-                LastName = "Smith",
-                Email = "jsmith@j.com",
-                Phone = "1112223333"
-            };
+                var expectedPerson = new Person()
+                {
+                    FirstName = "John",
+                    LastName = "Smith",
+                    Email = "jsmith@j.com",
+                    Phone = "1112223333"
+                };
 
-            int personID = 1;
-            Person actualPerson = LogicBroker.GetPerson(personID);
+                int personID = 1;
+                Person actualPerson = LogicBroker.GetPerson(personID);
 
-            bool areEqual = expectedPerson.Equals(actualPerson);
-            Assert.IsTrue(areEqual);
-        }
+                bool areEqual = expectedPerson.Equals(actualPerson);
+                Assert.IsTrue(areEqual);
+            }
 
-        [TestMethod()]
-        public void GetPersonTest()
-        {
-            string firstName = "John";
-            string lastName = "Smith";
-
-            var expectedPerson = new Person()
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = "jsmith@j.com",
-                Phone = "1112223333"
-            };
+                string firstName = "John";
+                string lastName = "Smith";
 
-            Person actualPerson = LogicBroker.GetPerson(firstName, lastName);
+                var expectedPerson = new Person()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = "jsmith@j.com",
+                    Phone = "1112223333"
+                };
 
-            bool areEqual = expectedPerson.Equals(actualPerson);
-            Assert.IsTrue(areEqual);
-        }
+                Person actualPerson = LogicBroker.GetPerson(firstName, lastName);
 
-        [TestMethod()]
-        public void GetHomeTest()
-        {
-            var expectedHome = new Home()
+                bool areEqual = expectedPerson.Equals(actualPerson);
+                Assert.IsTrue(areEqual);
+            }
+
             {
-                Address = "23 Oak St.",
-                City = "Johnsonville",
-                State = "CA",
-                Zip = "955551111"
-            };
+                var address = "23 Oak St.";
+                var zip = "955551111";
 
-            int homeID = 1;
-            Home actualHome = LogicBroker.GetHome(homeID);
+                var expectedHome = new Home()
+                {
+                    Address = address,
+                    City = "Johnsonville",
+                    State = "CA",
+                    Zip = zip
+                };
 
-            bool areEqual = expectedHome.Equals(actualHome);
-            Assert.IsTrue(areEqual);
-        }
+                int homeID = 1;
+                Home actualHome = LogicBroker.GetHome(homeID);
 
-        [TestMethod()]
-        public void GetHomeTest1()
-        {
-            var address = "23 Oak St.";
-            var zip = "955551111";
+                bool areEqual = expectedHome.Equals(actualHome);
+                Assert.IsTrue(areEqual);
+            }
 
-            var expectedHome = new Home()
             {
-                Address = address,
-                City = "Johnsonville",
-                State = "CA",
-                Zip = zip
-            };
+                var address = "23 Oak St.";
+                var zip = "955551111";
 
-            Home actualHome = LogicBroker.GetHome(address, zip);
+                var expectedHome = new Home()
+                {
+                    Address = address,
+                    City = "Johnsonville",
+                    State = "CA",
+                    Zip = zip
+                };
 
-            bool areEqual = expectedHome.Equals(actualHome);
-            Assert.IsTrue(areEqual);
-        }
+                Home actualHome = LogicBroker.GetHome(address, zip);
 
-        [TestMethod()]
-        public void GetHomeSaleTest()
-        {
-            var expectedHomeSale = new HomeSale()
+                bool areEqual = expectedHome.Equals(actualHome);
+                Assert.IsTrue(areEqual);
+            }
+
             {
-                HomeID = 1,
-                SoldDate = new DateTime(2010, 03, 15, 00, 00, 00),
-                AgentID = 1,
-                SaleAmount = 335000m,
-                BuyerID = 1,
-                MarketDate = new DateTime(2015, 03, 01, 00, 00, 00),
-                CompanyID = 2
-            };
+                int homesaleID = 6;
 
-            int homesaleID = 1;
-            var actualHomeSale = LogicBroker.GetHomeSale(homesaleID);
+                var expectedHomeSale = new HomeSale()
+                {
+                    SaleID = homesaleID,
+                    HomeID = 3,
+                    SoldDate = new DateTime(2014, 06, 13),
+                    AgentID = 1,
+                    SaleAmount = 550_000m,
+                    BuyerID = 5,
+                    MarketDate = new DateTime(2014, 06, 01),
+                    CompanyID = 4
+                };
 
-            bool areEqual = expectedHomeSale.Equals(actualHomeSale);
-            Assert.IsTrue(areEqual);
-        }
+                var actualHomeSale = LogicBroker.GetHomeSale(homesaleID);
 
-        [TestMethod()]
-        public void GetHomeSaleTest1()
-        {
-            var marketDate = new DateTime(2015, 03, 01, 00, 00, 00);
-            var saleAmount = 335000m;
+                bool areEqual = expectedHomeSale.Equals(actualHomeSale);
+                if (!areEqual)
+                {
+                    var items = new List<HomeSale>()
+                    {
+                        expectedHomeSale, actualHomeSale
+                    };
 
-            var expectedHomeSale = new HomeSale()
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
             {
-                SaleID = 1,
-                HomeID = 1,
-                SoldDate = new DateTime(2010, 03, 15, 00, 00, 00),
-                AgentID = 1,
-                SaleAmount = saleAmount,
-                BuyerID = 1,
-                MarketDate = marketDate,
-                CompanyID = 2
-            };
+                int homesaleID = 6;
+                var marketDate = new DateTime(2015, 03, 01);
+                var saleAmount = 335_000m;
 
-            var actualHomeSale = LogicBroker.GetHomeSale(marketDate, saleAmount);
+                var expectedHomeSale = new HomeSale()
+                {
+                    SaleID = homesaleID,
+                    HomeID = 1,
+                    SoldDate = new DateTime(2010, 03, 15),
+                    AgentID = 1,
+                    SaleAmount = saleAmount,
+                    BuyerID = 1,
+                    MarketDate = marketDate,
+                    CompanyID = 2
+                };
 
-            bool areEqual = expectedHomeSale.Equals(actualHomeSale);
-            Assert.IsTrue(areEqual);
-        }
+                var actualHomeSale = LogicBroker.GetHomeSale(marketDate, saleAmount);
 
-        [TestMethod()]
-        public void GetReCompanyTest()
-        {
-            int companyID = 1;
-            var expectedRECo = new RealEstateCompany()
+                bool areEqual = expectedHomeSale.Equals(actualHomeSale);
+                if (!areEqual)
+                {
+                    var items = new List<HomeSale>()
+                    {
+                        expectedHomeSale, actualHomeSale
+                    };
+
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
             {
-                CompanyID = companyID,
-                CompanyName = "ABC Real Estate"
-            };
+                var saleID = 1;
 
-            var actualRECo = LogicBroker.GetReCompany(companyID);
+                var expectedHomeForSale = new HomeSale()
+                {
+                    SaleID = saleID,
+                    HomeID = 3,
+                    SoldDate = null,
+                    AgentID = 4,
+                    SaleAmount = 700_000m,
+                    MarketDate = new DateTime(2016, 08, 15),
+                    CompanyID = 1
+                };
 
-            bool areEqual = expectedRECo.Equals(actualRECo);
-            Assert.IsTrue(areEqual);
-        }
+                var actualHomeForSale = LogicBroker.GetHomeSale(saleID);
 
-        [TestMethod()]
-        public void GetReCompanyTest1()
-        {
-            int companyID = 1;
-            string companyName = "ABC Real Estate";
+                bool areEqual = expectedHomeForSale.Equals(actualHomeForSale);
+                if (!areEqual)
+                {
+                    var items = new List<HomeSale>()
+                    {
+                        expectedHomeForSale, actualHomeForSale
+                    };
 
-            var expectedRECo = new RealEstateCompany()
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
             {
-                CompanyID = companyID,
-                CompanyName = companyName
-            };
+                int companyID = 3;
 
-            var actualRECo = LogicBroker.GetReCompany(companyName);
+                var expectedRECo = new RealEstateCompany()
+                {
+                    CompanyID = companyID,
+                    CompanyName = "Rapid Real Estate",
+                    Phone = "6662221111"
+                };
 
-            bool areEqual = expectedRECo.Equals(actualRECo);
-            Assert.IsTrue(areEqual);
-        }
+                var actualRECo = LogicBroker.GetReCompany(companyID);
 
-        [TestMethod()]
-        public void GetAgentTest()
-        {
-            Assert.Fail();
-        }
+                bool areEqual = expectedRECo.Equals(actualRECo);
+                if (!areEqual)
+                {
+                    var items = new List<RealEstateCompany>()
+                    {
+                        expectedRECo, actualRECo
+                    };
 
-        [TestMethod()]
-        public void GetBuyerTest()
-        {
-            Assert.Fail();
-        }
+                    PrintObject(items);
+                }
 
-        [TestMethod()]
-        public void GetOwnerTest()
-        {
-            Assert.Fail();
-        }
+                Assert.IsTrue(areEqual);
+            }
 
+            {
+                int companyID = 3;
+                var companyName = "Rapid Real Estate";
 
-        [TestMethod()]
-        public void StoreItemTest()
-        {
-            Assert.Fail();
-        }
+                var expectedRECo = new RealEstateCompany()
+                {
+                    CompanyID = companyID,
+                    CompanyName = companyName,
+                    Phone = "6662221111"
+                };
 
-        [TestMethod()]
-        public void UpdateExistingItemTest()
-        {
-            Assert.Fail();
-        }
+                var actualRECo = LogicBroker.GetReCompany(companyName);
 
-        [TestMethod()]
-        public void RemoveEntityTest()
-        {
-            Assert.Fail();
+                bool areEqual = expectedRECo.Equals(actualRECo);
+                if (!areEqual)
+                {
+                    var items = new List<RealEstateCompany>()
+                    {
+                        expectedRECo, actualRECo
+                    };
+
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
+            {
+                var agentID = 4;
+
+                var expectedAgent = new Agent()
+                {
+                    AgentID = agentID,
+                    CompanyID = 1,
+                    CommissionPercent = 0.03m
+                };
+
+                var actualAgent = LogicBroker.GetAgent(agentID);
+
+                bool areEqual = expectedAgent.Equals(actualAgent);
+                if (!areEqual)
+                {
+                    var items = new List<Agent>()
+                    {
+                        expectedAgent, actualAgent
+                    };
+
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
+            {
+                var buyerID = 7;
+
+                var expectedBuyer = new Buyer()
+                {
+                    BuyerID = buyerID,
+                    CreditRating = 780
+                };
+
+                var actualBuyer = LogicBroker.GetBuyer(buyerID);
+
+                bool areEqual = expectedBuyer.Equals(actualBuyer);
+                if (!areEqual)
+                {
+                    var items = new List<Buyer>()
+                    {
+                        expectedBuyer, actualBuyer
+                    };
+
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
+            {
+                var ownerID = 7;
+
+                var expectedOwner = new Owner()
+                {
+                    OwnerID = ownerID,
+                    PreferredLender = "Unique Mortgaging"
+                };
+
+                var actualOwner = LogicBroker.GetOwner(ownerID);
+
+                bool areEqual = expectedOwner.Equals(actualOwner);
+                if (!areEqual)
+                {
+                    var items = new List<Owner>()
+                    {
+                        expectedOwner, actualOwner
+                    };
+
+                    PrintObject(items);
+                }
+
+                Assert.IsTrue(areEqual);
+            }
+
+            {
+                var addUpdateRemovePerson = new Person
+                {
+                    FirstName = "p1FirstName",
+                    LastName = "p2LastName",
+                    Phone = "123456789",
+                    Email = "Person1@StoreItemTest.net"
+                };
+
+                var expectedStoreResult = true;
+                var actualStoreResult = LogicBroker.StoreItem<Person>(addUpdateRemovePerson);
+
+                if (!actualStoreResult)
+                {
+                    Console.WriteLine(addUpdateRemovePerson.ToString());
+                }
+                Assert.AreEqual(expectedStoreResult, actualStoreResult);
+
+                var expectedUpdateResult = true;
+                var actualUpdateResult = LogicBroker.UpdateExistingItem<Person>(new Person
+                {
+                    FirstName = addUpdateRemovePerson.FirstName,
+                    LastName = addUpdateRemovePerson.LastName,
+                    Phone = "0000000000",
+                    Email = "bogus.email@UpdateExistingItemTest.net"
+                });
+
+                if (actualUpdateResult)
+                {
+                    Person resultPerson = LogicBroker.GetPerson(addUpdateRemovePerson.FirstName, addUpdateRemovePerson.LastName);
+                    Console.WriteLine(resultPerson.ToString());
+                }
+                Assert.AreNotEqual(expectedUpdateResult, actualUpdateResult);
+
+                var expectedRemoveResult = true;
+                var actualRemoveResult = LogicBroker.RemoveEntity<Person>(addUpdateRemovePerson);
+                if (!actualRemoveResult)
+                {
+                    Console.WriteLine("RemoveEntity<Person>(addUpdateRemovePerson) failed.");
+                    Console.WriteLine(addUpdateRemovePerson.ToString());
+                }
+                Assert.AreEqual(expectedRemoveResult, actualRemoveResult);
+            }
+
         }
 
     }
