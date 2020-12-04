@@ -17,6 +17,13 @@ namespace HSTDataLayer
             //Database.SetInitializer<HSTDataModel>(null);
         }
 
+        public HSTDataModel(DropCreateDatabaseAlways<HSTDataModel> dropCreateDatabaseAlways) : base("name=HSTDataModelConnection")
+        {
+            Database.SetInitializer<HSTDataModel>(dropCreateDatabaseAlways);
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
+        }
+
         public virtual DbSet<Agent> Agents { get; set; }
         public virtual DbSet<Buyer> Buyers { get; set; }
         public virtual DbSet<Home> Homes { get; set; }

@@ -40,6 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Effort, Version=2.2.10.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Effort.EF6.2.2.10\lib\net45\Effort.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -52,24 +55,19 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="NMemory, Version=3.0.0.0, Culture=neutral, PublicKeyToken=afc61983f100d280, processorArchitecture=MSIL">
+      <HintPath>..\packages\NMemory.3.1.1\lib\net45\NMemory.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\AgentTests.cs" />
-    <Compile Include="Extensions\HomeSaleTests.cs" />
-    <Compile Include="Extensions\HomeTests.cs" />
-    <Compile Include="Extensions\PersonTests.cs" />
-    <Compile Include="Extensions\RealEstateCompanyTests.cs" />
-    <Compile Include="Helpers\BackUpDataFilesTests.cs" />
-    <Compile Include="Helpers\EntityListsTests.cs" />
-    <Compile Include="Helpers\FilesHelperTests.cs" />
     <Compile Include="Helpers\LoggerTests.cs" />
     <Compile Include="Helpers\LogicBrokerTests.cs" />
-    <Compile Include="Helpers\XmlHelperTests.cs" />
     <Compile Include="Collections\HomeSalesCollectionTests.cs" />
     <Compile Include="Collections\HomesCollectionTests.cs" />
     <Compile Include="Collections\PeopleCollectionTests.cs" />

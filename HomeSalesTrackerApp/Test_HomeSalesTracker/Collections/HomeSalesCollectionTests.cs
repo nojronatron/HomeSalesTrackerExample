@@ -3,134 +3,256 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
+using System.Collections.Generic;
+
+using System.Data.Entity;
+using System.Linq;
 
 namespace HomeSalesTrackerApp.Tests
 {
     [TestClass()]
     public class HomeSalesCollectionTests
     {
-        private static HomeSale alpha = new HomeSale()
+        private static HomeSale johnsonvilleHomeSold = new HomeSale()
         {
-            SaleID = 1,
             HomeID = 1,
-            SoldDate = new DateTime(2010, 3, 15, 0, 0, 0),
+            SoldDate = new DateTime(2020, 3, 15),
             AgentID = 3,
-            SaleAmount = 335_000m,
+            SaleAmount = 1_335_000m,
             BuyerID = 1,
-            MarketDate = new DateTime(2015, 3, 1),
+            MarketDate = new DateTime(2020, 3, 1),
             CompanyID = 2
         };
 
-        private static HomeSale bravo = new HomeSale()
+        private static HomeSale UpdateJohnsonvilleHomeSold = new HomeSale()
         {
-            SaleID = 2,
+            HomeID = 1,
+            SoldDate = new DateTime(2020, 3, 16),
+            AgentID = 3,
+            SaleAmount = 1_335_000m,
+            BuyerID = 1,
+            MarketDate = new DateTime(2020, 3, 1),
+            CompanyID = 2
+        };
+
+        private static HomeSale mannerHomeSold = new HomeSale()
+        {
             HomeID = 2,
-            SoldDate = new DateTime(2000, 4, 1, 0, 0, 0),
+            SoldDate = new DateTime(2020, 4, 1),
             AgentID = 2,
-            SaleAmount = 240_000m,
+            SaleAmount = 1_240_000m,
             BuyerID = 3,
-            MarketDate = new DateTime(2000, 3, 29),
+            MarketDate = new DateTime(2020, 3, 29),
             CompanyID = 3
         };
 
-        private static HomeSale charlie = new HomeSale()
+        private static HomeSale larimountHomeSold = new HomeSale()
         {
-            SaleID = 3,
             HomeID = 3,
-            SoldDate = new DateTime(2014, 6, 13, 0, 0, 0),
+            SoldDate = new DateTime(2020, 6, 13),
             AgentID = 1,
-            SaleAmount = 550_000m,
+            SaleAmount = 1_550_000m,
             BuyerID = 5,
-            MarketDate = new DateTime(2014, 6, 1),
+            MarketDate = new DateTime(2020, 6, 1),
             CompanyID = 4
         };
 
-        private static HomeSale foxtrot = new HomeSale()
+        private static HomeSale woodsworthHomeForSale = new HomeSale()
         {
-            SaleID = 6,
-            HomeID = 3,
+            HomeID = 4,
             AgentID = 4,
-            SaleAmount = 700_000m,
-            MarketDate = new DateTime(2016, 8, 15, 0, 0, 0),
+            SaleAmount = 1_700_000m,
+            MarketDate = new DateTime(2020, 8, 15),
             CompanyID = 1
         };
 
-        [TestMethod()]
-        public void CanInitialize()
+        private static HomeSale charlestonHomeForSale = new HomeSale()
         {
-            var homeSalesCollection = new HomeSalesCollection();
+            HomeID = 5,
+            AgentID = 1,
+            SaleAmount = 1_600_000m,
+            MarketDate = new DateTime(2020, 07, 01),
+            CompanyID = 4
+        };
 
-            var expectedResult = true;
-            var actualResult = (homeSalesCollection != null);
-
-            Assert.AreEqual(expectedResult, actualResult);
-        }
-
-        [TestMethod()]
-        public void CanAdd()
+        private static List<HomeSale> initialCollection = new List<HomeSale>()
         {
-            var homeSalesCollection = new HomeSalesCollection();
-            homeSalesCollection.Add(alpha);
-            homeSalesCollection.Add(bravo);
-            homeSalesCollection.Add(charlie);
+            mannerHomeSold,
+            larimountHomeSold,
+            charlestonHomeForSale
+        };
 
-            var expectedResult = 3;
-            var actualResult = homeSalesCollection.Count;
+        private static HomeSalesCollection _homeSalesCollection;
+        private static HSTDataModel _context;
 
-            Assert.AreEqual(expectedResult, actualResult);
-        }
-
-        [TestMethod()]
-        public void CanRetrieveItem()
+        [ClassInitialize]
+        public static void TestFixtureSetup(TestContext testContext)
         {
-            var homeSalesCollection = new HomeSalesCollection();
-            homeSalesCollection.Add(alpha);
+            //  trigger database Seed
+            //DropCreateDatabaseAlways<HSTDataModel> dropCreateDatabaseAlways = new DropCreateDatabaseAlways<HSTDataModel>();
+            //_context = new HSTDataModel(dropCreateDatabaseAlways);
+            _context = new HSTDataModel();
+            var dbHomeSales = new List<HomeSale>();
 
-            var expectedResult = alpha.Equals(alpha);
-            var actualResult = (homeSalesCollection[0].Equals(alpha));
-
-            Assert.AreEqual(expectedResult, actualResult);
-        }
-
-        [TestMethod()]
-        public void CanUpdateExistingItem()
-        {
-            var homeSalesCollection = new HomeSalesCollection();
-            homeSalesCollection.Add(alpha);
-
-            var alphaUpdate = new HomeSale()
+            foreach(var homeSale in _context.HomeSales)
             {
-                SaleID = 1,
-                HomeID = 1,
-                SoldDate = new DateTime(2010, 5, 15, 0, 0, 0),
-                AgentID = 3,
-                SaleAmount = 335_000m,
-                BuyerID = 1,
-                MarketDate = new DateTime(2015, 3, 1),
-                CompanyID = 2
+                dbHomeSales.Add(homeSale);
+            }
+
+            _homeSalesCollection = new HomeSalesCollection(dbHomeSales);
+            Console.WriteLine("TextFixtureSetup completed.");
+        }
+
+        //[ClassCleanup]
+        //public static void TestFixtureTeardown()
+        //{
+            
+        //}
+
+        //[TestInitialize]
+        //public void Setup()
+        //{
+        //}
+
+        #region TESTS
+        [TestMethod()]
+        public void InitializeWithItemsTest()
+        {
+            var expectedResult = 3;
+            int actualResult;
+            var homeSalesCollection = new HomeSalesCollection(initialCollection);
+            actualResult = homeSalesCollection.Count;
+            PrintOutput<int>(actualResult, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "local homeSalesCollection.Count");
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void AddHomeSoldTest()
+        {
+            int preAddCount = 0;
+            int postAddCount = 0;
+            var expectedResult = 1;
+            preAddCount = _homeSalesCollection.Count;
+            PrintOutput<int>(_homeSalesCollection.Count, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection Count");
+            _homeSalesCollection.Add(johnsonvilleHomeSold);
+            PrintOutput<int>(_homeSalesCollection.Count, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection Count");
+            postAddCount = _homeSalesCollection.Count;
+
+            int actualResult = postAddCount - preAddCount;
+
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void AddHomeForSaleTest()
+        {
+            int preAddCount = 0;
+            int postAddCount = 0;
+            var expectedResult = 1;
+
+            PrintOutput<int>(_homeSalesCollection.Count, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection Count");
+            preAddCount = _homeSalesCollection.Count;
+            _homeSalesCollection.Add(charlestonHomeForSale);
+            postAddCount = _homeSalesCollection.Count;
+            PrintOutput<int>(_homeSalesCollection.Count, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection Count");
+
+            int actualResult = postAddCount - preAddCount;
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void GetSoldHomeTest()
+        {
+            var expectedResult = new HomeSale()
+            {
+
             };
 
-            homeSalesCollection.Update(alphaUpdate);
+            Assert.AreEqual(true, false);
+        }
 
-            var expectedResult = true;
-            var actualResult = (homeSalesCollection[0].Equals(alphaUpdate));
+        [TestMethod()]
+        public void GetHomeForSaleTest()
+        {
+
+            Assert.AreEqual(true, false);
+        }
+
+        [TestMethod()]
+        public void RetreiveSoldHomeTest()
+        {
+            var homeSalesCollection = new HomeSalesCollection(initialCollection);
+            var retreivedHomeSale = homeSalesCollection.Retreive(mannerHomeSold.SaleID);
+
+            var expectedResult = mannerHomeSold.Equals(mannerHomeSold);
+            var actualResult = mannerHomeSold.Equals(retreivedHomeSale);
+
+            PrintOutput<HomeSale>(retreivedHomeSale, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "local homeSalesCollection object");
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [TestMethod()]
-        public void CanCountTotalHomesSold()
+        public void RetreiveHomeForSaleTest()
         {
-            var homeSalesCollection = new HomeSalesCollection();
-            homeSalesCollection.Add(alpha);
-            homeSalesCollection.Add(bravo);
-            homeSalesCollection.Add(charlie);
-            homeSalesCollection.Add(foxtrot);
+            var homeSalesCollection = new HomeSalesCollection(initialCollection);
+            var retreivedHomeSale = homeSalesCollection.Retreive(woodsworthHomeForSale.SaleID);
 
-            int expectedResult = 3;
-            int actualResult = homeSalesCollection.Count;
+            var expectedResult = woodsworthHomeForSale.Equals(woodsworthHomeForSale);
+            var actualResult = (woodsworthHomeForSale.Equals(retreivedHomeSale));
+
+            PrintOutput<HomeSale>(retreivedHomeSale, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "local homeSalesCollection object");
 
             Assert.AreEqual(expectedResult, actualResult);
         }
+
+        [TestMethod()]
+        public void UpdateExistingSoldHomeTest()
+        {
+            int expectedResult = 0;
+            int preUpdateCount = -1;
+            int postUpdateCount = 0;
+
+            preUpdateCount = _homeSalesCollection.Count;
+            _homeSalesCollection.Update(UpdateJohnsonvilleHomeSold);
+            postUpdateCount = _homeSalesCollection.Count;
+
+            int actualResult = postUpdateCount - preUpdateCount;
+
+            PrintOutput<int>(preUpdateCount, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection count");
+            PrintOutput<int>(postUpdateCount, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection count");
+
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void UpdateExistingHomeForSaleTest()
+        {
+            int expectedResult = 0;
+            int preUpdateCount = -1;
+            int postUpdateCount = 0;
+
+            preUpdateCount = _homeSalesCollection.Count;
+            _homeSalesCollection.Update(UpdateJohnsonvilleHomeSold);
+            postUpdateCount = _homeSalesCollection.Count;
+
+            int actualResult = postUpdateCount - preUpdateCount;
+
+            PrintOutput<int>(preUpdateCount, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection count");
+            PrintOutput<int>(postUpdateCount, System.Reflection.MethodBase.GetCurrentMethod().ToString(), "_homeSalesCollection count");
+            
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+        #endregion TESTS
+
+        private void PrintOutput<T>(T thing, string function, string argName)
+        {
+            Console.WriteLine($"***** { function } *****");
+            Console.WriteLine($"*** { argName } ***");
+            Console.WriteLine(thing.ToString());
+            Console.WriteLine();
+        }
+
     }
+
 }
