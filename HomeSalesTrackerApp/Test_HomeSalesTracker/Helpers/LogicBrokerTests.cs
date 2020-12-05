@@ -8,12 +8,27 @@ namespace HSTDataLayer.Tests
     [TestClass()]
     public class LogicBrokerTests
     {
-        public static void PrintObject<T>(List<T> inputObjects)
+        public static void PrintObjects<T>(List<T> inputObjects, string message="")
         {
+            Console.WriteLine("##### PrintObjects Output #####");
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                Console.WriteLine(message);
+            }
             foreach (var item in inputObjects)
             {
                 Console.WriteLine(item.ToString());
             }
+        }
+
+        public static void PrintObject<T>(T inputObject, string message="")
+        {
+            Console.WriteLine("##### PrintObject Output #####");
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                Console.WriteLine(message);
+            }
+            Console.WriteLine(inputObject.ToString());
         }
 
         [TestMethod()]
@@ -34,6 +49,7 @@ namespace HSTDataLayer.Tests
             Assert.IsTrue(result);
         }
 
+        [Ignore]
         [TestMethod()]
         public void LoadDatabaseDataTest()
         {
@@ -55,6 +71,7 @@ namespace HSTDataLayer.Tests
         [TestMethod()]
         public void OneBigTest()
         {
+            //  GetPerson(PersonID)
             {
                 var expectedPerson = new Person()
                 {
@@ -71,6 +88,7 @@ namespace HSTDataLayer.Tests
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetPerson(firstname, lastname)
             {
                 string firstName = "John";
                 string lastName = "Smith";
@@ -89,6 +107,7 @@ namespace HSTDataLayer.Tests
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetHome(homeID)
             {
                 var address = "23 Oak St.";
                 var zip = "955551111";
@@ -108,6 +127,7 @@ namespace HSTDataLayer.Tests
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetHome(address, zip)
             {
                 var address = "23 Oak St.";
                 var zip = "955551111";
@@ -126,6 +146,8 @@ namespace HSTDataLayer.Tests
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetHomeSale(saleID)
+            //  SOLD
             {
                 int homesaleID = 6;
 
@@ -151,12 +173,14 @@ namespace HSTDataLayer.Tests
                         expectedHomeSale, actualHomeSale
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetHomeSale(marketDate, saleAmount)
+            //  SOLD
             {
                 int homesaleID = 6;
                 var marketDate = new DateTime(2015, 03, 01);
@@ -184,12 +208,14 @@ namespace HSTDataLayer.Tests
                         expectedHomeSale, actualHomeSale
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetHomeSale(saleID)
+            //  FOR SALE
             {
                 var saleID = 1;
 
@@ -214,12 +240,13 @@ namespace HSTDataLayer.Tests
                         expectedHomeForSale, actualHomeForSale
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetReCompany(companyID)
             {
                 int companyID = 3;
 
@@ -240,12 +267,13 @@ namespace HSTDataLayer.Tests
                         expectedRECo, actualRECo
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetReCompany(companyName)
             {
                 int companyID = 3;
                 var companyName = "Rapid Real Estate";
@@ -267,12 +295,13 @@ namespace HSTDataLayer.Tests
                         expectedRECo, actualRECo
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetAgent(AgentID)
             {
                 var agentID = 4;
 
@@ -293,12 +322,13 @@ namespace HSTDataLayer.Tests
                         expectedAgent, actualAgent
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetBuyer(BuyerID)
             {
                 var buyerID = 7;
 
@@ -318,12 +348,13 @@ namespace HSTDataLayer.Tests
                         expectedBuyer, actualBuyer
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  GetOwner(OwnerID)
             {
                 var ownerID = 7;
 
@@ -343,17 +374,20 @@ namespace HSTDataLayer.Tests
                         expectedOwner, actualOwner
                     };
 
-                    PrintObject(items);
+                    PrintObjects(items);
                 }
 
                 Assert.IsTrue(areEqual);
             }
 
+            //  UpdateExistingItem<Person>(person)
             {
+                var updatePersonFirstName = "p1FirstName";
+                var updatePersonLastName = "p2LastName";
                 var addUpdateRemovePerson = new Person
                 {
-                    FirstName = "p1FirstName",
-                    LastName = "p2LastName",
+                    FirstName = updatePersonFirstName,
+                    LastName = updatePersonLastName,
                     Phone = "123456789",
                     Email = "Person1@StoreItemTest.net"
                 };
@@ -361,35 +395,50 @@ namespace HSTDataLayer.Tests
                 var expectedStoreResult = true;
                 var actualStoreResult = LogicBroker.StoreItem<Person>(addUpdateRemovePerson);
 
+                PrintObject<Person>(addUpdateRemovePerson, "Update Existing Item addUpdateRemovePerson.");
+                PrintObject<bool>(actualStoreResult, "Return value from StoreItem().");
+
                 if (!actualStoreResult)
                 {
                     Console.WriteLine(addUpdateRemovePerson.ToString());
                 }
+                
                 Assert.AreEqual(expectedStoreResult, actualStoreResult);
+
+                var personToUpdate = LogicBroker.GetPerson(updatePersonFirstName, updatePersonLastName);
+                PrintObject<Person>(personToUpdate, "Returned Person from GetPerson(firstname, lastname).");
 
                 var expectedUpdateResult = true;
                 var actualUpdateResult = LogicBroker.UpdateExistingItem<Person>(new Person
                 {
-                    FirstName = addUpdateRemovePerson.FirstName,
-                    LastName = addUpdateRemovePerson.LastName,
+                    PersonID = personToUpdate.PersonID,
+                    FirstName = personToUpdate.FirstName,
+                    LastName = personToUpdate.LastName,
                     Phone = "0000000000",
                     Email = "bogus.email@UpdateExistingItemTest.net"
                 });
 
+                PrintObject<bool>(actualUpdateResult, "Return value from UpdateExistingItem().");
+                
                 if (actualUpdateResult)
                 {
                     Person resultPerson = LogicBroker.GetPerson(addUpdateRemovePerson.FirstName, addUpdateRemovePerson.LastName);
                     Console.WriteLine(resultPerson.ToString());
                 }
-                Assert.AreNotEqual(expectedUpdateResult, actualUpdateResult);
+                
+                Assert.AreEqual(expectedUpdateResult, actualUpdateResult);
 
                 var expectedRemoveResult = true;
                 var actualRemoveResult = LogicBroker.RemoveEntity<Person>(addUpdateRemovePerson);
+
+                PrintObject<bool>(actualRemoveResult, "Return value from RemoveEntity<Person>().");
+
                 if (!actualRemoveResult)
                 {
                     Console.WriteLine("RemoveEntity<Person>(addUpdateRemovePerson) failed.");
                     Console.WriteLine(addUpdateRemovePerson.ToString());
                 }
+
                 Assert.AreEqual(expectedRemoveResult, actualRemoveResult);
             }
 
