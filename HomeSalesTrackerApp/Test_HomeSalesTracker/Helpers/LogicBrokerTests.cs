@@ -1,5 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HSTDataLayer;
+﻿using HomeSalesTrackerApp;
+
+using HSTDataLayer.Helpers;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +11,11 @@ namespace HSTDataLayer.Tests
     [TestClass()]
     public class LogicBrokerTests
     {
+        static PeopleCollection<Person> DbPeopleCollection { get; set; }
+        static HomesCollection DbHomesCollection { get; set; }
+        static HomeSalesCollection DbHomesalesCollection { get; set; }
+        static RealEstateCosCollection DbRECosCollection { get; set; }
+
         public static void PrintObjects<T>(List<T> inputObjects, string message="")
         {
             Console.WriteLine("##### PrintObjects Output #####");
@@ -71,6 +79,7 @@ namespace HSTDataLayer.Tests
         [TestMethod()]
         public void OneBigTest()
         {
+            #region LogicBrokerTests
             //  GetPerson(PersonID)
             {
                 var expectedPerson = new Person()
@@ -409,14 +418,16 @@ namespace HSTDataLayer.Tests
                 PrintObject<Person>(personToUpdate, "Returned Person from GetPerson(firstname, lastname).");
 
                 var expectedUpdateResult = true;
-                var actualUpdateResult = LogicBroker.UpdateExistingItem<Person>(new Person
+                var updatePerson = new Person()
                 {
                     PersonID = personToUpdate.PersonID,
                     FirstName = personToUpdate.FirstName,
                     LastName = personToUpdate.LastName,
                     Phone = "0000000000",
                     Email = "bogus.email@UpdateExistingItemTest.net"
-                });
+                };
+
+                var actualUpdateResult = LogicBroker.UpdateExistingItem<Person>(updatePerson);
 
                 PrintObject<bool>(actualUpdateResult, "Return value from UpdateExistingItem().");
                 
@@ -429,7 +440,7 @@ namespace HSTDataLayer.Tests
                 Assert.AreEqual(expectedUpdateResult, actualUpdateResult);
 
                 var expectedRemoveResult = true;
-                var actualRemoveResult = LogicBroker.RemoveEntity<Person>(addUpdateRemovePerson);
+                var actualRemoveResult = LogicBroker.RemoveEntity<Person>(updatePerson);
 
                 PrintObject<bool>(actualRemoveResult, "Return value from RemoveEntity<Person>().");
 
@@ -441,6 +452,130 @@ namespace HSTDataLayer.Tests
 
                 Assert.AreEqual(expectedRemoveResult, actualRemoveResult);
             }
+            #endregion LogicBrokerTests
+
+            #region InitializeCollections
+
+            DbPeopleCollection = new PeopleCollection<Person>(EntityLists.GetListOfPeople());
+            Assert.IsTrue(DbPeopleCollection.Count == 10);
+
+            DbHomesCollection = new HomesCollection(EntityLists.GetTreeListOfHomes());
+            Assert.IsTrue(DbHomesCollection.Count == 5);
+
+            DbHomesalesCollection = new HomeSalesCollection(EntityLists.GetListOfHomeSales());
+            Assert.IsTrue(DbHomesalesCollection.Count == 8);
+
+            DbRECosCollection = new RealEstateCosCollection(EntityLists.GetTreeListOfRECompanies());
+            Assert.IsTrue(DbRECosCollection.Count == 4);
+            #endregion InitializeCollections
+
+            #region PeopleCollectionTests
+
+            //  ADD
+            var personPerson = new Person()
+            {
+                FirstName = "Owen",
+                LastName = "Owner",
+                Phone = "123456789",
+                Email = "test.owner@person.net"
+            };
+            var personAddedCount = DbPeopleCollection.Add(personPerson);
+            PrintObject<Person>(personPerson, $"Attempted to add Person to PersonCollection. Result: { personAddedCount }.");
+            Assert.IsTrue(personAddedCount == 1);   //  Add plain Person
+
+            //  GET (PersonID by F+L Names)
+            int addedPersonID = 0;
+            addedPersonID = DbPeopleCollection.GetPersonIDbyName(personPerson.FirstName, personPerson.LastName);
+            PrintObject<int>(addedPersonID, "Returned PersonID from GetPersonIDbyName(Owen, Owner).");
+            Assert.IsTrue(addedPersonID > 10);
+
+            //  GET (Person by Person)
+            Person addedPerson = null;
+            addedPerson = DbPeopleCollection.Get(addedPersonID);
+            PrintObject<Person>(addedPerson, "Returned Person from Get(addedPersonID).");
+            Assert.IsTrue(addedPerson != null);
+
+            //  UPDATE (Person's Phone)
+            addedPerson.Phone = "3254678451";
+            var addedPersonUpdated = DbPeopleCollection.UpdatePerson(addedPerson);
+            PrintObject<Person>(addedPerson, $"UpdatePerson(addedPerson) result: { addedPersonUpdated }.");
+            Assert.IsTrue(addedPersonUpdated == 1);
+
+            //  UPDATE (Person as an Owner)
+            var owner = new Owner()
+            {
+                PreferredLender = "Lender Test"
+            };
+            addedPerson.Owner = owner;
+            var ownerPersonUpdated = DbPeopleCollection.UpdatePerson(addedPerson);
+            PrintObject<Person>(addedPerson, $"UpdatePerson(addedPerson) with Owner result: { ownerPersonUpdated }.");
+            Assert.IsTrue(ownerPersonUpdated > 0);
+
+            //  REMOVE
+            var personRemoved = DbPeopleCollection.Remove(personPerson);
+            PrintObject<Person>(personPerson, $"Removing person from collection result: { personRemoved }.");
+            Assert.IsTrue(personRemoved);           //  Remove plain Person
+
+            
+            
+            //var ownerPerson = new Person()
+            //{
+            //    FirstName = "Owen",
+            //    LastName = "Owner",
+            //    Phone = "123456789",
+            //    Email = "test.owner@person.net",
+            //    Owner = owner
+            //};
+            //var ownerPersonAddedCount = DbPeopleCollection.Add(ownerPerson);
+            //Assert.IsTrue(ownerPersonAddedCount == 1);  //  Add Owner Person
+
+
+            ////  UPDATE (Person w/ Owner attached)
+            //var anotherOwnerPerson = new Person()
+            //{
+            //    FirstName = "Ohnota",
+            //    LastName = "Nother",
+            //    Phone = "987654321",
+            //    Email = "nother.owner@person.net"
+            //};
+            //_ = DbPeopleCollection.Add(anotherOwnerPerson);
+            //var anotherOwnerPersonID = DbPeopleCollection.GetPersonIDbyName(anotherOwnerPerson.FirstName, anotherOwnerPerson.LastName);
+            //var anotherOwner = new Owner()
+            //{
+            //    PreferredLender = "Another Bank"
+            //};
+            //anotherOwnerPerson.PersonID = anotherOwnerPersonID;
+            //anotherOwnerPerson.Owner = anotherOwner;
+            //var anotherOwnerUpdatedCount = DbPeopleCollection.UpdatePerson(anotherOwnerPerson);
+            //PrintObject<int>(anotherOwnerUpdatedCount, "DbPeopleCollection.UpdatePerson(person with an owner) returned an int.");
+            //Assert.IsTrue(anotherOwnerUpdatedCount > 0);    //  Update existing Person with an Owner
+
+
+
+
+
+
+
+            #endregion
+
+            #region HomesCollectionTests
+            var newHome = new Home()
+            {
+                Address = "4412 153rd Ave SE",
+                City = "Bellevue",
+                State = "WA",
+                Zip = "980060000"
+            };
+
+            #endregion
+
+            #region HomeSalesCollectionTests
+
+            #endregion
+
+            #region RealEstateCompaniesTests
+
+            #endregion
 
         }
 

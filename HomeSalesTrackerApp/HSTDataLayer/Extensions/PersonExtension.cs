@@ -53,9 +53,7 @@ namespace HSTDataLayer
             }
 
             if (this.FirstName == other.FirstName &&
-                this.LastName == other.LastName &&
-                this.Email == other.Email &&
-                this.Phone == other.Phone)
+                this.LastName == other.LastName)
             {
                 return true;
             }
@@ -71,9 +69,7 @@ namespace HSTDataLayer
         {
             return obj is Person person &&
                    FirstName == person.FirstName &&
-                   LastName == person.LastName &&
-                   Phone == person.Phone &&
-                   Email == person.Email;
+                   LastName == person.LastName;
         }
 
         /// <summary>
@@ -85,8 +81,8 @@ namespace HSTDataLayer
             int hashCode = -1969988406;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FirstName);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(LastName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Phone);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
+            //hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Phone);
+            //hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
             return hashCode;
         }
 

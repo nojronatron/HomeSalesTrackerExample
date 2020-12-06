@@ -325,6 +325,7 @@ namespace HomeSalesTrackerApp
 
         public bool Remove(T item)
         {
+            //  TODO: Add LogicBroker.Remove to this function
             return ((ICollection<T>)_peopleList).Remove(item);
         }
 
