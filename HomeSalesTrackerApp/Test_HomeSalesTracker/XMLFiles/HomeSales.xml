@@ -8,7 +8,7 @@
     <AgentID>3</AgentID>
     <SaleAmount>335000.0000</SaleAmount>
     <BuyerID>1</BuyerID>
-    <MarketDate>3/1/2015</MarketDate>
+    <MarketDate>2015-03-01T00:00:00</MarketDate>
     <CompanyID>2</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -18,7 +18,7 @@
     <AgentID>2</AgentID>
     <SaleAmount>240000.0000</SaleAmount>
     <BuyerID>3</BuyerID>
-    <MarketDate>3/29/2000</MarketDate>
+    <MarketDate>2000-03-29T00:00:00</MarketDate>
     <CompanyID>3</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -28,7 +28,7 @@
     <AgentID>1</AgentID>
     <SaleAmount>550000.0000</SaleAmount>
     <BuyerID>5</BuyerID>
-    <MarketDate>6/1/2014</MarketDate>
+    <MarketDate>2014-06-01T00:00:00</MarketDate>
     <CompanyID>4</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -38,7 +38,7 @@
     <AgentID>1</AgentID>
     <SaleAmount>450000.0000</SaleAmount>
     <BuyerID>7</BuyerID>
-    <MarketDate>10/5/2012</MarketDate>
+    <MarketDate>2012-10-05T00:00:00</MarketDate>
     <CompanyID>4</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -48,7 +48,7 @@
     <AgentID>1</AgentID>
     <SaleAmount>600000.0000</SaleAmount>
     <BuyerID>5</BuyerID>
-    <MarketDate>7/1/2014</MarketDate>
+    <MarketDate>2014-07-01T00:00:00</MarketDate>
     <CompanyID>4</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -56,7 +56,7 @@
     <HomeID>3</HomeID>
     <AgentID>4</AgentID>
     <SaleAmount>700000.0000</SaleAmount>
-    <MarketDate>8/15/2016</MarketDate>
+    <MarketDate>2016-08-15T00:00:00</MarketDate>
     <CompanyID>1</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -64,7 +64,7 @@
     <HomeID>2</HomeID>
     <AgentID>8</AgentID>
     <SaleAmount>500000.0000</SaleAmount>
-    <MarketDate>10/20/2016</MarketDate>
+    <MarketDate>2016-10-20T00:00:00</MarketDate>
     <CompanyID>3</CompanyID>
   </HomeSale>
   <HomeSale>
@@ -72,7 +72,7 @@
     <HomeID>1</HomeID>
     <AgentID>2</AgentID>
     <SaleAmount>550000.0000</SaleAmount>
-    <MarketDate>11/5/2016</MarketDate>
+    <MarketDate>2016-11-05T00:00:00</MarketDate>
     <CompanyID>1</CompanyID>
   </HomeSale>
 </HomeSales>
