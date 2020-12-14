@@ -531,6 +531,24 @@ namespace HSTDataLayer
                             dbBuyer.CreditRating = buyer.CreditRating;
                             break;
                         }
+                    case "HomeSale":
+                        {
+                            HomeSale homesale = item as HomeSale;
+                            HomeSale dbHomesale = context.HomeSales.Find(homesale.SaleID);
+
+                            if (dbHomesale == null)
+                            {
+                                break;
+                            }
+
+                            if (dbHomesale.MarketDate == homesale.MarketDate )
+                            {
+                                dbHomesale.SoldDate = homesale.SoldDate;
+                                dbHomesale.SaleAmount = homesale.SaleAmount;
+                            }
+
+                            break;
+                        }
                     default:
                         {
                             break;
