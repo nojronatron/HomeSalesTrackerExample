@@ -16,7 +16,7 @@ namespace HomeSalesTrackerApp.ReportsViewModels
 
         private void Load()
         {
-            var query = (from home in MainWindow.homesCollection
+            var query = (from home in Factory.CollectionFactory.GetHomesCollectionObject()
                          join homesale in MainWindow.homeSalesCollection on home.HomeID equals homesale.HomeID
                          join buyer in MainWindow.peopleCollection on homesale.BuyerID equals buyer.PersonID
                          where homesale.Buyer != null

@@ -76,7 +76,8 @@ namespace HomeSalesTrackerApp
                         NewHome.State = state;
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
-                        itemsProcessed += MainWindow.homesCollection.Update(NewHome);
+                        //itemsProcessed += MainWindow.homesCollection.Update(NewHome);
+                        itemsProcessed += (Factory.CollectionFactory.GetHomesCollectionObject()).Update(NewHome);
                     }
                     else
                     {
@@ -89,7 +90,8 @@ namespace HomeSalesTrackerApp
                             OwnerID = APerson.PersonID
                         };
 
-                        itemsProcessed += MainWindow.homesCollection.Add(NewHome);
+                        //itemsProcessed += MainWindow.homesCollection.Add(NewHome);
+                        itemsProcessed += (Factory.CollectionFactory.GetHomesCollectionObject()).Add(NewHome);
                     }
 
                     if (itemsProcessed > 0)

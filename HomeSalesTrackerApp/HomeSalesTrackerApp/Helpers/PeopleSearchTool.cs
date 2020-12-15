@@ -136,7 +136,7 @@ namespace HomeSalesTrackerApp.Helpers
                 List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
                 purchasedHomes = (from hfs in MainWindow.homeSalesCollection
                                   where hfs.BuyerID == foundPerson.PersonID
-                                  join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                  join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                                   select new SoldHomeModel
                                   {
                                       HomeID = h.HomeID,
@@ -168,7 +168,7 @@ namespace HomeSalesTrackerApp.Helpers
             if (foundPerson.PersonType == new OwnerModel().PersonType)
             {
                 List<HomeDisplayModel> ownedHomes = new List<HomeDisplayModel>();
-                ownedHomes = (from h in MainWindow.homesCollection
+                ownedHomes = (from h in Factory.CollectionFactory.GetHomesCollectionObject()
                               where h.OwnerID == foundPerson.PersonID
                               select new HomeDisplayModel
                               {
@@ -180,7 +180,7 @@ namespace HomeSalesTrackerApp.Helpers
                               }).ToList();
 
                 OwnerModel ownerPerson = (from p in MainWindow.peopleCollection
-                                          join h in MainWindow.homesCollection on p.PersonID equals h.OwnerID
+                                          join h in Factory.CollectionFactory.GetHomesCollectionObject() on p.PersonID equals h.OwnerID
                                           where p.PersonID == foundPerson.PersonID
                                           select new OwnerModel
                                           {
@@ -204,7 +204,7 @@ namespace HomeSalesTrackerApp.Helpers
                 soldHomes = (from hfs in MainWindow.homeSalesCollection
                              where hfs.AgentID == foundPerson.PersonID &&
                              hfs.SoldDate != null
-                             join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                             join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                              select new SoldHomeModel
                              {
                                  HomeID = h.HomeID,
@@ -220,7 +220,7 @@ namespace HomeSalesTrackerApp.Helpers
                 homesForSale = (from hfs in MainWindow.homeSalesCollection
                                 where hfs.AgentID == foundPersonFull.PersonID &&
                                 hfs.SoldDate == null
-                                join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                                 select new HomeForSaleModel
                                 {
                                     HomeID = hfs.HomeID,

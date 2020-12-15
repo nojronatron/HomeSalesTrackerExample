@@ -234,7 +234,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void LoadOwnerPanel()
         {
             var tempPerson = MainWindow.peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
-            var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+            //var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
+            var tempHomes = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
 
             if (tempPerson != null)
             {
@@ -389,7 +390,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void LoadOwnersComboBox()
         {
-            var listOfOwners = (from h in MainWindow.homesCollection
+            var listOfOwners = (from h in Factory.CollectionFactory.GetHomesCollectionObject()
                                 from a in MainWindow.peopleCollection
                                 where a.PersonID == h.OwnerID
                                 select a).ToList();

@@ -17,7 +17,7 @@ namespace HomeSalesTrackerApp.ReportsViewModels
         {
             var query = (from hfs in MainWindow.homeSalesCollection
                          where hfs.SoldDate != null
-                         join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                         join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                          join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
                          join b in MainWindow.peopleCollection on hfs.BuyerID equals b.PersonID
                          join re in MainWindow.reCosCollection on hfs.CompanyID equals re.CompanyID

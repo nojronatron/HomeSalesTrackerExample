@@ -118,7 +118,7 @@ namespace HomeSalesTrackerApp.Helpers
                 homeForSaleDetails = (from hfs in MainWindow.homeSalesCollection
                                       where hfs.HomeID == selectedHomeForSale.HomeID &&
                                         hfs.MarketDate == selectedHomeForSale.MarketDate
-                                      join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                      join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                                       join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
                                       join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
                                       join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
@@ -159,7 +159,7 @@ namespace HomeSalesTrackerApp.Helpers
                 soldHomeDetails = (from hfs in MainWindow.homeSalesCollection
                                    where hfs.HomeID == selectedSoldHome.HomeID &&
                                    hfs.SoldDate == selectedSoldHome.SoldDate
-                                   join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
+                                   join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
                                    join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
                                    join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
                                    join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID

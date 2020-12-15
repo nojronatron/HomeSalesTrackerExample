@@ -20,7 +20,7 @@ namespace HomeSalesTrackerApp
     public partial class MainWindow : Window
     {
         private Logger logger = null;
-        public static HomesCollection homesCollection = null;
+        //public static HomesCollection homesCollection = null;
         public static PeopleCollection<Person> peopleCollection = null;
         public static HomeSalesCollection homeSalesCollection = null;
         public static RealEstateCosCollection reCosCollection = null;
@@ -50,9 +50,9 @@ namespace HomeSalesTrackerApp
 
         private static void InitializeCollections()
         {
-            InitHomeSalesCollection();
+            //InitHomeSalesCollection();
             InitPeopleCollection();
-            InitHomesCollection();
+            //InitHomesCollection();
             InitRealEstateCompaniesCollection();
         }
 
@@ -63,12 +63,12 @@ namespace HomeSalesTrackerApp
 
         }
 
-        private static void InitHomesCollection()
-        {
-            List<Home> homes = EntityLists.GetTreeListOfHomes();
-            homesCollection = new HomesCollection(homes);
+        //private static void InitHomesCollection()
+        //{
+        //    List<Home> homes = EntityLists.GetTreeListOfHomes();
+        //    homesCollection = new HomesCollection(homes);
 
-        }
+        //}
 
         private static void InitPeopleCollection()
         {
@@ -191,7 +191,8 @@ namespace HomeSalesTrackerApp
                                                                        hs.MarketDate != null &&
                                                                        hs.SoldDate == null).FirstOrDefault();
 
-                Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+                //Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+                Home hfsHome = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.HomeID == homeID).FirstOrDefault();
 
                 if (hfsHome != null && hfsHomesale != null)
                 {
@@ -416,7 +417,8 @@ namespace HomeSalesTrackerApp
             try
             {
                 HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
-                Home home = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                //Home home = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
+                Home home = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
                 home.HomeSales = homeSalesCollection.Where(hs => hs.HomeID == home.HomeID).ToList();
                 home.Owner = peopleCollection.Where(o => o.PersonID == home.OwnerID).FirstOrDefault().Owner;
                 var ahw = new AddHomeWindow();
