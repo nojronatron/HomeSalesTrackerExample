@@ -141,26 +141,48 @@ namespace HomeSalesTrackerApp
         }
 
         /// <summary>
+        /// Accepts a Home instance and attempts to remove from the Database and the Collection. Returns True if succeeds, False if no changes made.
+        /// </summary>
+        /// <param name="home"></param>
+        /// <returns></returns>
+        public bool Remove(Home home)
+        {
+            if (home != null)
+            {
+
+                if (_homesList.Contains(home))
+                {
+
+                    if (LogicBroker.RemoveEntity<Home>(home))
+                    {
+
+                        if (_homesList.Remove(home))
+                        {
+                            collectionMonitor.SendNotifications(1, "Home");
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Removes an item from this collection by its HomeID.
         /// </summary>
         /// <param name="homeID"></param>
         public bool Remove(int homeID)
         {
-            int preCount = this.Count;
+            bool result = false;
+            Home homeToRemove = _homesList.Where(hs => hs.HomeID == homeID).FirstOrDefault();
 
-            if (homeID > 0)
+            if (homeToRemove != null)
             {
-                int homeIdx = _homesList.FindIndex(x => x.HomeID == homeID);
-                _homesList.RemoveAt(homeIdx);
-
-                if (preCount > this.Count)
-                {
-                    collectionMonitor.SendNotifications(1, "Home");
-                    return true;
-                }
+                result = this.Remove(homeToRemove);
             }
 
-            return false;
+            return result;
         }
 
         IEnumerator<Home> IEnumerable<Home>.GetEnumerator()

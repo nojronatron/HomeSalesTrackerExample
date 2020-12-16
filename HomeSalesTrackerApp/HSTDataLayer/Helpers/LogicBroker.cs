@@ -597,10 +597,10 @@ namespace HSTDataLayer
                         {
                             Person person = (item as Person);
                             Person personToDelete = context.People.Find(person.PersonID);
-                            
+
                             if (personToDelete != null)
                             {
-                                context.People.Remove(personToDelete);
+                                Person removedPerson = context.People.Remove(personToDelete);
                             }
 
                             break;
@@ -686,9 +686,9 @@ namespace HSTDataLayer
                 {
                     itemsAffected = context.SaveChanges();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    _ = 0;
+                    throw new Exception("LogicBroker.context.SaveChanges threw an Exception.", ex);
                 }
 
                 if (itemsAffected > 0)
@@ -696,10 +696,6 @@ namespace HSTDataLayer
                     result = true;
                 }
 
-                if (itemsAffected < 0)
-                {
-                    result = false;
-                }
             }
 
             return result;

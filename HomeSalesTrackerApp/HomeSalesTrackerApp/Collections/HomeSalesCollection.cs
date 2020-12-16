@@ -201,8 +201,7 @@ namespace HomeSalesTrackerApp
             
             if (hsToRemove != null)
             {
-                _homeSalesList.Remove(hsToRemove);
-                result = true;
+                result = this.Remove(hsToRemove);
             }
             
             return result;

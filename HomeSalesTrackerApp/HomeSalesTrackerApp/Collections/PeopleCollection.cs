@@ -131,6 +131,11 @@ namespace HomeSalesTrackerApp
             return personID;
         }
 
+        /// <summary>
+        /// Attempts to update Person information (Phone or EMail) in the DB and Collection. Agent, Buyer, or Owner are delegated. Returns zero if no changes were made.
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
         public int UpdatePerson(T person)
         {
             if (person == null)
@@ -179,6 +184,11 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
+        /// <summary>
+        /// Attempts to update the Agent Object in the database and updates the Person instance in the Collection with the updated Agent info.
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <returns></returns>
         internal int UpdateAgent(Agent agent)
         {
             if (agent == null || agent.AgentID < 0)
@@ -220,6 +230,11 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
+        /// <summary>
+        /// Attempts to update the Buyer Object in the database and updates the Person instance in the Collection with the updated Buyer info.
+        /// </summary>
+        /// <param name="buyer"></param>
+        /// <returns></returns>
         internal int UpdateBuyer(Buyer buyer)
         {
             if (buyer == null || buyer.BuyerID < 0)
@@ -261,6 +276,11 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
+        /// <summary>
+        /// Attempts to update the Owner Object in the database and updates the Person instance in the Collection with the updated Owner info.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <returns></returns>
         internal int UpdateOwner(Owner owner)
         {
             if (owner == null || owner.OwnerID < 0)
@@ -271,11 +291,6 @@ namespace HomeSalesTrackerApp
             Owner dbOwner = null;
             int personIDX = _peopleList.FindIndex(p => p.PersonID == owner.OwnerID);
             Person collectionPerson = _peopleList[personIDX];
-
-            if (collectionPerson.Owner == owner)
-            {
-                return 0;
-            }
 
             int result = 0;
             bool ownerStored = false;
@@ -302,6 +317,10 @@ namespace HomeSalesTrackerApp
             return result;
         }
 
+        /// <summary>
+        /// Adds a Person, Agent, Buyer, or Owner item to the Collection, leveraging ICollection method. TODO: Enable updating the database too.
+        /// </summary>
+        /// <param name="item"></param>
         void ICollection<T>.Add(T item)
         {
             ((ICollection<T>)_peopleList).Add(item);
@@ -323,10 +342,94 @@ namespace HomeSalesTrackerApp
             ((ICollection<T>)_peopleList).CopyTo(array, arrayIndex);
         }
 
+        /// <summary>
+        /// Takes a Person, Agent, Buyer, or Owner instance and attempts to remove it from the Collection and the Database. Returns True if succeeds, False if otherwise.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Remove(T item)
         {
-            //  TODO: Add LogicBroker.Remove to this function
-            return ((ICollection<T>)_peopleList).Remove(item);
+            bool result = false;
+
+            if (item != null)
+            {
+                if (item.GetType().Name == "Agent")
+                {
+                    var agent = item as Agent;
+                    result = this.RemoveAgent(agent);
+                }
+                if (item.GetType().Name == "Buyer")
+                {
+                    var buyer = item as Buyer;
+                    result = this.RemoveBuyer(buyer);
+                }
+                if (item.GetType().Name == "Owner")
+                {
+                    var owner = item as Owner;
+                    result = this.RemoveOwner(owner);
+                }
+                if (item.GetType().Name == "Person")
+                {
+                    Person person = item as Person;
+
+                    if (_peopleList.Contains(person))
+                    {
+                        var personIDX = _peopleList.FindIndex(p => p.PersonID == person.PersonID);
+
+                        if (person.Agent != null)
+                        {
+                            this.RemoveAgent(person.Agent);
+                        }
+                        if (person.Buyer != null)
+                        {
+                            this.RemoveBuyer(person.Buyer);
+                        }
+                        if (person.Owner != null)
+                        {
+                            this.RemoveOwner(person.Owner);
+                        }
+                        if (LogicBroker.RemoveEntity<Person>(person))
+                        {
+                            collectionMonitor.SendNotifications(1, "Person");
+                            _peopleList.RemoveAt(personIDX);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Private helper method removes Agent instance from the DB.
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <returns></returns>
+        private bool RemoveAgent(Agent agent)
+        {
+            return (LogicBroker.RemoveEntity<Agent>(agent));
+        }
+
+        /// <summary>
+        /// Private helper method removes Buyer instance from the DB.
+        /// </summary>
+        /// <param name="buyer"></param>
+        /// <returns></returns>
+        private bool RemoveBuyer(Buyer buyer)
+        {
+
+            return (LogicBroker.RemoveEntity<Buyer>(buyer));
+        }
+
+        /// <summary>
+        /// Private helper method removes Owner instance from the DB.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        private bool RemoveOwner(Owner owner)
+        {
+            return (LogicBroker.RemoveEntity<Owner>(owner));
         }
 
         public IEnumerator<T> GetEnumerator()
