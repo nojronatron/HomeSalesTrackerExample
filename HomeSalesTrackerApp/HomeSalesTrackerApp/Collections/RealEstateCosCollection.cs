@@ -52,6 +52,11 @@ namespace HomeSalesTrackerApp
             }
         }
 
+        /// <summary>
+        /// Attempts to add a RealEstateCompany instance to the Collection and the Database. Returns True if succeeds, False if otherwise.
+        /// </summary>
+        /// <param name="realEstateCompany"></param>
+        /// <returns></returns>
         public int Add(RealEstateCompany realEstateCompany)
         {
             if (realEstateCompany != null)
@@ -86,6 +91,11 @@ namespace HomeSalesTrackerApp
             return 0;
         }
 
+        /// <summary>
+        /// Retreives a RealEstateCompany instance from the Collection by CompanyID. Returns Null if CompanyID not in Collection.
+        /// </summary>
+        /// <param name="companyID"></param>
+        /// <returns></returns>
         public RealEstateCompany Retrieve(int companyID)
         {
             var reco = new RealEstateCompany();
@@ -98,6 +108,11 @@ namespace HomeSalesTrackerApp
             return reco;
         }
 
+        /// <summary>
+        /// Attempts to update a RealEstateCompany instance in the Collection. Returns 1 if succeeds, 0 if fails.
+        /// </summary>
+        /// <param name="realEstateCompany"></param>
+        /// <returns></returns>
         public int Update(RealEstateCompany realEstateCompany)
         {
             if (realEstateCompany != null)
@@ -134,21 +149,50 @@ namespace HomeSalesTrackerApp
             return 0;
         }
 
-        public void Remove(int companyID)
+        /// <summary>
+        /// Attempts to remove a RealEstateCompany instance from the Collection and the Database. Returns True if succeeds, False if otherwise.
+        /// </summary>
+        /// <param name="realEstateCompany"></param>
+        /// <returns></returns>
+        public bool Remove(RealEstateCompany realEstateCompany)
         {
-            int preCount = this.Count;
-
-            if (companyID > -1)
+            if (realEstateCompany != null)
             {
-                int recoIdx = _recoList.FindIndex(r => r.CompanyID == companyID);
-                _recoList.RemoveAt(recoIdx);
+
+                if (_recoList.Contains(realEstateCompany))
+                {
+
+                    if (LogicBroker.RemoveEntity<RealEstateCompany>(realEstateCompany))
+                    {
+
+                        if (_recoList.Remove(realEstateCompany))
+                        {
+                            collectionMonitor.SendNotifications(1, "RECo");
+                            return true;
+                        }
+                    }
+                }
             }
 
-            if (preCount > this.Count)
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to remove a RealEstateCompany instance from teh Collection and the Database, by CompanyID. Returns True if succeeds, False if otherwise.
+        /// </summary>
+        /// <param name="companyID"></param>
+        /// <returns></returns>
+        public bool Remove(int companyID)
+        {
+            bool result = false;
+            RealEstateCompany recoToRemove = _recoList.Where(re => re.CompanyID == companyID).FirstOrDefault();
+
+            if (recoToRemove != null)
             {
-                collectionMonitor.SendNotifications(1, "RECo");
+                result = this.Remove(recoToRemove);
             }
 
+            return result;
         }
 
         public IEnumerator<RealEstateCompany> GetEnumerator()

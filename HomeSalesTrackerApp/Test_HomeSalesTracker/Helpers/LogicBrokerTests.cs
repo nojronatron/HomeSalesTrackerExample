@@ -5,6 +5,7 @@ using HSTDataLayer.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HSTDataLayer.Tests
 {
@@ -509,21 +510,22 @@ namespace HSTDataLayer.Tests
                 Assert.IsTrue(addedPersonUpdated == 1);
 
                 //  UPDATE (Person as an Owner)
+                var existingUpdatePerson = DbPeopleCollection.Get(addedPersonID);
                 var owner = new Owner()
                 {
                     OwnerID = addedPerson.PersonID,
                     PreferredLender = "Lender Test"
                 };
-                addedPerson.Owner = owner;
-                var ownerPersonUpdated = DbPeopleCollection.UpdatePerson(addedPerson);
-                PrintObject<Person>(addedPerson, $"UpdatePerson(addedPerson) with Owner result: { ownerPersonUpdated }.");
+                existingUpdatePerson.Owner = owner;
+                var ownerPersonUpdated = DbPeopleCollection.UpdatePerson(existingUpdatePerson);
+                PrintObject<Person>(existingUpdatePerson, $"UpdatePerson(addedPerson) with Owner result: { ownerPersonUpdated }.");
                 Assert.IsTrue(ownerPersonUpdated > 0);
 
                 //  REMOVE
-                var personRemoved = DbPeopleCollection.Remove(personPerson);
-                PrintObject<Person>(personPerson, $"Removing person from collection result: { personRemoved }.");
-                Assert.IsTrue(personRemoved);           //  Remove plain Person
-
+                var updatePersonWithOwner = DbPeopleCollection.Get(addedPersonID);
+                var personRemoved = DbPeopleCollection.Remove(updatePersonWithOwner);
+                PrintObject<Person>(updatePersonWithOwner, $"Removing person from collection result: { personRemoved }.");
+                Assert.IsTrue(personRemoved);           //  Remove Person with Owner FK
 
                 //  CLEAR
                 DbPeopleCollection.Clear();
@@ -532,7 +534,7 @@ namespace HSTDataLayer.Tests
 
                 //  REINIT
                 DbPeopleCollection = new PeopleCollection<Person>(EntityLists.GetListOfPeople());
-                Assert.IsTrue(DbPeopleCollection.Count == 11);
+                Assert.IsTrue(DbPeopleCollection.Count == 10);
             }
             #endregion
 
@@ -591,8 +593,7 @@ namespace HSTDataLayer.Tests
                 //  REINIT
                 DbHomesCollection = new HomesCollection(EntityLists.GetTreeListOfHomes());
 
-                //  var expectedCount = 5;
-                var expectedCount = 6; //   Use this until DbHomesCollection.Remove() is implemented to remove item from DB
+                var expectedCount = 5;
                 var actualCount = DbHomesCollection.Count;
                 PrintObject<int>(actualCount, "Actual Count of reinitialized Homes collection.");
                 Assert.AreEqual(expectedCount, actualCount);
@@ -708,6 +709,33 @@ namespace HSTDataLayer.Tests
                 var actualRECoRetreiveResult = expectedRECo.Equals(retreivedRECo);
                 PrintObject<bool>(actualRECoRetreiveResult, "Expected .Equals(): True; Actual comparison result: ");
                 Assert.AreEqual(expectedRECoRetreiveResult, actualRECoRetreiveResult);
+
+                //  ADD
+                var expectedPreCount = DbRECosCollection.Count;
+                var recoToAdd = new RealEstateCompany()
+                {
+                    CompanyName = "TestCompany",
+                    Phone = "2061234567"
+                };
+                var expectedAddResult = 1;
+                var actualAddResult = DbRECosCollection.Add(recoToAdd);
+                Assert.AreEqual(expectedAddResult, actualAddResult);
+
+                //  SEARCH and store
+                var recoToRemove = DbRECosCollection.Where(re => re.CompanyName == recoToAdd.CompanyName).FirstOrDefault();
+                if (recoToRemove == null)
+                {
+                    Assert.Fail($"Unable to recover added RECo: { recoToAdd }");
+                }
+
+                //  Remove
+                var expectedRemoveResult = true;
+                var recoRemovalPreCount = DbRECosCollection.Count;
+                var expectedPostCount = recoRemovalPreCount - 1;
+                var actualRemoveResult = DbRECosCollection.Remove(recoToRemove.CompanyID);  //  this exercizes BOTH remove methods
+                var actualPostCount = DbRECosCollection.Count;
+                Assert.AreEqual(expectedPostCount, actualPostCount);
+                Assert.AreEqual(expectedRemoveResult, actualRemoveResult);
             }
             #endregion
 
