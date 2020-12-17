@@ -17,6 +17,7 @@ namespace HomeSalesTrackerApp
         private bool IsButtonClose = false;
         //  Note: Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
         private CollectionMonitor collectionMonitor = null;
+        private PeopleCollection<Person> _peopleCollection { get; set; }
         public bool UpdateInsteadOfAdd = false;
         public Home NewHome { get; set; }
         public Owner AnOwner { get; set; }

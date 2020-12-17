@@ -1,4 +1,6 @@
 ﻿using HomeSalesTrackerApp.DisplayModels;
+using HomeSalesTrackerApp.Factory;
+
 using HSTDataLayer;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ namespace HomeSalesTrackerApp.Helpers
                 foreach (var searchTerm in searchTerms)
                 {
                     string capSearchTerm = searchTerm.ToUpper().Trim();
-                    searchResults.AddRange(MainWindow.homesCollection.OfType<Home>().Where(
+                    searchResults.AddRange(CollectionFactory.GetHomesCollectionObject().OfType<Home>().Where(
                         hc =>
                             hc.HomeID.ToString().Contains(capSearchTerm) ||
                             hc.Address.ToUpper().Contains(capSearchTerm) ||

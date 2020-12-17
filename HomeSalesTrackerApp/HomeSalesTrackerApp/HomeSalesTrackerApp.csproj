@@ -69,7 +69,8 @@
     <Compile Include="DisplayModels\RealEstateCoModel.cs" />
     <Compile Include="DisplayModels\SoldHomeDetailModel.cs" />
     <Compile Include="DisplayModels\SoldHomeModel.cs" />
-    <Compile Include="Factory\CollectionFactory.cs" />
+    <Compile Include="Factories\CollectionFactory.cs" />
+    <Compile Include="Factories\IHstCollection.cs" />
     <Compile Include="Helpers\CollectionMonitor.cs" />
     <Compile Include="Helpers\FormatSearchTerms.cs" />
     <Compile Include="Helpers\HomeSalesSearchHelper.cs" />

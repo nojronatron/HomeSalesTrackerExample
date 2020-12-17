@@ -1,5 +1,6 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HomeSalesTrackerApp.DisplayModels;
+using HomeSalesTrackerApp.Factory;
 using HomeSalesTrackerApp.Helpers;
 using HomeSalesTrackerApp.ReportWindows;
 using HomeSalesTrackerApp.SearchResultViewModels;
@@ -20,10 +21,10 @@ namespace HomeSalesTrackerApp
     public partial class MainWindow : Window
     {
         private Logger logger = null;
-        //public static HomesCollection homesCollection = null;
-        public static PeopleCollection<Person> peopleCollection = null;
-        public static HomeSalesCollection homeSalesCollection = null;
-        public static RealEstateCosCollection reCosCollection = null;
+        ////public static HomesCollection homesCollection = null;
+        //public static PeopleCollection<Person> peopleCollection = null;
+        //public static HomeSalesCollection homeSalesCollection = null;
+        //public static RealEstateCosCollection reCosCollection = null;
 
         public MainWindow()
         {
@@ -36,7 +37,7 @@ namespace HomeSalesTrackerApp
 
             if (App.DatabaseInitLoaded)
             {
-                InitializeCollections();
+                //InitializeCollections();
                 logger.Data("MainWindow Loaded", "Database data loaded.");
                 DisplayStatusMessage("Database data loaded.");
             }
@@ -48,20 +49,20 @@ namespace HomeSalesTrackerApp
             logger.Flush();
         }
 
-        private static void InitializeCollections()
-        {
-            //InitHomeSalesCollection();
-            InitPeopleCollection();
-            //InitHomesCollection();
-            InitRealEstateCompaniesCollection();
-        }
+        //private static void InitializeCollections()
+        //{
+        //    //InitHomeSalesCollection();
+        //    InitPeopleCollection();
+        //    //InitHomesCollection();
+        //    InitRealEstateCompaniesCollection();
+        //}
 
-        private static void InitRealEstateCompaniesCollection()
-        {
-            List<RealEstateCompany> recos = EntityLists.GetTreeListOfRECompanies();
-            reCosCollection = new RealEstateCosCollection(recos);
+        //private static void InitRealEstateCompaniesCollection()
+        //{
+        //    List<RealEstateCompany> recos = EntityLists.GetTreeListOfRECompanies();
+        //    reCosCollection = new RealEstateCosCollection(recos);
 
-        }
+        //}
 
         //private static void InitHomesCollection()
         //{
@@ -70,19 +71,19 @@ namespace HomeSalesTrackerApp
 
         //}
 
-        private static void InitPeopleCollection()
-        {
-            List<Person> people = EntityLists.GetListOfPeople();
-            peopleCollection = new PeopleCollection<Person>(people);
+        //private static void InitPeopleCollection()
+        //{
+        //    List<Person> people = EntityLists.GetListOfPeople();
+        //    peopleCollection = new PeopleCollection<Person>(people);
 
-        }
+        //}
 
-        private static void InitHomeSalesCollection()
-        {
-            List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
-            homeSalesCollection = new HomeSalesCollection(homeSales);
+        //private static void InitHomeSalesCollection()
+        //{
+        //    List<HomeSale> homeSales = EntityLists.GetListOfHomeSales();
+        //    homeSalesCollection = new HomeSalesCollection(homeSales);
 
-        }
+        //}
 
         private void ClearFieldsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -167,6 +168,7 @@ namespace HomeSalesTrackerApp
         {
             try
             {
+                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
                 StringBuilder statusMessage = new StringBuilder("Ok. ");
 
                 int homeID = -1;
@@ -187,7 +189,7 @@ namespace HomeSalesTrackerApp
                     return;
                 }
 
-                HomeSale hfsHomesale = homeSalesCollection.Where(hs => hs.HomeID == homeID &&
+                HomeSale hfsHomesale = fHomeSalesCollection.Where(hs => hs.HomeID == homeID &&
                                                                        hs.MarketDate != null &&
                                                                        hs.SoldDate == null).FirstOrDefault();
 
@@ -196,13 +198,15 @@ namespace HomeSalesTrackerApp
 
                 if (hfsHome != null && hfsHomesale != null)
                 {
+                    var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
                     Person hfsAgent = new Person();
-                    hfsAgent = peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
+                    hfsAgent = fPeopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
 
                     if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
                     {
+                        var fRECosCollection = CollectionFactory.GetRECosCollectionObject();
                         RealEstateCompany hfsReco = new RealEstateCompany();
-                        hfsReco = reCosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                        hfsReco = fRECosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                         if (hfsReco != null)
                         {
                             var homeUpdaterWindow = new HomeUpdaterWindow();
@@ -258,8 +262,8 @@ namespace HomeSalesTrackerApp
             HomeForSaleModel selectedHomeForSale = (HomeForSaleModel)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
-
-                var homeSaleToRemove = homeSalesCollection
+                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                var homeSaleToRemove = fHomeSalesCollection
                     .Where(hs =>
                         hs.MarketDate == selectedHomeForSale.MarketDate &&
                         hs.SaleAmount == selectedHomeForSale.SaleAmount &&
@@ -268,7 +272,7 @@ namespace HomeSalesTrackerApp
                         )
                     .FirstOrDefault();
 
-                if (homeSalesCollection.Remove(homeSaleToRemove))
+                if (fHomeSalesCollection.Remove(homeSaleToRemove))
                 {
 
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
@@ -416,15 +420,17 @@ namespace HomeSalesTrackerApp
         {
             try
             {
+                var fHomeSalesCollection = CollectionFactory.GetHomesCollectionObject();
+                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
                 HomeSearchModel selectedHome = FoundHomesView.SelectedItem as HomeSearchModel;
                 //Home home = homesCollection.Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
                 Home home = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.HomeID == selectedHome.HomeID).FirstOrDefault();
-                home.HomeSales = homeSalesCollection.Where(hs => hs.HomeID == home.HomeID).ToList();
-                home.Owner = peopleCollection.Where(o => o.PersonID == home.OwnerID).FirstOrDefault().Owner;
+                home.HomeSales = (ICollection<HomeSale>) fHomeSalesCollection.Where(hs => hs.HomeID == home.HomeID).ToList();
+                home.Owner = fPeopleCollection.Where(o => o.PersonID == home.OwnerID).FirstOrDefault().Owner;
                 var ahw = new AddHomeWindow();
                 ahw.NewHome = home;
                 ahw.AnOwner = home.Owner;
-                ahw.APerson = peopleCollection.Where(p => p.PersonID == home.Owner.OwnerID).FirstOrDefault();
+                ahw.APerson = fPeopleCollection.Where(p => p.PersonID == home.Owner.OwnerID).FirstOrDefault();
                 ahw.UpdateInsteadOfAdd = true;
                 ahw.Show();
             }
@@ -448,8 +454,9 @@ namespace HomeSalesTrackerApp
         {
             try
             {
+                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
                 var hfsHome = FoundHomesView.SelectedItem as Home;
-                List<HomeSale> hfsHomesales = homeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
+                List<HomeSale> hfsHomesales = fHomeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
                 var homeUpdaterWindow = new HomeUpdaterWindow();
                 homeUpdaterWindow.UpdateType = "PUTONMARKET";
                 homeUpdaterWindow.UpdateAgent = new Agent();
@@ -481,7 +488,8 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (selectedPerson != null)
                 {
 
@@ -513,7 +521,8 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (updatePerson.Buyer != null)
                 {
                     updateBuyer = updatePerson.Buyer;
@@ -551,7 +560,8 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                updatePerson = peopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
                 if (updatePerson.Owner != null)
                 {
                     updateOwner = updatePerson.Owner;
