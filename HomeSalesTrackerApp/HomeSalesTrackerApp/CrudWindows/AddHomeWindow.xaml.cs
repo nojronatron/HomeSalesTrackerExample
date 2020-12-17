@@ -1,4 +1,5 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
+using HomeSalesTrackerApp.Factory;
 using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
 using System;
@@ -15,18 +16,41 @@ namespace HomeSalesTrackerApp
     public partial class AddHomeWindow : Window, IObserver<NotificationData>
     {
         private bool IsButtonClose = false;
-        //  Note: Menu Update Home will set this to true to enable Address and Owner update (instead of New Home)
         private CollectionMonitor collectionMonitor = null;
         private PeopleCollection<Person> _peopleCollection { get; set; }
-        public bool UpdateInsteadOfAdd = false;
-        public Home NewHome { get; set; }
-        public Owner AnOwner { get; set; }
-        public Person APerson { get; set; }
-        public string AddType { get; set; }
+        private HomesCollection _homesCollection { get; set; }
+        private HomeSalesCollection _homeSalesCollection { get; set; }
+        private bool UpdateInsteadOfAdd = false;
+        private Home NewHome { get; set; }
+        private Owner AnOwner { get; set; }
+        private Person APerson { get; set; }
+        private string AddType { get; set; }
 
         public AddHomeWindow()
         {
             InitializeComponent();
+        }
+        public AddHomeWindow(string addType, string windowTitle) : base()
+        {
+            AddType = addType;
+            this.Title = windowTitle;
+        }
+        public AddHomeWindow(int homeID, bool updateInsteadOfAdd, string addType, string windowTitle) : this(addType, windowTitle)
+        {
+            UpdateInsteadOfAdd = updateInsteadOfAdd;
+            LoadUpdateData(homeID);
+        }
+
+        private void LoadUpdateData(int homeID)
+        {
+            _homesCollection = CollectionFactory.GetHomesCollectionObject();
+            _peopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            _homeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+            NewHome = _homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+            NewHome.HomeSales = (ICollection<HomeSale>) _homeSalesCollection.Where(hs => hs.HomeID == NewHome.HomeID).ToList();
+            APerson = _peopleCollection.Where(p => p.PersonID == NewHome.Owner.OwnerID).FirstOrDefault();
+            NewHome.Owner = _peopleCollection.Where(o => o.PersonID == NewHome.OwnerID).FirstOrDefault().Owner;
+            AnOwner = NewHome.Owner;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -44,7 +68,7 @@ namespace HomeSalesTrackerApp
                 statusBarText.Text = $"Add a new { this.AddType } to the database.";
             }
 
-            collectionMonitor = MainWindow.peopleCollection.collectionMonitor;
+            collectionMonitor = _peopleCollection.collectionMonitor;
             collectionMonitor.Subscribe(this);
             RefreshOwnersComboBox();
         }
@@ -77,8 +101,7 @@ namespace HomeSalesTrackerApp
                         NewHome.State = state;
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
-                        //itemsProcessed += MainWindow.homesCollection.Update(NewHome);
-                        itemsProcessed += (Factory.CollectionFactory.GetHomesCollectionObject()).Update(NewHome);
+                        itemsProcessed += _homesCollection.Update(NewHome);
                     }
                     else
                     {
@@ -91,8 +114,7 @@ namespace HomeSalesTrackerApp
                             OwnerID = APerson.PersonID
                         };
 
-                        //itemsProcessed += MainWindow.homesCollection.Add(NewHome);
-                        itemsProcessed += (Factory.CollectionFactory.GetHomesCollectionObject()).Add(NewHome);
+                        itemsProcessed += _homesCollection.Add(NewHome);
                     }
 
                     if (itemsProcessed > 0)
@@ -100,7 +122,7 @@ namespace HomeSalesTrackerApp
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
                         AnOwner.Homes.Add(NewHome);
-                        MainWindow.peopleCollection.UpdateOwner(AnOwner);
+                        _peopleCollection.UpdateOwner(AnOwner);
 
                     }
                     else
@@ -138,7 +160,7 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            var existingOwnersList = (from p in MainWindow.peopleCollection
+            var existingOwnersList = (from p in _peopleCollection
                                       select p).ToList();
 
             int selectedIndex = -1;
@@ -180,7 +202,7 @@ namespace HomeSalesTrackerApp
                 return;
             }
 
-            APerson = MainWindow.peopleCollection.Where(p => p.PersonID == tempOwnerPerson.PersonID).FirstOrDefault();
+            APerson = _peopleCollection.Where(p => p.PersonID == tempOwnerPerson.PersonID).FirstOrDefault();
             AnOwner = APerson.Owner;
             PreferredLenderTextbox.Text = AnOwner.PreferredLender ?? "Lender info not found";
             
@@ -188,7 +210,6 @@ namespace HomeSalesTrackerApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
             if (IsButtonClose)
             {
                 e.Cancel = false;
@@ -220,15 +241,15 @@ namespace HomeSalesTrackerApp
         private IDisposable unsubscriber;
         private string notificationMessage;
 
-        public virtual void Subscribe(IObservable<NotificationData> provider)
-        {
-            unsubscriber = provider.Subscribe(this);
-        }
+        //public virtual void Subscribe(IObservable<NotificationData> provider)
+        //{
+        //    unsubscriber = provider.Subscribe(this);
+        //}
 
-        public virtual void Unsubscribe()
-        {
-            unsubscriber.Dispose();
-        }
+        //public virtual void Unsubscribe()
+        //{
+        //    unsubscriber.Dispose();
+        //}
 
         public void OnNext(NotificationData value)
         {

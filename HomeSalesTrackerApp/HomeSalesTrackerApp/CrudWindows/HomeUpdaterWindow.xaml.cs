@@ -16,25 +16,68 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class HomeUpdaterWindow : Window, IObserver<NotificationData>
     {
+        private PeopleCollection<Person> _peopleCollection { get; set; }
+        private HomesCollection _homesCollection { get; set; }
+        private HomeSalesCollection _homeSalesCollection { get; set; }
+        private RealEstateCosCollection _recosCollection { get; set; }
         private bool IsButtonClose { get; set; }
         private bool BuyerUpdated { get; set; }
         private bool HomesaleUpdated { get; set; }
         private Logger logger = null;
         private CollectionMonitor collectionMonitor = null;
 
-        public string UpdateType { get; set; }
-        public Person UpdatePerson { get; set; }
-        public Agent UpdateAgent { get; set; }
-        public Owner UpdateOwner { get; set; }
-        public Buyer UpdateBuyer { get; set; }
-        public Home UpdateHome { get; set; }
-        public HomeSale UpdateHomeSale { get; set; }
-        public RealEstateCompany UpdateReco { get; set; }
+        private string UpdateType { get; set; }
+        private Person UpdatePerson { get; set; }
+        private Agent UpdateAgent { get; set; }
+        private Owner UpdateOwner { get; set; }
+        private Buyer UpdateBuyer { get; set; }
+        private Home UpdateHome { get; set; }
+        private HomeSale UpdateHomeSale { get; set; }
+        private RealEstateCompany UpdateReco { get; set; }
 
         public HomeUpdaterWindow()
         {
             InitializeComponent();
         }
+        public HomeUpdaterWindow(int homeID, string updateType, string windowTitle) : base()
+        {
+            UpdateType = updateType;
+            this.Title = windowTitle;
+            LoadDataUpdateHomeAsSold(homeID);
+        }
+        private void LoadDataUpdateHomeAsSold(int homeID)
+        {
+
+        }
+            /*                              
+             *                              HomeSale hfsHomesale = fHomeSalesCollection.Where(hs => hs.HomeID == homeID &&
+                                                                       hs.MarketDate != null &&
+                                                                       hs.SoldDate == null).FirstOrDefault();
+
+                //Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+                Home hfsHome = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.HomeID == homeID).FirstOrDefault();
+
+                if (hfsHome != null && hfsHomesale != null)
+                {
+                    var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                    Person hfsAgent = new Person();
+                    hfsAgent = fPeopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
+
+                    if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                    {
+                        var fRECosCollection = CollectionFactory.GetRECosCollectionObject();
+                        RealEstateCompany hfsReco = new RealEstateCompany();
+                        hfsReco = fRECosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                        if (hfsReco != null)
+                        {
+                            //var homeUpdaterWindow = new HomeUpdaterWindow();
+                            //homeUpdaterWindow.UpdateType = "HOMESOLD";
+                            //homeUpdaterWindow.UpdatePerson = hfsAgent;
+                            //homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
+                            //homeUpdaterWindow.UpdateHome = hfsHome;
+                            //homeUpdaterWindow.UpdateHomeSale = hfsHomesale;
+                            //homeUpdaterWindow.UpdateReco = hfsReco;
+            */
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
