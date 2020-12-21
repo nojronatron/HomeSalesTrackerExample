@@ -3,6 +3,7 @@ using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace HomeSalesTrackerApp.Helpers
 {
@@ -31,7 +32,9 @@ namespace HomeSalesTrackerApp.Helpers
             foreach (var searchTerm in SearchTerms)
             {
                 string capSearchTerm = searchTerm.ToUpper().Trim();
-                searchResults.AddRange(MainWindow.peopleCollection.OfType<Person>().Where(
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+
+                searchResults.AddRange(((App)Application.Current)._peopleCollection.OfType<Person>().Where(
                     p =>
                         p.PersonID.ToString().Contains(capSearchTerm) ||
                         p.FirstName.ToUpper().Contains(capSearchTerm) ||
@@ -124,7 +127,8 @@ namespace HomeSalesTrackerApp.Helpers
 
         public static string GetPersonDetails(PersonModel foundPerson)
         {
-            Person foundPersonFull = MainWindow.peopleCollection.FirstOrDefault(p => p.PersonID == foundPerson.PersonID);
+            //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            Person foundPersonFull = ((App)Application.Current)._peopleCollection.FirstOrDefault(p => p.PersonID == foundPerson.PersonID);
 
             if (foundPerson == null)
             {
@@ -134,9 +138,10 @@ namespace HomeSalesTrackerApp.Helpers
             if (foundPerson.PersonType == new BuyerModel().PersonType)
             {
                 List<SoldHomeModel> purchasedHomes = new List<SoldHomeModel>();
-                purchasedHomes = (from hfs in MainWindow.homeSalesCollection
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                purchasedHomes = (from hfs in ((App)Application.Current)._homeSalesCollection
                                   where hfs.BuyerID == foundPerson.PersonID
-                                  join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
+                                  join h in ((App)Application.Current)._homesCollection on hfs.HomeID equals h.HomeID
                                   select new SoldHomeModel
                                   {
                                       HomeID = h.HomeID,
@@ -148,7 +153,7 @@ namespace HomeSalesTrackerApp.Helpers
                                       SoldDate = hfs.SoldDate
                                   }).ToList();
 
-                var buyerPerson = (from hfs in MainWindow.homeSalesCollection
+                var buyerPerson = (from hfs in ((App)Application.Current)._homeSalesCollection
                                    where hfs.BuyerID == foundPerson.PersonID
                                    select new BuyerModel
                                    {
@@ -168,7 +173,7 @@ namespace HomeSalesTrackerApp.Helpers
             if (foundPerson.PersonType == new OwnerModel().PersonType)
             {
                 List<HomeDisplayModel> ownedHomes = new List<HomeDisplayModel>();
-                ownedHomes = (from h in Factory.CollectionFactory.GetHomesCollectionObject()
+                ownedHomes = (from h in ((App)Application.Current)._homesCollection
                               where h.OwnerID == foundPerson.PersonID
                               select new HomeDisplayModel
                               {
@@ -179,8 +184,8 @@ namespace HomeSalesTrackerApp.Helpers
                                   Zip = h.Zip
                               }).ToList();
 
-                OwnerModel ownerPerson = (from p in MainWindow.peopleCollection
-                                          join h in Factory.CollectionFactory.GetHomesCollectionObject() on p.PersonID equals h.OwnerID
+                OwnerModel ownerPerson = (from p in ((App)Application.Current)._peopleCollection
+                                          join h in ((App)Application.Current)._homesCollection on p.PersonID equals h.OwnerID
                                           where p.PersonID == foundPerson.PersonID
                                           select new OwnerModel
                                           {
@@ -201,10 +206,11 @@ namespace HomeSalesTrackerApp.Helpers
             if (foundPerson.PersonType == new AgentModel().PersonType)
             {
                 List<SoldHomeModel> soldHomes = new List<SoldHomeModel>();
-                soldHomes = (from hfs in MainWindow.homeSalesCollection
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                soldHomes = (from hfs in ((App)Application.Current)._homeSalesCollection
                              where hfs.AgentID == foundPerson.PersonID &&
                              hfs.SoldDate != null
-                             join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
+                             join h in ((App)Application.Current)._homesCollection on hfs.HomeID equals h.HomeID
                              select new SoldHomeModel
                              {
                                  HomeID = h.HomeID,
@@ -217,10 +223,10 @@ namespace HomeSalesTrackerApp.Helpers
                              }).ToList();
 
                 List<HomeForSaleModel> homesForSale = new List<HomeForSaleModel>();
-                homesForSale = (from hfs in MainWindow.homeSalesCollection
+                homesForSale = (from hfs in ((App)Application.Current)._homeSalesCollection
                                 where hfs.AgentID == foundPersonFull.PersonID &&
                                 hfs.SoldDate == null
-                                join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
+                                join h in ((App)Application.Current)._homesCollection on hfs.HomeID equals h.HomeID
                                 select new HomeForSaleModel
                                 {
                                     HomeID = hfs.HomeID,
@@ -232,8 +238,9 @@ namespace HomeSalesTrackerApp.Helpers
                                     SaleAmount = hfs.SaleAmount
                                 }).ToList();
 
-                var agentPerson = (from hfs in MainWindow.homeSalesCollection
-                                   join re in MainWindow.reCosCollection on hfs.CompanyID equals re.CompanyID
+                //var fRECOsCollection = CollectionFactory.GetRECosCollectionObject();
+                var agentPerson = (from hfs in ((App)Application.Current)._homeSalesCollection
+                                   join re in ((App)Application.Current)._recosCollection on hfs.CompanyID equals re.CompanyID
                                    select new AgentModel
                                    {
                                        PersonID = foundPersonFull.PersonID,

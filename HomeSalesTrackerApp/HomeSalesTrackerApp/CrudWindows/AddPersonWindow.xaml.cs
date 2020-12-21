@@ -1,4 +1,5 @@
-﻿using HomeSalesTrackerApp.Helpers;
+﻿using HomeSalesTrackerApp.Factory;
+using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
 
 using System;
@@ -22,13 +23,16 @@ namespace HomeSalesTrackerApp.CrudWindows
         private RealEstateCompany ExistingRECo = null;
         private Logger logger = null;
         private CollectionMonitor collectionMonitor = null;
-
+        //private PeopleCollection<Person> _peopleCollection { get; set; }
+        //private RealEstateCosCollection _reCosCollection { get; set; }
         public string AddType { get; set; }
 
         public AddPersonWindow()
         {
             InitializeComponent();
             logger = new Logger();
+            //_peopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            //_reCosCollection = CollectionFactory.GetRECosCollectionObject();
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
@@ -157,7 +161,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 NewPerson.Phone = phone;
                 NewPerson.Email = email;
 
-                if (MainWindow.peopleCollection.Add(NewPerson) > 0)
+                if (((App)Application.Current)._peopleCollection.Add(NewPerson) > 0)
                 {
                     DisplayStatusMessage("Person created!");
                     result = true;
@@ -238,14 +242,14 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void LoadRECoComboBox()
         {
-            var recosList = (from re in MainWindow.reCosCollection
+            var recosList = (from re in ((App)Application.Current)._recosCollection
                              select re).ToList();
             ExistingRECoComboBox.ItemsSource = recosList;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            collectionMonitor = MainWindow.reCosCollection.collectionMonitor;
+            collectionMonitor = ((App)Application.Current)._recosCollection.collectionMonitor;
             collectionMonitor.Subscribe(this);
             LoadRECoComboBox();
 
@@ -319,19 +323,19 @@ namespace HomeSalesTrackerApp.CrudWindows
                 if (NewAgent != null)
                 {
                     NewAgent.AgentID = NewPerson.PersonID;
-                    itemsCount += MainWindow.peopleCollection.UpdateAgent(NewAgent);
+                    itemsCount += ((App)Application.Current)._peopleCollection.UpdateAgent(NewAgent);
                 }
 
                 if (NewBuyer != null)
                 {
                     NewBuyer.BuyerID = NewPerson.PersonID;
-                    itemsCount += MainWindow.peopleCollection.UpdateBuyer(NewBuyer);
+                    itemsCount += ((App)Application.Current)._peopleCollection.UpdateBuyer(NewBuyer);
                 }
 
                 if (NewOwner != null)
                 {
                     NewOwner.OwnerID = NewPerson.PersonID;
-                    itemsCount += MainWindow.peopleCollection.UpdateOwner(NewOwner);
+                    itemsCount += ((App)Application.Current)._peopleCollection.UpdateOwner(NewOwner);
                 }
 
                 if (itemsCount > 0)
@@ -350,7 +354,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void ExistingRECosCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedRECo = (sender as ComboBox).SelectedItem as RealEstateCompany;
-            ExistingRECo = MainWindow.reCosCollection.Where(re => re.CompanyID == selectedRECo.CompanyID).FirstOrDefault();
+            ExistingRECo = ((App)Application.Current)._recosCollection.Where(re => re.CompanyID == selectedRECo.CompanyID).FirstOrDefault();
             if (ExistingRECo != null)
             {
                 AgentRecoTextbox.Text = selectedRECo.CompanyName;

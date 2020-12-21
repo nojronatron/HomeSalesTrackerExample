@@ -17,9 +17,9 @@ namespace HomeSalesTrackerApp
     {
         private bool IsButtonClose = false;
         private CollectionMonitor collectionMonitor = null;
-        private PeopleCollection<Person> _peopleCollection { get; set; }
-        private HomesCollection _homesCollection { get; set; }
-        private HomeSalesCollection _homeSalesCollection { get; set; }
+        //private PeopleCollection<Person> _peopleCollection { get; set; }
+        //private HomesCollection _homesCollection { get; set; }
+        //private HomeSalesCollection _homeSalesCollection { get; set; }
         private bool UpdateInsteadOfAdd = false;
         private Home NewHome { get; set; }
         private Owner AnOwner { get; set; }
@@ -29,8 +29,11 @@ namespace HomeSalesTrackerApp
         public AddHomeWindow()
         {
             InitializeComponent();
+            //_homesCollection = CollectionFactory.GetHomesCollectionObject();
+            //_peopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            //_homeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
         }
-        public AddHomeWindow(string addType, string windowTitle) : base()
+        public AddHomeWindow(string addType, string windowTitle) : this()
         {
             AddType = addType;
             this.Title = windowTitle;
@@ -43,13 +46,10 @@ namespace HomeSalesTrackerApp
 
         private void LoadUpdateData(int homeID)
         {
-            _homesCollection = CollectionFactory.GetHomesCollectionObject();
-            _peopleCollection = CollectionFactory.GetPeopleCollectionObject();
-            _homeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
-            NewHome = _homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
-            NewHome.HomeSales = (ICollection<HomeSale>) _homeSalesCollection.Where(hs => hs.HomeID == NewHome.HomeID).ToList();
-            APerson = _peopleCollection.Where(p => p.PersonID == NewHome.Owner.OwnerID).FirstOrDefault();
-            NewHome.Owner = _peopleCollection.Where(o => o.PersonID == NewHome.OwnerID).FirstOrDefault().Owner;
+            NewHome = ((App)Application.Current)._homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+            NewHome.HomeSales = (ICollection<HomeSale>)((App)Application.Current)._homeSalesCollection.Where(hs => hs.HomeID == NewHome.HomeID).ToList();
+            APerson = ((App)Application.Current)._peopleCollection.Where(p => p.PersonID == NewHome.Owner.OwnerID).FirstOrDefault();
+            NewHome.Owner = ((App)Application.Current)._peopleCollection.Where(o => o.PersonID == NewHome.OwnerID).FirstOrDefault().Owner;
             AnOwner = NewHome.Owner;
         }
 
@@ -68,7 +68,7 @@ namespace HomeSalesTrackerApp
                 statusBarText.Text = $"Add a new { this.AddType } to the database.";
             }
 
-            collectionMonitor = _peopleCollection.collectionMonitor;
+            collectionMonitor = ((App)Application.Current)._peopleCollection.collectionMonitor;
             collectionMonitor.Subscribe(this);
             RefreshOwnersComboBox();
         }
@@ -101,7 +101,7 @@ namespace HomeSalesTrackerApp
                         NewHome.State = state;
                         NewHome.Zip = zip;
                         NewHome.OwnerID = APerson.PersonID;
-                        itemsProcessed += _homesCollection.Update(NewHome);
+                        itemsProcessed += ((App)Application.Current)._homesCollection.Update(NewHome);
                     }
                     else
                     {
@@ -114,7 +114,7 @@ namespace HomeSalesTrackerApp
                             OwnerID = APerson.PersonID
                         };
 
-                        itemsProcessed += _homesCollection.Add(NewHome);
+                        itemsProcessed += ((App)Application.Current)._homesCollection.Add(NewHome);
                     }
 
                     if (itemsProcessed > 0)
@@ -122,7 +122,7 @@ namespace HomeSalesTrackerApp
                         IsButtonClose = true;
                         DisplayStatusMessage("New Home saved! You can now close this window.");
                         AnOwner.Homes.Add(NewHome);
-                        _peopleCollection.UpdateOwner(AnOwner);
+                        ((App)Application.Current)._peopleCollection.UpdateOwner(AnOwner);
 
                     }
                     else
@@ -160,7 +160,7 @@ namespace HomeSalesTrackerApp
 
         public void RefreshOwnersComboBox()
         {
-            var existingOwnersList = (from p in _peopleCollection
+            var existingOwnersList = (from p in ((App)Application.Current)._peopleCollection
                                       select p).ToList();
 
             int selectedIndex = -1;
@@ -202,7 +202,7 @@ namespace HomeSalesTrackerApp
                 return;
             }
 
-            APerson = _peopleCollection.Where(p => p.PersonID == tempOwnerPerson.PersonID).FirstOrDefault();
+            APerson = ((App)Application.Current)._peopleCollection.Where(p => p.PersonID == tempOwnerPerson.PersonID).FirstOrDefault();
             AnOwner = APerson.Owner;
             PreferredLenderTextbox.Text = AnOwner.PreferredLender ?? "Lender info not found";
             
@@ -238,7 +238,7 @@ namespace HomeSalesTrackerApp
 
         #region IObserver implementation
 
-        private IDisposable unsubscriber;
+        //private IDisposable unsubscriber;
         private string notificationMessage;
 
         //public virtual void Subscribe(IObservable<NotificationData> provider)

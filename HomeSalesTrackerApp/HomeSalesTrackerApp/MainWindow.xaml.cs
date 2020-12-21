@@ -1,26 +1,35 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
 using HomeSalesTrackerApp.DisplayModels;
-using HomeSalesTrackerApp.Factory;
 using HomeSalesTrackerApp.Helpers;
 using HomeSalesTrackerApp.ReportWindows;
 using HomeSalesTrackerApp.SearchResultViewModels;
 using HSTDataLayer;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace HomeSalesTrackerApp
 {
+    delegate void HomeIDSelected(int selectedHomeID);
+    delegate void HomeSaleIDSelected(int selectedHomesaleID);
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
         private Logger logger = null;
-
+        protected static int SelectedHomeID { get; set; } = 0;   //  to be received when a Home is Selected in another view
+        protected static int SelectedHomesaleID { get; set; } = 0;   //  to be received when a Homesale is Selected in another view
+        internal static void SetSelectedHome(int homeID)
+        {
+            SelectedHomeID = homeID;
+        }
+        internal static void SetSelectedHomesale(int homesaleID)
+        {
+            SelectedHomesaleID = homesaleID;
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -126,20 +135,26 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
-                StringBuilder statusMessage = new StringBuilder("Ok. ");
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                //StringBuilder statusMessage = new StringBuilder("Ok. ");
 
-                int homeID = -1;
-
-                if (FoundHomesForSaleView.IsVisible)
+                //int homeID = -1;
+                int homesaleID = 0;
+                int homeID = 0;
+                //if (FoundHomesForSaleView.IsVisible)
+                //{
+                //    HomeForSaleModel selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
+                //    homeID = selectedHomesaleView.HomeID;
+                //}
+                //else if (FoundHomesView.IsVisible)
+                //{
+                //    HomeSearchModel selectedHomeSearchModel = FoundHomesView.SelectedItem as HomeSearchModel;
+                //    homeID = selectedHomeSearchModel.HomeID;
+                //}
+                if (MainWindow.SelectedHomesaleID > 0 && MainWindow.SelectedHomeID > 0)
                 {
-                    HomeForSaleModel selectedHomesaleView = FoundHomesForSaleView.SelectedItem as HomeForSaleModel;
-                    homeID = selectedHomesaleView.HomeID;
-                }
-                else if (FoundHomesView.IsVisible)
-                {
-                    HomeSearchModel selectedHomeSearchModel = FoundHomesView.SelectedItem as HomeSearchModel;
-                    homeID = selectedHomeSearchModel.HomeID;
+                    homesaleID = MainWindow.SelectedHomesaleID;
+                    homeID = MainWindow.SelectedHomeID;
                 }
                 else
                 {
@@ -148,8 +163,8 @@ namespace HomeSalesTrackerApp
                 }
 
                 //HomeSale hfsHomesale = fHomeSalesCollection.Where(hs => hs.HomeID == homeID &&
-                //                                                       hs.MarketDate != null &&
-                //                                                       hs.SoldDate == null).FirstOrDefault();
+                                                                       //hs.MarketDate != null &&
+                                                                       //hs.SoldDate == null).FirstOrDefault();
 
                 ////Home hfsHome = homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
                 //Home hfsHome = (Factory.CollectionFactory.GetHomesCollectionObject()).Where(h => h.HomeID == homeID).FirstOrDefault();
@@ -167,38 +182,21 @@ namespace HomeSalesTrackerApp
                 //        hfsReco = fRECosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
                 //        if (hfsReco != null)
                 //        {
-                //            //var homeUpdaterWindow = new HomeUpdaterWindow();
+                var homeUpdaterWindow = new HomeUpdaterWindow(homeID, homesaleID);
                 //            //homeUpdaterWindow.UpdateType = "HOMESOLD";
                 //            //homeUpdaterWindow.UpdatePerson = hfsAgent;
                 //            //homeUpdaterWindow.UpdateAgent = hfsAgent.Agent;
                 //            //homeUpdaterWindow.UpdateHome = hfsHome;
                 //            //homeUpdaterWindow.UpdateHomeSale = hfsHomesale;
                 //            //homeUpdaterWindow.UpdateReco = hfsReco;
-                            DisplayStatusMessage("Loading update window");
-                            homeUpdaterWindow.Show();
-                            ClearSearchResultsViews();
-                        }
-                        else
-                        {
-                            statusMessage.Append($"DB Data problem: Real Estate Co not found. ");
-                        }
+                DisplayStatusMessage("Loading update window");
+                homeUpdaterWindow.Show();
+                ClearSearchResultsViews();
 
-                    }
-                    else
-                    {
-                        statusMessage.Append($"Agent not associated with a Real Estate Co. ");
-                    }
-
-                }
-                else
-                {
-                    statusMessage.Append($"DB Data problem: No Home found for this Sale record. ");
-                }
-
-                if (statusMessage.Length > 4)
-                {
-                    DisplayStatusMessage(statusMessage.ToString());
-                }
+                //if (statusMessage.Length > 4)
+                //{
+                //    DisplayStatusMessage(statusMessage.ToString());
+                //}
 
             }
             catch (Exception ex)
@@ -220,8 +218,8 @@ namespace HomeSalesTrackerApp
             HomeForSaleModel selectedHomeForSale = (HomeForSaleModel)this.FoundHomesForSaleView.SelectedItem;
             if (selectedHomeForSale != null)
             {
-                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
-                var homeSaleToRemove = fHomeSalesCollection
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                var homeSaleToRemove = ((App)Application.Current)._homeSalesCollection
                     .Where(hs =>
                         hs.MarketDate == selectedHomeForSale.MarketDate &&
                         hs.SaleAmount == selectedHomeForSale.SaleAmount &&
@@ -230,7 +228,7 @@ namespace HomeSalesTrackerApp
                         )
                     .FirstOrDefault();
 
-                if (fHomeSalesCollection.Remove(homeSaleToRemove))
+                if (((App)Application.Current)._homeSalesCollection.Remove(homeSaleToRemove))
                 {
                     DisplayStatusMessage($"Removing { selectedHomeForSale.Address }, SaleID { homeSaleToRemove.SaleID } from For Sale Market.");
                     ClearSearchResultsViews();
@@ -411,16 +409,20 @@ namespace HomeSalesTrackerApp
         {
             try
             {
-                var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
-                var hfsHome = FoundHomesView.SelectedItem as Home;
-                List<HomeSale> hfsHomesales = fHomeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
-                var homeUpdaterWindow = new HomeUpdaterWindow();
-                homeUpdaterWindow.UpdateType = "PUTONMARKET";
-                homeUpdaterWindow.UpdateAgent = new Agent();
-                homeUpdaterWindow.UpdatePerson = new Person();
-                homeUpdaterWindow.UpdateHome = hfsHome;
-                homeUpdaterWindow.UpdateHomeSale = new HomeSale();
-                homeUpdaterWindow.UpdateReco = new RealEstateCompany();
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                //List<HomeSale> hfsHomesales = fHomeSalesCollection.Where(hs => hs.HomeID == hfsHome.HomeID).ToList();
+
+                //var hfsHome = FoundHomesView.SelectedItem as Home;
+                //var homeUpdaterWindow = new HomeUpdaterWindow(hfsHome.HomeID);
+                DisplayStatusMessage($"Selected Home ID: { SelectedHomeID }.");
+                var homeUpdaterWindow = new HomeUpdaterWindow(MainWindow.SelectedHomeID);
+
+                //homeUpdaterWindow.UpdateType = "PUTONMARKET";
+                //homeUpdaterWindow.UpdateAgent = new Agent();
+                //homeUpdaterWindow.UpdatePerson = new Person();
+                //homeUpdaterWindow.UpdateHome = hfsHome;
+                //homeUpdaterWindow.UpdateHomeSale = new HomeSale();
+                //homeUpdaterWindow.UpdateReco = new RealEstateCompany();
                 homeUpdaterWindow.Show();
                 ClearSearchResultsViews();
             }
@@ -445,24 +447,24 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
-                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-                if (selectedPerson != null)
-                {
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                //if (selectedPerson != null)
+                //{
+                //    updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
 
-                    if (updatePerson != null)
-                    {
-                        updateAgent = updatePerson.Agent;
-                        var puw = new PersonUpdaterWindow();
-                        puw.CalledByUpdateMenu = true;
-                        puw.CalledByUpdateMenuType = "Agent";
-                        puw.ReceivedPerson = updatePerson;
-                        puw.ReceivedAgent = updateAgent;
-                        puw.Title = "Update Person's Agent Info";
-                        puw.Show();
-                        ClearSearchResultsViews();
-                    }
-                }
+                //    if (updatePerson != null)
+                //    {
+                //        updateAgent = updatePerson.Agent;
+                //        var puw = new PersonUpdaterWindow();
+                //        puw.CalledByUpdateMenu = true;
+                //        puw.CalledByUpdateMenuType = "Agent";
+                //        puw.ReceivedPerson = updatePerson;
+                //        puw.ReceivedAgent = updateAgent;
+                //        puw.Title = "Update Person's Agent Info";
+                //        puw.Show();
+                //        ClearSearchResultsViews();
+                //    }
+                //}
             }
             catch
             {
@@ -478,27 +480,27 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
-                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-                if (updatePerson.Buyer != null)
-                {
-                    updateBuyer = updatePerson.Buyer;
-                }
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                //updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                //if (updatePerson.Buyer != null)
+                //{
+                //    updateBuyer = updatePerson.Buyer;
+                //}
 
-                if (selectedPerson != null)
-                {
-                    if (updatePerson != null)
-                    {
-                        var puw = new PersonUpdaterWindow();
-                        puw.CalledByUpdateMenu = true;
-                        puw.CalledByUpdateMenuType = "Buyer";
-                        puw.ReceivedPerson = updatePerson;
-                        puw.ReceivedBuyer = updateBuyer;
-                        puw.Title = "Update Person's Buyer Info";
-                        puw.Show();
-                        ClearSearchResultsViews();
-                    }
-                }
+                //if (selectedPerson != null)
+                //{
+                //    if (updatePerson != null)
+                //    {
+                //        var puw = new PersonUpdaterWindow();
+                //        puw.CalledByUpdateMenu = true;
+                //        puw.CalledByUpdateMenuType = "Buyer";
+                //        puw.ReceivedPerson = updatePerson;
+                //        puw.ReceivedBuyer = updateBuyer;
+                //        puw.Title = "Update Person's Buyer Info";
+                //        puw.Show();
+                //        ClearSearchResultsViews();
+                //    }
+                //}
 
             }
             catch
@@ -517,28 +519,28 @@ namespace HomeSalesTrackerApp
             PersonModel selectedPerson = FoundPeopleView.SelectedItem as PersonModel;
             try
             {
-                var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
-                updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
-                if (updatePerson.Owner != null)
-                {
-                    updateOwner = updatePerson.Owner;
-                }
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+                //updatePerson = fPeopleCollection.Where(p => p.PersonID == selectedPerson.PersonID).FirstOrDefault();
+                //if (updatePerson.Owner != null)
+                //{
+                //    updateOwner = updatePerson.Owner;
+                //}
 
-                if (selectedPerson != null)
-                {
+                //if (selectedPerson != null)
+                //{
 
-                    if (updatePerson != null)
-                    {
-                        var puw = new PersonUpdaterWindow();
-                        puw.CalledByUpdateMenu = true;
-                        puw.CalledByUpdateMenuType = "Owner";
-                        puw.ReceivedPerson = updatePerson;
-                        puw.ReceivedOwner = updateOwner;
-                        puw.Title = "Update Person's Owner Info";
-                        puw.Show();
-                        ClearSearchResultsViews();
-                    }
-                }
+                //    if (updatePerson != null)
+                //    {
+                //        var puw = new PersonUpdaterWindow();
+                //        puw.CalledByUpdateMenu = true;
+                //        puw.CalledByUpdateMenuType = "Owner";
+                //        puw.ReceivedPerson = updatePerson;
+                //        puw.ReceivedOwner = updateOwner;
+                //        puw.Title = "Update Person's Owner Info";
+                //        puw.Show();
+                //        ClearSearchResultsViews();
+                //    }
+                //}
 
             }
 

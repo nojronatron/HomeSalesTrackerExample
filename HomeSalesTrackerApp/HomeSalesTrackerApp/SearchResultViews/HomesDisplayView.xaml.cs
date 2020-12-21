@@ -42,5 +42,14 @@ namespace HomeSalesTrackerApp.SearchResultViews
 
         }
 
+        private void FoundHomesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedHome = FoundHomesDataGrid.SelectedItem as HomeDisplayModel;
+            if (selectedHome != null)
+            {
+                HomeIDSelected registerHomeID = new HomeIDSelected(MainWindow.SetSelectedHome);
+                registerHomeID(selectedHome.HomeID);
+            }
+        }
     }
 }

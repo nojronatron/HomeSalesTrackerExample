@@ -42,5 +42,17 @@ namespace HomeSalesTrackerApp.SearchResultViews
             }
 
         }
+
+        private void FoundHomesForSaleDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedHomesale = FoundHomesForSaleDataGrid.SelectedItem as HomeForSaleModel;
+            if (selectedHomesale != null)
+            {
+                HomeSaleIDSelected registerHomesaleID = new HomeSaleIDSelected(MainWindow.SetSelectedHomesale);
+                registerHomesaleID(selectedHomesale.HomeForSaleID);
+                HomeIDSelected registerHomeID = new HomeIDSelected(MainWindow.SetSelectedHome);
+                registerHomeID(selectedHomesale.HomeID);
+            }
+        }
     }
 }
