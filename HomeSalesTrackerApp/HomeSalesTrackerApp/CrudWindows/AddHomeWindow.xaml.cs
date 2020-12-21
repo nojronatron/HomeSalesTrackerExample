@@ -17,9 +17,6 @@ namespace HomeSalesTrackerApp
     {
         private bool IsButtonClose = false;
         private CollectionMonitor collectionMonitor = null;
-        //private PeopleCollection<Person> _peopleCollection { get; set; }
-        //private HomesCollection _homesCollection { get; set; }
-        //private HomeSalesCollection _homeSalesCollection { get; set; }
         private bool UpdateInsteadOfAdd = false;
         private Home NewHome { get; set; }
         private Owner AnOwner { get; set; }
@@ -29,9 +26,6 @@ namespace HomeSalesTrackerApp
         public AddHomeWindow()
         {
             InitializeComponent();
-            //_homesCollection = CollectionFactory.GetHomesCollectionObject();
-            //_peopleCollection = CollectionFactory.GetPeopleCollectionObject();
-            //_homeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
         }
         public AddHomeWindow(string addType, string windowTitle) : this()
         {

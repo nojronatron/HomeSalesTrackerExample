@@ -22,26 +22,42 @@ namespace HomeSalesTrackerApp.SearchResultViews
 
         private void GetDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DetailsWindowIsOpen)
+            try
             {
-                PersonDetailsTextbox.Text = string.Empty;
-                DetailsWindowIsOpen = false;
-                GetDetailsButton.Content = DefaultButtonText;
-                PeopleDetailsBorder.Visibility = Visibility.Collapsed;
-                return;
+                if (DetailsWindowIsOpen)
+                {
+                    PersonDetailsTextbox.Text = string.Empty;
+                    DetailsWindowIsOpen = false;
+                    GetDetailsButton.Content = DefaultButtonText;
+                    PeopleDetailsBorder.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                var selectedPerson = FoundPeopleDataGrid.SelectedItem as PersonModel;
+
+                if (selectedPerson != null)
+                {
+                    PersonDetailsTextbox.Text = PeopleSearchTool.GetPersonDetails(selectedPerson);
+                    DetailsWindowIsOpen = true;
+                    GetDetailsButton.Content = "Click here to close the details bubble.";
+                    PeopleDetailsBorder.Visibility = Visibility.Visible;
+                }
             }
-
-            var selectedPerson = FoundPeopleDataGrid.SelectedItem as PersonModel;
-
-            if (selectedPerson != null)
+            catch
             {
-                PersonDetailsTextbox.Text = PeopleSearchTool.GetPersonDetails(selectedPerson);
-                DetailsWindowIsOpen = true;
-                GetDetailsButton.Content = "Click here to close the details bubble.";
-                PeopleDetailsBorder.Visibility = Visibility.Visible;
+                MessageBox.Show("An error occurred. Call the developer.");
             }
-
         }
 
+        private void FoundPeopleDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedPerson = FoundPeopleDataGrid.SelectedItem as PersonModel;
+            if (selectedPerson != null)
+            {
+                PersonIDSelected registerPersonID = new PersonIDSelected(MainWindow.SetSelectedPerson);
+                registerPersonID(selectedPerson.PersonID);
+            }
+        }
     }
+
 }

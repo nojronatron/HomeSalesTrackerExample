@@ -19,9 +19,10 @@ namespace HomeSalesTrackerApp.SearchResultViewModels
         private void Load()
         {
             var pst = new PeopleSearchTool(FormattedSearchTerms);
-            var foundPeople = pst.SearchResults;
+            List<PersonModel> foundPeople = null;
+            foundPeople = pst.SearchResults;
             
-            if (foundPeople.Count > 0)
+            if (foundPeople != null && foundPeople.Count > 0)
             {
                 FoundPeople = foundPeople;
             }

@@ -1,5 +1,4 @@
-﻿using HomeSalesTrackerApp.Factory;
-using HomeSalesTrackerApp.Helpers;
+﻿using HomeSalesTrackerApp.Helpers;
 
 using HSTDataLayer;
 
@@ -33,10 +32,6 @@ namespace HomeSalesTrackerApp.CrudWindows
         private Owner ReceivedOwner { get; set; }
         private Buyer ReceivedBuyer { get; set; }
         private RealEstateCompany ReceivedRECo { get; set; }
-        //private PeopleCollection<Person> _peopleCollection { get; set; }
-        //private HomesCollection _homesCollection { get; set; }
-        //private HomeSalesCollection _homeSalesCollection { get; set; }
-        //private RealEstateCosCollection _recosCollection { get; set; }
 
         public PersonUpdaterWindow()
         {
@@ -49,32 +44,6 @@ namespace HomeSalesTrackerApp.CrudWindows
             CalledByUpdateMenuType = aboType.Trim().ToUpper();
             ReceivedPersonID = personID;
         }
-
-        //private void LoadDataForBuyerUpdate()
-        //{
-        //    ReceivedPerson = _peopleCollection.Where(p => p.PersonID == ReceivedPersonID).FirstOrDefault();
-        //    if (ReceivedPerson != null)
-        //    {
-        //        if (ReceivedPerson.Buyer != null)
-        //        {
-        //            ReceivedBuyer = ReceivedPerson.Buyer;
-        //        }
-        //        this.Title = "Update Person's Buyer Info";
-        //    }
-        //}
-
-        //private void LoadDataForOwnerUpdate()
-        //{
-        //    ReceivedPerson = _peopleCollection.Where(p => p.PersonID == ReceivedPersonID).FirstOrDefault();
-        //    if (ReceivedPerson != null)
-        //    {
-        //        if (ReceivedPerson.Owner != null)
-        //        {
-        //            ReceivedOwner = ReceivedPerson.Owner;
-        //        }
-        //        this.Title = "Update Person's Owner Info";
-        //    }
-        //}
 
         private void DisableAgentDetailsControls()
         {
@@ -220,18 +189,8 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                 else if (ReceivedAgent == null)
                 {
-                    //ReceivedAgent = new Agent();
-                    //var tempPerson = _peopleCollection.Where(p => p.PersonID == ReceivedPerson.PersonID).FirstOrDefault();
-                    //tempRECo = null;
-                    //tempHomesales = new List<HomeSale>();
-                    //ReceivedAgent.Person = tempPerson;
-                    //ReceivedAgent.RealEstateCompany = null;
                     AgentReCompanyTextbox.IsReadOnly = true;
                     AgentCommissionTextbox.IsEnabled = true;
-                    //if (ReceivedPerson.Buyer != null)
-                    //{
-                    //    CreditRatingTextbox.Text = ReceivedPerson.Buyer.CreditRating?.ToString() ?? string.Empty;
-                    //}
                     DisableBuyerDetailsControls();
                     DisableOwnerDetailsControls();
                     ExistingAgentsCombobox.IsEnabled = false;   //  user is here to create new Agent props for existing person
@@ -265,16 +224,6 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                 var tempHomesales = ((App)Application.Current)._homeSalesCollection.Where(hs => hs.AgentID == ReceivedBuyer.BuyerID).ToList();
 
-                //if (ReceivedPerson.Buyer != null)
-                //{
-                //    ReceivedBuyer.Person = ReceivedPerson;
-                //}
-
-                //if (tempHomesales.Count < 1)
-                //{
-                //    ReceivedBuyer.HomeSales = tempHomesales;
-                //}
-
                 CreditRatingTextbox.Text = ReceivedBuyer.CreditRating?.ToString() ?? string.Empty;
                 CreditRatingTextbox.IsEnabled = true;
                 DisableAgentDetailsControls();
@@ -295,37 +244,16 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// </summary>
         private void LoadOwnerPanel()
         {
-            ReceivedPerson = ((App)Application.Current)._peopleCollection.Where(p => p.PersonID == ReceivedPersonID).FirstOrDefault();
             if (ReceivedPerson != null)
             {
                 if (ReceivedPerson.Owner != null)
                 {
                     ReceivedOwner = ReceivedPerson.Owner;
                 }
+
                 this.Title = "Update Person's Owner Info";
 
-                //var tempPerson = _peopleCollection.Where(p => p.PersonID == ReceivedOwner.OwnerID).FirstOrDefault();
-                ////var tempHomes = MainWindow.homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
-                //var tempHomes = _homesCollection.Where(h => h.OwnerID == ReceivedOwner.OwnerID).ToList();
-
-                //if (tempPerson != null)
-                //{
-                //    ReceivedOwner.Person = tempPerson;
-                //}
-
-                //if (tempHomes != null)
-                //{
-                //    ReceivedOwner.Homes = tempHomes;
-                //}
-
-                if (ReceivedOwner == null)
-                {
-                    preferredLenderTextbox.Text = "";
-                }
-                else
-                {
-                    preferredLenderTextbox.Text = ReceivedOwner.PreferredLender?.ToString();
-                }
+                preferredLenderTextbox.Text = ReceivedPerson.Owner?.PreferredLender;
 
                 preferredLenderTextbox.IsEnabled = true;
                 DisableAgentDetailsControls();
@@ -721,21 +649,26 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //_peopleCollection = CollectionFactory.GetPeopleCollectionObject();
-            //_homesCollection = CollectionFactory.GetHomesCollectionObject();
-            //_homeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
-            //_recosCollection = CollectionFactory.GetRECosCollectionObject();
-            
             personCollectionMonitor = ((App)Application.Current)._peopleCollection.collectionMonitor;
             personCollectionMonitor.Subscribe(this);
             recoCollectionMonitor = ((App)Application.Current)._recosCollection.collectionMonitor;
             recoCollectionMonitor.Subscribe(this);
 
+            ReceivedPerson = ((App)Application.Current)._peopleCollection.Get(ReceivedPersonID);
+            if (ReceivedPerson == null)
+            {
+                DisplayStatusMessage("No person found. Exit this Window and try again.");
+                return;
+            }
+
             var ReceivedRECo = new RealEstateCompany();
             var SelectedRECo = new RealEstateCompany();
+
+
             LoadPersonInformation();
             logger = new Logger();
             string updateType = CalledByUpdateMenuType;
+
             switch (updateType)
             {
                 case "AGENT":
