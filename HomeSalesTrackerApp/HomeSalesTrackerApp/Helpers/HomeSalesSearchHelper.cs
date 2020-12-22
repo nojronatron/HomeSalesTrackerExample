@@ -3,6 +3,7 @@ using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace HomeSalesTrackerApp.Helpers
 {
@@ -23,9 +24,10 @@ namespace HomeSalesTrackerApp.Helpers
             foundHfsItems = SearchHomeForSaleItems(searchTerms);
             foundHomeItems = HomeSearchHelper.SearchHomeItems(searchTerms);
 
+            //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
             foreach (var homeItem in foundHomeItems)
             {
-                foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
+                foundHfsItems.AddRange(((App)Application.Current)._homeSalesCollection.Retreive(homeItem));
             }
 
             foundHfsItems = foundHfsItems.Distinct().ToList();
@@ -62,9 +64,11 @@ namespace HomeSalesTrackerApp.Helpers
             foundHfsItems = SearchHomeForSaleItems(searchTerms);
             foundHomeItems = HomeSearchHelper.SearchHomeItems(searchTerms);
 
+            //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+
             foreach (var homeItem in foundHomeItems)
             {
-                foundHfsItems.AddRange(MainWindow.homeSalesCollection.Retreive(homeItem));
+                foundHfsItems.AddRange(((App)Application.Current)._homeSalesCollection.Retreive(homeItem));
             }
 
             foundHfsItems = foundHfsItems.Distinct().ToList();
@@ -94,11 +98,12 @@ namespace HomeSalesTrackerApp.Helpers
         public static List<HomeSale> SearchHomeForSaleItems(List<string> searchTerms)
         {
             var searchHomesalesResults = new List<HomeSale>();
+            //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
 
             foreach (var searchTerm in searchTerms)
             {
                 string capSearchTerm = searchTerm.ToUpper().Trim();
-                searchHomesalesResults.AddRange(MainWindow.homeSalesCollection.OfType<HomeSale>()
+                searchHomesalesResults.AddRange(((App)Application.Current)._homeSalesCollection.OfType<HomeSale>()
                     .Where(hs =>
                         hs.SaleID.ToString().Contains(searchTerm) ||
                         hs.MarketDate.ToString().Contains(searchTerm) ||
@@ -114,14 +119,18 @@ namespace HomeSalesTrackerApp.Helpers
         {
             if (selectedHomeForSale != null)
             {
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                //var fRECOsCollection = CollectionFactory.GetRECosCollectionObject();
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+
                 var homeForSaleDetails = new HomeForSaleDetailModel();
-                homeForSaleDetails = (from hfs in MainWindow.homeSalesCollection
+                homeForSaleDetails = (from hfs in ((App)Application.Current)._homeSalesCollection
                                       where hfs.HomeID == selectedHomeForSale.HomeID &&
                                         hfs.MarketDate == selectedHomeForSale.MarketDate
-                                      join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
-                                      join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
-                                      join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
-                                      join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
+                                      join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
+                                      join reco in ((App)Application.Current)._recosCollection on hfs.CompanyID equals reco.CompanyID
+                                      join o in ((App)Application.Current)._peopleCollection on h.OwnerID equals o.PersonID
+                                      join a in ((App)Application.Current)._peopleCollection on hfs.AgentID equals a.PersonID
                                       select new HomeForSaleDetailModel
                                       {
                                           HomeID = h.HomeID,
@@ -155,14 +164,18 @@ namespace HomeSalesTrackerApp.Helpers
         {
             if (selectedSoldHome != null)
             {
+                //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+                //var fRECOsCollection = CollectionFactory.GetRECosCollectionObject();
+                //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+
                 var soldHomeDetails = new SoldHomeDetailModel();
-                soldHomeDetails = (from hfs in MainWindow.homeSalesCollection
+                soldHomeDetails = (from hfs in ((App)Application.Current)._homeSalesCollection
                                    where hfs.HomeID == selectedSoldHome.HomeID &&
                                    hfs.SoldDate == selectedSoldHome.SoldDate
-                                   join h in MainWindow.homesCollection on hfs.HomeID equals h.HomeID
-                                   join o in MainWindow.peopleCollection on h.OwnerID equals o.PersonID
-                                   join a in MainWindow.peopleCollection on hfs.AgentID equals a.PersonID
-                                   join reco in MainWindow.reCosCollection on hfs.CompanyID equals reco.CompanyID
+                                   join h in Factory.CollectionFactory.GetHomesCollectionObject() on hfs.HomeID equals h.HomeID
+                                   join o in ((App)Application.Current)._peopleCollection on h.OwnerID equals o.PersonID
+                                   join a in ((App)Application.Current)._peopleCollection on hfs.AgentID equals a.PersonID
+                                   join reco in ((App)Application.Current)._recosCollection on hfs.CompanyID equals reco.CompanyID
                                    select new SoldHomeDetailModel
                                    {
                                        HomeID = h.HomeID,

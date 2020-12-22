@@ -16,24 +16,93 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class HomeUpdaterWindow : Window, IObserver<NotificationData>
     {
+        //private PeopleCollection<Person> _peopleCollection { get; set; }
+        //private HomesCollection _homesCollection { get; set; }
+        //private HomeSalesCollection _homeSalesCollection { get; set; }
+        //private RealEstateCosCollection _recosCollection { get; set; }
         private bool IsButtonClose { get; set; }
         private bool BuyerUpdated { get; set; }
         private bool HomesaleUpdated { get; set; }
         private Logger logger = null;
         private CollectionMonitor collectionMonitor = null;
 
-        public string UpdateType { get; set; }
-        public Person UpdatePerson { get; set; }
-        public Agent UpdateAgent { get; set; }
-        public Owner UpdateOwner { get; set; }
-        public Buyer UpdateBuyer { get; set; }
-        public Home UpdateHome { get; set; }
-        public HomeSale UpdateHomeSale { get; set; }
-        public RealEstateCompany UpdateReco { get; set; }
+        private string UpdateType { get; set; }
+        private Person UpdatePerson { get; set; }
+        private Agent UpdateAgent { get; set; }
+        private Owner UpdateOwner { get; set; }
+        private Buyer UpdateBuyer { get; set; }
+        private Home UpdateHome { get; set; }
+        private HomeSale UpdateHomeSale { get; set; }
+        private RealEstateCompany UpdateReco { get; set; }
 
         public HomeUpdaterWindow()
         {
             InitializeComponent();
+            //_homeSalesCollection = Factory.CollectionFactory.GetHomeSalesCollectionObject();
+            //_homesCollection = Factory.CollectionFactory.GetHomesCollectionObject();
+            //_peopleCollection = Factory.CollectionFactory.GetPeopleCollectionObject();
+            //_recosCollection = Factory.CollectionFactory.GetRECosCollectionObject();
+        }
+
+        public HomeUpdaterWindow(int homeID) : this()
+        {
+            UpdateType = "PUTONMARKET";
+            this.Title = "Put Home On Market";
+            LoadDataPutHomeOnMarket(homeID);
+        }
+
+        public HomeUpdaterWindow(int homeID, int homesaleID) : this()
+        {
+            UpdateType = "HOMESOLD";
+            this.Title = "Update Home as SOLD";
+            LoadDataUpdateHomeAsSold(homeID);
+        }
+
+        private void LoadDataPutHomeOnMarket(int homeID)
+        {
+            UpdateHome = ((App)Application.Current)._homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+
+            if (UpdateHome == null)
+            {
+                //  theoretically a null UpdateHome will cause the Window to only allow user to close it
+                UpdateHome = new Home();
+            }
+
+            UpdateAgent = new Agent();
+            UpdatePerson = new Person();
+            UpdateHomeSale = new HomeSale();
+            UpdateReco = new RealEstateCompany();
+        }
+
+        private void LoadDataUpdateHomeAsSold(int homeID)
+        {
+            HomeSale hfsHomesale = ((App)Application.Current)._homeSalesCollection.Where(
+                hs => 
+                    hs.HomeID == homeID &&
+                    hs.MarketDate != null &&
+                    hs.SoldDate == null).FirstOrDefault();
+
+            Home hfsHome = ((App)Application.Current)._homesCollection.Where(h => h.HomeID == homeID).FirstOrDefault();
+
+            if (hfsHome != null && hfsHomesale != null)
+            {
+                Person hfsAgent = new Person();
+                hfsAgent = ((App)Application.Current)._peopleCollection.Where(p => p.PersonID == hfsHomesale.AgentID).FirstOrDefault();
+
+                if (hfsAgent != null && hfsAgent.Agent.CompanyID != null)
+                {
+                    RealEstateCompany hfsReco = new RealEstateCompany();
+                    hfsReco = ((App)Application.Current)._recosCollection.Where(r => r.CompanyID == hfsAgent.Agent.CompanyID).FirstOrDefault();
+                    if (hfsReco != null)
+                    {
+                        UpdatePerson = hfsAgent;
+                        UpdateAgent = hfsAgent.Agent;
+                        UpdateHome = hfsHome;
+                        UpdateHomeSale = hfsHomesale;
+                        UpdateReco = hfsReco;
+                    }
+                }
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -69,12 +138,12 @@ namespace HomeSalesTrackerApp.CrudWindows
             
             if (includeAllPeople)
             {
-                existingAgentPeopleList = (from p in MainWindow.peopleCollection
+                existingAgentPeopleList = (from p in ((App)Application.Current)._peopleCollection
                                            select p).ToList();
             }
             else
             {
-                existingAgentPeopleList = (from p in MainWindow.peopleCollection
+                existingAgentPeopleList = (from p in ((App)Application.Current)._peopleCollection
                                            where p.Agent != null
                                            select p).ToList();
             }
@@ -85,7 +154,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         private void LoadBuyersCombobox()
         {
-            var existingBuyersList = (from p in MainWindow.peopleCollection
+            var existingBuyersList = (from p in ((App)Application.Current)._peopleCollection
                                       select p).ToList();
             ExistingBuyersCombobox.ItemsSource = existingBuyersList;
         }
@@ -97,7 +166,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            collectionMonitor = MainWindow.peopleCollection.collectionMonitor;
+            collectionMonitor = ((App)Application.Current)._peopleCollection.collectionMonitor;
             collectionMonitor.Subscribe(this);
             AddNewAgentButton.Visibility = Visibility.Hidden;
             AddNewAgentButton.IsEnabled = false;
@@ -410,7 +479,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                 }
 
                 UpdateHomeSale.BuyerID = UpdateBuyer.BuyerID;
-                var buyerPerson = MainWindow.peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
+                var buyerPerson = ((App)Application.Current)._peopleCollection.Where(p => p.PersonID == UpdateBuyer.BuyerID).FirstOrDefault();
 
                 if (buyerPerson != null)
                 {
@@ -448,21 +517,21 @@ namespace HomeSalesTrackerApp.CrudWindows
                 {
                     case "PUTONMARKET":
                         {
-                            savedCount += MainWindow.homeSalesCollection.Add(UpdateHomeSale);
+                            savedCount += ((App)Application.Current)._homeSalesCollection.Add(UpdateHomeSale);
                             break;
                         }
                     case "HOMESOLD":
                         {
                             if (BuyerUpdated && HomesaleUpdated)
                             {
-                                Person buyerPerson = MainWindow.peopleCollection.Get(UpdateBuyer.BuyerID);
+                                Person buyerPerson = ((App)Application.Current)._peopleCollection.Get(UpdateBuyer.BuyerID);
 
                                 if (buyerPerson == null)
                                 {
                                     break;
                                 }
 
-                                savedCount += MainWindow.peopleCollection.UpdatePerson(buyerPerson);
+                                savedCount += ((App)Application.Current)._peopleCollection.UpdatePerson(buyerPerson);
                                 var homesaleToSave = new HomeSale()
                                 {
                                     SaleID = UpdateHomeSale.SaleID,
@@ -475,7 +544,7 @@ namespace HomeSalesTrackerApp.CrudWindows
                                     CompanyID = UpdateHomeSale.CompanyID
                                 };
 
-                                savedCount += MainWindow.homeSalesCollection.Update(homesaleToSave);
+                                savedCount += ((App)Application.Current)._homeSalesCollection.Update(homesaleToSave);
 
                             }
 
@@ -535,7 +604,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 
                     if (selectedAgent.Agent.CompanyID != null)
                     {
-                        var agentsAffiliatedReco = (from re in MainWindow.reCosCollection
+                        var agentsAffiliatedReco = (from re in ((App)Application.Current)._recosCollection
                                                     where selectedAgent.Agent.CompanyID == re.CompanyID
                                                     select re).FirstOrDefault();
                         UpdateAgentCompanyNameTextbox.Text = agentsAffiliatedReco.CompanyName;
@@ -618,18 +687,18 @@ namespace HomeSalesTrackerApp.CrudWindows
 
         #region IObserver
 
-        private IDisposable unsubscriber;
+        //private IDisposable unsubscriber;
         private string notificationMessage;
 
-        public virtual void Subscribe(IObservable<NotificationData> provider)
-        {
-            unsubscriber = provider.Subscribe(this);
-        }
+        //public virtual void Subscribe(IObservable<NotificationData> provider)
+        //{
+        //    unsubscriber = provider.Subscribe(this);
+        //}
 
-        public virtual void Unsubscribe()
-        {
-            unsubscriber.Dispose();
-        }
+        //public virtual void Unsubscribe()
+        //{
+        //    unsubscriber.Dispose();
+        //}
 
         public void OnNext(NotificationData value)
         {

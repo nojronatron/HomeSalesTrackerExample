@@ -17,7 +17,9 @@
 
             <DataGrid ItemsSource="{Binding FoundPeople, Mode=OneWay}" CanUserAddRows="False" 
                   AutoGenerateColumns="False" TextBlock.TextAlignment="Center"
-                      Name="FoundPeopleDataGrid" Style="{StaticResource BasicControlStyle}" >
+                      Name="FoundPeopleDataGrid" Style="{StaticResource BasicControlStyle}" 
+                      SelectionChanged="FoundPeopleDataGrid_SelectionChanged"
+                       >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding PersonID}" />
                     <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" />

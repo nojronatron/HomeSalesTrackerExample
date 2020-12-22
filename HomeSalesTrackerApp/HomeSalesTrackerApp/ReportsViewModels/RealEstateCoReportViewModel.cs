@@ -1,4 +1,5 @@
-﻿using HomeSalesTrackerApp.Report_Models;
+﻿using HomeSalesTrackerApp.Factory;
+using HomeSalesTrackerApp.Report_Models;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,11 @@ namespace HomeSalesTrackerApp.ReportsViewModels
         }
         public void LoadRealEstateCoTotals()
         {
+            var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+            var fRECOsCollection = CollectionFactory.GetRECosCollectionObject();
 
-            var realEstateCoTotals = (from hs in MainWindow.homeSalesCollection
-                                      join re in MainWindow.reCosCollection on hs.CompanyID equals re.CompanyID
+            var realEstateCoTotals = (from hs in fHomeSalesCollection
+                                      join re in fRECOsCollection on hs.CompanyID equals re.CompanyID
                                       select new RealEstateCoReportModel
                                       {
                                           CompanyID = re.CompanyID,

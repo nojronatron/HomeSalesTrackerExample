@@ -16,6 +16,10 @@ namespace HomeSalesTrackerApp
         private bool DoDbBackup { get; set; }
         private Logger HSTLogger { get; set; }
         public static bool DatabaseInitLoaded { get; private set; }
+        public PeopleCollection<Person> _peopleCollection {get;set;}
+        public HomesCollection _homesCollection { get; set; }
+        public HomeSalesCollection _homeSalesCollection { get; set; }
+        public RealEstateCosCollection _recosCollection { get; set; }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -39,6 +43,10 @@ namespace HomeSalesTrackerApp
                     {
                         HSTLogger.Data("Application Startup", "Initialize Database completed. Launching UI.");
                         DoDbBackup = true;
+                        _peopleCollection = Factory.CollectionFactory.GetPeopleCollectionObject();
+                        _homesCollection = Factory.CollectionFactory.GetHomesCollectionObject();
+                        _homeSalesCollection = Factory.CollectionFactory.GetHomeSalesCollectionObject();
+                        _recosCollection = Factory.CollectionFactory.GetRECosCollectionObject();
                         new MainWindow().Show();
                     }
                     else

@@ -1,5 +1,6 @@
 ﻿using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
+using HSTDataLayer.Helpers;
 
 using System;
 using System.Collections;
@@ -18,7 +19,9 @@ namespace HomeSalesTrackerApp
         /// </summary>
         public HomesCollection()
         {
-            _homesList = new List<Home>();
+            //_homesList = new List<Home>();
+            _homesList = new List<Home>(EntityLists.GetTreeListOfHomes());
+            collectionMonitor = new CollectionMonitor();
         }
 
         public HomesCollection(List<Home> homes)

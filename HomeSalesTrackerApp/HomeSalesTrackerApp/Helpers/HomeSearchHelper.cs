@@ -1,8 +1,10 @@
 ﻿using HomeSalesTrackerApp.DisplayModels;
+
 using HSTDataLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace HomeSalesTrackerApp.Helpers
 {
@@ -24,7 +26,7 @@ namespace HomeSalesTrackerApp.Helpers
                 foreach (var searchTerm in searchTerms)
                 {
                     string capSearchTerm = searchTerm.ToUpper().Trim();
-                    searchResults.AddRange(MainWindow.homesCollection.OfType<Home>().Where(
+                    searchResults.AddRange(((App)Application.Current)._homesCollection.OfType<Home>().Where(
                         hc =>
                             hc.HomeID.ToString().Contains(capSearchTerm) ||
                             hc.Address.ToUpper().Contains(capSearchTerm) ||
@@ -41,9 +43,13 @@ namespace HomeSalesTrackerApp.Helpers
 
         public static String GetHomeItemDetails(HomeDisplayModel selectedHome)
         {
+            //var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+            //var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            //var fHomesCollection = CollectionFactory.GetHomesCollectionObject();
+
             if (selectedHome != null)
             {
-                var homeForSale = (from hfs in MainWindow.homeSalesCollection
+                var homeForSale = (from hfs in ((App)Application.Current)._homeSalesCollection
                                    where hfs.HomeID == selectedHome.HomeID &&
                                    hfs.MarketDate != null
                                    select hfs).FirstOrDefault();
@@ -53,9 +59,9 @@ namespace HomeSalesTrackerApp.Helpers
                     placeholder = homeForSale.MarketDate;
                 }
 
-                var SelectedHomeDetail = (from h in MainWindow.homesCollection
+                var SelectedHomeDetail = (from h in ((App)Application.Current)._homesCollection
                                           where h.HomeID == selectedHome.HomeID
-                                          join p in MainWindow.peopleCollection on h.OwnerID equals p.PersonID
+                                          join p in ((App)Application.Current)._peopleCollection on h.OwnerID equals p.PersonID
                                           select new HomeDisplayDetailModel
                                           {
                                               HomeID = h.HomeID,

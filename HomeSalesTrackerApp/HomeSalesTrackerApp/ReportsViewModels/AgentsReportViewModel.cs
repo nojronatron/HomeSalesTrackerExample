@@ -1,4 +1,5 @@
-﻿using HomeSalesTrackerApp.Report_Models;
+﻿using HomeSalesTrackerApp.Factory;
+using HomeSalesTrackerApp.Report_Models;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,15 @@ namespace HomeSalesTrackerApp.ReportsViewModels
         private void Load()
         {
             var agentsList = new List<AgentsReportModel>();
+            var fPeopleCollection = CollectionFactory.GetPeopleCollectionObject();
+            var fHomeSalesCollection = CollectionFactory.GetHomeSalesCollectionObject();
+            var fRECOsCollection = CollectionFactory.GetRECosCollectionObject();
 
-            var query = (from person in MainWindow.peopleCollection
-                         join agent in MainWindow.homeSalesCollection on person.PersonID equals agent.AgentID
-                         join homesale in MainWindow.homeSalesCollection on agent.AgentID equals homesale.AgentID
+            var query = (from person in fPeopleCollection
+                         join agent in fHomeSalesCollection on person.PersonID equals agent.AgentID
+                         join homesale in fHomeSalesCollection on agent.AgentID equals homesale.AgentID
                          where homesale.Agent != null
-                         join reco in MainWindow.reCosCollection on homesale.CompanyID equals reco.CompanyID
+                         join reco in fRECOsCollection on homesale.CompanyID equals reco.CompanyID
                          select new AgentsReportModel
                          {
                              AgentID = homesale.AgentID,
