@@ -21,17 +21,22 @@
             <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
             <Grid x:Name="HomeItems" Grid.Column="1" >
-            <StackPanel Orientation="Vertical" MinWidth="130" Margin="10" Background="Azure">
+            <StackPanel Orientation="Vertical" MinWidth="130" Margin="5" Background="Azure">
                 <Label Content="Address"  />
                 <TextBlock x:Name="Address" Text="{Binding Path=Address}" />
                 <Label Content="City" />
                 <TextBlock x:Name="City" Text="{Binding Path=City}" />
-        </StackPanel>
+                <Label Content="State" />
+                <TextBlock x:Name="State" Text="{Binding Path=State}" />
+                <Label Content="Zip Code" />
+                <TextBlock x:Name="Zip" Text="{Binding Path=Zip}" />
+                <Button x:Name="SaveHome" Content="Save New Home" Margin="5" />
+            </StackPanel>
         </Grid>
         <Grid x:Name="Owners" Grid.Column="3">
             <StackPanel Orientation="Vertical" MinWidth="130" Margin="10" Background="Azure">
                 <Label Content="Select an Existing Owner" />
-                <ComboBox x:Name="OwnersList" />
+                <ComboBox x:Name="OwnersList" ItemsSource="{Binding}" />
                 <Label Content="Add new Owner person" />
                 <Button x:Name="AddNewOwner" Content="Add New Owner" />
             </StackPanel>
