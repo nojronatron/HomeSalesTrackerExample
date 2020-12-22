@@ -650,6 +650,7 @@ namespace HomeSalesTrackerApp
         {
             try
             {
+                ClearSearchResultsViews();
                 var formattedSearchTerms = FormatSearchTerms.FormatTerms(searchTermsTextbox.Text);
                 var peopleDisplayViewModel = new PeopleDisplayViewModel(formattedSearchTerms);
                 DataContext = peopleDisplayViewModel;

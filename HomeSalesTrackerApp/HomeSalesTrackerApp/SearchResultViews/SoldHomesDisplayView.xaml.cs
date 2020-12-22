@@ -1,6 +1,8 @@
 ﻿using HomeSalesTrackerApp.DisplayModels;
 using HomeSalesTrackerApp.Helpers;
+
 using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,32 +18,44 @@ namespace HomeSalesTrackerApp.SearchResultViews
         public SoldHomesDisplayView()
         {
             InitializeComponent();
-            DetailsWindowIsOpen = false;
             GetDetailsButton.Content = DefaultButtonText;
         }
 
         private void GetDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DetailsWindowIsOpen)
+            try
             {
-                HomesForSaleDetailsTextbox.Text = string.Empty;
-                DetailsWindowIsOpen = false;
-                GetDetailsButton.Content = DefaultButtonText;
-                SoldHomeDetailBorder.Visibility = Visibility.Collapsed;
-                return;
-            }
+                if (DetailsWindowIsOpen)
+                {
+                    HomesForSaleDetailsTextbox.Text = string.Empty;
+                    DetailsWindowIsOpen = false;
+                    GetDetailsButton.Content = DefaultButtonText;
+                    SoldHomeDetailBorder.Visibility = Visibility.Collapsed;
+                    return;
+                }
 
-            var selectedHomeForSale = FoundSoldHomesDataGrid.SelectedItem as SoldHomeModel;
+                var selectedHomeForSale = FoundSoldHomesDataGrid.SelectedItem as SoldHomeModel;
+                var outputMessage = new StringBuilder();
+                
+                if (selectedHomeForSale != null)
+                {
+                    outputMessage.Append( HomeSalesSearchHelper.GetSoldHomeItemDetails(selectedHomeForSale) );
+                }
+                else
+                {
+                    outputMessage.AppendLine("Select an item first.");
+                }
 
-            if (selectedHomeForSale != null)
-            {
-                HomesForSaleDetailsTextbox.Text = HomeSalesSearchHelper.GetSoldHomeItemDetails(selectedHomeForSale);
+                HomesForSaleDetailsTextbox.Text = outputMessage.ToString();
                 DetailsWindowIsOpen = true;
                 GetDetailsButton.Content = "Click here to close the details bubble.";
                 SoldHomeDetailBorder.Visibility = Visibility.Visible;
             }
-
+            catch
+            {
+                DetailsWindowIsOpen = false;
+                MessageBox.Show("Something went wrong. Call the developer.");
+            }
         }
-
     }
 }
