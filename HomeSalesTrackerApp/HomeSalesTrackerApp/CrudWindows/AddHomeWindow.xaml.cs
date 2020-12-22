@@ -1,5 +1,4 @@
 ﻿using HomeSalesTrackerApp.CrudWindows;
-using HomeSalesTrackerApp.Factory;
 using HomeSalesTrackerApp.Helpers;
 using HSTDataLayer;
 using System;
