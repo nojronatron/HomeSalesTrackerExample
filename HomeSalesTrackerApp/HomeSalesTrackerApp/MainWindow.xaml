@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeSalesTrackerApp" 
         xmlns:sys="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
-        xmlns:views="clr-namespace:HomeSalesTrackerApp.SearchResultViews"
+        xmlns:searchviews="clr-namespace:HomeSalesTrackerApp.SearchResultViews"
+        xmlns:crudviews="clr-namespace:HomeSalesTrackerApp.CrudWindows"
         mc:Ignorable="d"
         Title="Home Sales Tracker" Height="550" Width="760" Loaded="Window_Loaded" Closing="Window_Closing">
     <DockPanel>
@@ -93,31 +94,37 @@
                 <!-- FOUND HOMES VIEW -->
                 <ListView Name="FoundHomesView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
-                        <views:HomesDisplayView x:Name="HomeDisplayViewControl" />
+                        <searchviews:HomesDisplayView x:Name="HomeDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND HOMES FOR SALE VIEW -->
                 <ListView Name="FoundHomesForSaleView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
-                        <views:HomesForSaleDisplayView x:Name="HomesForSaleDisplayViewControl" />
+                        <searchviews:HomesForSaleDisplayView x:Name="HomesForSaleDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND SOLD HOMES VIEW -->
                 <ListView Name="FoundSoldHomesView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
-                        <views:SoldHomesDisplayView x:Name="SoldHomesDisplayViewControl" />
+                        <searchviews:SoldHomesDisplayView x:Name="SoldHomesDisplayViewControl" />
                     </Grid>
                 </ListView>
 
                 <!-- FOUND PEOPLE VIEW -->
                 <ListView Name="FoundPeopleView" Style="{StaticResource SearchListViewStyle}">
                     <Grid>
-                        <views:PeopleDisplayView x:Name="PeopleDisplayViewControl" />
+                        <searchviews:PeopleDisplayView x:Name="PeopleDisplayViewControl" />
                     </Grid>
                 </ListView>
 
+                <!-- AddHomesWindow VIEW -->
+                <ListView Name="AddNewHomeView" Style="{StaticResource SearchListViewStyle}">
+                    <Grid>
+                        <crudviews:AddHomeView x:Name="AddHomeViewControl" />
+                    </Grid>
+                </ListView>
             </Grid>
             <StackPanel Grid.Column="7" VerticalAlignment="Stretch">
                 <Button x:Name="clearButton" Content="Clear Screen" Margin="10, 7" Height="25" Click="ClearFieldsButton_Click" ToolTip="Clear search results." />

@@ -80,6 +80,8 @@ namespace HomeSalesTrackerApp
             FoundSoldHomesView.Visibility = Visibility.Hidden;
             FoundPeopleView.ItemsSource = null;
             FoundPeopleView.Visibility = Visibility.Hidden;
+            AddNewHomeView.ItemsSource = null;
+            AddNewHomeView.Visibility = Visibility.Hidden;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -273,8 +275,10 @@ namespace HomeSalesTrackerApp
             try
             {
                 ClearSearchResultsViews();
-                var ahw = new AddHomeWindow("Home", "Add New Home");
-                ahw.Show();
+                //var ahw = new AddHomeWindow("Home", "Add New Home");
+                //ahw.Show();
+                DataContext = new AddHomeViewModel();
+                AddNewHomeView.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {

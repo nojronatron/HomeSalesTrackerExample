@@ -29,6 +29,18 @@
             <Setter Property="Background" Value="Azure" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
-    
+        <Style x:Key="CrudWindowTextbox" TargetType="TextBox">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="27" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="CrudWindowLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="DemiBold" />
+        </Style>
+        <Style x:Key="CrudWindowStackpanel" TargetType="StackPanel">
+            <Setter Property="Width" Value="180" />
+        </Style>
     </Application.Resources>
 </Application>

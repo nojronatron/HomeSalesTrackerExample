@@ -10,6 +10,17 @@
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:HomeDisplayModel}" />
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Background" Value="Pink" />
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self},
+                        Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -20,25 +31,29 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
-            <Grid x:Name="HomeItems" Grid.Column="1" >
-            <StackPanel Orientation="Vertical" MinWidth="130" Margin="5" Background="Azure">
-                <Label Content="Address"  />
-                <TextBlock x:Name="Address" Text="{Binding Path=Address}" />
+        <Grid Name="HomeItems" Grid.Column="1" >
+            <StackPanel Orientation="Vertical" MinWidth="130" Margin="5" Background="Azure" 
+                        Style="{StaticResource CrudWindowStackpanel}"
+                        DataContext="{Binding Path=NewHome}">
+                <Label Content="Address" Style="{StaticResource CrudWindowLabel}" />
+                <TextBox Name="Address" Text="{Binding Path=Address}" Style="{StaticResource CrudWindowTextbox}" />
                 <Label Content="City" />
-                <TextBlock x:Name="City" Text="{Binding Path=City}" />
+                <TextBox Name="City" Text="{Binding Path=City}"  FontSize="16" />
                 <Label Content="State" />
-                <TextBlock x:Name="State" Text="{Binding Path=State}" />
+                <TextBox Name="State" Text="{Binding Path=State}" FontSize="16"  />
                 <Label Content="Zip Code" />
-                <TextBlock x:Name="Zip" Text="{Binding Path=Zip}" />
+                <TextBox Name="Zip" Text="{Binding Path=Zip}"  FontSize="16" Margin="5" />
+                <Separator Margin="5" />
                 <Button x:Name="SaveHome" Content="Save New Home" Margin="5" />
             </StackPanel>
         </Grid>
-        <Grid x:Name="Owners" Grid.Column="3">
-            <StackPanel Orientation="Vertical" MinWidth="130" Margin="10" Background="Azure">
+        <Grid Name="Owners" Grid.Column="3" >
+            <StackPanel Orientation="Vertical" MinWidth="130" Margin="10" Background="Azure"
+                        Style="{StaticResource CrudWindowStackpanel}">
                 <Label Content="Select an Existing Owner" />
-                <ComboBox x:Name="OwnersList" ItemsSource="{Binding}" />
+                <ComboBox x:Name="OwnersList" />
                 <Label Content="Add new Owner person" />
-                <Button x:Name="AddNewOwner" Content="Add New Owner" />
+                <Button Name="AddNewOwner" Content="Add New Owner" />
             </StackPanel>
         </Grid>
     </Grid>
