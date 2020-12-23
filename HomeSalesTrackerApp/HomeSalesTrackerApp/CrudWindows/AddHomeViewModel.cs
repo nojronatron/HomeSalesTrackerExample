@@ -9,7 +9,7 @@ namespace HomeSalesTrackerApp.CrudWindows
 {
     class AddHomeViewModel
     {
-        public HomeDisplayModel NewHome { get; set; }
+        public HomeDisplayModel NewHome {   get; set; }
         HSTDataLayer.Person SelectedOwner { get; set; }
         IList<HSTDataLayer.Person> ExistingOwnersList { get; set; }
         string PreferredLender { get; set; } = string.Empty;

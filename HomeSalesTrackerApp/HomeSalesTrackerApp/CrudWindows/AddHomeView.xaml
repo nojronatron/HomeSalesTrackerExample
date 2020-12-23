@@ -9,7 +9,14 @@
              >
 
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type data:HomeDisplayModel}" />
+        <DataTemplate DataType="{x:Type data:HomeDisplayModel}">
+            <StackPanel>
+                <TextBox Text="{Binding Path=Address}" />
+                <TextBox Text="{Binding Path=City}" />
+                <TextBox Text="{Binding Path=State}" />
+                <TextBox Text="{Binding Path=Zip}" />
+            </StackPanel>
+        </DataTemplate>
         <Style TargetType="{x:Type TextBox}">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
@@ -20,6 +27,35 @@
                         Path=(Validation.Errors)[0].ErrorContent}" />
                 </Trigger>
             </Style.Triggers>
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Height" Value="27" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="Background" Value="Azure" />
+        </Style>
+        <Style TargetType="StackPanel">
+            <Setter Property="Width" Value="180" />
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="MinWidth" Value="130" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Background" Value="Azure" />
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="DemiBold" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="5" />
         </Style>
     </UserControl.Resources>
 
@@ -31,30 +67,27 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
-        <Grid Name="HomeItems" Grid.Column="1" >
-            <StackPanel Orientation="Vertical" MinWidth="130" Margin="5" Background="Azure" 
-                        Style="{StaticResource CrudWindowStackpanel}"
-                        DataContext="{Binding Path=NewHome}">
-                <Label Content="Address" Style="{StaticResource CrudWindowLabel}" />
-                <TextBox Name="Address" Text="{Binding Path=Address}" Style="{StaticResource CrudWindowTextbox}" />
-                <Label Content="City" />
-                <TextBox Name="City" Text="{Binding Path=City}"  FontSize="16" />
-                <Label Content="State" />
-                <TextBox Name="State" Text="{Binding Path=State}" FontSize="16"  />
-                <Label Content="Zip Code" />
-                <TextBox Name="Zip" Text="{Binding Path=Zip}"  FontSize="16" Margin="5" />
-                <Separator Margin="5" />
-                <Button x:Name="SaveHome" Content="Save New Home" Margin="5" />
-            </StackPanel>
-        </Grid>
-        <Grid Name="Owners" Grid.Column="3" >
-            <StackPanel Orientation="Vertical" MinWidth="130" Margin="10" Background="Azure"
-                        Style="{StaticResource CrudWindowStackpanel}">
-                <Label Content="Select an Existing Owner" />
+            <Border Grid.Column="1">
+                <StackPanel DataContext="{Binding}">
+                    <Label Content="Address" />
+                    <TextBox Name="Address" Text="{Binding Path=NewHome.Address}" />
+                    <Label Content="City" />
+                <TextBox Name="City" Text="{Binding Path=NewHome.City}" />
+                    <Label Content="State" />
+                <TextBox Name="State" Text="{Binding Path=NewHome.State}" />
+                    <Label Content="Zip Code" />
+                <TextBox Name="Zip" Text="{Binding Path=NewHome.Zip}" />
+                    <Separator Margin="5" />
+                    <Button x:Name="SaveHome" Content="Save New Home" />
+                </StackPanel>
+            </Border>
+        <Border Grid.Column="3">
+        <StackPanel>
+                <Label Content="Select an existing Owner" />
                 <ComboBox x:Name="OwnersList" />
                 <Label Content="Add new Owner person" />
                 <Button Name="AddNewOwner" Content="Add New Owner" />
             </StackPanel>
-        </Grid>
+        </Border>
     </Grid>
 </UserControl>
