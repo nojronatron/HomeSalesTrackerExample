@@ -10,12 +10,6 @@
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:HomeDisplayModel}">
-            <StackPanel>
-                <TextBox Text="{Binding Path=Address}" />
-                <TextBox Text="{Binding Path=City}" />
-                <TextBox Text="{Binding Path=State}" />
-                <TextBox Text="{Binding Path=Zip}" />
-            </StackPanel>
         </DataTemplate>
         <Style TargetType="{x:Type TextBox}">
             <Style.Triggers>
@@ -67,22 +61,32 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
-            <Border Grid.Column="1">
-                <StackPanel DataContext="{Binding}">
-                    <Label Content="Address" />
-                    <TextBox Name="Address" Text="{Binding Path=NewHome.Address}" />
-                    <Label Content="City" />
-                <TextBox Name="City" Text="{Binding Path=NewHome.City}" />
-                    <Label Content="State" />
-                <TextBox Name="State" Text="{Binding Path=NewHome.State}" />
-                    <Label Content="Zip Code" />
-                <TextBox Name="Zip" Text="{Binding Path=NewHome.Zip}" />
-                    <Separator Margin="5" />
-                    <Button x:Name="SaveHome" Content="Save New Home" />
-                </StackPanel>
-            </Border>
+        <Border Grid.Column="1">
+            <StackPanel >
+                <Label Content="Address" />
+                <TextBox Name="Address">
+                    <TextBox.Text>
+                        <Binding Path="NewHome.Address"
+                                 ValidatesOnDataErrors="True"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <DataErrorValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Label Content="City" />
+                <TextBox Name="City" Text="{Binding Path=NewHome.City, ValidatesOnDataErrors=True}" />
+                <Label Content="State" />
+                <TextBox Name="State" Text="{Binding Path=NewHome.State, ValidatesOnDataErrors=True}" />
+                <Label Content="Zip Code" />
+                <TextBox Name="Zip" Text="{Binding Path=NewHome.Zip, ValidatesOnDataErrors=True}" />
+                <Separator Margin="5" />
+                <Button x:Name="SaveHome" Content="Save New Home" />
+            </StackPanel>
+        </Border>
         <Border Grid.Column="3">
-        <StackPanel>
+            <StackPanel>
                 <Label Content="Select an existing Owner" />
                 <ComboBox x:Name="OwnersList" />
                 <Label Content="Add new Owner person" />
