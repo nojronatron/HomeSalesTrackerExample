@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
-    class AddHomeViewModel
+    public class AddHomeViewModel
     {
         public HomeDisplayModel NewHome { get; set; }
         HSTDataLayer.Person SelectedOwner { get; set; }
@@ -16,7 +16,13 @@ namespace HomeSalesTrackerApp.CrudWindows
         public AddHomeViewModel()
         {
             LoadOwnersList();
-            NewHome = new HomeDisplayModel();
+            NewHome = new HomeDisplayModel()
+            {
+                Address = "enter new address",
+                City = "enter city name",
+                State = "AK",
+                Zip = "123451234"
+            };
             ExistingOwnersList = new List<HSTDataLayer.Person>();
             SelectedOwner = new HSTDataLayer.Person();
         }

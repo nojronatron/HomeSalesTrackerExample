@@ -5,7 +5,6 @@
              Startup="Application_Startup" Exit="Application_Exit">
 
     <Application.Resources>
-         <!-- try implementing Styles -->
         <Style x:Key="BasicControlStyle" TargetType="Control">
             <Setter Property="ItemsControl.FontSize" Value="12" />
         </Style>
