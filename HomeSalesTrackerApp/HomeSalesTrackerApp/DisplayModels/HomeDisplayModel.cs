@@ -5,6 +5,22 @@ namespace HomeSalesTrackerApp.DisplayModels
 {
     public class HomeDisplayModel : IDataErrorInfo, INotifyPropertyChanged
     {
+        private bool _isValid;
+        public bool IsValid
+        {
+            get
+            {
+                return _isValid;
+            }
+            private set
+            {
+                if (value != _isValid)
+                {
+                    _isValid = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public int HomeID { get; set; }
         private string _address;
         public string Address
@@ -84,6 +100,7 @@ namespace HomeSalesTrackerApp.DisplayModels
         {
             get
             {
+                this.IsValid = false;
                 string result = null;
                 switch (columnName)
                 {
@@ -91,7 +108,11 @@ namespace HomeSalesTrackerApp.DisplayModels
                         {
                             if (this.Address.Length < 1 || this.Address.Length > 50)
                             {
-                                result = "Address limited to 50 characters.";
+                                result = "Address must be 2 to 50 characters.";
+                            }
+                            else
+                            {
+                                this.IsValid = true;
                             }
                             break;
                         }
@@ -99,7 +120,11 @@ namespace HomeSalesTrackerApp.DisplayModels
                         {
                             if (this.City.Length < 2 || this.City.Length > 30)
                             {
-                                result = "City limited to 50 characters.";
+                                result = "City must be 2 to 50 characters.";
+                            }
+                            else
+                            {
+                                this.IsValid = true;
                             }
                             break;
                         }
@@ -107,7 +132,11 @@ namespace HomeSalesTrackerApp.DisplayModels
                         {
                             if (this.State.Length != 2)
                             {
-                                result = "State must be 2 alpha-numeric characters.";
+                                result = "State must be 2 letter abbreviation.";
+                            }
+                            else
+                            {
+                                this.IsValid = true;
                             }
                             break;
                         }
@@ -115,7 +144,11 @@ namespace HomeSalesTrackerApp.DisplayModels
                         {
                             if (this.Zip.Length < 5 || this.Zip.Length > 9)
                             {
-                                result = "Zip code must be 5 or 9 digits without spaces.";
+                                result = "Zip code must be 5 or 9 digits without spaces or dashes.";
+                            }
+                            else
+                            {
+                                this.IsValid = true;
                             }
                             break;
                         }

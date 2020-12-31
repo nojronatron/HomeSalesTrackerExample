@@ -5,6 +5,7 @@ namespace HSTDataLayer
 {
     public partial class Person : IEquatable<Person>, IComparable<Person>
     {
+        public string FullName => $"{ this.FirstName } { this.LastName }";
         /// <summary>
         /// Override ToString() to control a basic string-output of a Person instance
         /// </summary>

@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
     public class AddHomeViewModel
     {
         public HomeDisplayModel NewHome { get; set; }
-        HSTDataLayer.Person SelectedOwner { get; set; }
-        IList<HSTDataLayer.Person> ExistingOwnersList { get; set; }
-        string PreferredLender { get; set; } = string.Empty;
+        public HSTDataLayer.Person SelectedOwner { get; set; }
+        public IList<HSTDataLayer.Person> ExistingOwnersList { get; private set; }
+        public string PreferredLender { get; set; } = string.Empty;
         public AddHomeViewModel()
         {
-            LoadOwnersList();
             NewHome = new HomeDisplayModel()
             {
                 Address = "enter new address",
@@ -24,8 +25,18 @@ namespace HomeSalesTrackerApp.CrudWindows
                 Zip = "123451234"
             };
             ExistingOwnersList = new List<HSTDataLayer.Person>();
-            SelectedOwner = new HSTDataLayer.Person();
+            LoadOwnersList();
+            SelectedOwner = ExistingOwnersList[0];
+            AddHomeView.RaiseNewHomeCreatedEvent += AddHomeView_RaiseNewHomeCreatedEvent;
         }
+
+        private void AddHomeView_RaiseNewHomeCreatedEvent(object sender, HSTDataLayer.Person e)
+        {
+            //  listener
+            SelectedOwner = (HSTDataLayer.Person)e as HSTDataLayer.Person;
+            AddNewHome();
+        }
+
         protected void AddNewHome()
         {
             if (NewHome != null)
@@ -45,9 +56,7 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void LoadOwnersList()
         {
             ExistingOwnersList = ((App)Application.Current)._peopleCollection.Where<HSTDataLayer.Person>(p => p.Owner != null).ToList();
-            //ExistingOwnersList = (from p in ((App)Application.Current)._peopleCollection
-            //                      where p.Owner != null
-            //                      select p).ToList();
         }
+
     }
 }

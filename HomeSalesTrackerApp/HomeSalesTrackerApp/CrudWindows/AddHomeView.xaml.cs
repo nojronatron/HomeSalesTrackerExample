@@ -1,19 +1,6 @@
-﻿using HomeSalesTrackerApp.DisplayModels;
-using HomeSalesTrackerApp.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HomeSalesTrackerApp.CrudWindows
 {
@@ -22,9 +9,31 @@ namespace HomeSalesTrackerApp.CrudWindows
     /// </summary>
     public partial class AddHomeView : UserControl
     {
+        //  Create an event to handle when a new Home has been created
+        public static event EventHandler<HSTDataLayer.Person> RaiseNewHomeCreatedEvent;
+
         public AddHomeView()
         {
             InitializeComponent();
+        }
+
+        private void AddNewOwnerButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("AddNewownerButton clicked!");
+        }
+
+        private void ExistingOwnersCombobox_selectionchanged(object sender, SelectionChangedEventArgs e)
+        {
+            //  TODO: do something with selectedOwner or remove this code
+            MessageBox.Show("ExistingOwnersCombobox selectionchanged!");
+        }
+
+        private void SaveHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOwner = ExistingOwnersCombobox.SelectedItem as HSTDataLayer.Person;
+
+            //  trigger
+            RaiseNewHomeCreatedEvent?.Invoke(this, selectedOwner);
         }
     }
 }

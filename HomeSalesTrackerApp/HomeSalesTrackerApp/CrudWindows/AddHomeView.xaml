@@ -11,16 +11,32 @@
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type data:HomeDisplayModel}">
         </DataTemplate>
+        <data:PersonModel x:Key="personModel" />
+
         <Style TargetType="{x:Type TextBox}">
             <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
+                <Trigger Property="Validation.HasError" Value="true">
                     <Setter Property="Background" Value="Pink" />
                     <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="ToolTip"
-                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
-                            Path=(Validation.Errors)[0].ErrorContent}" />
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
+                        Path=(Validation.Errors)[0].ErrorContent}" />
                 </Trigger>
             </Style.Triggers>
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="true">
+                            <Border Background="Red" DockPanel.Dock="Right" Width="20" Height="20" Margin="3" CornerRadius="10"
+                                    ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"></TextBlock>
+                            </Border>
+                            <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
+                                <Border BorderBrush="Red" BorderThickness="1" />
+                            </AdornedElementPlaceholder>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Margin" Value="4" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Height" Value="27" />
@@ -31,11 +47,11 @@
             <Setter Property="BorderThickness" Value="2" />
             <Setter Property="Padding" Value="2" />
             <Setter Property="Background" Value="Azure" />
+            <Setter Property="CornerRadius" Value="5" />
         </Style>
         <Style TargetType="StackPanel">
-            <Setter Property="Width" Value="180" />
             <Setter Property="Orientation" Value="Vertical" />
-            <Setter Property="MinWidth" Value="130" />
+            <Setter Property="MinWidth" Value="180" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="Background" Value="Azure" />
         </Style>
@@ -52,8 +68,8 @@
             <Setter Property="Margin" Value="5" />
         </Style>
     </UserControl.Resources>
-
-    <Grid x:Name="DetailsGrid" DataContext="{Binding ElementName=}">
+    
+    <Grid x:Name="DetailsGrid" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="Auto" />
@@ -63,32 +79,35 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Column="1">
             <StackPanel x:Name="InputStackpanel">
-                <Label Content="Address" />
-                <TextBox Name="Address" Text="{Binding Path=NewHome.Address, ValidatesOnDataErrors=True}" />
-                <Label Content="City" />
-                <TextBox Name="City" Text="{Binding Path=NewHome.City, ValidatesOnDataErrors=True}" />
-                <Label Content="State" />
-                <TextBox Name="State" Text="{Binding Path=NewHome.State, ValidatesOnDataErrors=True}" />
-                <Label Content="Zip Code" />
-                <TextBox Name="Zip" Text="{Binding Path=NewHome.Zip, ValidatesOnDataErrors=True}" />
-                <Separator Margin="5" />
-                <Button x:Name="SaveHome" Content="Save New Home" />
+                <Label Content="Street Address (2 to 50 characters)" />
+                <TextBox Name="Address" Text="{Binding Path=NewHome.Address, ValidatesOnDataErrors=True}" 
+                         />
+                <Label Content="City (2 to 50 characters)" />
+                <TextBox Name="City" Text="{Binding Path=NewHome.City, ValidatesOnDataErrors=True}" 
+                         />
+                <Label Content="State (2 character abbreviation)" />
+                <TextBox Name="State" Text="{Binding Path=NewHome.State, ValidatesOnDataErrors=True}" 
+                         />
+                <Label Content="Zip Code (5 or 9 digits, no dash)" />
+                <TextBox Name="Zip" Text="{Binding Path=NewHome.Zip, ValidatesOnDataErrors=True}" 
+                         />
+                 <Label Content="Select an existing Owner" />
+                <ComboBox Name="ExistingOwnersCombobox"
+                          ItemsSource="{Binding Path=ExistingOwnersList}"
+                          SelectionChanged="ExistingOwnersCombobox_selectionchanged"
+                          DisplayMemberPath="FullName" />
             </StackPanel>
         </Border>
         <Border Grid.Column="3">
             <StackPanel>
-                <Label Content="Select an existing Owner" />
-                <ComboBox x:Name="OwnersList" />
                 <Label Content="Add new Owner person" />
-                <Button Name="AddNewOwner" Content="Add New Owner" />
+                <Button Name="AddNewOwner" Content="Add New Owner" 
+                        Click="AddNewOwnerButton_Click" />
                 <Separator Margin="5" />
-                <ListBox ItemsSource="{Binding ElementName=InputStackpanel,Path=(Validation.Errors)}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <ListBox ItemsSource="{Binding Path=ErrorContent}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <Button x:Name="SaveHome" Content="Save This New Home" 
+                        IsEnabled="{Binding Path=NewHome.IsValid, UpdateSourceTrigger=PropertyChanged}"
+                        Click="SaveHomeButton_Click"
+                        />
             </StackPanel>
         </Border>
     </Grid>
