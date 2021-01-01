@@ -101,14 +101,16 @@ namespace HomeSalesTrackerApp.DisplayModels
             get
             {
                 this.IsValid = false;
-                string result = null;
+                string result = string.Empty;
                 switch (columnName)
                 {
                     case "Address":
                         {
-                            if (this.Address.Length < 1 || this.Address.Length > 50)
+                            var min = 1;
+                            var max = 50;
+                            if (this.Address.Length < min || this.Address.Length > max)
                             {
-                                result = "Address must be 2 to 50 characters.";
+                                result = $"Address must be { min } to { max } characters.";
                             }
                             else
                             {
@@ -118,9 +120,11 @@ namespace HomeSalesTrackerApp.DisplayModels
                         }
                     case "City":
                         {
-                            if (this.City.Length < 2 || this.City.Length > 30)
+                            var min = 2;
+                            var max = 30;
+                            if (this.City.Length < min || this.City.Length > max)
                             {
-                                result = "City must be 2 to 50 characters.";
+                                result = $"City must be { min } to { max } characters.";
                             }
                             else
                             {
@@ -130,9 +134,10 @@ namespace HomeSalesTrackerApp.DisplayModels
                         }
                     case "State":
                         {
-                            if (this.State.Length != 2)
+                            var minMax = 2;
+                            if (this.State.Length != minMax)
                             {
-                                result = "State must be 2 letter abbreviation.";
+                                result = $"State must be { minMax } letter abbreviation.";
                             }
                             else
                             {
@@ -142,7 +147,9 @@ namespace HomeSalesTrackerApp.DisplayModels
                         }
                     case "Zip":
                         {
-                            if (this.Zip.Length < 5 || this.Zip.Length > 9)
+                            var min = 5;
+                            var max = 9;
+                            if (!(int.TryParse(this.Zip, out int parsedZip)) || this.Zip.Length < min || this.Zip.Length > max)
                             {
                                 result = "Zip code must be 5 or 9 digits without spaces or dashes.";
                             }
@@ -154,7 +161,6 @@ namespace HomeSalesTrackerApp.DisplayModels
                         }
                     default:
                         {
-                            result = string.Empty;
                             break;
                         }
                 }

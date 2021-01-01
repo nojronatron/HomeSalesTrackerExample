@@ -65,6 +65,10 @@
       <DependentUpon>AddHomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CrudWindows\AddHomeViewModel.cs" />
+    <Compile Include="CrudWindows\AddPersonView.xaml.cs">
+      <DependentUpon>AddPersonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CrudWindows\AddPersonViewModel.cs" />
     <Compile Include="DisplayModels\AgentModel.cs" />
     <Compile Include="DisplayModels\HomeDisplayDetailModel.cs" />
     <Compile Include="DisplayModels\HomeForSaleDetailModel.cs" />
@@ -158,6 +162,10 @@
       <DependentUpon>SoldHomesView.xaml</DependentUpon>
     </Compile>
     <Page Include="CrudWindows\AddHomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\AddPersonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
