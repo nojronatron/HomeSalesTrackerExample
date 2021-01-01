@@ -49,7 +49,7 @@ namespace HomeSalesTrackerApp.DisplayModels
             {
                 if (value != _lastName)
                 {
-                    value = _lastName;
+                    _lastName = value;
                     OnPropertyChanged();
                 }
             }

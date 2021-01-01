@@ -72,30 +72,43 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5" />
         </Grid.ColumnDefinitions>
         <Border Grid.Column="1">
             <StackPanel x:Name="InputStackpanel">
                 <Label Content="First Name" />
-                <TextBox Name="FirstName" Text="{Binding Path=NewPerson.FirstName, ValidatesOnDataErrors=True}" 
-                         />
+                <TextBox Name="FirstName" Text="{Binding Path=NewPerson.FirstName, ValidatesOnDataErrors=True}" />
                 <Label Content="Last Name" />
-                <TextBox Name="LastName" Text="{Binding Path=NewPerson.LastName, ValidatesOnDataErrors=True}" 
-                         />
+                <TextBox Name="LastName" Text="{Binding Path=NewPerson.LastName, ValidatesOnDataErrors=True}" />
                 <Label Content="Phone Number (7-10 digits only)" />
-                <TextBox Name="PhoneNumber" Text="{Binding Path=NewPerson.Phone, ValidatesOnDataErrors=True}" 
-                         />
+                <TextBox Name="PhoneNumber" Text="{Binding Path=NewPerson.Phone, ValidatesOnDataErrors=True}" />
                 <Label Content="EMail (Email format)" />
-                <TextBox Name="Email" Text="{Binding Path=NewPerson.Email, ValidatesOnDataErrors=True}" 
-                         />
-                <!--<Label Content="Select an existing Owner" />
-                <ComboBox Name="ExistingOwnersCombobox"
-                          ItemsSource="{Binding Path=ExistingOwnersList}"
-                          SelectionChanged="ExistingOwnersCombobox_selectionchanged"
-                          DisplayMemberPath="FullName" />-->
-                <!--<Label Content="Add new Owner person" />
-                <Button Name="AddNewOwner" Content="Add New Owner" 
-                        Click="AddNewOwnerButton_Click" />
-                <Separator Margin="5" />-->
+                <TextBox Name="Email" Text="{Binding Path=NewPerson.Email, ValidatesOnDataErrors=True}" />
+                
+                <StackPanel Name="AgentStackpanel" Visibility="Collapsed">
+                    <!--<StackPanel.DataContext>
+                        <Binding Path="NewAgent" />
+                    </StackPanel.DataContext>-->
+                    <Label Content="Agent Information" />
+                    <Label Content="Commission" />
+                    <TextBox Name="CommissionTextbox" Text="{Binding Path=NewAgent.Commission}" />
+                    <Label Content="Real Estate Company" />
+                    <ComboBox Name="RecoCombobox"  />
+                </StackPanel>
+
+                <StackPanel Name="BuyerStackpanel" Visibility="Collapsed">
+                    <Label Content="Buyer Information" />
+                    <Label Content="Credit Rating" />
+                    <TextBox Name="CreditRatingTextbox" />
+                </StackPanel>
+
+                <StackPanel Name="OwnerStackpanel" Visibility="Collapsed">
+                    <Label Content="Owner Information" />
+                    <Label Content="Preferred Lender" />
+                    <TextBox Name="PreferredLenderTextbox" />
+                </StackPanel>
+
                 <Button x:Name="SavePerson" Content="Save This Person" 
                         IsEnabled="{Binding Path=NewPerson.IsValid, UpdateSourceTrigger=PropertyChanged}"
                         Click="SavePersonButton_Click"

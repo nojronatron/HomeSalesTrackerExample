@@ -11,6 +11,8 @@ using System.Windows;
 
 namespace HomeSalesTrackerApp
 {
+    public enum TypeOfPerson { Agent, Buyer, Owner };
+
     delegate void HomeIDSelected(int selectedHomeID);
     delegate void HomeSaleIDSelected(int selectedHomesaleID);
     delegate void PersonIDSelected(int selectedPersonID);
@@ -80,8 +82,9 @@ namespace HomeSalesTrackerApp
             FoundSoldHomesView.Visibility = Visibility.Hidden;
             FoundPeopleView.ItemsSource = null;
             FoundPeopleView.Visibility = Visibility.Hidden;
-            AddNewHomeView.ItemsSource = null;
             AddNewHomeView.Visibility = Visibility.Hidden;
+            AddNewPersonView.Visibility = Visibility.Hidden;
+            DataContext = null;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -301,10 +304,12 @@ namespace HomeSalesTrackerApp
             try
             {
                 ClearSearchResultsViews();
-                var apw = new AddPersonWindow();
-                apw.AddType = "Owner";
-                apw.Title = "Add New Owner Person";
-                apw.Show();
+                DataContext = new AddPersonViewModel(TypeOfPerson.Owner.ToString());
+                AddNewPersonView.Visibility = Visibility.Visible;
+                //var apw = new AddPersonWindow();
+                //apw.AddType = "Owner";
+                //apw.Title = "Add New Owner Person";
+                //apw.Show();
             }
             catch (Exception ex)
             {
@@ -327,10 +332,12 @@ namespace HomeSalesTrackerApp
             try
             {
                 ClearSearchResultsViews();
-                var apw = new AddPersonWindow();
-                apw.AddType = "Agent";
-                apw.Title = "Add New Agent Person";
-                apw.Show();
+                DataContext = new AddPersonViewModel(TypeOfPerson.Agent.ToString());
+                AddNewPersonView.Visibility = Visibility.Visible;
+                //var apw = new AddPersonWindow();
+                //apw.AddType = "Agent";
+                //apw.Title = "Add New Agent Person";
+                //apw.Show();
             }
             catch (Exception ex)
             {

@@ -20,6 +20,8 @@ namespace HomeSalesTrackerApp.CrudWindows
         private void AddNewOwnerButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("AddNewownerButton clicked!");
+            DataContext = new AddPersonViewModel(TypeOfPerson.Owner.ToString());
+
         }
 
         private void ExistingOwnersCombobox_selectionchanged(object sender, SelectionChangedEventArgs e)

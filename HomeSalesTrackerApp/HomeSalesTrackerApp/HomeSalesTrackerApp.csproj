@@ -69,6 +69,9 @@
       <DependentUpon>AddPersonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CrudWindows\AddPersonViewModel.cs" />
+    <Compile Include="CrudWindows\CrudSubWindow.xaml.cs">
+      <DependentUpon>CrudSubWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DisplayModels\AgentModel.cs" />
     <Compile Include="DisplayModels\HomeDisplayDetailModel.cs" />
     <Compile Include="DisplayModels\HomeForSaleDetailModel.cs" />
@@ -166,6 +169,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CrudWindows\AddPersonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CrudWindows\CrudSubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

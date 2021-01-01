@@ -125,6 +125,12 @@
                         <crudviews:AddHomeView x:Name="AddHomeViewControl" />
                     </Grid>
                 </ListView>
+                
+                <!-- AddPersonView -->
+                <ListView Name="AddNewPersonView"  Style="{StaticResource SearchListViewStyle}">
+                    <crudviews:AddPersonView x:Name="AddPersonViewControl" />
+                </ListView>
+                
             </Grid>
             <StackPanel Grid.Column="7" VerticalAlignment="Stretch">
                 <Button x:Name="clearButton" Content="Clear Screen" Margin="10, 7" Height="25" 
