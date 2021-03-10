@@ -12,14 +12,17 @@ As time permits I will update the code to close the loop on incomplete workflow 
 
 # BUILD AND USE REQUIREMENTS
 .NET Framework 4.x
-Entity Framework 6.x
+Entity Framework 6.x (be sure to Restore NuGet packages)
 Local SQL Server or other database supported by Entity Framework 6.0
 A SQL database with some data in it (this may get added to this repo at some point)
+Remove HomeSalesTrackerApp\HomeSalesTrackerApp\bin\Debug\XMLFiles folder
+Build => Clean to remove any lingering files
 
 # HOW TO USE
 Probably best to Debug-Build and Debug-Run at this point.
 The main menu has options for Searching, Adding, Updating, Removing, and running Reports.
 
+## Menus
 Search Menu: Search for Homes; Homes for sale; RE Agents; home buyers; or home owners.
 Add Menu: Create a new home; Put an existing home on the market (add); new Agent person; new Buyer person; or new Owner person.
 Update Menu: Update existing Homes; update a home as Sold; update information on an agent, buyer, or owner.
@@ -27,7 +30,8 @@ Remove Menu: Removes an existing home off the market without recording a sale. R
 Reports Menu: View reports based on existing DB data.
 
 # ARCHITECTURE
-The front-end UI is WPF and is fairly "heavy" with some code-behind and less-than-efficient use of LINQ, decision trees, and MVVM. Front-end includes:
+## Front-end
+UI is WPF and is fairly "heavy" with some code-behind and less-than-efficient use of LINQ, decision trees, and MVVM. Front-end includes:
 * Logging
 * Exception Handling
 * MVVM and MVVM-ish code style that enables viewing data in different contexts
@@ -35,7 +39,7 @@ The front-end UI is WPF and is fairly "heavy" with some code-behind and less-tha
 * Maintains Collections for data use and access to data back-end
 * Wrapper to handle all start-up, operate, and shut-down operations
 
-Back-end:
+## Back-end
 * Leverages Entity Framework 6.0
 * Segregates actual data handling from front-end app
 * Employs Exception handling
